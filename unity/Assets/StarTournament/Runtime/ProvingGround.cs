@@ -191,8 +191,18 @@ namespace StarTournament.ProvingGround
             yield return RunLoadingSteps(InitializeGame(),false);
             if(IsReady)
             {
-                Debug.Log("Game startup: menu ready at "+Time.realtimeSinceStartup.ToString("F2")+" seconds; Default "+activeLabReference.Hash);
                 StartCoroutine(LoadDesignLabHistoryInBackground());
+                // Critical profiles/world/UI/input initialized and loading hidden. Allow the
+                // real player loop to run before acknowledging this launcher's challenge.
+                yield return null;
+                yield return null;
+                if(IsReady)
+                {
+                    try{NativeStartupHealth.ReportReady();}
+                    catch(Exception error) when(error is System.IO.IOException||error is UnauthorizedAccessException||error is ArgumentException)
+                    {Debug.LogWarning("Startup readiness could not be reported: "+error.Message);}
+                }
+                Debug.Log("Game startup: menu ready at "+Time.realtimeSinceStartup.ToString("F2")+" seconds; Default "+activeLabReference.Hash);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 if(Environment.GetCommandLineArgs().Contains("-labStartupEvidence"))gameObject.AddComponent<NativeLabStartupReview>();
 #endif
@@ -200,7 +210,8 @@ namespace StarTournament.ProvingGround
         }
         IEnumerator InitializeGame()
         {
-            playerProfiles = new PlayerProfileCatalog(PlayerProfilesPath());
+            var profilesPath=PlayerProfilesPath(out var legacyProfilesPath);
+            playerProfiles = new PlayerProfileCatalog(profilesPath,legacyProfilesPath);
             input.Joined += OnDeviceJoined;
             input.JoinRejected += device => {
                 if(phase==Phase.Setup && setupStep==2 && LocalSeatCount<4 && RosterTotal<8)
@@ -210,11 +221,7 @@ namespace StarTournament.ProvingGround
                 }
                 setupError="Нет свободного места для "+device.displayName; RefreshInterface();
             };
-            MatchProfile.EnsureMatchDescriptors();
-            TrooperProfile.EnsureTrooperDescriptors();
-            ParticipantPaletteProfile.EnsureIdentitySurfaceDescriptors();
-            RocketEffectsProfile.EnsureRocketEffectsDescriptors();
-            Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
+            PrepareLabRegistry();
             if (Profile.Validate().Count != 0 || LifeProfile.Validate().Count != 0 || CombatProfile.Validate().Count != 0 || TrooperProfile.Validate().Count != 0) throw new InvalidOperationException("Invalid proving profile");
             yield return InitializeDesignLabAsync();
             previewMovement=Copy(Profile);previewLife=Copy(LifeProfile);previewCombat=Copy(CombatProfile);previewTrooper=Copy(TrooperProfile);
@@ -330,15 +337,17 @@ namespace StarTournament.ProvingGround
 #endif
 #endif
         }
-        static string PlayerProfilesPath()
+        static string PlayerProfilesPath(out string legacyPath)
         {
-            string path=System.IO.Path.Combine(Application.persistentDataPath,"player-profiles-v1.json");
+            string path=System.IO.Path.Combine(Application.persistentDataPath,VersionedUserData.Profiles);
+            legacyPath=System.IO.Path.Combine(Application.persistentDataPath,VersionedUserData.LegacyProfiles);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-profilesPath");
             if(index>=0)
             {
                 if(index+1>=args.Length || !System.IO.Path.IsPathFullyQualified(args[index+1]))throw new ArgumentException("Absolute profile QA path required");
                 path=args[index+1];
+                legacyPath=null;
             }
 #endif
             return path;
@@ -505,7 +514,10 @@ namespace StarTournament.ProvingGround
         {
             if(phase==Phase.Loading)return;
             if(UpdateTextEntry()){UpdateMenuCursor();UpdateTextEntryCursor();UpdateMenuSelectionAudio();TickGameMusic();return;}
+            var phaseAtInput=phase;
+            UpdateMenuCursor();
             TickDisplayConfirmation();
+            UpdateShellBackInput();
             UpdateSettingsBackInput();
             UpdateReleaseHistory();
             UpdateRosterInput();
@@ -536,9 +548,9 @@ namespace StarTournament.ProvingGround
             }
             else if(phase==Phase.Paused && UseSeatPauseMenus)UpdateSeatPauseInput();
             UpdateDesignLab();
-            if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
+            if (diagnostic && phase==Phase.Running && menuBackConsumedFrame!=Time.frameCount && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
-            UpdateMenuCursor();
+            if(phase!=phaseAtInput)UpdateMenuCursor();
             UpdateMenuSelectionAudio();
             TickGameMusic();
         }
@@ -634,8 +646,8 @@ namespace StarTournament.ProvingGround
         }
         void OnApplicationFocus(bool focus)
         {
-            musicFocused=focus;
-            if(!focus){input.Clear();Session?.ClearInput();}
+            musicFocused=focus;menuWindowFocused=focus;
+            if(!focus){menuGamepadCursor=false;SetCursor(false);input.Clear();Session?.ClearInput();}
             if(!focus&&!diagnostic&&!combatReview&&!nativeInputReview&&!Application.isBatchMode)gameAudio?.SuspendMusic();
             if(!focus && displayConfirmationActive)RollbackDisplay();
             if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
@@ -752,10 +764,12 @@ namespace StarTournament.ProvingGround
                 if(hasBots){frozenBehavior=Copy(BotBehaviorProfile);frozenPerception=Copy(BotPerceptionProfile);frozenNavigation=Copy(BotNavigationProfile);}
                 frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);frozenHitFeedback=Copy(HitFeedbackProfile);
                 FrozenLabIdentity=LabSavedIdentity;
+                FrozenLabPresentation=labSavedPresentation;
                 frozenLabReference=activeLabReference==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":activeLabReference.ProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:activeLabReference.Revision,Hash=CurrentLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             yield return null;
+            ApplySavedHudProfile(frozenMovement);
             Time.fixedDeltaTime=1/frozenMovement.Get("simulation.fixedTickHz");
             yield return RebuildActorsSteps(Composition,frozenMovement,frozenTrooper,false);
             yield return null;
@@ -944,24 +958,26 @@ namespace StarTournament.ProvingGround
         void Resume() { if (diagnostic || input.Ready) { BotDriver?.Release(); input.Clear(); Session.ClearInput(); phase = Phase.Running; SetCursor(!diagnostic && input.HasKeyboard); } }
         void ResetSetup() { Menu(); phase = Phase.Setup; diagnostic = false; input.Reset(); for(int i=0;i<SeatInputCoordinator.SeatCount;i++)identities.ClearSeat(i); Session.ClearInput(); Array.Clear(actions,0,actions.Length); SetCursor(false); RefreshInterface(); FocusSetupStep(); }
         static void Select(Selectable button) { if(EventSystem.current) { EventSystem.current.firstSelectedGameObject=button.gameObject; EventSystem.current.SetSelectedGameObject(button.gameObject); } }
-        bool menuGamepadCursor;
+        bool menuGamepadCursor,menuWindowFocused=true;
         void UpdateMenuCursor()
         {
+            if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);return;}
             if(phase==Phase.Running || phase==Phase.Loading)return;
             foreach(var pad in Gamepad.all)
             {
                 if(!pad.enabled)continue;
-                if(pad.leftStick.ReadValue().sqrMagnitude>=.25f || pad.dpad.ReadValue()!=Vector2.zero)
-                    menuGamepadCursor=true;
+                bool activity=pad.leftStick.ReadValue().sqrMagnitude>=.25f||pad.dpad.ReadValue()!=Vector2.zero||Mathf.Abs(pad.rightStick.ReadValue().y)>MenuHistoryScrollDeadzone;
                 foreach(var control in pad.allControls)
-                    if(control is UnityEngine.InputSystem.Controls.ButtonControl button && button.wasPressedThisFrame)
-                        menuGamepadCursor=true;
+                    if(control is UnityEngine.InputSystem.Controls.ButtonControl button&&button.wasPressedThisFrame)activity=true;
+                if(activity){menuGamepadCursor=true;menuDevice=pad;}
             }
+            if(Keyboard.current!=null&&Keyboard.current.enabled&&Keyboard.current.anyKey.wasPressedThisFrame)
+            {menuGamepadCursor=false;menuDevice=Keyboard.current;}
             // Mouse movement wins when both devices are used in the same frame.
             // Button releases and small stick drift do not change the cursor mode.
             var mouse=Mouse.current;
             if(mouse!=null && mouse.enabled && (mouse.delta.ReadValue()!=Vector2.zero || mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame || mouse.scroll.ReadValue()!=Vector2.zero))
-                menuGamepadCursor=false;
+            {menuGamepadCursor=false;menuDevice=Keyboard.current;}
             Cursor.visible=!menuGamepadCursor;
         }
         void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
@@ -1130,6 +1146,7 @@ namespace StarTournament.ProvingGround
             var teamLayout=teamRow.GetComponent<HorizontalLayoutGroup>();teamLayout.childControlWidth=teamLayout.childControlHeight=true;teamLayout.childForceExpandWidth=teamLayout.childForceExpandHeight=true;
             for(int i=0;i<teamButtons.Length;i++) { int seat=i;teamButtons[i]=ButtonElement(teamRow.transform,"Команда P"+(i+1),()=>SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));teamButtons[i].gameObject.name="team-seat-"+i; }
             resume=ButtonElement(column.transform,"Продолжить",Resume);
+            BindMenuShortcut(resume,MenuPadButton.East,()=>phase==Phase.Paused&&!UseSeatPauseMenus&&FocusAllowsResume);
             fallbackSettings=ButtonElement(column.transform,"Настройки",()=>OpenSettings(-1));operatorSettingsButton=fallbackSettings;
             fallbackSettings.gameObject.name="fallback-settings";
             repeat=ButtonElement(column.transform,"Повторить матч",Repeat);
@@ -1237,6 +1254,36 @@ namespace StarTournament.ProvingGround
             value.horizontalOverflow=HorizontalWrapMode.Overflow;value.color=tint;
             return value;
         }
+        void ApplySavedHudProfile(ProvingProfile movement)
+        {
+            // These objects outlive matches. Retune them only from the selected frozen
+            // match profile, never from a Lab draft or a later mutable runtime profile.
+            int bodySize=(int)movement.Get("ui.fontSize"),headingSize=(int)movement.Get("ui.headingFontSize");
+            int indicatorHeight=(int)movement.Get("ui.indicatorVisualHeight");float padding=bodySize;
+            for(int i=0;i<hud.Length;i++)
+            {
+                if(!hud[i])continue;
+                hud[i].fontSize=bodySize;hud[i].rectTransform.offsetMin=Vector2.one*padding;hud[i].rectTransform.offsetMax=-Vector2.one*padding;
+                names[i].fontSize=(int)movement.Get("ui.nameFontSize");names[i].rectTransform.offsetMin=Vector2.one*padding;names[i].rectTransform.offsetMax=-Vector2.one*padding;
+                crosshair[i].fontSize=headingSize;
+                killNotice[i].fontSize=(int)movement.Get("ui.killNoticeFontSize");
+                Layout(killNotice[i].rectTransform,new Vector2(0,movement.Get("ui.killNoticeBottom")),new Vector2(1,movement.Get("ui.killNoticeTop")));
+                RetuneHudIndicator(health[i],padding,indicatorHeight,padding,false);
+                RetuneHudIndicator(armor[i],padding,indicatorHeight,padding*2+indicatorHeight,false);
+                RetuneHudIndicator(ammo[i],padding,indicatorHeight,padding,true);
+            }
+            if(matchTimer)matchTimer.fontSize=headingSize;
+            if(status)status.fontSize=headingSize;
+            fps?.ApplyFontSize(bodySize);achievementsView?.ApplyFontSize(bodySize);
+        }
+        static void RetuneHudIndicator(Text value,float padding,int height,float bottom,bool right)
+        {
+            if(!value)return;
+            var group=(RectTransform)value.transform.parent;
+            group.anchoredPosition=new Vector2(right?-padding:padding,bottom);group.sizeDelta=new Vector2(height*5,height);
+            var icon=group.GetComponentInChildren<HudIndicatorIcon>(true);if(icon)icon.rectTransform.sizeDelta=Vector2.one*height;
+            value.fontSize=Mathf.RoundToInt(height*1.1f);value.rectTransform.anchoredPosition=new Vector2(height+padding*.5f,0);value.rectTransform.sizeDelta=new Vector2(height*4,height);
+        }
         void ResizeHudIndicator(Text value)
         {
             var rect=(RectTransform)value.transform.parent;
@@ -1250,7 +1297,9 @@ namespace StarTournament.ProvingGround
             var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter;
             label.rectTransform.offsetMin=new Vector2(12,4);label.rectTransform.offsetMax=new Vector2(-12,-4);
             var colors=button.colors;colors.normalColor=Color.white;colors.highlightedColor=colors.selectedColor=Color.white;colors.pressedColor=new Color(.8f,.8f,.8f,1);colors.disabledColor=new Color(.52f,.57f,.62f,1);colors.fadeDuration=.12f;button.colors=colors;
-            go.AddComponent<MenuPresentation>();return button;
+            go.AddComponent<MenuPresentation>();
+            go.AddComponent<MenuActionHint>().Initialize(button,()=>menuDevice,()=>menuGamepadCursor&&menuWindowFocused);
+            return button;
         }
         static void Layout(RectTransform rect,Vector2 min,Vector2 max) { rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero; }
         static RectTransform CreateViewportDivider(Transform parent,string name)

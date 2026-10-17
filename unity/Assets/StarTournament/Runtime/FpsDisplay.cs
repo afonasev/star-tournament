@@ -58,6 +58,12 @@ namespace StarTournament.ProvingGround
             Visible = PlayerPrefs.GetInt(PreferenceKey, 1) != 0;
             Refresh();
         }
+        public void ApplyFontSize(int fontSize)
+        {
+            if(!counter)return;
+            counter.fontSize=fontSize;var panel=(RectTransform)counter.transform.parent;
+            panel.anchoredPosition=new Vector2(-fontSize,-fontSize);panel.sizeDelta=new Vector2(fontSize*7,fontSize*1.6f);
+        }
         public void Toggle()
         {
             Visible = !Visible;

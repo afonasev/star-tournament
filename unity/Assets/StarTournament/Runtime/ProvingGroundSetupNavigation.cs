@@ -49,10 +49,11 @@ namespace StarTournament.ProvingGround
             else if(setupStep==1)Select(modeChoices[0]);
             else FocusRosterCard(0);
         }
+        bool CanAdvanceSetupInput()=>phase==Phase.Setup&&rosterEditing<0&&pendingSeat<0&&setupTransitionFrame!=Time.frameCount&&
+            (setupStep!=2||(input.Ready&&IdentitiesReady()&&ValidSetup()));
         void AdvanceSetupInput()
         {
-            if(phase!=Phase.Setup || rosterEditing>=0 || pendingSeat>=0 || setupTransitionFrame==Time.frameCount)return;
-            if(setupStep==2 && (!input.Ready || !IdentitiesReady() || !ValidSetup()))return;
+            if(!CanAdvanceSetupInput())return;
             setupTransitionFrame=Time.frameCount;
             if(setupStep<2)NextSetupStep();else start.onClick.Invoke();
         }

@@ -344,7 +344,37 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(upgraded.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(80));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
         }
-        [Test]public void FootstepMixUpgradeRetunesOldDefaultAndPreservesHistory()
+        [TestCase("BeforeArenaHarmonization")]
+        [TestCase("BeforeBloodIntensityIncrease")]
+        [TestCase("BeforeFootstepMix")]
+        [TestCase("BeforeEquipmentReadability")]
+        [TestCase("BeforeMediumWeaponSwitch")]
+        public void OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(string legacyMethod)
+        {
+            var current=Shipped();
+            var method=typeof(ProvingProfile).GetMethod(legacyMethod,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Public);
+            var baseRegistry=legacyMethod=="BeforeMediumWeaponSwitch"||legacyMethod=="BeforeFootstepMix"?BeforeRebalance(current.Clone()):current;
+            var previous=new LabBundle{Profiles=baseRegistry.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            for(int mode=0;mode<3;mode++)
+            {
+                string source=Path.Combine(directory,"preserve-"+mode+".json");bool author=mode>0;
+                var old=new DesignLabHistory(source,previous,releases:LabReleaseCatalog.Factory(previous),authoring:author);
+                if(mode!=2)old.Create("Saved experiment");
+                else old.Rename("Authored Default"); // Persists the initially seeded authored source.
+                var original=old.Selected;var bytes=File.ReadAllBytes(source);
+                var upgraded=new DesignLabHistory(source,current,releases:LabReleaseCatalog.Factory(current),authoring:author,persistMigration:false);
+                Assert.That(upgraded.StorageError,Is.Null,legacyMethod+" mode="+mode);
+                foreach(var d in original.Snapshot.Descriptors.Where(d=>current.Descriptors.Any(c=>c.Path==d.Path)&&current.IsEditable(d.Path)))
+                    Assert.That(upgraded.Selected.Snapshot.Get(d.Path),Is.EqualTo(original.Snapshot.Get(d.Path)),legacyMethod+" mode="+mode+" "+d.Path);
+                var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==original.Number);
+                Assert.That(preserved.Hash,Is.EqualTo(original.Hash));Assert.That(preserved.Date,Is.EqualTo(original.Date));
+                Assert.That(UnityEngine.JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(UnityEngine.JsonUtility.ToJson(original.Snapshot)));
+                CollectionAssert.AreEqual(bytes,File.ReadAllBytes(source));
+                var again=new DesignLabHistory(source,current,releases:LabReleaseCatalog.Factory(current),authoring:author,persistMigration:false);
+                Assert.That(again.Selected.Hash,Is.EqualTo(upgraded.Selected.Hash));
+            }
+        }
+        [Test]public void FootstepMixUpgradePreservesSavedOldDefaultAndHistory()
         {
             var old=BeforeRebalance(Shipped());var current=old.Profiles.Single(p=>p.Id==ProvingProfile.DefaultId);
             old.Profiles[old.Profiles.IndexOf(current)]=current.BeforeFootstepMix();
@@ -352,7 +382,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             string oldHash=history.Selected.Hash;
             var upgraded=new DesignLabHistory(path,Shipped());
             Assert.That(upgraded.StorageError,Is.Null);
-            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepDistanceMeters"),Is.EqualTo(2.1f));
+            Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepDistanceMeters"),Is.EqualTo(1.7f));
             Assert.That(upgraded.Selected.Snapshot.Get("audio.footstepGain"),Is.EqualTo(.5f));
             Assert.That(upgraded.SelectedProfile.Revisions.Any(r=>r.Hash==oldHash),Is.True);
         }

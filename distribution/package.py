@@ -11,8 +11,23 @@ import re
 import shutil
 import subprocess
 import zipfile
+import plistlib
 
+from release_compatibility import current as compatibility_requirements, manifest as release_manifest, verify_payload
 from windows_dpi import validate_windows_dpi
+from windows_stable_entry import install_stable_entry
+from broker_upgrade import seal as seal_broker_upgrade, install_component
+import macos_dmg
+
+
+def write_metadata(output, runtime, version, envelope):
+    """Only modern discovery names; old names are publisher-owned frozen aliases."""
+    raw = (json.dumps(envelope)+'\n').encode()
+    paths = [output/f'{version}.signed.json', output/f'latest-v2-{runtime}.json']
+    for path in paths:
+        if path.is_symlink() or (path.exists() and path.read_bytes() != raw):
+            raise ValueError('Immutable signed metadata output differs')
+    for path in paths: path.write_bytes(raw)
 
 
 def main():
@@ -40,6 +55,7 @@ def main():
     if a.runtime == 'win-x64' and not a.update_only and not a.nsis_host and (a.makensis is None or not a.makensis.is_file()):
         p.error('Windows packages require --makensis for the installation wizard')
     a.output = a.output.resolve(); a.player = a.player.resolve()
+    compatibility = compatibility_requirements(a.runtime, a.player)
     stage = a.output / ('payload-' + a.version)
     if stage.exists(): p.error('Payload already exists; use an immutable new version/output')
     stage.mkdir(parents=True)
@@ -64,11 +80,21 @@ def main():
         game_exe = 'game/StarTournament.exe'
     app_id = 'tech.afonasev.star-tournament.' + a.runtime
     config = dict(appId=app_id, platform=a.runtime.split('-')[0], architecture=a.runtime.split('-')[1],
-                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel)
+                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel, compatibility=compatibility)
     (stage/'release.json').write_text(json.dumps(config, indent=2)+'\n')
+    if a.runtime.startswith('osx'):
+        outer_info = a.output/'macos-launcher.plist'
+        with outer_info.open('wb') as stream: plistlib.dump(macos_dmg.outer_plist(config), stream)
     subprocess.run(['openssl', 'pkey', '-in', str(a.key.resolve()), '-pubout', '-out', str(stage/'update-public.pem')], check=True)
     if (stage/'update-public.pem').read_bytes() != (root/'update-public.pem').read_bytes():
         raise ValueError('Signing key differs from pinned distribution key')
+    if a.runtime == 'win-x64':
+        # Updates carry the same signed component as first-install, before packing.
+        candidate = stage/'broker-upgrade'
+        subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
+                        '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
+                        '-p:DebugType=None','-p:OutputType=WinExe','-o',str(candidate)],check=True,env=env)
+        sealed_broker = seal_broker_upgrade(candidate, config, a.key.resolve(), root/'update-public.pem')
     output = a.output/'releases'; output.mkdir(exist_ok=True)
     launcher = 'StarTournamentLauncher.exe' if a.runtime.startswith('win') else 'StarTournamentLauncher'
     cmd = [str(a.vpk.resolve())] + (['[win]'] if a.runtime.startswith('win') else [])
@@ -76,10 +102,11 @@ def main():
             '--mainExe', launcher, '--runtime', a.runtime, '--channel', a.runtime, '--packTitle', 'Star Tournament',
             '--delta', 'None', '--outputDir', str(output), '--icon', str(root/'branding'/('app-icon.ico' if a.runtime.startswith('win') else 'app-icon.icns'))]
     if a.runtime == 'win-x64': cmd += ['--shortcuts', 'None']
+    else: cmd += ['--noInst', '--plist', str(outer_info)]
     subprocess.run(cmd, check=True, env=env)
     if a.update_only:
         for first_install in output.iterdir():
-            if first_install.suffix in ('.exe', '.pkg', '.zip'): first_install.unlink()
+            if first_install.suffix in ('.exe', '.pkg', '.zip', '.dmg'): first_install.unlink()
     elif a.runtime == 'win-x64':
         # NSIS owns installation, shortcuts and ARP; preserve the portable marker.
         portable = next(output.glob('*Portable.zip'))
@@ -92,37 +119,31 @@ def main():
         if not (layout/'.portable').is_file() or not (layout/'Update.exe').is_file():
             raise ValueError('Expected complete Velopack portable layout')
         shutil.copyfile(root/'branding/app-icon.ico',layout/'app-icon.ico')
-        maintenance = layout/'maintenance'; maintenance.mkdir()
-        subprocess.run([str(a.dotnet.resolve()),'publish',str(root/'maintenance/Maintenance.csproj'),
-                        '-c','Release','-r','win-x64','--self-contained','true','-p:PublishSingleFile=true',
-                        '-p:DebugType=None','-o',str(maintenance)],check=True,env=env)
-        (maintenance/'maintenance.json').write_text(json.dumps(dict(protocol=1, **config),indent=2)+'\n')
-        shutil.copyfile(root/'update-public.pem',maintenance/'update-public.pem')
+        install_component(stage/'broker-upgrade', layout/'maintenance', sealed_broker)
+        install_stable_entry(layout)
         next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
         installer = output/f'Star-Tournament-{a.version}-Windows-x64-Setup.exe'
         compiler = (['--compiler-host',a.nsis_host] if a.nsis_host else ['--makensis',str(a.makensis.resolve())])
         subprocess.run(['python3',str(root/'windows/build_installer.py'),'--layout',str(layout),
                         '--version',a.version,'--output',str(installer)] + compiler,check=True)
     if a.runtime.startswith('osx') and not a.update_only:
-        for package in output.glob('*.pkg'):
-            package.rename(output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.pkg')
+        portable = list(output.glob('*Portable.zip'))
+        if len(portable) != 1: raise ValueError('Exactly one complete macOS portable required')
+        macos_dmg.from_portable(portable[0], output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.dmg', a.runtime, a.version)
+        portable[0].unlink()
     feed = json.loads((output/f'releases.{a.runtime}.json').read_text())
     asset = next(x for x in feed['Assets'] if x['Version'] == a.version and x['Type'] == 'Full')
-    payload = json.dumps(dict(schema=1, channel=a.channel, platform=config['platform'], architecture=config['architecture'],
-                              version=a.version, publicationDate=a.date,
-                              downloadUrl=f'https://github.com/afonasev/star-tournament/releases/download/v{a.version}/{asset["FileName"]}',
-                              publishedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(), feed={'Assets': [asset]}),
+    payload = json.dumps(release_manifest(config, asset, datetime.datetime.now(datetime.timezone.utc).isoformat()),
                          separators=(',', ':'), ensure_ascii=False).encode()
+    verify_payload(output/asset["FileName"], json.loads(payload))
     signed = subprocess.run(['openssl','dgst','-sha256','-sign',str(a.key.resolve()),
                              '-sigopt','rsa_padding_mode:pss','-sigopt','rsa_pss_saltlen:32'], input=payload,
                             capture_output=True, check=True).stdout
     envelope = dict(payload=base64.b64encode(payload).decode(), signature=base64.b64encode(signed).decode())
-    (output/f'{a.version}.signed.json').write_text(json.dumps(envelope)+'\n')
-    (output/'latest.json').write_text(json.dumps(envelope)+'\n')  # Bridge feed compatibility.
-    (output/f'latest-{a.runtime}.json').write_text(json.dumps(envelope)+'\n')
+    write_metadata(output, a.runtime, a.version, envelope)
     files = []
     for f in sorted(output.iterdir()):
-        if f.is_file() and f.suffix in ('.nupkg','.exe','.pkg','.zip'):
+        if f.is_file() and f.suffix in ('.nupkg','.exe','.pkg','.zip','.dmg'):
             with f.open('rb') as stream: digest = hashlib.file_digest(stream, 'sha256').hexdigest()
             files.append(dict(name=f.name, size=f.stat().st_size, sha256=digest))
     revision = subprocess.check_output(['git','rev-parse','HEAD'], cwd=root, text=True).strip()

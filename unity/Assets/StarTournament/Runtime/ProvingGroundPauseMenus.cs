@@ -18,6 +18,7 @@ namespace StarTournament.ProvingGround
         readonly GameObject[] seatPauseRepeat = new GameObject[SeatInputCoordinator.SeatCount];
         readonly GameObject[] seatPauseExit = new GameObject[SeatInputCoordinator.SeatCount];
         readonly Text[] seatPauseReason = new Text[SeatInputCoordinator.SeatCount];
+        readonly Text[] seatPauseBalance = new Text[SeatInputCoordinator.SeatCount];
         readonly Text[] seatPauseFps = new Text[SeatInputCoordinator.SeatCount];
         readonly Button[,] seatPauseActionButtons = new Button[SeatInputCoordinator.SeatCount,4];
         readonly Vector2[] seatPauseLastStick=new Vector2[SeatInputCoordinator.SeatCount];
@@ -48,14 +49,15 @@ namespace StarTournament.ProvingGround
                 card.AddComponent<CanvasGroup>();
                 seatPauseActions[seat]=PausePage(card.transform,"actions");
                 Label(seatPauseActions[seat].transform,"title","Пауза",40,new Vector2(.08f,.83f),new Vector2(.92f,.96f),TextAnchor.MiddleCenter,MenuGold);
-                seatPauseReason[seat]=Label(seatPauseActions[seat].transform,"reason","",30,new Vector2(.08f,.72f),new Vector2(.92f,.83f),TextAnchor.MiddleCenter,Color.white);
+                seatPauseReason[seat]=Label(seatPauseActions[seat].transform,"reason","",30,new Vector2(.08f,.74f),new Vector2(.92f,.83f),TextAnchor.MiddleCenter,Color.white);
+                seatPauseBalance[seat]=CreatePauseBalanceLabel(seatPauseActions[seat].transform,"pause-balance-"+seat);
                 string[] actionLabels={"Продолжить","Настройки","Начать заново","Выйти в главное меню"};
                 for(int item=0;item<4;item++)
                 {
                     int localItem=item;
-                    float top=.70f-item*.155f;
+                    float top=.55f-item*.132f;
                     seatPauseActionButtons[seat,item]=PauseButton(seatPauseActions[seat].transform,"pause-action-"+seat+"-"+item,actionLabels[item],
-                        new Vector2(.08f,top-.11f),new Vector2(.92f,top),()=>RunSeatPauseAction(localSeat,localItem),seat,item);
+                        new Vector2(.08f,top-.095f),new Vector2(.92f,top),()=>RunSeatPauseAction(localSeat,localItem),seat,item);
                 }
                 seatSettingsViews[seat]=new SettingsView(this,true,seat,()=>BackSeatPause(localSeat));
                 seatSettingsViews[seat].CreateSettingsUi(card.transform);
@@ -76,6 +78,12 @@ namespace StarTournament.ProvingGround
             page.GetComponent<Image>().raycastTarget=false;
             return page;
         }
+        Text CreatePauseBalanceLabel(Transform parent,string name)
+        {
+            var label=Label(parent,name,"",22,new Vector2(.08f,.58f),new Vector2(.92f,.72f),TextAnchor.MiddleCenter,new Color32(174,193,208,255));
+            label.supportRichText=false;label.raycastTarget=false;label.resizeTextForBestFit=true;label.resizeTextMinSize=12;label.resizeTextMaxSize=22;
+            return label;
+        }
 
         GameObject ConfirmationPage(Transform parent,int seat,string name,string title,out Button yes,out Button no)
         {
@@ -86,12 +94,15 @@ namespace StarTournament.ProvingGround
                 ()=>RunSeatPauseAction(seat,0),seat,0);
             no=PauseButton(page.transform,"pause-"+name+"-no-"+seat,"Отмена",new Vector2(.08f,.07f),new Vector2(.92f,.21f),
                 ()=>RunSeatPauseAction(seat,1),seat,1);
+            BindMenuShortcut(no,MenuPadButton.East,()=>seatPausePages[seat]==SeatPausePage.ConfirmRepeat||seatPausePages[seat]==SeatPausePage.ConfirmExit);
             return page;
         }
 
         Button PauseButton(Transform parent,string name,string value,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action,int seat,int index)
         {
             var button=MenuButton(parent,name,value,min,max,action);
+            button.GetComponent<MenuActionHint>().Initialize(button,()=>input.DeviceAt(seat),()=>menuGamepadCursor&&menuWindowFocused,()=>seatPauseCursor[seat]==index);
+            if(index==0)BindMenuShortcut(button,MenuPadButton.East,()=>seatPausePages[seat]==SeatPausePage.Actions&&button==seatPauseActionButtons[seat,0]&&FocusAllowsResume);
             button.transition=Selectable.Transition.None;
             var trigger=button.GetComponent<EventTrigger>()??button.gameObject.AddComponent<EventTrigger>();
             var entry=new EventTrigger.Entry { eventID=EventTriggerType.PointerEnter };
@@ -190,7 +201,7 @@ namespace StarTournament.ProvingGround
         void BackSeatPause(int seat)
         {
             if(seatPausePages[seat]==SeatPausePage.Actions)CloseSeatPause(seat);
-            else {seatPausePages[seat]=SeatPausePage.Actions;seatPauseCursor[seat]=1;RefreshSeatPauseUi();}
+            else {var previous=seatPausePages[seat];seatPausePages[seat]=SeatPausePage.Actions;seatPauseCursor[seat]=previous==SeatPausePage.ConfirmRepeat?2:previous==SeatPausePage.ConfirmExit?3:1;RefreshSeatPauseUi();}
         }
 
         void CloseSeatPause(int seat)
@@ -235,11 +246,11 @@ namespace StarTournament.ProvingGround
                         if(!input.Ready)return;
                         ClearSeatPauseMenus();Repeat();RefreshInterface();
                     }
-                    else SetSeatPausePage(seat,SeatPausePage.Actions);
+                    else BackSeatPause(seat);
                     break;
                 case SeatPausePage.ConfirmExit:
                     if(item==0){ClearSeatPauseMenus();ToMainMenu();}
-                    else SetSeatPausePage(seat,SeatPausePage.Actions);
+                    else BackSeatPause(seat);
                     break;
             }
             RefreshSeatPauseUi();
@@ -278,6 +289,7 @@ namespace StarTournament.ProvingGround
                 if(human)
                 {
                     seatPauseReason[seat].text=IdentityLabel(seat);
+                    seatPauseBalance[seat].text=FrozenLabPresentation??"";
                     if(page==SeatPausePage.Settings)seatSettingsViews[seat].RefreshSettingsUi();
                     seatPauseActionButtons[seat,0].interactable=input.Ready&&FocusAllowsResume;
                     if(page!=SeatPausePage.Settings&&page!=SeatPausePage.Closed)PaintSeatButtons(seat,page);

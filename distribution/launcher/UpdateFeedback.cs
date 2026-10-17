@@ -12,6 +12,9 @@ public static class UpdateFeedback
     public static string LogPath => Path.Combine(LogRoot, "errors.log");
     public static string Explain(Exception error) => error switch
     {
+        PlatformNotSupportedException => error.Message,
+        ReleaseCompatibilityException => error.Message,
+        MaintenanceUpgradeRequiredException => "Для безопасного обновления требуется новый установщик Star Tournament.",
         UnauthorizedAccessException or Win32Exception { NativeErrorCode: 5 } => "Нет доступа к папке игры или обновления. Проверьте права доступа.",
         CryptographicException => "Пакет обновления не прошёл проверку подлинности. Скачайте обновление заново.",
         TimeoutException or OperationCanceledException => "Сервер обновлений не отвечает. Проверьте подключение и повторите попытку.",
@@ -82,3 +85,5 @@ public sealed class UpdateAttemptJournal
     }
     public static UpdateAttemptJournal ForApp(string appId) => new(Path.Combine(UpdateFeedback.LogRoot, Path.GetFileName(appId) + ".apply.json"));
 }
+
+public sealed class MaintenanceUpgradeRequiredException : Exception { public MaintenanceUpgradeRequiredException() : base("Maintenance protocol2 is required") { } }

@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround
             string key=shape.Id+"@"+shape.Version+"|"+shape.DefinitionHash;
             if(storageAuthored.TryGetValue(key,out var known))return known;
             var current=shipped.Profiles.SingleOrDefault(p=>p.Id==shape.Id);
-            if(current==null||shape.Paths.Count!=0||string.IsNullOrEmpty(shape.DefinitionHash))throw new InvalidDataException("Unsupported authored definition");
+            if(current==null||shape.Paths.Count!=0||string.IsNullOrEmpty(shape.DefinitionHash))throw new InvalidDataException("Недоступно поддерживаемое определение ресурса "+shape.Id+"@"+shape.Version);
             // Every candidate is produced by existing trusted compatibility code, never file data.
             IEnumerable<ProvingProfile> Candidates()
             {
@@ -91,16 +91,23 @@ namespace StarTournament.ProvingGround
                 }
             }
             var authored=Candidates().FirstOrDefault(p=>p.Version==shape.Version&&DefinitionHash(p)==shape.DefinitionHash);
-            if(authored==null)throw new InvalidDataException("Unsupported authored definition");
+            if(authored==null)throw new InvalidDataException("Недоступно поддерживаемое определение ресурса "+shape.Id+"@"+shape.Version);
             storageAuthored.Add(key,authored);return authored;
         }
         static bool AuthoredProfile(string id)=>id=="combat-bowl-ring-r7-authoring-v1"||id==ProvingProfile.TunnelsAuthoringId||id=="lunar-laboratory-authoring-v1"||id=="well-authoring-v1";
         static string ShapeKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version+":"+string.Join(",",p.Descriptors.Select(d=>d.Path).OrderBy(path=>path,StringComparer.Ordinal))));
+        string SchemaIdentity(LabBundle bundle)
+        {
+            var changed=bundle.Profiles.Where(p=>!shipped.Profiles.Any(known=>known.Id==p.Id&&known.Version==p.Version&&
+                known.Descriptors.Select(d=>d.Path).OrderBy(x=>x,StringComparer.Ordinal).SequenceEqual(p.Descriptors.Select(d=>d.Path).OrderBy(x=>x,StringComparer.Ordinal)))).ToArray();
+            var relevant=changed.Length==0?bundle.Profiles.ToArray():changed;
+            return string.Join(", ",relevant.Take(2).Select(p=>p.Id+"@"+p.Version))+(relevant.Length>2?", ещё: "+(relevant.Length-2):"");
+        }
         LabBundle StorageRegistry(LabBundle snapshot)
         {
             if(Current(snapshot))return shipped;
             if(storageResolvedSchemas.TryGetValue(ShapeKey(snapshot),out var known))return known;
-            return HistoricalPredecessors(snapshot).FirstOrDefault(b=>RegistryMatches(b,snapshot))??throw new InvalidDataException("Unknown trusted schema");
+            return HistoricalPredecessors(snapshot).FirstOrDefault(b=>RegistryMatches(b,snapshot))??throw new InvalidDataException("Неподдерживаемая схема Lab: "+SchemaIdentity(snapshot)+"; недоступные поля: "+string.Join(", ",snapshot.Descriptors.Select(d=>d.Path).Except(shipped.Descriptors.Select(d=>d.Path)).Take(3)));
         }
         static string StorageIntegrity(LabParameterFile file)
         {
@@ -141,11 +148,12 @@ namespace StarTournament.ProvingGround
                 }
             }
             compact.Integrity=StorageIntegrity(compact);
-            return JsonUtility.ToJson(compact);
+            return WriteCompatibilityEnvelope(compact,file);
         }
         LabHistoryFile ReadStorage(string json)
         {
             var header=JsonUtility.FromJson<LabStorageHeader>(json);
+            if(header?.Schema==3)return ReadCompatibilityEnvelope(json);
             if(header?.Schema==1)return JsonUtility.FromJson<LabHistoryFile>(json);
             if(header?.Schema!=2)throw new InvalidDataException("Unsupported history schema");
             var file=JsonUtility.FromJson<LabParameterFile>(json);
@@ -170,7 +178,7 @@ namespace StarTournament.ProvingGround
                 LabBundle registry;
                 lock(storageRegistryLock)storageRegistryCache.TryGetValue(StorageRegistryKey(sought,schema.BaselineHash),out registry);
                 if(registry==null)registry=Current(sought)?shipped:HistoricalPredecessors(sought,true).FirstOrDefault(b=>RegistryMatches(b,sought)&&b.Hash()==schema.BaselineHash);
-                if(registry==null||registry.Hash()!=schema.BaselineHash)throw new InvalidDataException("Trusted baseline unavailable or changed");
+                if(registry==null||registry.Hash()!=schema.BaselineHash)throw new InvalidDataException("Недоступна или изменена доверенная схема Lab: "+SchemaIdentity(sought));
                 RememberStorageRegistry(registry);registries.Add(registry);
                 string shapeKey=ShapeKey(registry);
                 if(!storageResolvedSchemas.ContainsKey(shapeKey)&&storageResolvedSchemas.Count>=8)storageResolvedSchemas.Remove(storageResolvedSchemas.Keys.First());

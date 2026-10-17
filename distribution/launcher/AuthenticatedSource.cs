@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.IO.Compression;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Velopack;
@@ -8,7 +9,7 @@ using Velopack.Sources;
 namespace StarTournament.Distribution;
 
 public sealed record LauncherConfig(string AppId, string Platform, string Architecture, string Version,
-    string PublicationDate, string FeedBase, string GameExecutable, string? UpdateChannel = null);
+    string PublicationDate, string FeedBase, string GameExecutable, string? UpdateChannel = null, ReleaseRequirements? Compatibility = null);
 
 public sealed class AuthenticatedSource : IUpdateSource, IDisposable
 {
@@ -16,31 +17,38 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     readonly string key;
     readonly HttpClient http;
     readonly TimeSpan stallTimeout;
+    readonly GitHubDiscovery discovery;
+    readonly int readerProtocol;
+    readonly Func<string, Version, bool>? hostProbe;
+    ReleaseRequirements? requirements;
     Uri? packageUri;
     public string? Envelope { get; private set; }
     public VelopackAsset? Asset { get; private set; }
     public string? PublicationDate { get; private set; }
     public CancellationToken CheckCancellationToken { get; set; }
 
-    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null)
+    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null, int readerProtocol = ReleaseCompatibility.ReaderProtocol, Func<string, Version, bool>? hostProbe = null)
     {
         this.config = config; this.key = key;
+        this.readerProtocol = readerProtocol; this.hostProbe = hostProbe;
         this.stallTimeout = stallTimeout ?? TimeSpan.FromSeconds(30);
         if (config.UpdateChannel != null && (config.UpdateChannel is not ("test" or "production") ||
             config.FeedBase != (config.UpdateChannel == "test" ? TestLocator : ProductionBase)))
             throw new CryptographicException("Untrusted GitHub channel configuration");
         http = new HttpClient(transport ?? new HttpClientHandler { AllowAutoRedirect = false })
         { Timeout = TimeSpan.FromMinutes(30), MaxResponseContentBufferSize = 65536 };
+        discovery = new GitHubDiscovery(http, this.stallTimeout, discoveryCachePath, discoveryClock);
     }
 
     public const string TestLocator = "https://api.github.com/repos/afonasev/star-tournament/releases";
     public const string ProductionBase = "https://github.com/afonasev/star-tournament/releases/latest/download/";
     string ManifestName => $"latest-{config.Platform}-{config.Architecture}.json";
+    string ModernManifestName => $"latest-v2-{config.Platform}-{config.Architecture}.json";
 
     public void Admit(string envelope)
     {
         // Clear prior admission before parsing any new, potentially rejected descriptor.
-        Envelope = null; Asset = null; PublicationDate = null; packageUri = null;
+        Envelope = null; Asset = null; PublicationDate = null; packageUri = null; requirements = null;
         if (envelope.Length > 65536) throw new CryptographicException("Release metadata exceeds limit");
         using var outer = JsonDocument.Parse(envelope);
         var payload = Convert.FromBase64String(outer.RootElement.GetProperty("payload").GetString()!);
@@ -49,8 +57,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         if (!rsa.VerifyData(payload, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pss))
             throw new CryptographicException("Invalid release signature");
         using var doc = JsonDocument.Parse(payload); var release = doc.RootElement;
-        if (release.GetProperty("schema").GetInt32() != 1 ||
-            release.GetProperty("platform").GetString() != config.Platform ||
+        if (release.GetProperty("platform").GetString() != config.Platform ||
             release.GetProperty("architecture").GetString() != config.Architecture)
             throw new CryptographicException("Release target mismatch");
         if (config.UpdateChannel != null && (!release.TryGetProperty("channel", out var signedChannel) ||
@@ -80,8 +87,15 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         if (config.UpdateChannel != null && (authenticatedUrl == null ||
             (config.UpdateChannel == "test") != asset.Version.IsPrerelease))
             throw new CryptographicException("Missing GitHub identity or invalid channel version");
-        packageUri = authenticatedUrl;
+        var parsedRequirements = ReleaseCompatibility.Parse(release, config.Platform);
+        packageUri = authenticatedUrl; requirements = parsedRequirements;
         Envelope = envelope; Asset = asset; PublicationDate = date;
+    }
+
+    public void RequireCompatibleTarget()
+    {
+        if (requirements == null || Asset == null) throw new CryptographicException("No authenticated target");
+        ReleaseCompatibility.Require(requirements, config.Platform, readerProtocol, hostProbe);
     }
 
     Uri Remote(string filename)
@@ -139,53 +153,72 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         return System.Text.Encoding.UTF8.GetString(output.ToArray());
     }
 
-    async Task<(Uri Uri, string? Version)> Discover(CancellationToken token)
+    async Task<List<(Uri Uri, string? Version, HashSet<string>? Assets)>> Discover(CancellationToken token)
     {
-        if (config.UpdateChannel == null) return (Remote("latest.json"), null); // Legacy broker/config only.
-        if (config.UpdateChannel == "production") return (new Uri(ProductionBase + ManifestName), null);
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("StarTournament-Updater/1");
-        SemanticVersion? best = null;
-        Uri? bestUri = null;
-        for (var page = 1; page <= 10; page++)
+        if (config.UpdateChannel == null) return new() { (Remote("latest.json"), null, null) }; // Legacy broker/config only.
+        var candidates = new Dictionary<SemanticVersion, (Uri Uri, string? Version, HashSet<string>? Assets)>();
+        Uri? next = new(TestLocator + "?per_page=100&page=1"); var visited = new HashSet<string>(StringComparer.Ordinal);
+        for (int page = 0; next != null; page++)
         {
-            using var doc = JsonDocument.Parse(await ReadBounded(new Uri(TestLocator + $"?per_page=100&page={page}"), 2 * 1024 * 1024, false, token));
-            var releases = doc.RootElement;
-            foreach (var release in releases.EnumerateArray())
+            if (page >= 10 || !visited.Add(next.AbsoluteUri)) throw new InvalidOperationException("Release discovery exceeds pagination limit or repeats a page");
+            var result = await discovery.Get(next, token);
+            using var doc = JsonDocument.Parse(result.Body);
+            foreach (var release in doc.RootElement.EnumerateArray())
             {
-                if (release.GetProperty("draft").GetBoolean() || !release.GetProperty("prerelease").GetBoolean()) continue;
+                bool test = config.UpdateChannel == "test";
+                if (release.GetProperty("draft").GetBoolean() || release.GetProperty("prerelease").GetBoolean() != test) continue;
                 var tag = release.GetProperty("tag_name").GetString() ?? "";
-                if (!tag.StartsWith('v') || !SemanticVersion.TryParse(tag[1..], out var version) || !version.IsPrerelease || tag != "v" + version) continue;
-                var names = release.GetProperty("assets").EnumerateArray().Select(x => x.GetProperty("name").GetString()).ToHashSet();
-                if (!names.Contains("latest-win-x64.json") || !names.Contains("latest-osx-arm64.json") ||
+                if (!tag.StartsWith('v') || !SemanticVersion.TryParse(tag[1..], out var version) || version.IsPrerelease != test || tag != "v" + version) continue;
+                var names = release.GetProperty("assets").EnumerateArray().Select(x => x.GetProperty("name").GetString() ?? "").ToHashSet(StringComparer.Ordinal);
+                bool modernFamily = names.Contains("latest-v2-win-x64.json") && names.Contains("latest-v2-osx-arm64.json");
+                bool modern = modernFamily && names.Contains(ModernManifestName);
+                bool legacy = !modernFamily && names.Contains(ManifestName) && names.Contains("latest-win-x64.json") && names.Contains("latest-osx-arm64.json");
+                if ((!modern && !legacy) ||
                     !names.Contains($"Star-Tournament-{version}-Windows-x64-Setup.exe") ||
-                    !names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg")) continue;
-                if (best == null || version > best)
-                {
-                    best = version;
-                    // Construct the pinned URL; never trust a locator-provided arbitrary URL.
-                    bestUri = new Uri($"https://github.com/afonasev/star-tournament/releases/download/{tag}/{ManifestName}");
-                }
+                    !names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg") ||
+                    names.Count(n => n.EndsWith("-full.nupkg", StringComparison.Ordinal)) < 2) continue;
+                // Locator data cannot assign a different repository or target URL.
+                var uri = new Uri($"https://github.com/afonasev/star-tournament/releases/download/{tag}/{(modern ? ModernManifestName : ManifestName)}");
+                if (!candidates.TryAdd(version, (uri, version.ToString(), names)) && !candidates[version].Assets!.SetEquals(names))
+                    throw new InvalidDataException("Conflicting release version in discovery snapshot");
             }
-            if (releases.GetArrayLength() < 100)
-                return bestUri == null ? throw new InvalidOperationException("No complete test release") : (bestUri, best!.ToString());
+            next = result.Next;
         }
-        throw new InvalidOperationException("Release discovery exceeds pagination limit");
+        return candidates.Count == 0 ? throw new InvalidOperationException("No complete release for this channel") : candidates.OrderByDescending(p => p.Key).Select(p => p.Value).ToList();
     }
 
     public async Task<VelopackAssetFeed> GetReleaseFeed(IVelopackLogger logger, string? appId, string channel,
         Guid? stagingId = null, VelopackAsset? latestLocalRelease = null)
     {
+        Envelope = null; Asset = null; PublicationDate = null; packageUri = null; requirements = null;
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(CheckCancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(10));
-        var location = await Discover(timeout.Token);
-        var envelope = await ReadBounded(location.Uri, 65536, config.UpdateChannel != null, timeout.Token);
-        Admit(envelope);
-        if (location.Version != null && Asset!.Version.ToString() != location.Version)
+        var locations = await Discover(timeout.Token);
+        ReleaseCompatibilityException? incompatible = null;
+        foreach (var location in locations)
         {
-            Envelope = null; Asset = null; packageUri = null;
-            throw new CryptographicException("Release discovery version mismatch");
+            var envelope = await ReadBounded(location.Uri, 65536, config.UpdateChannel != null, timeout.Token);
+            timeout.Token.ThrowIfCancellationRequested();
+            try
+            {
+                Admit(envelope);
+                if (location.Version != null && (Asset!.Version.ToString() != location.Version || !location.Assets!.Contains(Asset.FileName)))
+                    throw new CryptographicException("Release discovery version or full asset mismatch");
+                RequireCompatibleTarget();
+                return new VelopackAssetFeed { Assets = new[] { Asset! } };
+            }
+            catch (ReleaseCompatibilityException error)
+            {
+                incompatible = error;
+                Envelope = null; Asset = null; PublicationDate = null; packageUri = null; requirements = null;
+            }
+            catch
+            {
+                Envelope = null; Asset = null; PublicationDate = null; packageUri = null; requirements = null;
+                throw;
+            }
         }
-        return new VelopackAssetFeed { Assets = new[] { Asset! } };
+        throw incompatible ?? new ReleaseCompatibilityException("Совместимого обновления нет.");
     }
 
     public async Task VerifyPackage(string path, VelopackAsset asset, CancellationToken token = default)
@@ -197,6 +230,30 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
         var hash = await SHA256.HashDataAsync(stream, token);
         if (!CryptographicOperations.FixedTimeEquals(hash, Convert.FromHexString(asset.SHA256)))
             throw new CryptographicException("Package digest mismatch");
+        if (requirements is { UserDataPolicy: not "legacy-preserved-v1", PayloadFormat: ReleaseCompatibility.PayloadFormat })
+        {
+            // The signed descriptor must describe the actual atomic launcher/Player config.
+            stream.Position = 0;
+            try
+            {
+                using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+                var entries = archive.Entries.Where(e => e.Name == "release.json").ToArray();
+                if (entries.Length != 1 || entries[0].Length > 65536) throw new CryptographicException("Unique bounded payload config required");
+                using var input = entries[0].Open(); using var content = new MemoryStream();
+                var buffer = new byte[8192]; int count;
+                while ((count = await input.ReadAsync(buffer, token)) > 0)
+                {
+                    if (content.Length + count > 65536) throw new CryptographicException("Payload config exceeds limit");
+                    content.Write(buffer, 0, count);
+                }
+                var target = JsonSerializer.Deserialize<LauncherConfig>(content.ToArray(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (target == null || target.AppId != config.AppId || target.Version != asset.Version.ToString() || target.Platform != config.Platform ||
+                    target.Architecture != config.Architecture || target.UpdateChannel != config.UpdateChannel || target.PublicationDate != PublicationDate || target.Compatibility != requirements)
+                    throw new CryptographicException("Payload config differs from signed target requirements");
+            }
+            catch (Exception error) when (error is InvalidDataException or JsonException)
+            { throw new CryptographicException("Invalid authenticated payload config", error); }
+        }
     }
 
     public async Task DownloadReleaseEntry(IVelopackLogger logger, VelopackAsset releaseEntry, string localFile,

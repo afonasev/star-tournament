@@ -1,0 +1,81 @@
+# Совместимость релизов
+
+Новые пакеты создаются только с подписанными metadata schema2. RSA-PSS/key pin, repository/channel, version/date, full asset identity/hash/size остаются обязательными. Launcher и Unity Player поставляются одним полным `velopack-full-v1` пакетом; отдельного content-only обновления нет.
+
+```json
+{
+  "schema": 2,
+  "compatibility": {
+    "minimumOsVersion": "12.0",
+    "minimumUpdaterProtocol": 2,
+    "payloadFormat": "velopack-full-v1",
+    "userDataPolicy": "profiles2-lab3-prefs1"
+  }
+}
+```
+
+Пример — для macOS; Windows floor `10.0.19043`. Версия ОС canonical, без ведущих нулей. macOS producer читает `LSMinimumSystemVersion` фактического Player и отвергает отсутствие/значение ниже Unity6000.3 baseline12.0. Windows floor соответствует Unity6000.3 Player10/21H1. `minimumUpdaterProtocol` означает поколение reader технических metadata, отдельно от Windows maintenance IPC protocol2. Неизвестные payload/data contracts или более высокий reader не допускаются.
+
+Producer пишет этот же compatibility в `release.json` внутри payload. До подписи, при publication collect и после проверки signed package hash перед активацией читается ровно один ограниченный по размеру `release.json` из ZIP. Его application/version/date/platform/architecture/channel и compatibility должны совпасть с signed descriptor. Проверка не распаковывает файлы на диск. Detached signature/hash/config inspection остаётся host-independent; discovery/staged/native activation отдельно требуют совместимый реальный host/capabilities.
+
+Один ограниченный API traversal даёт frozen candidate snapshot, отсортированный по semantic version. Повторяющиеся одинаковые locator entries объединяются; конфликтующие останавливают discovery. Корректно подписанный, но несовместимый target пропускается в пользу следующего совместимого. Неверная подпись/identity/shape, HTTP failure или незавершённая pagination не превращаются в «актуально». Если все targets несовместимы — явная ошибка, без повторного discovery в этой сессии. SDK отдельно исключает downgrade/установленную версию.
+
+## Старые клиенты и protected broker
+
+Подписанные schema1 файлы не переписываются. Новый reader сохраняет исторический fixed contract: Unity baseline ОС, reader1, прежний full payload и legacy data policy. Schema1 с compatibility override отвергается. Новые публикации schema1 запрещены producer/publisher. **Открытый разрыв UPDATES-INSTALL-02:** старый reader, проверяющий `schema==1`, отклоняет schema2. Прежнее решение требовать новый installer не достигает обычного seamless update и не принято как исключение пользователем. Обязателен совместимый подписанный bootstrap и автоматическая миграция protected broker; пока этот путь не реализован, переход существующих клиентов не готов. Исторические опубликованные байты не меняются.
+
+Windows `maintenance.json` новых установщиков содержит `protocol:2, metadataReader:2`. Отсутствие `metadataReader` означает1; legacy playback protocol1 не допускает новое обновление. Effective reader ограничен одновременно исполняемым launcher parser и защищённым broker declaration. При rollback сохраняется новый broker и его metadataReader2, но восстанавливаются playback identity/protocol предыдущего launcher. Поэтому protocol1 остаётся доступным для offline playback. Автоматический переход protocol1→2 ещё не реализован; повторный installer остаётся способом ремонта, не принят обычным шагом обновления. Неизвестная capability не поднимает возможности исполняемого кода.
+
+## Данные и откат
+
+`profiles2-lab3-prefs1` закрепляет `player-profiles-v2.json`, `design-lab-history-v3.json` и совместимые primitive PlayerPrefs. Legacy файлы profiles-v1/Lab-v2 читаются только при отсутствии destination; import не переписывает оригинал, явная mutation пишет новый namespace. Предыдущий Player использует свои файлы. Собственные совместимые значения Lab, включая0/false/old default, сохраняются точно, оригинальные snapshot/hash/date неизменны. Новая генерация несовместимого формата требует нового policy token и согласованных writer/reader/rollback правил; нельзя молча повторно использовать этот token.
+
+Metadata gate подтверждает объявленный и связанный с пакетом контракт, а не физическую приёмку миграции/отката. Actual v0.1.2 namespace/migration fixtures сохранены в `docs/evidence/standard-user-data/`; native installed previous→candidate→failed startup→previous/data acceptance остаётся отдельным gate.
+
+## Границы проверки
+
+Source QA: `docs/evidence/standard-release-compatibility/signed-target/`. Реальные RSA-PSS signatures и C# production sources, ZIP/config binding, simulated OS/reader probes, реальные macOS fixture supervisor processes (без Unity), portable Windows filesystem contracts. Windows ACL/UAC/NSIS runtime, готовая пара launcher/Player, macOS first-install preflight/DMG и физические устройства этим не доказаны. Player/installer/release build, публикация и выкатка требуют отдельной команды человека.
+
+## Переход v1→v2: незавершённая работа
+
+Read-only inventory подтвердил published0.1.5/test.1 schema1 и protocol1 в выпущенном Windows source. Новый API discovery уже поддерживает paired `latest-v2-*` endpoints, предпочитает их при наличии и сохраняет legacy fallback для полностью legacy releases. Modern family без own-architecture primary не подменяется историческим alias; неверная modern signature не вызывает downgrade к legacy metadata. Эти маршруты исполнены на настоящих выпущенных Source classes с namespace-only transform, offline HTTP/RSA; это не готовый bootstrap/installed migration.
+
+Требуемый дальнейший pipeline: подписанный совместимый bootstrap с отдельным broker candidate; subsequent production release хранит immutable old `latest-*` descriptor aliases на этот bootstrap плюс настоящие modern primaries текущей версии. GitHub Latest остаётся текущим выпуском, legacy production reader принимает подписанный older bridge target из alias. В subsequent test releases old names отсутствуют, поэтому старый test selector выбирает последний совместимый bootstrap. Новый reader выбирает modern primaries. Нужны version-bound bridge receipts, producer/collector/publisher/landing wiring и автоматическая protected component transaction. Текущий producer/publisher ещё не подключены к этому переходу — не считать весь pipeline готовым.
+
+Legacy Update.exe backup/fast-callback/startup guarantees должны быть установлены по actual native binary/tool version, а не по NuGet API. Library1.2.158 указывает source3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b; это исходная точка исследования, не доказательство версии shipped native updater. Нельзя приписать старым exe новые snapshot/health guarantees. Bridge/recovery source и native acceptance остаются обязательными.
+
+## Publication routing source stage (2026-10-17)
+`package.py` writes schema2 only as `<version>.signed.json` and `latest-v2-<runtime>.json`; it does not put schema2 under any legacy `latest*.json` name. The collector consumes the modern pair. Landing eligibility accepts a complete modern pair or a complete historical pair without mixing families; installer links and layout are unchanged.
+
+`publish_release.py --legacy-bridge /absolute/path/to/paired-bootstrap-metadata` is now a prerequisite to ordinary modern publication. The directory must contain both runtimes' legacy `latest-<runtime>.json` and modern `latest-v2-<runtime>.json` envelopes. Both signatures use the pinned key, agree exactly on version/date/platform/channel/package identity, and bind an older same-channel bootstrap. Only the modern envelope contains compatibility and the reserved signed `legacyBootstrap={"schema":1,"metadataReader":2,"windowsMaintenance":2}` declaration. The bootstrap cannot raise historical Windows10.0.19043/macOS12.0 floors or change the supported payload/data contract. Historical schema1 alone, an arbitrary schema2 release, invalid signatures or differing package identities are insufficient.
+
+Before packaging or creating a new draft, the publisher GETs the existing bootstrap tag, requires a published same-channel complete platform pair and checks remote immutable digests. It reads back both full packages/installers and all four signed descriptors. Those exact descriptor bytes are frozen under the output's `legacy-bridge-inputs/` and used by the collector even if the original directory changes during packaging. Resume rejects changed snapshots/aliases. Production publishes modern current primaries plus unchanged legacy aliases pointing to the bootstrap; GitHub Latest remains the current production release. Test publishes modern current primaries and bootstrap provenance, with no old selector names. Neither channel rewrites existing releases.
+
+This does **not** implement the first compatible bootstrap or certify a signed declaration as native runtime proof. Bootstrap producer mode, signed embedded broker candidate, automatic protected Windows1→2 replacement, startup/retry integration and actual legacy native recovery are still mandatory and unimplemented. Consequently ordinary publication intentionally stops if no valid published bootstrap is supplied; the old0.1.5 releases are not such a bootstrap. Do not bypass the prerequisite or reintroduce a manual installer as ordinary migration. A future first-bootstrap path must be separately constrained by its actual compatible payload and tested migration, rather than calling an arbitrary schema1 writer. No release/build/deploy was run in this source stage.
+
+
+## Собственное применение Windows full payload (2026-10-17)
+Task2.7 source исправлен: ElevatedApply больше не запускает native Update.exe, поэтому его kill-root policy не завершает resident supervisor/broker. WindowsFullPayload повторно проверяет admitted signature/hash/config compatibility, ограничивает ZIP namespace и размеры, отвергает escaping/case/file-directory/device/link/reparse пути и неизвестные frameworks. Unique bounded nuspec/sq.version согласуются с target identity/OS/rid/channel/launcher, без скрытых внешних runtime prerequisites или root shortcut изменений. Подготовленный full current получает installer-equivalent защищённые ACL; inventory/readback проверяются перед активацией.
+
+Перед rename остаются прежние exact supervisor/idle/root lease/ACL/consent/capability guards и durable WindowsRecoveryStore.Prepare. Activate заменяет только current; исключения восстанавливают проверенный прежний snapshot. После смерти процесса между rename доступен retained recovery и стабильный root maintenance --recover; root entry/updater/registration, пользовательская Lab/баланс и argv/startup-watch контракт не подменяются native apply. Stage предшествует snapshot, а mutation разрешена только внутри recovery.Apply. Неподтверждённая версия сохраняет backup до ready.
+
+177 целевых source checks:44 full-payload (включая2 настоящих process-exit checkpoints),35 existing Windows recovery,40 payload recovery,10 startup-watch,48 compatibility. Actual published0.1.5 Windows nupkg заново прошёл pinned RSA-PSS/полный SHA256/size и тот же production Stage подготовил363 файла; пакет не активировался и игра не запускалась. Maintenance compilation0 errors/0 warnings. Это portable source/actual archive evidence, не native Windows ACL/UAC/device acceptance. Evidence: docs/evidence/standard-release-compatibility/windows-owned-apply/.
+
+First legacy bootstrap по-прежнему не готов: установленный protocol1 broker ещё вызывает старый native updater; новые исходники не исправляют его ретроактивно. Signed broker candidate/transaction, старые native capture/restart/argv границы, constrained first-bootstrap producer/publication mode и native installed acceptance остаются обязательными. Нельзя считать исправление текущего apply полной миграцией0.1.5. No Player/installer/full/deploy.
+
+## Основа broker migration (2026-10-17)
+Добавлены отдельно подписанный `BrokerUpgradeCandidate` и `WindowsBrokerUpgradeTransaction`. Manifest связывает current win-x64 identity/capabilities с exact3 files; fixed-file transaction сохраняет предыдущие broker/config/root entry и меняет entry последним. Pinned root key повторно проверяется на границе transaction; key и current payload не заменяются. Recovery не зависит от candidate.138 affected C# checks прошли (55 новых, включая7 process deaths;48 compatibility;35 recovery), maintenance compilation0/0. `docs/evidence/standard-release-compatibility/broker-transaction/`.
+
+**Это ещё не готовая миграция:** startup/elevated authority/ACL/PID/lease/retry adapter и actual candidate packaging не подключены. SDK item plan проверен без publish и не заменяет actual runnable layout/native acceptance. Legacy native handoff/exact argv/automatic relaunch, old6-arg activation against new7-arg broker и payload rollback interaction остаются обязательными. Ordinary first-bootstrap producer отсутствует; прежние schema1 clients не получили новых возможностей от одного добавления классов. No Player/installer/full/deploy.
+
+## Startup/elevated adapter source continuation (2026-10-17)
+Normal launcher and privileged helper are now wired to the signed component transaction before Player/install lease; retained signed actors support retry/recovery without trusting a damaged current candidate.154 affected contracts passed; maintenance compile0 warnings/0 errors. Evidence `docs/evidence/standard-release-compatibility/broker-startup/`. Earlier statements that startup/authority adapters are absent are superseded by this source milestone. Actual candidate producer, first legacy native handoff, activation/rollback integration and native Windows UAC/ACL acceptance remain OPEN; no complete migration claim.
+
+2026-10-17 embedded broker producer source: Windows update-only and first-install now embed an independently signed component before vpk pack; installer reuses exact frozen bytes instead of compiling twice.46 targeted checks include real RSA→C# consumer and recording routes. Evidence `docs/evidence/standard-release-compatibility/broker-producer/`. Earlier producer-absent notes are superseded for component packaging only; constrained first-bootstrap mode, legacy handoff/activation/rollback and actual runnable/native acceptance remain OPEN. No Player/installer/release build/full/deploy.
+
+2026-10-17 retained reader correction: playback protocol1 after authorized payload rollback no longer downgrades the retained metadataReader2; absent declaration stays1 and parser ceiling is enforced.100 affected source contracts + maintenance compile0/0. Evidence `docs/evidence/standard-release-compatibility/retained-reader/`. Legacy startup/activation/first handoff/native acceptance remain OPEN. Additional pinned source audit found optional native-stub argv diagnostic logging; see `legacy-handoff/findings.md`, not a guaranteed recovery contract.
+
+2026-10-17 rollback/component cleanup integration: protected restored payload proof now authorizes cleanup of a committed signed component while retaining the new broker and restored old bootstrap/playback contract. Ordinary exact-file verification unchanged; payload proof is deleted only after component cleanup.161 affected contracts,8 real child exits, maintenance0/0. Evidence `docs/evidence/standard-release-compatibility/rollback-component/`. Earlier notes that this cleanup interaction is missing are superseded for the verified restored path. Legacy first handoff/argv/6arg activation/old Player health/bootstrap publication/native acceptance remain OPEN. No Player/installer/release/full/deploy.
+
+## Explicit owner production installation check (2026-10-17)
+The sole user authorized production0.1.6 for manual installation and checking; historical test-version migration is no longer a release prerequisite. `publish_release.py --new-install-only` is an explicit production-only path, mutually exclusive with `--legacy-bridge`. It retains signed schema2 compatibility, actual package binding, paired custody, immutable notes/upload/readback and publishes no legacy aliases or fake bootstrap. Notes must include “Установите эту версию вручную” and “Install this version manually”. Default publication still requires the verified legacy bridge. The mode/pinned source/version are retained in immutable publication-policy.json for resume. This exception does not prove automatic transition from production0.1.5 or native recovery acceptance.

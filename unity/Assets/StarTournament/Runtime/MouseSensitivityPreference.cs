@@ -8,13 +8,16 @@ namespace StarTournament.ProvingGround
         public const string Key = "StarTournament.Settings.MouseDegreesPerPixel";
         const string Path = "input.mouseDegreesPerPixel";
         public static NumericDescriptor Descriptor(ProvingProfile profile) => profile.Descriptor(Path);
-        public static float Resolve(ProvingProfile profile)
+        public static float Resolve(ProvingProfile profile)=>Resolve(profile,PlayerPrefs.HasKey,PlayerPrefs.GetFloat);
+        internal static float Resolve(ProvingProfile profile,System.Func<string,bool> hasKey,System.Func<string,float,float> read)
         {
             var descriptor=Descriptor(profile);
             if(descriptor==null) throw new System.ArgumentException("Mouse sensitivity descriptor is required.");
-            if(!PlayerPrefs.HasKey(Key)) return descriptor.DefaultValue;
-            float value=PlayerPrefs.GetFloat(Key,descriptor.DefaultValue);
-            return descriptor.Contains(value) ? value : descriptor.DefaultValue;
+            float fallback=profile.Get(Path);
+            if(!descriptor.Contains(fallback))fallback=descriptor.DefaultValue;
+            if(!hasKey(Key))return fallback;
+            float value=read(Key,fallback);
+            return descriptor.Contains(value)?value:fallback;
         }
         public static float Set(ProvingProfile profile,float value)
         {

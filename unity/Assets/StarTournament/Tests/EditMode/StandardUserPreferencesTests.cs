@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ResetAllowListPreservesConsentProgressAndUnconfirmedDisplay()
         {
             var values=new Dictionary<string,int>{
-                {NativeUserPreferences.ScaleKey,125},{NativeAudioPreferences.MasterKey,35},
+                {NativeUserPreferences.ScaleKey,125},{NativeAudioPreferences.MasterKey,35},{NativeVisualPreferences.QualityKey,0},
                 {"StarTournament.Settings.Gamepad.InvertX",1},{NativeVisualPreferences.Key(VisualEffect.Bloom)+".Strength",25},
                 {"StarTournament.Statistics.Consent",1},{"StarTournament.Progress.Record",12},
                 {"OtherGame.Sound",15},{"StarTournament.Graphics.Width",1024}};
@@ -24,6 +24,32 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(values["StarTournament.Statistics.Consent"],Is.EqualTo(1));
             Assert.That(values["StarTournament.Progress.Record"],Is.EqualTo(12));Assert.That(values["OtherGame.Sound"],Is.EqualTo(15));
             Assert.That(values["StarTournament.Graphics.Width"],Is.EqualTo(1024),"Risky display stays unchanged until its own confirmation");
+        }
+        [Test] public void QualityPreferenceUsesThreeNativeTiersAndPreservesIndependentGates()
+        {
+            bool had=PlayerPrefs.HasKey(NativeVisualPreferences.QualityKey);int saved=PlayerPrefs.GetInt(NativeVisualPreferences.QualityKey),tier=QualitySettings.GetQualityLevel();
+            int aa=QualitySettings.antiAliasing,vsync=QualitySettings.vSyncCount,mip=QualitySettings.globalTextureMipmapLimit,lod=QualitySettings.maximumLODLevel;
+            float bias=QualitySettings.lodBias;var shadows=QualitySettings.shadows;var skin=QualitySettings.skinWeights;var aniso=QualitySettings.anisotropicFiltering;bool probes=QualitySettings.realtimeReflectionProbes;
+            try
+            {
+                PlayerPrefs.DeleteKey(NativeVisualPreferences.QualityKey);Assert.That(NativeVisualPreferences.Quality,Is.EqualTo(2));
+                foreach(int value in new[]{0,1,2})
+                {
+                    NativeVisualPreferences.SetQuality(value);Assert.That(PlayerPrefs.GetInt(NativeVisualPreferences.QualityKey),Is.EqualTo(value));
+                    NativeVisualPreferences.ApplyQuality();Assert.That(QualitySettings.GetQualityLevel(),Is.EqualTo(new[]{0,2,5}[value]));
+                    Assert.That(QualitySettings.skinWeights,Is.EqualTo(new[]{SkinWeights.OneBone,SkinWeights.TwoBones,SkinWeights.Unlimited}[value]));
+                    Assert.That(QualitySettings.anisotropicFiltering,Is.EqualTo(new[]{AnisotropicFiltering.Disable,AnisotropicFiltering.Enable,AnisotropicFiltering.ForceEnable}[value]));
+                    Assert.That(QualitySettings.antiAliasing,Is.EqualTo(aa));Assert.That(QualitySettings.realtimeReflectionProbes,Is.EqualTo(probes));
+                }
+                PlayerPrefs.SetInt(NativeVisualPreferences.QualityKey,99);Assert.That(NativeVisualPreferences.Quality,Is.EqualTo(2));
+                NativeVisualPreferences.SetQuality(-1);Assert.That(NativeVisualPreferences.Quality,Is.EqualTo(2));
+            }
+            finally
+            {
+                if(had)PlayerPrefs.SetInt(NativeVisualPreferences.QualityKey,saved);else PlayerPrefs.DeleteKey(NativeVisualPreferences.QualityKey);PlayerPrefs.Save();
+                QualitySettings.SetQualityLevel(tier,true);QualitySettings.antiAliasing=aa;QualitySettings.realtimeReflectionProbes=probes;QualitySettings.vSyncCount=vsync;QualitySettings.shadows=shadows;
+                QualitySettings.globalTextureMipmapLimit=mip;QualitySettings.maximumLODLevel=lod;QualitySettings.lodBias=bias;QualitySettings.skinWeights=skin;QualitySettings.anisotropicFiltering=aniso;
+            }
         }
         [Test] public void ProfileResetKeepsIdentitiesAndSurvivesReload()
         {

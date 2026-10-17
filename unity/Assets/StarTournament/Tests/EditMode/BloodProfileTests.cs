@@ -13,8 +13,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             foreach(var d in p.Descriptors){Assert.That(d.Validate(out var reason),Is.True,reason);Assert.That(bundle.IsEditable(d.Path),Is.True);Assert.That(bundle.Domain(d.Path),Is.EqualTo("Presentation"));}
             p.Set("blood.markSeconds",0);Assert.That(p.Validate(),Is.Not.Empty);
         }
-        [TestCase(10f,15f)][TestCase(18f,18f)]
-        public void PreviousIntensityHistoryPreservesSnapshotsAndUpgradesOnlyDefault(float oldDrops,float expected)
+        [TestCase(10f,10f)][TestCase(18f,18f)]
+        public void PreviousIntensityHistoryPreservesAllSavedValuesAndSnapshots(float oldDrops,float expected)
         {
             string path=Path.Combine(Path.GetTempPath(),"blood-intensity-"+Guid.NewGuid()+".json");
             try

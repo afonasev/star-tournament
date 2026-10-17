@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
 
         void BindTextInput(InputField field,bool numeric=false)
         {
+            field.gameObject.AddComponent<MenuActionHint>().Initialize(field,()=>menuDevice,()=>menuGamepadCursor&&menuWindowFocused&&!textEntryPanel);
             var binding=field.gameObject.AddComponent<NativeGamepadTextField>();
             binding.Open=()=>{if(menuDevice is Gamepad pad)OpenTextEntry(field,pad,numeric);};
             field.onEndEdit.AddListener(_=>textFieldEndedFrame=Time.frameCount);
@@ -56,6 +57,8 @@ namespace StarTournament.ProvingGround
         {
             var button=MenuButton(textEntryPanel.transform,name,caption,min,max,()=>
             {if(Time.frameCount<=textOpenedFrame||!textEntryPanel)return;action();if(textEntryPanel)RefreshTextEntry();});
+            bool extra=name=="text-space"||name=="text-delete"||name=="text-cancel"||name=="text-apply";
+            button.GetComponent<MenuActionHint>().Initialize(button,()=>textPad,()=>menuGamepadCursor&&menuWindowFocused&&textUsingPad&&!extra);
             button.GetComponent<MenuPresentation>().Height=56;
             button.GetComponentInChildren<Text>().fontSize=24;
             return button;
@@ -95,20 +98,19 @@ namespace StarTournament.ProvingGround
         void TextEntryCharacter(char c)
         {if(!textEntryPanel||Time.frameCount<=textOpenedFrame||char.IsControl(c))return;textDraft.Insert(c);menuDevice=textKeyboard;textUsingPad=false;textCharacterFrame=Time.frameCount;menuGamepadCursor=false;RefreshTextEntry();}
         void UpdateTextEntryCursor()
-        {if(textEntryPanel){menuGamepadCursor=textUsingPad;Cursor.visible=!textUsingPad;RefreshTextEntry();}}
+        {if(textEntryPanel){if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);}else{menuGamepadCursor=textUsingPad;Cursor.visible=!textUsingPad;}RefreshTextEntry();}}
         void RefreshTextEntry()
         {
             int start=Mathf.Max(0,textDraft.Caret-32),end=Mathf.Min(textDraft.Text.Length,textDraft.Caret+32);
             textEntryValue.text=(start>0?"…":"")+textDraft.Text.Substring(start,textDraft.Caret-start)+"│"+textDraft.Text.Substring(textDraft.Caret,end-textDraft.Caret)+(end<textDraft.Text.Length?"…":"");
             textEntryCount.text=textDraft.Text.Length+(textDraft.Limit>0?" / "+textDraft.Limit:"");
             textEntryStatus.text=textPad!=null&&(!textPad.added||!textPad.enabled)?"Геймпад отключён. Черновик сохранён; нажмите нижнюю кнопку подключённого геймпада или используйте клавиатуру и мышь.":textDraft.Complete?"":"Введите корректное число.";
-            string device=(textPad?.layout+" "+textPad?.description.product).ToLowerInvariant();
-            bool ps=device.Contains("dual")||device.Contains("playstation"),sw=device.Contains("switch")||device.Contains("nintendo"),xbox=device.Contains("xinput")||device.Contains("xbox");
+            textApply.interactable=textDraft.Complete;
             bool hints=menuGamepadCursor;
-            textSpace.GetComponentInChildren<Text>().text="Пробел"+(hints?(ps?" · △":sw?" · X":xbox?" · Y":" · Верхняя"):"");
-            textDelete.GetComponentInChildren<Text>().text="Удалить"+(hints?(ps?" · □":sw?" · Y":xbox?" · X":" · Левая"):"");
-            textCancel.GetComponentInChildren<Text>().text="Отмена"+(hints?(ps?" · ○":sw?" · A":xbox?" · B":" · Правая"):"");
-            textApply.GetComponentInChildren<Text>().text="Применить"+(hints?(ps?" · Options":sw?" · +":" · Menu"):"");
+            textSpace.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Пробел",textPad,hints&&textSpace.IsInteractable(),MenuPadButton.North);
+            textDelete.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Удалить",textPad,hints&&textDelete.IsInteractable(),MenuPadButton.West);
+            textCancel.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Отмена",textPad,hints&&textCancel.IsInteractable(),MenuPadButton.East);
+            textApply.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Применить",textPad,hints&&textApply.IsInteractable(),MenuPadButton.Start);
         }
         void CloseTextEntry(bool apply)
         {

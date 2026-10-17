@@ -4,6 +4,7 @@ using UnityEngine.UI;
 namespace StarTournament.ProvingGround
 {
     // Native UI geometry is presentation-only; no font glyph or texture import decides the HUD icon shape.
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class HudIndicatorIcon : MaskableGraphic
     {
         public enum IconKind { Heart, Shield, Cartridges, Rifle, Shotgun, Rocket, Cutter }

@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).parents[1]))
 import release_changelog as notes
@@ -123,7 +124,7 @@ class ReleaseNotes(unittest.TestCase):
         def git_only(command,**kwargs):
             self.assertEqual(command[0],'git','Invalid review must not invoke package/build subprocess')
             return original_run(command,**kwargs)
-        with patch.object(sys,'argv',args),patch.object(sys,'stdin',io.StringIO('fixture')),patch.object(publisher,'ROOT',self.repo/'distribution'),patch.object(publisher,'api',return_value=dict(sha=self.source)),patch.object(publisher,'changelog_baseline',return_value=self.previous),patch.object(publisher.subprocess,'run',side_effect=git_only),patch.object(publisher,'collect') as collect,patch.object(publisher,'publish') as publish:
+        with patch.object(sys,'argv',args),patch.object(sys,'stdin',io.StringIO('fixture')),patch.object(publisher,'ROOT',self.repo/'distribution'),patch.object(publisher,'api',return_value=dict(sha=self.source)),patch.object(publisher,'changelog_baseline',return_value=self.previous),patch.object(publisher,'verify_published_bridge',return_value={}),patch.object(publisher,'snapshot_bridge',return_value=self.repo/'snapshot'),patch.object(publisher.subprocess,'run',side_effect=git_only),patch.object(publisher,'collect') as collect,patch.object(publisher,'publish') as publish:
             with self.assertRaises(ValueError):publisher.main()
             collect.assert_not_called();publish.assert_not_called()
     def test_cli_wrong_checkout_rejected_before_api_or_packaging(self):
@@ -137,13 +138,17 @@ class ReleaseNotes(unittest.TestCase):
         output=Path(self.temp.name)/'packages';packages=[]
         for runtime in publisher.RUNTIMES:
             base=output/runtime;releases=base/'releases';releases.mkdir(parents=True)
-            (releases/('latest-'+runtime+'.json')).write_text('{}')
-            full=releases/('game-'+runtime+'.nupkg');full.write_bytes(b'full')
+            (releases/('latest-v2-'+runtime+'.json')).write_text('{}')
+            full=releases/('game-'+runtime+'.nupkg')
+            platform,arch=runtime.split('-')
+            config=dict(version='2.0.0',platform=platform,architecture=arch,publicationDate='2026-10-16',updateChannel='production',appId='tech.afonasev.star-tournament.'+runtime,compatibility=None)
+            with zipfile.ZipFile(full,'w') as archive: archive.writestr('lib/app/release.json',json.dumps(config))
             filename='Star-Tournament-2.0.0-Windows-x64-Setup.exe' if runtime=='win-x64' else 'Star-Tournament-2.0.0-macOS-arm64.pkg'
             setup=releases/filename;setup.write_bytes(b'installer')
             items=[publisher.identity(full),publisher.identity(setup)]
             (base/'2.0.0.identity.json').write_text(json.dumps(dict(version='2.0.0',date='2026-10-16',runtime=runtime,channel='production',revision=self.first,packages=items)))
-            packages.append((dict(publicationDate='2026-10-16'),dict(FileName=full.name,Size=items[0]['size'],SHA256=items[0]['sha256'])))
+            asset=dict(FileName=full.name,Size=items[0]['size'],SHA256=items[0]['sha256'],PackageId=config['appId'])
+            packages.append((dict(config,channel='production',feed={'Assets':[asset]}),asset))
         with patch.object(publisher,'verify_manifest',side_effect=packages):
             with self.assertRaisesRegex(ValueError,'changelog source'):publisher.collect(output,'2.0.0','2026-10-16','production',self.source)
         custody_path=output/publisher.RUNTIMES[0]/'2.0.0.identity.json'

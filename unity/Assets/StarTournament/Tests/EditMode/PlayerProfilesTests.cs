@@ -7,6 +7,47 @@ namespace StarTournament.ProvingGround.Tests
     public sealed class PlayerProfilesTests
     {
         [Test]
+        public void LegacyProfileReadPreservesBytesAndUsesGamepadDefaults()
+        {
+            string directory=Path.Combine(Path.GetTempPath(),"star-tournament-profiles-"+Guid.NewGuid().ToString("N"));
+            string path=Path.Combine(directory,"profiles.json");
+            Directory.CreateDirectory(directory);
+            try
+            {
+                File.WriteAllText(path,"{\"Version\":1,\"Profiles\":[{\"Id\":\"legacy\",\"Name\":\"Игрок\",\"MouseDegreesPerPixel\":0.22,\"ShowFps\":false}]}");
+                var bytes=File.ReadAllBytes(path);
+                var record=new PlayerProfileCatalog(path).Find("legacy");
+                Assert.That(record.MouseDegreesPerPixel,Is.EqualTo(.22f));
+                Assert.That(record.ShowFps,Is.False);
+                Assert.That(record.GamepadLookVersion,Is.Zero);
+                var profile=ProvingProfile.CreateDefault();
+                var actual=GamepadLookSettings.Resolve(profile,record);
+                var expected=GamepadLookSettings.Default(profile);
+                Assert.That(actual,Is.EqualTo(expected));
+                CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path),"Opening a profile must not migrate it before startup is confirmed");
+                Assert.That(Directory.GetFiles(directory),Has.Length.EqualTo(1));
+            }
+            finally {Directory.Delete(directory,true);}
+        }
+
+        [TestCase(0)] [TestCase(2)]
+        public void UnsupportedProfileVersionFailsWithoutOverwritingSource(int version)
+        {
+            string directory=Path.Combine(Path.GetTempPath(),"star-tournament-profiles-"+Guid.NewGuid().ToString("N"));
+            string path=Path.Combine(directory,"profiles.json");
+            Directory.CreateDirectory(directory);
+            try
+            {
+                File.WriteAllText(path,"{\"Version\":"+version+",\"Profiles\":[]}");
+                var bytes=File.ReadAllBytes(path);
+                Assert.Throws<InvalidDataException>(()=>new PlayerProfileCatalog(path));
+                CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+                Assert.That(Directory.GetFiles(directory),Has.Length.EqualTo(1));
+            }
+            finally {Directory.Delete(directory,true);}
+        }
+
+        [Test]
         public void ProfilePersistsWhileGuestAndDevicePreferenceRemainInSession()
         {
             string directory=Path.Combine(Path.GetTempPath(),"star-tournament-profiles-"+Guid.NewGuid().ToString("N"));

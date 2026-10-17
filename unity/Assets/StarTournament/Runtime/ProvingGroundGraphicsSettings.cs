@@ -14,6 +14,9 @@ namespace StarTournament.ProvingGround
         void SetVisualStrength(VisualEffect effect,float value){NativeVisualPreferences.SetStrength(Profile,effect,value);visualPresentation?.Apply();RefreshSettingsUi();}
         void SetColorAdjustment(string path,float value){NativeVisualPreferences.SetAdjustment(Profile,path,value);visualPresentation?.Apply();RefreshSettingsUi();}
         void SetAntialiasingLevel(int value){NativeVisualPreferences.SetAntialiasingLevel(value);visualPresentation?.Apply();RefreshSettingsUi();}
+        void SetGraphicsQuality(int value){NativeVisualPreferences.SetQuality(value);ApplyQualityPreference();RefreshSettingsUi();}
+        void ApplyQualityPreference()
+        {NativeVisualPreferences.ApplyQuality();ApplyVSyncPreference();ApplyShadowPreference();Application.targetFrameRate=NativeUserPreferences.FrameCap;visualPresentation?.Apply();}
         enum SettingsSection { Image, Control, Interface, Audio, Graphics }
         const string DisplayWidthKey="StarTournament.Graphics.Width";
         const string DisplayHeightKey="StarTournament.Graphics.Height";
@@ -27,6 +30,8 @@ namespace StarTournament.ProvingGround
         ShadowQuality originalShadowQuality;
         int originalVSyncCount;
         int originalFrameCap;
+        int originalQualityLevel,originalQualityAa;
+        bool originalRealtimeReflections;
         bool vSyncEnabled;
         bool shadowsEnabled=true,graphicsPreferencesInitialized,displayConfirmationActive;
         float displayConfirmationDeadline;
@@ -83,9 +88,7 @@ namespace StarTournament.ProvingGround
         void UpdateSettingsBackInput()
         {
             if(phase!=Phase.Settings)return;
-            bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
-            if(settingsSeat>=0){if(input.DeviceAt(settingsSeat) is Gamepad pad)back|=pad.buttonEast.wasPressedThisFrame;}
-            else foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
+            bool back=TryTakeMenuBack(input.DeviceAt(settingsSeat) as Gamepad,settingsSeat>=0);
             if(back){settingsView.Back();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;}
             else if(settingsSeat>=0){if(input.DeviceAt(settingsSeat) is Gamepad assigned&&assigned.buttonNorth.wasPressedThisFrame)settingsView.ResetShortcut();}
             else foreach(var pad in Gamepad.all)if(pad.buttonNorth.wasPressedThisFrame){settingsView.ResetShortcut();break;}
@@ -95,12 +98,13 @@ namespace StarTournament.ProvingGround
             originalShadowQuality=QualitySettings.shadows;
             originalVSyncCount=QualitySettings.vSyncCount;
             originalFrameCap=Application.targetFrameRate;
+            originalQualityLevel=QualitySettings.GetQualityLevel();originalQualityAa=QualitySettings.antiAliasing;originalRealtimeReflections=QualitySettings.realtimeReflectionProbes;
             int savedVSync=PlayerPrefs.GetInt(VSyncKey,-1);
             vSyncEnabled=savedVSync!=0;
             ApplyVSyncPreference();
             graphicsPreferencesInitialized=true;
             shadowsEnabled=PlayerPrefs.GetInt(ShadowsKey,1)!=0;
-            ApplyShadowPreference();
+            ApplyQualityPreference();
             Application.targetFrameRate=NativeUserPreferences.FrameCap;
             int width=PlayerPrefs.GetInt(DisplayWidthKey,0),height=PlayerPrefs.GetInt(DisplayHeightKey,0);
             if(NativeUserPreferences.AutoResolution){var desktop=Screen.currentResolution;width=desktop.width;height=desktop.height;}
@@ -137,7 +141,7 @@ namespace StarTournament.ProvingGround
         }
         void RestoreGraphicsQuality()
         {
-            if(graphicsPreferencesInitialized){QualitySettings.shadows=originalShadowQuality;QualitySettings.vSyncCount=originalVSyncCount;Application.targetFrameRate=originalFrameCap;}
+            if(graphicsPreferencesInitialized){QualitySettings.SetQualityLevel(originalQualityLevel,true);QualitySettings.antiAliasing=originalQualityAa;QualitySettings.realtimeReflectionProbes=originalRealtimeReflections;QualitySettings.shadows=originalShadowQuality;QualitySettings.vSyncCount=originalVSyncCount;Application.targetFrameRate=originalFrameCap;}
         }
     }
 }

@@ -91,7 +91,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(old.Version,Is.EqualTo(8));Assert.That(old.Get("view.fillIntensity"),Is.EqualTo(.25f));
             Assert.That(old.Validate(),Is.Empty);
         }
-        [TestCase(.05f,.35f)][TestCase(.25f,.25f)][TestCase(0f,0f)]
+        [TestCase(.05f,.05f)][TestCase(.25f,.25f)][TestCase(0f,0f)]
         public void EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(float previous,float expected)
         {
             var current=DesignLabHistoryTests.Shipped();

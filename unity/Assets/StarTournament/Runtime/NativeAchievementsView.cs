@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
     {
         public GameObject Root { get; }
         readonly Font font;
-        readonly int baseFontSize;
+        int baseFontSize;
         readonly RectTransform[] tiles=new RectTransform[4];
         readonly Text[] tiers=new Text[4],titles=new Text[4],names=new Text[4],reasons=new Text[4],facts=new Text[4],stamps=new Text[4];
         readonly Image[][] stampFrames=new Image[4][];
@@ -73,6 +73,7 @@ namespace StarTournament.ProvingGround
         }
         static void Place(RectTransform rect,Vector2 min,Vector2 max){rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=rect.offsetMax=Vector2.zero;}
 
+        public void ApplyFontSize(int fontSize)=>baseFontSize=Mathf.Max(12,fontSize);
         public void Show(bool visible,NativeMatchSnapshot snapshot,NativeMatchComposition composition)
         {
             var awards=visible?snapshot?.Achievements:null;bool shown=awards!=null&&awards.Length>0;HasAwards=shown;

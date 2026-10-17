@@ -136,14 +136,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     var old=new DesignLabHistory(path,legacy);old.Create("Мой профиль");var draft=old.Selected.Snapshot;draft.Set("rifle.damage",31);if(draft.Descriptors.Any(d=>d.Path=="cutter.width"))draft.Set("cutter.width",.021f);old.Save(draft);
                     // Historical policy allowed this placement override. Write the authentic old
                     // snapshot/hash directly: current Save intentionally forbids new placement edits.
-                    var file=UnityEngine.JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));
+                    var file=DesignLabHistoryTests.ReadFixture(path,legacy);
                     var before=file.Profiles.Single(p=>p.Id==file.SelectedId).Revisions.Single(r=>r.Number==file.SelectedRevision);
                     before.Snapshot.Set("view.y",-1.5f);before.Hash=before.Snapshot.Hash();File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(file,true));
                     string id=old.SelectedProfileId;
-                    var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
+                    var sourceBytes=File.ReadAllBytes(path);
+                    var upgraded=new DesignLabHistory(path,current);
+                    if(predecessor=="BeforeLowWeaponSwitch")
+                    {
+                        Assert.That(upgraded.StorageError,Does.Contain("view.switchShoulderDegrees"));Assert.That(upgraded.Writable,Is.False);
+                        Assert.That(upgraded.SelectedProfileId,Is.EqualTo(DesignLabHistory.ReleaseId));
+                        var retained=DesignLabHistoryTests.ReadFixture(path,legacy).Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==before.Number);
+                        Assert.That(retained.Hash,Is.EqualTo(before.Hash));Assert.That(retained.Snapshot.Hash(),Is.EqualTo(before.Hash));
+                        Assert.That(retained.Snapshot.Get("view.switchShoulderDegrees"),Is.EqualTo(145));
+                        Assert.That(retained.Snapshot.Get("rifle.damage"),Is.EqualTo(31));CollectionAssert.AreEqual(sourceBytes,File.ReadAllBytes(path));
+                        continue;
+                    }
+                    Assert.That(upgraded.StorageError,Is.Null);
                     Assert.That(upgraded.SelectedProfileId,Is.EqualTo(id));Assert.That(upgraded.Selected.Number,Is.GreaterThan(before.Number));
                     Assert.That(upgraded.Selected.Snapshot.Get("view.y"),Is.EqualTo(-1.5f));Assert.That(upgraded.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));
-                    Assert.That(upgraded.Selected.Snapshot.Get("view.switchShoulderDegrees"),Is.EqualTo(60f));
+                    Assert.That(upgraded.Selected.Snapshot.Get("view.switchShoulderDegrees"),Is.EqualTo(predecessor=="BeforeMediumWeaponSwitch"?25f:60f));
                     if(legacy.Descriptors.Any(d=>d.Path=="cutter.width"))Assert.That(upgraded.Selected.Snapshot.Get("cutter.width"),Is.EqualTo(.021f));
                     Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==before.Number).Hash,Is.EqualTo(before.Hash));
                     int count=upgraded.SelectedProfile.Revisions.Count;var reopened=new DesignLabHistory(path,current);

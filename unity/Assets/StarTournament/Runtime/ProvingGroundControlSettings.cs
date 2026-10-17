@@ -37,6 +37,7 @@ namespace StarTournament.ProvingGround
             // The filled gold box is the checked-state marker; decorative glyph follows it.
             toggle.onValueChanged.AddListener(v=>{mark.gameObject.SetActive(v);changed(v);});
             var caption=Label(row.transform,"label",title,font,new Vector2(0,.05f),new Vector2(1,.95f),TextAnchor.MiddleLeft,Color.white);caption.rectTransform.offsetMin=new Vector2(60,0);caption.rectTransform.offsetMax=new Vector2(-12,0);
+            row.AddComponent<MenuActionHint>().Initialize(toggle,()=>menuDevice,()=>menuGamepadCursor&&menuWindowFocused);
             return toggle;
         }
         static void RefreshNumericSetting(Slider slider,string title,float value,string unit)

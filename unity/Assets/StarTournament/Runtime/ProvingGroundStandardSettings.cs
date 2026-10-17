@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
             GameObject settingsGraphicsPage,resetDialog;
             Slider settingsDeadzoneSlider,settingsScaleSlider;
             Toggle settingsInvertX,settingsInvertY,settingsContrast;
-            Button settingsAutoButton,settingsFrameCap,resetAllButton,resetCancel,resetConfirm;
+            Button settingsAutoButton,settingsFrameCap,settingsQualityButton,resetAllButton,resetCancel,resetConfirm;
             Text settingsWriteError;
             bool resetOpen;
             int settingsOpenedFrame;
@@ -24,6 +24,7 @@ namespace StarTournament.ProvingGround
             {node.SetParent(parent,false);Layout((RectTransform)node,min,max);}
             void AddStandardFocus(Selectable control)
             {
+                BindSettingsHint(control);
                 if(control is Button b){settingsFocusButtons.Add(b);return;}
                 var border=Panel(control.transform,"controller-focus",Vector2.zero,Vector2.one,Color.clear);
                 border.GetComponent<Image>().raycastTarget=false;
@@ -48,25 +49,31 @@ namespace StarTournament.ProvingGround
                 var replacement=settingsGraphicsPage.AddComponent<ScrollRect>();replacement.viewport=viewport;replacement.content=list;replacement.horizontal=false;replacement.movementType=ScrollRect.MovementType.Clamped;replacement.scrollSensitivity=45;
                 UnityEngine.Object.Destroy(graphicsScroll);graphicsScroll=replacement;
                 foreach(var focus in viewport.GetComponentsInChildren<MenuScrollFocus>(true))focus.Scroll=graphicsScroll;
-                list.sizeDelta=new Vector2(0,800);
+                list.sizeDelta=new Vector2(0,900);
                 Move(settingsDisplayMode.transform,settingsImagePage.transform,new Vector2(.02f,.79f),new Vector2(.55f,.98f));
                 Move(settingsModeButton.transform,settingsImagePage.transform,new Vector2(.60f,.81f),new Vector2(.98f,.96f));
                 Move(settingsResolution.transform,settingsImagePage.transform,new Vector2(.02f,.57f),new Vector2(.55f,.76f));
                 Move(settingsResolutionButton.transform,settingsImagePage.transform,new Vector2(.60f,.63f),new Vector2(.98f,.75f));
                 settingsModeButton.GetComponent<MenuScrollFocus>().Scroll=null;settingsResolutionButton.GetComponent<MenuScrollFocus>().Scroll=null;
-                settingsAutoButton=MenuButton(settingsImagePage.transform,StandardName("settings-resolution-auto"),"AUTO",new Vector2(.60f,.50f),new Vector2(.98f,.61f),ChooseAutoResolution);
+                settingsAutoButton=MenuButton(settingsImagePage.transform,StandardName("settings-resolution-auto"),"Автоматически",new Vector2(.60f,.50f),new Vector2(.98f,.61f),ChooseAutoResolution);
+                Label(settingsImagePage.transform,StandardName("settings-auto-explanation"),"Автоподбор по текущему экрану",20,new Vector2(.02f,.50f),new Vector2(.56f,.61f),TextAnchor.MiddleLeft,Color.white);
                 Move(settingsVSyncToggle.transform,settingsImagePage.transform,new Vector2(.02f,.29f),new Vector2(.98f,.45f));
                 settingsVSyncToggle.GetComponent<MenuScrollFocus>().Scroll=null;
                 Label(settingsImagePage.transform,StandardName("settings-frame-cap-label"),"Ограничение FPS",23,new Vector2(.02f,.08f),new Vector2(.57f,.23f),TextAnchor.MiddleLeft,Color.white);
                 settingsFrameCap=MenuButton(settingsImagePage.transform,StandardName("settings-frame-cap"),"",new Vector2(.60f,.08f),new Vector2(.98f,.23f),()=>SaveStandard(NativeUserPreferences.CycleFrameCap));
                 foreach(var hint in settingsImagePage.GetComponentsInChildren<Text>(true).Where(t=>t.name.EndsWith("graphics-help")))hint.gameObject.SetActive(false);
                 var aaLabel=list.GetComponentsInChildren<Text>(true).Single(t=>t.name.EndsWith("settings-antialiasing-label"));
-                Layout(aaLabel.rectTransform,new Vector2(.02f,.88f),new Vector2(.56f,.99f));
-                Layout((RectTransform)settingsAntialiasingButton.transform,new Vector2(.59f,.88f),new Vector2(.96f,.99f));
-                Layout(settingsShadows.rectTransform,new Vector2(.02f,.76f),new Vector2(.56f,.87f));
-                Layout((RectTransform)settingsShadowsToggle.transform,new Vector2(.59f,.76f),new Vector2(.96f,.87f));
+                Vector2 RowMin(int row,float x)=>new Vector2(x,1-(row+1)/9f+.005f);
+                Vector2 RowMax(int row,float x)=>new Vector2(x,1-row/9f-.005f);
+                Label(list,StandardName("settings-quality-label"),"Качество графики",25,RowMin(0,.02f),RowMax(0,.56f),TextAnchor.MiddleLeft,Color.white);
+                settingsQualityButton=MenuButton(list,StandardName("settings-quality"),"",RowMin(0,.59f),RowMax(0,.96f),()=>SaveStandard(()=>owner.SetGraphicsQuality((NativeVisualPreferences.Quality+1)%NativeVisualPreferences.QualityNames.Length)));
+                var qualityFocus=settingsQualityButton.gameObject.AddComponent<MenuScrollFocus>();qualityFocus.Scroll=graphicsScroll;
+                Layout(aaLabel.rectTransform,RowMin(1,.02f),RowMax(1,.56f));
+                Layout((RectTransform)settingsAntialiasingButton.transform,RowMin(1,.59f),RowMax(1,.96f));
+                Layout(settingsShadows.rectTransform,RowMin(2,.02f),RowMax(2,.56f));
+                Layout((RectTransform)settingsShadowsToggle.transform,RowMin(2,.59f),RowMax(2,.96f));
                 for(int i=0;i<visualToggles.Length;i++)
-                {Layout((RectTransform)visualToggles[i].transform,new Vector2(.02f,.75f-(i+1)*.11f),new Vector2(.98f,.75f-i*.11f));visualSliders[i].transform.parent.gameObject.SetActive(false);}
+                {Layout((RectTransform)visualToggles[i].transform,RowMin(i+3,.02f),RowMax(i+3,.98f));visualSliders[i].transform.parent.gameObject.SetActive(false);}
                 foreach(var slider in colorAdjustments)slider.transform.parent.gameObject.SetActive(false);
 
                 var controls=ListViewport(settingsControlPage.transform,StandardName("controls-viewport"),Vector2.zero,Vector2.one,out var body);
@@ -90,13 +97,15 @@ namespace StarTournament.ProvingGround
 
                 resetAllButton=MenuButton(settingsScreen.transform,StandardName("settings-reset-all"),"Сбросить все настройки",new Vector2(.05f,.035f),new Vector2(.34f,.09f),OpenReset);
                 settingsWriteError=Label(settingsScreen.transform,StandardName("settings-save-error"),"",17,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(255,218,184,255));
+                var backContext=Label(settingsScreen.transform,StandardName("settings-back-context"),"",18,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+                backContext.gameObject.AddComponent<MenuContextHint>().Value=BackContextCaption;
                 resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,new Color32(4,10,17,250));
                 var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);
                 Label(card.transform,"title","Сбросить все настройки?",30,new Vector2(.06f,.76f),new Vector2(.94f,.94f),TextAnchor.MiddleLeft,MenuGold);
                 Label(card.transform,"body","Экран, графика, звук, управление и интерфейс, включая личные предпочтения, вернутся к исходным значениям.\n\nПрофили, прогресс, история и лаборатория сохранятся. Согласие на статистику не изменится.",22,new Vector2(.06f,.30f),new Vector2(.94f,.75f),TextAnchor.UpperLeft,Color.white);
                 resetCancel=MenuButton(card.transform,StandardName("settings-reset-cancel"),"Отмена",new Vector2(.06f,.10f),new Vector2(.48f,.24f),CloseReset);
                 resetConfirm=MenuButton(card.transform,StandardName("settings-reset-confirm"),"Сбросить всё",new Vector2(.52f,.10f),new Vector2(.94f,.24f),ConfirmReset);
-                foreach(var c in new Selectable[]{settingsAutoButton,settingsFrameCap,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsScaleSlider,settingsContrast,resetAllButton,resetCancel,resetConfirm})AddStandardFocus(c);
+                foreach(var c in new Selectable[]{settingsQualityButton,settingsAutoButton,settingsFrameCap,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsScaleSlider,settingsContrast,resetAllButton,resetCancel,resetConfirm})AddStandardFocus(c);
                 var canvas=settingsScreen.GetComponentInParent<Canvas>();
                 if(canvas&&!canvas.GetComponent<NativeInterfacePreferences>())canvas.gameObject.AddComponent<NativeInterfacePreferences>();
                 resetDialog.SetActive(false);
@@ -104,12 +113,12 @@ namespace StarTournament.ProvingGround
             void ConfigureStandardNavigation()
             {
                 for(int i=0;i<StandardSectionOrder.Length;i++)
-                {int n=StandardSectionOrder[i];var action=n==0?settingsModeButton:n==4?(Selectable)settingsAntialiasingButton:n==3?settingsMasterSlider:n==1?settingsMouseSlider:settingsScaleSlider;Link(settingsSectionButtons[n],i==0?settingsBackButton:settingsSectionButtons[StandardSectionOrder[i-1]],i==4?resetAllButton:settingsSectionButtons[StandardSectionOrder[i+1]],null,action);}
+                {int n=StandardSectionOrder[i];var action=n==0?settingsModeButton:n==4?(Selectable)settingsQualityButton:n==3?settingsMasterSlider:n==1?settingsMouseSlider:settingsScaleSlider;Link(settingsSectionButtons[n],i==0?settingsBackButton:settingsSectionButtons[StandardSectionOrder[i-1]],i==4?resetAllButton:settingsSectionButtons[StandardSectionOrder[i+1]],null,action);}
                 Link(settingsBackButton,resetAllButton,settingsSectionButtons[0]);
                 Link(resetAllButton,settingsSectionButtons[2],settingsBackButton);
                 Selectable[] screen={settingsModeButton,settingsResolutionButton,settingsAutoButton,settingsVSyncToggle,settingsFrameCap};
                 Chain(screen,settingsSectionButtons[0]);
-                Chain(new Selectable[]{settingsAntialiasingButton,settingsShadowsToggle}.Concat(visualToggles).ToArray(),settingsSectionButtons[4]);
+                Chain(new Selectable[]{settingsQualityButton,settingsAntialiasingButton,settingsShadowsToggle}.Concat(visualToggles).ToArray(),settingsSectionButtons[4]);
                 Chain(new Selectable[]{settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsReturnDelaySlider,settingsAutoLevelToggle,settingsHelpButton,settingsDevicesButton},settingsSectionButtons[1]);
                 Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsFpsToggle,settingsBotTextToggle,settingsBotVoiceToggle},settingsSectionButtons[2]);
             }
@@ -123,22 +132,21 @@ namespace StarTournament.ProvingGround
                 RefreshNumericSetting(settingsScaleSlider,"Масштаб интерфейса",NativeUserPreferences.Scale,"%");
                 RefreshToggle(settingsInvertX,look.InvertX);RefreshToggle(settingsInvertY,look.InvertY);RefreshToggle(settingsContrast,NativeUserPreferences.HighContrast);
                 settingsFrameCap.GetComponentInChildren<Text>().text=NativeUserPreferences.FrameCap<0?"Без ограничения":NativeUserPreferences.FrameCap+" FPS";
+                settingsQualityButton.GetComponentInChildren<Text>().text=NativeVisualPreferences.QualityNames[NativeVisualPreferences.Quality];
                 resetDialog.SetActive(resetOpen);resetAllButton.gameObject.SetActive(!settingsHelpOpen&&!settingsDevicesOpen);
                 for(int i=0;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 resetAllButton.interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 var pad=InMatch?owner.input.DeviceAt(Seat) as UnityEngine.InputSystem.Gamepad:owner.menuDevice as UnityEngine.InputSystem.Gamepad;
-                string device=(pad?.layout+" "+pad?.description.product).ToLowerInvariant();
-                string glyph=device.Contains("dual")||device.Contains("playstation")?"△":device.Contains("switch")||device.Contains("nintendo")?"X":device.Contains("xinput")||device.Contains("xbox")?"Y":"Верх";
-                resetAllButton.GetComponentInChildren<Text>().text="Сбросить все настройки"+(owner.menuGamepadCursor?" · "+glyph:"");
+                resetAllButton.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Сбросить все настройки",pad,owner.menuGamepadCursor&&resetAllButton.IsInteractable()&&CanHintAssignedShortcut()&&CanResetShortcut(),MenuPadButton.North);
             }
             void ChooseAutoResolution()
             {var d=Screen.currentResolution;int w=d.width>0?d.width:Screen.width,h=d.height>0?d.height:Screen.height;displayReturnButton=settingsAutoButton;owner.BeginDisplayChange(this,w,h,EffectiveDisplayMode(),true);}
-            public void ResetShortcut()
+            bool CanResetShortcut()
             {
                 var editing=EventSystem.current?.currentSelectedGameObject?.GetComponent<InputField>();
-                if(Time.frameCount<=settingsOpenedFrame||resetOpen||displayConfirmationActive||owner.displayConfirmationActive||resolutionPickerOpen||settingsHelpOpen||settingsDevicesOpen||editing&&editing.isFocused)return;
-                OpenReset();
+                return Time.frameCount>settingsOpenedFrame&&!resetOpen&&!displayConfirmationActive&&!owner.displayConfirmationActive&&!resolutionPickerOpen&&!settingsHelpOpen&&!settingsDevicesOpen&&!(editing&&editing.isFocused);
             }
+            public void ResetShortcut(){if(CanResetShortcut())OpenReset();}
             void OpenReset()
             {if(owner.displayConfirmationActive||resetOpen||resolutionPickerOpen)return;resetReturn=InMatch?Selected:EventSystem.current?.currentSelectedGameObject?.GetComponent<Selectable>();resetOpen=true;RefreshSettingsUi();ConfigureSettingsNavigation();Select(resetCancel);}
             void CloseReset()
@@ -148,7 +156,7 @@ namespace StarTournament.ProvingGround
                 SaveStandard(()=>
                 {
                     playerProfiles.ResetPreferences(Profile);NativeUserPreferences.Reset();owner.identities.ResetGuestPreferences(Profile);
-                    owner.vSyncEnabled=true;owner.shadowsEnabled=true;owner.ApplyVSyncPreference();owner.ApplyShadowPreference();owner.fps.RestoreGeneralPreference();
+                    owner.vSyncEnabled=true;owner.shadowsEnabled=true;owner.ApplyQualityPreference();owner.fps.RestoreGeneralPreference();
                     owner.visualPresentation?.Apply();owner.gameAudio?.UpdateVolume();CloseReset();
                     var d=Screen.currentResolution;displayReturnButton=resetAllButton;
                     owner.BeginDisplayChange(this,d.width>0?d.width:Screen.width,d.height>0?d.height:Screen.height,FullScreenMode.FullScreenWindow,true);

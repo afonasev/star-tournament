@@ -19,6 +19,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             file.Integrity=(string)typeof(DesignLabHistory).GetMethod("StorageIntegrity",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{file});
         }
+        [TestCase(0)] [TestCase(3)]
+        public void UnsupportedStorageSchemaPreservesSourceAndDisablesWrites(int schema)
+        {
+            File.WriteAllText(path,"{\"Schema\":"+schema+",\"Profiles\":[]}");
+            var bytes=File.ReadAllBytes(path);
+            var history=new DesignLabHistory(path,Small(),persistMigration:false);
+            Assert.That(history.StorageError,Is.Not.Null.And.Not.Empty);
+            Assert.Throws<IOException>(()=>history.Create("Do not replace unknown data"));
+            Assert.Throws<IOException>(()=>history.CompactStorage());
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+            Assert.That(Directory.GetFiles(directory),Has.Length.EqualTo(1));
+        }
+
         [TestCase("-muted")][TestCase("-noaudio")]
         public void SilentStartupFlagDominatesAudioReviewWithoutSavingPreferences(string flag)
         {
@@ -106,16 +119,23 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test,Timeout(1800000)] public void ExactLargeLegacyHistoryCompactsAndReloadsAllIdentities()
         {
             var source=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_COMPACT_HISTORY_FIXTURE");Assert.That(source,Is.Not.Null.And.Not.Empty,"Explicit owned exact fixture required");File.Copy(source,path);
-            var prepare=AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType("StarTournament.ProvingGround.Editor.ProvingGroundBuild")).First(t=>t!=null);
-            prepare.GetMethod("Prepare").Invoke(null,null);
-            var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            const string scenePath="Assets/StarTournament/Scenes/ProvingGround.unity";
+            var scene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scenePath);bool opened=!scene.isLoaded;
+            if(opened)scene=EditorSceneManager.OpenScene(scenePath,OpenSceneMode.Additive);
             try
             {
-                var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();var baseline=ground.CaptureLabBundle();var catalog=LabReleaseCatalog.Load();
+                var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();var baseline=ground.CaptureLabAuthoringBaseline();var catalog=LabReleaseCatalog.Load();
                 var legacy=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var bytes=File.ReadAllBytes(path);
                 var history=new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false);Assert.That(history.StorageError,Is.Null);var before=State(history);history.CompactStorage();
                 var size=new FileInfo(path).Length;Assert.That(size,Is.LessThan(2000000));var json=File.ReadAllText(path);Assert.That(json,Does.Not.Contain("\"Snapshot\":").And.Not.Contain("\"Description\":").And.Not.Contain("\"DefaultValue\":"));
-                var compact=JsonUtility.FromJson<LabParameterFile>(json);Assert.That(compact.Profiles.SelectMany(p=>p.Revisions).All(r=>r.LegacyOverrides.Count==0),Is.True);
+                var compact=JsonUtility.FromJson<LabParameterFile>(json);
+                if(compact.Schema==3)
+                {
+                    var envelope=JsonUtility.FromJson<LabParameterEnvelope>(json);Assert.That(envelope.Views,Is.Not.Empty);
+                    Assert.That(envelope.Views.All(v=>v.SourceNumber>0&&!string.IsNullOrEmpty(v.SourceHash)),Is.True);
+                    compact=envelope.History;
+                }
+                Assert.That(compact.Schema,Is.EqualTo(2));Assert.That(compact.Profiles.SelectMany(p=>p.Revisions).All(r=>r.LegacyOverrides.Count==0),Is.True);
                 var loaded=new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false);Assert.That(loaded.StorageError,Is.Null);Assert.That(State(loaded),Is.EqualTo(before));
                 foreach(var p in legacy.Profiles)foreach(var r in p.Revisions)
                 {var preserved=loaded.Profiles.Single(q=>q.Id==p.Id).Revisions.Single(q=>q.Number==r.Number);Assert.That(preserved.Hash,Is.EqualTo(r.Hash));Assert.That(preserved.Date,Is.EqualTo(r.Date));foreach(var d in r.Snapshot.Descriptors.Where(d=>r.Snapshot.IsEditable(d.Path)))Assert.That(preserved.Snapshot.Get(d.Path),Is.EqualTo(r.Snapshot.Get(d.Path)),d.Path);}
@@ -124,7 +144,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 if(!string.IsNullOrEmpty(output)){Assert.That(Path.IsPathFullyQualified(output),Is.True);Directory.CreateDirectory(Path.GetDirectoryName(output));File.Copy(path,output,false);}
                 Debug.Log("LAB_PARAMETER_COMPACTION_PASS "+JsonUtility.ToJson(new Report{OriginalBytes=bytes.Length,CompactBytes=size,OriginalRevisions=legacy.Profiles.Sum(p=>p.Revisions.Count),Revisions=compact.Profiles.Sum(p=>p.Revisions.Count),Schemas=compact.Schemas.Count,Reload=loaded.StartupDiagnostics}));
             }
-            finally{EditorSceneManager.CloseScene(scene,true);}
+            finally{if(opened)EditorSceneManager.CloseScene(scene,true);}
         }
         [Serializable] sealed class Report{public long OriginalBytes,CompactBytes;public int OriginalRevisions,Revisions,Schemas;public LabHistoryStartupDiagnostics Reload;}
     }

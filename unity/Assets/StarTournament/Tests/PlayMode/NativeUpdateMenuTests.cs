@@ -236,6 +236,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("release-history-version-"+row),"D-pad navigates all releases including offscreen rows");
             }
             Assert.That(versions.content.anchoredPosition.y,Is.GreaterThan(10),"Navigation reveals installed release below the viewport");
+            var installedHint=installed.GetComponent<MenuActionHint>();Assert.That(installedHint.ReservedRightInset,Is.Not.Null);
+            if(installedHint.GlyphLabel.enabled)
+            {
+                var hintBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(installed.transform,installedHint.GlyphLabel.rectTransform);
+                var badgeBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(installed.transform,(RectTransform)installedBadge);
+                Assert.That(hintBounds.max.x,Is.LessThan(badgeBounds.min.x),"A controller hint must not cover the installed-version badge");
+            }
             var rowBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(versions.viewport,(RectTransform)installed.transform);
             Assert.That(rowBounds.min.y,Is.GreaterThanOrEqualTo(versions.viewport.rect.yMin-1));
             Assert.That(rowBounds.max.y,Is.LessThanOrEqualTo(versions.viewport.rect.yMax+1));

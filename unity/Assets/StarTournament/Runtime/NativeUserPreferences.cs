@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround
             delete=delete??PlayerPrefs.DeleteKey;save=save??PlayerPrefs.Save;
             // Explicit allow-list: never erase identities, progress, Lab or statistics consent.
             foreach(var k in new[]{ScaleKey,ContrastKey,FrameCapKey,MouseSensitivityPreference.Key,FpsDisplay.PreferenceKey,
-                "StarTournament.Graphics.VSync","StarTournament.Graphics.Shadows",NativeVisualPreferences.AntialiasingKey,
+                "StarTournament.Graphics.VSync","StarTournament.Graphics.Shadows",NativeVisualPreferences.AntialiasingKey,NativeVisualPreferences.QualityKey,
                 "StarTournament.Audio.MusicPercent","StarTournament.Audio.EffectsPercent",NativeAudioPreferences.MasterKey,NativeAudioPreferences.VoiceKey,
                 NativeBotReactionPreferences.TextKey,NativeBotReactionPreferences.VoiceKey})delete(k);
             GamepadLookSettings.ResetGeneral(delete);

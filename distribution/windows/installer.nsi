@@ -7,6 +7,8 @@ SetCompressorDictSize 32
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "x64.nsh"
+!include "WinVer.nsh"
+!include "nsDialogs.nsh"
 
 !ifndef INPUT_DIR
   !error "INPUT_DIR must point to the extracted Velopack Portable ZIP layout"
@@ -21,7 +23,7 @@ SetCompressorDictSize 32
 !define PRODUCT "Star Tournament"
 !define PRODUCT_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\StarTournament.Native"
 !define MARKER_NAME ".star-tournament-install.json"
-!define BROKER "$PLUGINSDIR\StarTournamentMaintenance.exe"
+!define BROKER "$BrokerDir\StarTournamentMaintenance.exe"
 
 Name "${PRODUCT} ${VERSION}"
 OutFile "${OUTPUT_FILE}"
@@ -43,8 +45,10 @@ ShowUninstDetails show
 !define MUI_WELCOMEPAGE_TITLE "Установка Star Tournament"
 !define MUI_WELCOMEPAGE_TEXT "Мастер установит Star Tournament для всех пользователей компьютера."
 !insertmacro MUI_PAGE_WELCOME
+!define MUI_DIRECTORYPAGE_VERIFYONLEAVE
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE ValidateInstallTarget
 !insertmacro MUI_PAGE_DIRECTORY
+Page custom ExistingInstallPage
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
@@ -59,99 +63,141 @@ Var FindName
 Var HasMarker
 Var TargetKnown
 Var InstallFlag
+Var BrokerDir
+Var StageDir
+Var InstallMode
+Var ExistingVersion
+Var TransactionActive
+Var TransactionRoot
+Var ConfirmDialog
+Var InstallerPid
 
 Section "Star Tournament (обязательный компонент)" MainInstall
   SectionIn RO
-  ; Validate before creating any files. The lock then closes the launch race.
-  StrCpy $R0 '--validate-root "$INSTDIR"'
+  StrCpy $TransactionRoot $INSTDIR
+  StrCpy $TransactionActive 1
+  StrCpy $R0 '--installer begin "$INSTDIR" "${VERSION}" $InstallerPid'
   Call CallBroker
   ${If} $BrokerStatus != "0"
-    SetErrorLevel 1
-    Abort "Не удалось проверить папку установки."
+    Goto install_transaction_failed
   ${EndIf}
-
-  ; Directory validation ends FindFirst/FindNext with the NSIS error flag set.
-  ; Start a fresh filesystem check so a successful lock is not treated as failure.
-  ClearErrors
-  CreateDirectory "$INSTDIR\maintenance"
-  IfErrors install_lock_failed
-  FileOpen $InstallFlag "$INSTDIR\maintenance\installing.flag" w
-  IfErrors install_lock_failed
-  FileWrite $InstallFlag "${VERSION}$\r$\n"
-  FileClose $InstallFlag
-
-  StrCpy $R0 '--check-idle "$INSTDIR"'
-  Call CallBroker
-  ${If} $BrokerStatus != "0"
-    Delete "$INSTDIR\maintenance\installing.flag"
-    SetErrorLevel 1
-    Abort "Закройте Star Tournament перед установкой."
+  ${If} $BrokerOutput != "$InstallMode|$ExistingVersion"
+    MessageBox MB_ICONEXCLAMATION|MB_OK "Состояние установки изменилось. Вернитесь к выбору папки и проверьте установленную версию ещё раз."
+    Goto install_transaction_failed
   ${EndIf}
-  StrCpy $R0 '--check-install "$INSTDIR" "${VERSION}"'
-  Call CallBroker
-  ${If} $BrokerStatus != "0"
-    Delete "$INSTDIR\maintenance\installing.flag"
-    SetErrorLevel 1
-    Abort "Установленную версию нельзя безопасно заменить."
-  ${EndIf}
+  StrCpy $StageDir "$INSTDIR.installer\stage"
 
-  ; Record ownership and write the uninstaller before payload files, so a partial
-  ; first install can still be removed. The uninstaller embeds its own broker.
-  ClearErrors
-  FileOpen $InstallFlag "$INSTDIR\${MARKER_NAME}" w
-  IfErrors install_recovery_setup_failed
-  FileWrite $InstallFlag "{$\"protocol$\":1,$\"product$\":$\"Star Tournament$\",$\"installerVersion$\":$\"${VERSION}$\"}$\r$\n"
-  FileClose $InstallFlag
-  ClearErrors
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
-  IfErrors install_recovery_setup_failed
-
-  ; Put the broker in place before the game payload. Its runtime DLLs are copied too.
-  SetOutPath "$INSTDIR\maintenance"
-  ClearErrors
-  File /r "${INPUT_DIR}\maintenance\*"
-  IfErrors install_payload_failed
-
-  ; The .portable marker is a zero-byte file in the Velopack Portable ZIP.
-  SetOutPath "$INSTDIR"
+  ; Every file goes into the protected sibling stage. The previous root is untouched.
+  SetOutPath "$StageDir"
   ClearErrors
   File /oname=.portable "${INPUT_DIR}\.portable"
   File /r "${INPUT_DIR}\*"
-  IfErrors install_payload_failed
+  IfErrors install_transaction_failed
+  ClearErrors
+  FileOpen $InstallFlag "$StageDir\${MARKER_NAME}" w
+  IfErrors install_transaction_failed
+  FileWrite $InstallFlag "{$\"protocol$\":1,$\"product$\":$\"Star Tournament$\",$\"installerVersion$\":$\"${VERSION}$\"}$\r$\n"
+  FileClose $InstallFlag
+  IfErrors install_transaction_failed
+  ClearErrors
+  FileOpen $InstallFlag "$StageDir\maintenance\installing.flag" w
+  IfErrors install_transaction_failed
+  FileWrite $InstallFlag "${VERSION}$\r$\n"
+  FileClose $InstallFlag
+  IfErrors install_transaction_failed
+  ; Keep INSTDIR bound to the final root; the generated uninstaller moves with stage.
+  ClearErrors
+  WriteUninstaller "$StageDir\Uninstall.exe"
+  IfErrors install_transaction_failed
 
-  WriteRegStr HKLM "${PRODUCT_KEY}" "DisplayName" "${PRODUCT}"
-  WriteRegStr HKLM "${PRODUCT_KEY}" "DisplayVersion" "${VERSION}"
-  WriteRegStr HKLM "${PRODUCT_KEY}" "Publisher" "Star Tournament"
-  WriteRegStr HKLM "${PRODUCT_KEY}" "DisplayIcon" "$INSTDIR\app-icon.ico"
-  WriteRegStr HKLM "${PRODUCT_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "${PRODUCT_KEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
-  WriteRegDWORD HKLM "${PRODUCT_KEY}" "NoModify" 1
-  WriteRegDWORD HKLM "${PRODUCT_KEY}" "NoRepair" 1
+  SetOutPath "$BrokerDir"
+  StrCpy $R0 '--installer commit "$INSTDIR" "${VERSION}" $InstallerPid'
+  Call CallBroker
+  ${If} $BrokerStatus != "0"
+    Goto install_transaction_failed
+  ${EndIf}
+  StrCpy $R0 '--installer finalize "$INSTDIR" "${VERSION}" $InstallerPid'
+  Call CallBroker
+  ${If} $BrokerStatus != "0"
+    Goto install_transaction_failed
+  ${EndIf}
+  StrCpy $TransactionActive 0
 
+  ; Ordinary shortcuts are created only after the transaction commit point.
+  ClearErrors
   CreateDirectory "$SMPROGRAMS\Star Tournament"
   CreateShortcut "$SMPROGRAMS\Star Tournament\Star Tournament.lnk" "$INSTDIR\Star Tournament.exe" "" "$INSTDIR\app-icon.ico" 0
   CreateShortcut "$SMPROGRAMS\Star Tournament\Uninstall Star Tournament.lnk" "$INSTDIR\Uninstall.exe"
-  ; A repair with the desktop option unchecked removes only our prior shortcut.
+  ${If} ${Errors}
+    MessageBox MB_ICONEXCLAMATION|MB_OK "Игра установлена, но не удалось создать ярлыки в меню «Пуск». Повторите восстановление или откройте Star Tournament.exe в папке установки."
+  ${EndIf}
+  ; The explicit finish option controls only this product's desktop shortcut.
   Delete "$DESKTOP\Star Tournament.lnk"
-  Delete "$INSTDIR\maintenance\installing.flag"
   Goto install_done
 
-  install_lock_failed:
-    RMDir "$INSTDIR\maintenance"
+  install_transaction_failed:
+    DetailPrint "$BrokerOutput"
+    Call RestoreInterruptedInstall
     SetErrorLevel 1
-    Abort "Не удалось создать блокировку установки."
-  install_recovery_setup_failed:
-    Delete "$INSTDIR\${MARKER_NAME}"
-    Delete "$INSTDIR\maintenance\installing.flag"
-    RMDir "$INSTDIR\maintenance"
-    SetErrorLevel 1
-    Abort "Не удалось подготовить безопасное восстановление установки."
-  install_payload_failed:
-    Delete "$INSTDIR\maintenance\installing.flag"
-    SetErrorLevel 1
-    Abort "Windows не удалось скопировать файлы установки."
+    Abort "Установка не завершена. Прежние файлы сохранены или восстановлены; если восстановление не удалось, закройте игру и повторите этот установщик."
   install_done:
 SectionEnd
+
+Function RestoreInterruptedInstall
+  ${If} $TransactionActive == 1
+    SetOutPath "$BrokerDir"
+    StrCpy $R0 '--installer resume "$TransactionRoot" "${VERSION}" $InstallerPid'
+    Call CallBroker
+    ${If} $BrokerStatus == "0"
+      StrCpy $TransactionActive 0
+    ${Else}
+      DetailPrint "Не удалось завершить восстановление: $BrokerOutput"
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+
+Function .onGUIEnd
+  Call RestoreInterruptedInstall
+  SetOutPath "$TEMP"
+  ${If} $BrokerDir != ""
+    Delete "$BrokerDir"
+    ClearErrors
+    RMDir /r "$BrokerDir"
+  ${EndIf}
+FunctionEnd
+
+Function ExistingInstallPage
+  ${If} $InstallMode == "fresh"
+    Abort
+  ${EndIf}
+  !insertmacro MUI_HEADER_TEXT "Обнаружена установленная игра" "Файлы приложения будут восстановлены или обновлены."
+  nsDialogs::Create 1018
+  Pop $ConfirmDialog
+  ${If} $ConfirmDialog == error
+    MessageBox MB_ICONSTOP|MB_OK "Не удалось открыть подтверждение восстановления. Файлы игры не изменены."
+    Quit
+  ${EndIf}
+  ${NSD_CreateLabel} 0 0 100% 30u "$INSTDIR"
+  Pop $0
+  ${NSD_CreateLabel} 0 36u 100% 16u "Установлена версия: $ExistingVersion"
+  Pop $0
+  ${NSD_CreateLabel} 0 58u 100% 16u "Версия установщика: ${VERSION}"
+  Pop $0
+  ${If} $InstallMode == "repair"
+    ${NSD_CreateLabel} 0 82u 100% 24u "Установлена та же версия. Восстановить файлы приложения."
+    Pop $0
+    GetDlgItem $0 $HWNDPARENT 1
+    SendMessage $0 ${WM_SETTEXT} 0 "STR:Восстановить"
+  ${Else}
+    ${NSD_CreateLabel} 0 82u 100% 24u "Обновить файлы приложения до новой версии."
+    Pop $0
+    GetDlgItem $0 $HWNDPARENT 1
+    SendMessage $0 ${WM_SETTEXT} 0 "STR:Обновить"
+  ${EndIf}
+  ${NSD_CreateLabel} 0 112u 100% 20u "Настройки, профили и история сохранятся."
+  Pop $0
+  nsDialogs::Show
+FunctionEnd
 
 Function CreateDesktopShortcut
   SetShellVarContext all
@@ -168,26 +214,68 @@ Function CreateDesktopShortcut
 FunctionEnd
 
 Function .onInit
+  ${IfNot} ${AtLeastWin10}
+  ${OrIfNot} ${AtLeastBuild} 19043
+    MessageBox MB_ICONSTOP|MB_OK "Для Star Tournament требуется Windows 10 21H1 (сборка 19043) или новее."
+    Abort
+  ${EndIf}
   ${IfNot} ${RunningX64}
     MessageBox MB_ICONSTOP|MB_OK "Для установки Star Tournament требуется 64-разрядная версия Windows."
     Abort
   ${EndIf}
   SetRegView 64
   SetShellVarContext all
+  System::Call 'kernel32::GetCurrentProcessId() i .r0'
+  StrCpy $InstallerPid $0
   ReadRegStr $0 HKLM "${PRODUCT_KEY}" "InstallLocation"
   ${If} $0 != ""
     StrCpy $INSTDIR $0
   ${EndIf}
-  InitPluginsDir
-  SetOutPath "$PLUGINSDIR"
-  ; The broker's native runtime files must travel with it in plugin temp.
-  File /r "${INPUT_DIR}\maintenance\*"
+  Call PrepareProtectedBroker
 
   StrCpy $R0 '--check-legacy-user'
   Call CallBroker
   ${If} $BrokerStatus != "0"
     MessageBox MB_ICONEXCLAMATION|MB_OK "Не удалось безопасно подтвердить отсутствие пользовательской установки Star Tournament. Удалите старую копию из той же учётной записи Windows. Если установщик запущен с учётными данными другой учётной записи администратора, повторите запуск из исходной учётной записи."
     Abort
+  ${EndIf}
+FunctionEnd
+
+!macro ProtectedBroker PREFIX
+Function ${PREFIX}PrepareProtectedBroker
+  ClearErrors
+  GetTempFileName $BrokerDir "$PROGRAMFILES64"
+  IfErrors broker_custody_failed
+  Delete "$BrokerDir"
+  CreateDirectory "$BrokerDir"
+  IfErrors broker_custody_failed
+  ; Mark ownership before extracting a large runtime, so a later run can clean
+  ; this exact protected directory after a killed installer.
+  System::Call 'kernel32::GetCurrentProcessId() i .r0'
+  StrCpy $InstallerPid $0
+  FileOpen $InstallFlag "$BrokerDir\.star-tournament-installer-temp.json" w
+  IfErrors broker_custody_failed
+  FileWrite $InstallFlag "{$\"schema$\":1,$\"product$\":$\"Star Tournament installer$\",$\"pid$\":$InstallerPid}$\r$\n"
+  FileClose $InstallFlag
+  IfErrors broker_custody_failed
+  SetOutPath "$BrokerDir"
+  File /r "${INPUT_DIR}\maintenance\*"
+  IfErrors broker_custody_failed
+  Return
+  broker_custody_failed:
+    MessageBox MB_ICONSTOP|MB_OK "Не удалось подготовить защищённый компонент установки в Program Files. Файлы игры не изменены."
+    Abort
+FunctionEnd
+!macroend
+!insertmacro ProtectedBroker ""
+!insertmacro ProtectedBroker "un."
+
+Function un.onGUIEnd
+  SetOutPath "$TEMP"
+  ${If} $BrokerDir != ""
+    Delete "$BrokerDir"
+    ClearErrors
+    RMDir /r "$BrokerDir"
   ${EndIf}
 FunctionEnd
 
@@ -199,6 +287,17 @@ Function CallBroker
 FunctionEnd
 
 Function ValidateInstallTarget
+  GetInstDirError $0
+  ${If} $0 != 0
+    MessageBox MB_ICONSTOP|MB_OK "Недостаточно свободного места или папка установки недоступна. Освободите место и повторите попытку."
+    Abort
+  ${EndIf}
+  StrCpy $R0 '--installer resume "$INSTDIR" "${VERSION}" $InstallerPid'
+  Call CallBroker
+  ${If} $BrokerStatus != "0"
+    MessageBox MB_ICONSTOP|MB_OK "Не удалось завершить предыдущую установку. Закройте игру и повторите попытку.$\r$\n$BrokerOutput"
+    Abort
+  ${EndIf}
   StrCpy $R0 '--validate-root "$INSTDIR"'
   Call CallBroker
   ${If} $BrokerStatus != "0"
@@ -253,9 +352,18 @@ Function ValidateInstallTarget
   StrCpy $R0 '--check-install "$INSTDIR" "${VERSION}"'
   Call CallBroker
   ${If} $BrokerStatus != "0"
-    MessageBox MB_ICONSTOP|MB_OK "Star Tournament уже установлена. Обновляйте игру из самой игры; для полной переустановки сначала удалите существующую копию.$\r$\n$BrokerOutput"
+    MessageBox MB_ICONSTOP|MB_OK "Нельзя безопасно заменить эту установку. Проверьте версию, канал и папку установки.$\r$\n$BrokerOutput"
     Abort
   ${EndIf}
+  StrCpy $InstallMode $BrokerOutput
+  StrCpy $R0 '--installed-version "$INSTDIR" "${VERSION}"'
+  Call CallBroker
+  ${If} $BrokerStatus != "0"
+    MessageBox MB_ICONSTOP|MB_OK "Не удалось прочитать установленную версию.$\r$\n$BrokerOutput"
+    Abort
+  ${EndIf}
+  StrCpy $ExistingVersion $BrokerOutput
+
 FunctionEnd
 
 Function LaunchInstalledGame
@@ -277,11 +385,8 @@ Function un.onInit
   MessageBox MB_ICONSTOP|MB_OK "Путь в системном реестре не совпадает с папкой этого деинсталлятора. Файлы не будут удалены."
   Abort
   un_registry_path_ok:
-  InitPluginsDir
-  SetOutPath "$PLUGINSDIR"
-  ; Embed the broker so uninstall can recover a partial first install.
-  File /r "${INPUT_DIR}\maintenance\*"
-  ExecWait '"$PLUGINSDIR\StarTournamentMaintenance.exe" --validate-root "$INSTDIR"' $0
+  Call un.PrepareProtectedBroker
+  ExecWait '"${BROKER}" --validate-root "$INSTDIR"' $0
   ${If} $0 != 0
     MessageBox MB_ICONSTOP|MB_OK "Папка не прошла проверку владения Star Tournament. Файлы не будут удалены."
     Abort
@@ -297,13 +402,13 @@ Section "Uninstall"
   FileWrite $InstallFlag "uninstall$\r$\n"
   FileClose $InstallFlag
 
-  ExecWait '"$PLUGINSDIR\StarTournamentMaintenance.exe" --check-idle "$INSTDIR"' $0
+  ExecWait '"${BROKER}" --check-idle "$INSTDIR"' $0
   ${If} $0 != 0
     Delete "$INSTDIR\maintenance\installing.flag"
     SetErrorLevel 1
     Abort "Закройте Star Tournament перед удалением."
   ${EndIf}
-  ExecWait '"$PLUGINSDIR\StarTournamentMaintenance.exe" --validate-root "$INSTDIR"' $0
+  ExecWait '"${BROKER}" --validate-root "$INSTDIR"' $0
   ${If} $0 != 0
     Delete "$INSTDIR\maintenance\installing.flag"
     SetErrorLevel 1

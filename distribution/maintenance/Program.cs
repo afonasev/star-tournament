@@ -11,7 +11,7 @@ using StarTournament.Distribution;
 using Velopack;
 
 [SupportedOSPlatform("windows")]
-static class Maintenance
+static partial class Maintenance
 {
     static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true };
     sealed record Marker(int Protocol, string Product, string InstallerVersion);
@@ -24,15 +24,25 @@ static class Maintenance
         {
             if (!OperatingSystem.IsWindows()) throw new InvalidOperationException("Windows only");
             ClearRuntimeInjectionEnvironment();
+            if (string.Equals(Path.GetFileName(Environment.ProcessPath), "Star Tournament.exe", StringComparison.OrdinalIgnoreCase))
+                return ForwardStableEntry(args);
+            if (args.FirstOrDefault() == "--launch-stable") return LaunchStable(args[1..]).GetAwaiter().GetResult();
             return args.Length switch
             {
+                5 when args[0] == "--upgrade-broker" => UpgradeBroker(args[1], new Caller(int.Parse(args[2]), long.Parse(args[3])), args[4]),
                 2 when args[0] == "--validate-root" => ValidateRoot(args[1]),
                 2 when args[0] == "--check-idle" => CheckIdle(args[1]),
-                3 when args[0] == "--check-install" => CheckInstall(args[1], args[2]),
+                3 when args[0] == "--check-install" => InstallerOperation("plan",args[1],args[2]),
+                3 when args[0] == "--installed-version" => InstallerOperation("version",args[1],args[2]),
+                5 when args[0] == "--installer" => InstallerOperation(args[1],args[2],args[3],int.Parse(args[4])),
                 2 when args[0] == "--launch-user" => LaunchUser(args[1]),
                 1 when args[0] == "--check-legacy-user" => CheckLegacyUser(),
-                6 when args[0] == "--activate" => Activate(args),
-                3 when args[0] == "--apply-staged" => ApplyStaged(args[1], int.Parse(args[2])),
+                7 when args[0] == "--activate" => Activate(args),
+                5 when args[0] == "--watch-startup" => WatchStartup(args).GetAwaiter().GetResult(),
+                7 when args[0] == "--apply-staged" => ElevatedApply(args[1], new Caller(int.Parse(args[2]), long.Parse(args[3])), args[4], bool.Parse(args[5]), args[6]),
+                0 => RecoverUser(),
+                1 when args[0] == "--recover" => RecoverUser(),
+                4 when args[0] == "--restore-protected" => RestoreProtected(new Caller(int.Parse(args[1]), long.Parse(args[2])), args[3]),
                 _ => throw new ArgumentException("Unsupported maintenance command")
             };
         }
@@ -40,7 +50,7 @@ static class Maintenance
         {
             UpdateFeedback.Log("maintenance " + (args.FirstOrDefault() ?? "unknown"), ex);
             Console.Error.WriteLine("Star Tournament maintenance: " + ex.Message);
-            if (args.FirstOrDefault() == "--activate") UpdateFeedback.Show("Обновление или перезапуск не выполнены. " + UpdateFeedback.Explain(ex));
+            if (args.Length == 0 || args.FirstOrDefault() is "--activate" or "--recover" or "--launch-stable" || string.Equals(Path.GetFileName(Environment.ProcessPath), "Star Tournament.exe", StringComparison.OrdinalIgnoreCase)) UpdateFeedback.Show("Обновление или перезапуск не выполнены. " + UpdateFeedback.Explain(ex));
             return 1;
         }
     }
@@ -61,7 +71,7 @@ static class Maintenance
     static string SafeRoot(string root)
     {
         if (!Path.IsPathFullyQualified(root)) throw new InvalidOperationException("Absolute install path required");
-        var full = Path.GetFullPath(root);
+        var full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
         var drive = Path.GetPathRoot(full)!;
         if (string.Equals(full.TrimEnd('\\'), drive.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Drive root cannot be an install");
@@ -156,6 +166,8 @@ static class Maintenance
     static int CheckIdle(string raw)
     {
         var root = SafeRoot(raw);
+        GuardInstallerOwner(root,null);
+        if(WindowsInstallation.InstallerPending(root))throw new IOException("Повторите установщик, чтобы завершить восстановление перед удалением.");
         using var lease = WindowsInstallLease.TryAcquire(root) ?? throw new IOException("Install is in use or lease access is unknown");
         CheckNoProcesses(root);
         return 0;
@@ -163,7 +175,7 @@ static class Maintenance
 
     static void CheckNoProcesses(string root, int allowedPid = 0)
     {
-        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "StarTournament", "Star Tournament", "StarTournamentLauncher", "StarTournamentMaintenance", "Update" };
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "StarTournament", "Star Tournament", "StarTournamentLauncher", "StarTournamentMaintenance", "Update", "Uninstall" };
         foreach (var process in Process.GetProcesses())
         {
             using (process)
@@ -179,27 +191,6 @@ static class Maintenance
                 catch { throw new IOException("Cannot establish whether a matching process is using the install"); }
             }
         }
-    }
-
-    static int CheckInstall(string raw, string version)
-    {
-        var root = SafeRoot(raw); ValidateInstallParents(root); RequireSemVer(version);
-        var marker = Path.Combine(root, ".star-tournament-install.json");
-        if (File.Exists(marker)) ValidateRoot(root);
-        else if (!IsFreshOrInstallLockedTarget(root)) throw new InvalidOperationException("Target is not an empty or marked Star Tournament installation");
-        var currentPath = Path.Combine(root, "current", "release.json");
-        if (!File.Exists(currentPath))
-        {
-            return 0; // Empty first install or a partial marked install repaired by NSIS.
-        }
-        if ((File.GetAttributes(Path.Combine(root, "current")) & FileAttributes.ReparsePoint) != 0 ||
-            (File.GetAttributes(currentPath) & FileAttributes.ReparsePoint) != 0)
-            throw new InvalidOperationException("Installed release metadata path is a reparse point");
-        using var current = JsonDocument.Parse(File.ReadAllText(currentPath));
-        var installed = current.RootElement.GetProperty("version").GetString()!;
-        RequireSemVer(installed);
-        if (CompareSemVer(version, installed) < 0) throw new InvalidOperationException("Downgrades are not allowed");
-        throw new InvalidOperationException("An existing release is present; uninstall it before running this fresh installer");
     }
 
     static bool IsFreshOrInstallLockedTarget(string root)
@@ -325,6 +316,7 @@ static class Maintenance
 
     static int Activate(string[] a)
     {
+        PlatformRequirements.RequireSupported("win");
         if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Update supervision must start from a normal-user launcher");
         var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
         var cache = Path.GetFullPath(a[1]); var restart = bool.Parse(a[2]);
@@ -332,9 +324,17 @@ static class Maintenance
         var restartArgs = JsonSerializer.Deserialize<string[]>(Convert.FromBase64String(a[5])) ?? [];
         ValidateCaller(root, caller);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "current", "release.json")), Json)!;
-        using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")));
+        using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root));
         source.Admit(ReadBoundedText(Path.Combine(cache, "star-authenticated.json"), 65536));
+        source.RequireCompatibleTarget();
         var expected = source.Asset!.Version.ToString();
+        var frozenEnvelope = source.Envelope!;
+        var frozenHash = Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(frozenEnvelope)));
+        bool explicitRetry = bool.Parse(a[6]);
+        var observed = StartupRecovery.ForInstallation(config, UpdateFeedback.LogRoot, root).Read();
+        if (observed.HealthyVersion != config.Version || observed.Launch != null)
+            throw new InvalidOperationException("Current Player startup must be confirmed before activation");
+        using var watchLease = TryWatchLease(root, config.AppId) ?? throw new IOException("Startup supervision is already active");
         var journal = UpdateAttemptJournal.ForApp(config.AppId);
         journal.Begin(expected);
         UpdateFeedback.Log("maintenance-ready target=" + expected);
@@ -347,7 +347,7 @@ static class Maintenance
         try
         {
             using var elevated = Process.Start(new ProcessStartInfo(broker) { UseShellExecute = true, Verb = "runas", WorkingDirectory = root,
-                ArgumentList = { "--apply-staged", cache, Environment.ProcessId.ToString() } }) ?? throw new IOException("Could not start protected updater");
+                ArgumentList = { "--apply-staged", cache, Environment.ProcessId.ToString(), Process.GetCurrentProcess().StartTime.ToUniversalTime().Ticks.ToString(), frozenHash, explicitRetry.ToString(), observed.HealthyVersion } }) ?? throw new IOException("Could not start protected updater");
             elevated.WaitForExit(); result = elevated.ExitCode;
             UpdateFeedback.Log("protected-updater-exit code=" + result + " target=" + expected);
         }
@@ -371,27 +371,136 @@ static class Maintenance
         }
         else if (applied)
         {
-            journal.ClearIfInstalled(expected);
+            // Installed files are not proof that the Player reached a working menu.
+            // The normal-user launcher clears its attempt journal after the ready handshake.
             var declined = Path.Combine(cache, "star-apply-declined.json"); if (File.Exists(declined)) File.Delete(declined);
         }
+        if (restart && WindowsInstallation.RecoveryNeedsRepair(root))
+        { UpdateFeedback.Show("Установка прервана. Запустите восстановление Star Tournament перед повторным запуском игры."); return 1; }
         if (restart)
         {
-            var stub = Path.Combine(root, "Star Tournament.exe");
-            var launch = new ProcessStartInfo(stub) { UseShellExecute = false, WorkingDirectory = root };
-            foreach (var arg in restartArgs) launch.ArgumentList.Add(arg);
-            try
-            {
-                UpdateFeedback.Log("restart-stub target=" + expected + " applied=" + applied);
-                using var child = Process.Start(launch) ?? throw new IOException("Restart launcher did not start");
-            }
+            WindowsDetachedProcess? launched = null;
+            try { launched = LaunchCurrent(root, restartArgs); }
             catch (Exception ex)
             {
-                UpdateFeedback.Log("restart-stub-failed", ex);
-                UpdateFeedback.Show("Не удалось перезапустить игру. " + UpdateFeedback.Explain(ex));
-                return 1;
+                UpdateFeedback.Log("restart-launcher-failed", ex);
+                if (!applied) { UpdateFeedback.Show("Не удалось перезапустить игру. " + UpdateFeedback.Explain(ex)); return 1; }
+            }
+            using (launched)
+            {
+                if (applied && WindowsInstallation.PendingStartup(root, expected) is { } id)
+                    ObserveStartup(root, config, id, expected, () => launched?.IsAlive() ?? false, restartArgs).GetAwaiter().GetResult();
             }
         }
         return 0; // The launcher already exited successfully; a failed or declined update keeps the old install usable.
+    }
+
+    static int ForwardStableEntry(string[] args)
+    {
+        if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Start the game as the normal user");
+        var root = SafeRoot(Path.GetDirectoryName(Environment.ProcessPath!)!);
+        using var child = WindowsDetachedProcess.Start(Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"),
+            new[] { "--launch-stable" }.Concat(args), root);
+        return 0;
+    }
+    static async Task<int> LaunchStable(string[] args)
+    {
+        if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Start the game as the normal user");
+        var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
+        if(!WindowsInstallation.InstallerAllowsLaunch(root))throw new IOException("Finish or repeat the installer before launching");
+        if(File.Exists(Path.Combine(root,"maintenance","installing.flag")))throw new IOException("Installer is changing files; wait for it to finish");
+        var identity = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")), Json)!;
+        using var watchLease = TryWatchLease(root, identity.AppId); if (watchLease == null) return 0;
+        // Read-only routing from protected state, including when current is missing/broken.
+        // Only the UAC store can validate/perform mutations; the normal host creates no protected paths.
+        var statePath = Path.Combine(root, "maintenance", "recovery", "state.json");
+        WindowsRecoveryAttempt? pending = null;
+        if (File.Exists(statePath))
+        {
+            var state = JsonSerializer.Deserialize<WindowsRecoveryState>(ReadBoundedText(statePath, 131072)) ?? throw new IOException("Protected recovery state missing");
+            if (state.Schema != 1 || state.RootId != StartupRecovery.InstallationId(root) || state.AppId != identity.AppId) throw new IOException("Foreign protected recovery state");
+            pending = state.Attempt;
+        }
+        if (pending != null && pending.Phase is not ("installed" or "restored"))
+            throw new IOException("Interrupted installation requires maintenance --recover before launch");
+        bool watch = pending is { Phase: "installed" } && !WindowsInstallation.StartupConfirmed(root, pending.Id);
+        WindowsDetachedProcess? child = null;
+        try { child = LaunchCurrent(root, args); }
+        catch (Exception ex) when (watch) { UpdateFeedback.Log("stable-first-launch-failed", ex); }
+        using (child)
+        {
+            if (watch) await ObserveStartup(root, identity, pending!.Id, pending.Target, () => child?.IsAlive() ?? false, args);
+        }
+        return 0;
+    }
+
+    static FileStream? TryWatchLease(string root, string appId)
+    {
+        Directory.CreateDirectory(UpdateFeedback.LogRoot);
+        var path = Path.Combine(UpdateFeedback.LogRoot, appId + "." + StartupRecovery.InstallationId(root) + ".windows-watch.lock");
+        try { return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+        catch (IOException error) when ((error.HResult & 0xffff) is 32 or 33) { return null; }
+    }
+    static WindowsDetachedProcess LaunchCurrent(string root, string[] args) =>
+        WindowsDetachedProcess.Start(Path.Combine(root, "current", "StarTournamentLauncher.exe"), args, root);
+
+    static async Task<int> WatchStartup(string[] args)
+    {
+        if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Startup supervision must run as the normal user");
+        var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
+        var caller = new Caller(int.Parse(args[2]), long.Parse(args[3])); ValidateCaller(root, caller);
+        var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "current", "release.json")), Json)!;
+        var id = WindowsInstallation.PendingStartup(root, config.Version);
+        if (id != null && id != args[1]) throw new IOException("Startup transaction changed before supervision");
+        var restartArgs = JsonSerializer.Deserialize<string[]>(Convert.FromBase64String(args[4])) ?? throw new IOException("Restart arguments missing");
+        using var watchLease = TryWatchLease(root, config.AppId);
+        Console.WriteLine("STAR_TOURNAMENT_STARTUP_WATCH_READY"); Console.Out.Flush();
+        // An activation supervisor already holds the lease before launching its exact child.
+        if (id == null || watchLease == null) return 0;
+        await ObserveStartup(root, config, id, config.Version, () => ExactAlive(caller), restartArgs);
+        return 0;
+    }
+    static bool ExactAlive(Caller caller)
+    {
+        try
+        {
+            using var process = Process.GetProcessById(caller.Pid);
+            return !process.HasExited && process.StartTime.ToUniversalTime().Ticks == caller.StartedTicks;
+        }
+        catch (ArgumentException) { return false; }
+        catch (InvalidOperationException) { return false; }
+        // Access failures are not proof of exit. Let the caller fail closed with its backup.
+    }
+    static async Task WaitForRecordedPlayer(string appId)
+    {
+        var path = Path.Combine(UpdateFeedback.LogRoot, appId + ".player.json");
+        if (!File.Exists(path)) return;
+        using var record = JsonDocument.Parse(ReadBoundedText(path, 4096));
+        var player = new Caller(record.RootElement.GetProperty("pid").GetInt32(), record.RootElement.GetProperty("started").GetInt64());
+        if (player.Pid <= 0 || player.StartedTicks <= 0) throw new IOException("Invalid recorded Player identity");
+        while (ExactAlive(player)) await Task.Delay(100);
+        // Do not delete a record another launcher could have replaced while we waited.
+    }
+    static async Task ObserveStartup(string root, LauncherConfig config, string id, string target, Func<bool> alive, string[] args)
+    {
+        var journal = StartupRecovery.ForInstallation(config, UpdateFeedback.LogRoot, root);
+        await WindowsStartupWatch.Observe(alive, () => WindowsInstallation.StartupConfirmed(root, id),
+            () => WaitForRecordedPlayer(config.AppId),
+            () => journal.Read().HealthyVersion == target,
+            () => { RequestRestore(root, id);
+                using var restored=JsonDocument.Parse(ReadBoundedText(Path.Combine(root,"maintenance","maintenance.json"),65536));
+                var retry=restored.RootElement.GetProperty("protocol").GetInt32()==1?" Для повторной попытки используйте новый установщик Star Tournament.":" Повторить попытку можно явно через перезапуск с обновлением.";
+                UpdateAttemptJournal.ForApp(config.AppId).Fail(target, "Новая версия не подтвердила запуск. Восстановлена предыдущая версия."+retry); return Task.CompletedTask; },
+            () => { using var child = LaunchCurrent(root, args); });
+    }
+    static void RequestRestore(string root, string id)
+    {
+        using var self = Process.GetCurrentProcess();
+        var start = new ProcessStartInfo(Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"))
+        { UseShellExecute = true, Verb = "runas", WorkingDirectory = root };
+        foreach (var arg in new[] { "--restore-protected", self.Id.ToString(), self.StartTime.ToUniversalTime().Ticks.ToString(), id }) start.ArgumentList.Add(arg);
+        using var elevated = Process.Start(start) ?? throw new IOException("Protected recovery did not start"); elevated.WaitForExit();
+        if (elevated.ExitCode != 0) throw new IOException("Protected recovery did not complete; inspect the journal");
     }
 
     static void WaitForExactProcess(Caller caller)
@@ -418,41 +527,51 @@ static class Maintenance
             throw new UnauthorizedAccessException("Update request must come from the same-session normal-user launcher");
     }
 
-    static int ApplyStaged(string cache, int supervisorPid) => ElevatedApply(cache, supervisorPid);
-    static int ElevatedApply(string cache, int supervisorPid)
+    static void ValidateSupervisor(string root, Caller caller)
     {
+        using var supervisor = Process.GetProcessById(caller.Pid);
+        if (supervisor.StartTime.ToUniversalTime().Ticks != caller.StartedTicks || supervisor.ProcessName != "StarTournamentMaintenance" ||
+            IsElevated(caller.Pid) || !SameSession(caller.Pid) ||
+            !string.Equals(Path.GetFullPath(supervisor.MainModule!.FileName!), Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"), StringComparison.OrdinalIgnoreCase))
+            throw new UnauthorizedAccessException("Request must come from the exact stable normal-user supervisor");
+    }
+    static int ElevatedApply(string cache, Caller supervisor, string frozenHash, bool explicitRetry, string confirmedCurrent)
+    {
+        PlatformRequirements.RequireSupported("win");
+        if (!IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Protected apply requires elevation");
         var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
-        EnsureProtectedRoot(root);
-        using (var supervisor = Process.GetProcessById(supervisorPid))
-        {
-            if (supervisor.ProcessName != "StarTournamentMaintenance" || IsElevated(supervisorPid) || !SameSession(supervisorPid) ||
-                !string.Equals(Path.GetFullPath(supervisor.MainModule!.FileName!), Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe"), StringComparison.OrdinalIgnoreCase))
-                throw new UnauthorizedAccessException("Apply request did not come from the stable normal-user supervisor");
-        }
+        EnsureProtectedRoot(root); ValidateSupervisor(root, supervisor);
+        if(WindowsInstallation.InstallerPending(root))throw new IOException("Finish or repeat the installer before updating/recovering");
         using var lease = WindowsInstallLease.TryAcquire(root) ?? throw new IOException("Install lease is held");
-        CheckNoProcesses(root, supervisorPid);
+        CheckNoProcesses(root, supervisor.Pid);
         cache = SafeAbsoluteNonReparsePath(cache);
         if ((File.GetAttributes(cache) & FileAttributes.ReparsePoint) != 0)
             throw new InvalidOperationException("Staged cache path is unsafe");
         var envelopePath = Path.Combine(cache, "star-authenticated.json");
         if (!File.Exists(envelopePath)) throw new CryptographicException("Staged release envelope missing");
         var envelope = ReadBoundedText(envelopePath, 65536);
+        ProtectedPackage.RequireEnvelopeHash(envelope, frozenHash);
         var currentDir = Path.Combine(root, "current"); var currentConfigPath = Path.Combine(currentDir, "release.json");
         if ((File.GetAttributes(currentDir) & FileAttributes.ReparsePoint) != 0 || (File.GetAttributes(currentConfigPath) & FileAttributes.ReparsePoint) != 0)
             throw new InvalidOperationException("Installed configuration path is a reparse point");
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(currentConfigPath), Json)!;
         var protectedConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json"))).RootElement;
-        if (protectedConfig.GetProperty("protocol").GetInt32() != 1 || protectedConfig.GetProperty("appId").GetString() != config.AppId ||
+        if (protectedConfig.GetProperty("protocol").GetInt32() != 2 || protectedConfig.GetProperty("appId").GetString() != config.AppId ||
             protectedConfig.GetProperty("platform").GetString() != config.Platform || protectedConfig.GetProperty("architecture").GetString() != config.Architecture)
             throw new CryptographicException("Protected installation identity mismatch");
-        using var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")));
+        using var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root));
         verifier.Admit(envelope); var asset = verifier.Asset!;
+        verifier.RequireCompatibleTarget();
         var sourcePackage = Path.Combine(cache, Path.GetFileName(asset.FileName));
         if (!File.Exists(sourcePackage)) throw new CryptographicException("Staged package missing");
         verifier.VerifyPackage(sourcePackage, asset).GetAwaiter().GetResult();
         if (asset.Version.ToString() != JsonDocument.Parse(Convert.FromBase64String(JsonDocument.Parse(envelope).RootElement.GetProperty("payload").GetString()!)).RootElement.GetProperty("version").GetString())
             throw new CryptographicException("Package release identity mismatch");
         if (CompareSemVer(asset.Version.ToString(), config.Version) <= 0) throw new InvalidOperationException("Refusing downgrade or same-version update");
+        if (confirmedCurrent != config.Version) throw new InvalidOperationException("Supervisor health attestation does not match current release");
+        ValidateProtectedTree(currentDir);
+        var recovery = new WindowsRecoveryStore(root, config, CreateRecoveryDirectory, CreateRecoveryFile, CreateStartupMarker);
+        if (recovery.Read().Attempt != null) recovery.Cleanup(confirmedCurrent);
         var stagingRoot = Path.Combine(root, "maintenance", "staging");
         if (Directory.Exists(stagingRoot) && (File.GetAttributes(stagingRoot) & FileAttributes.ReparsePoint) != 0)
             throw new InvalidOperationException("Protected staging parent is a reparse point");
@@ -463,16 +582,104 @@ static class Maintenance
             var copied = ProtectedPackage.CopyAndVerifyAsync(verifier, envelope, asset, sourcePackage, staging).GetAwaiter().GetResult();
             var copiedPackage = copied.PackagePath;
             using var held = new FileStream(copiedPackage, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var updater = Path.Combine(root, "Update.exe");
-        if (!File.Exists(updater) || (File.GetAttributes(updater) & FileAttributes.ReparsePoint) != 0)
-            throw new InvalidOperationException("Protected updater is missing or reparse");
-        var psi = new ProcessStartInfo(updater) { UseShellExecute = false, WorkingDirectory = root };
-        foreach (var v in new[] { "apply", "--package", copiedPackage, "--rootDir", root, "--packageDir", staging, "--norestart" }) psi.ArgumentList.Add(v);
-            using var update = Process.Start(psi) ?? throw new IOException("Protected updater did not start"); update.WaitForExit();
-            if (update.ExitCode != 0) throw new IOException("Protected updater failed with exit code " + update.ExitCode);
+            var candidate = WindowsFullPayload.Stage(verifier, asset, copiedPackage, Path.Combine(staging, "payload"),
+                CreateRecoveryDirectory, CreateRecoveryFile).GetAwaiter().GetResult();
+            ValidateProtectedTree(Path.Combine(staging, "payload"));
+            try
+            {
+                recovery.Prepare(config, asset.Version.ToString(), explicitRetry);
+                recovery.Apply(() =>
+                {
+                    CheckNoProcesses(root, supervisor.Pid); // Recheck after potentially lengthy staging/snapshot.
+                    candidate.Activate(root); // No native apply: resident supervisor/broker survive.
+                    // Root entry/updater/registration remain installer-owned and unchanged.
+                    ValidateProtectedTree(currentDir);
+                });
+            }
+            catch
+            {
+                if (recovery.Read().Attempt is { Phase: "capturing" }) recovery.Restore(); // Activation never began.
+                throw;
+            }
             return 0;
         }
         finally { try { Directory.Delete(staging, true); } catch { } }
+    }
+
+    static int RecoverUser()
+    {
+        if (IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Start recovery as the normal user");
+        var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
+        var statePath = Path.Combine(root, "maintenance", "recovery", "state.json");
+        using var state = JsonDocument.Parse(ReadBoundedText(statePath, 131072));
+        if (state.RootElement.GetProperty("Schema").GetInt32() != 1 || state.RootElement.GetProperty("RootId").GetString() != StartupRecovery.InstallationId(root))
+            throw new IOException("Foreign recovery status");
+        var expectedId = state.RootElement.GetProperty("Attempt").GetProperty("Id").GetString() ?? throw new IOException("No recovery transaction");
+        if (!Regex.IsMatch(expectedId, "\\A[0-9a-f]{32}\\z")) throw new IOException("Invalid recovery identity");
+        RequestRestore(root, expectedId);
+        Console.WriteLine("Предыдущая рабочая версия восстановлена. Запустите игру обычным способом."); return 0;
+    }
+    static int RestoreProtected(Caller supervisor, string expectedId)
+    {
+        if (!IsElevated(Environment.ProcessId)) throw new UnauthorizedAccessException("Protected recovery requires elevation");
+        var root = SafeRoot(Path.GetDirectoryName(Path.GetDirectoryName(Environment.ProcessPath!))!);
+        EnsureProtectedRoot(root); ValidateSupervisor(root, supervisor);
+        if(WindowsInstallation.InstallerPending(root))throw new IOException("Finish or repeat the installer before updating/recovering");
+        using var lease = WindowsInstallLease.TryAcquire(root) ?? throw new IOException("Install lease is held");
+        CheckNoProcesses(root, supervisor.Pid);
+        var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "maintenance", "maintenance.json")), Json)!;
+        var store = new WindowsRecoveryStore(root, config, CreateRecoveryDirectory, CreateRecoveryFile, CreateStartupMarker);
+        store.Restore(expectedId); ValidateProtectedTree(Path.Combine(root, "current")); return 0;
+    }
+    static DirectorySecurity RecoveryDirectorySecurity()
+    {
+        var value = new DirectorySecurity(); value.SetAccessRuleProtection(true, false);
+        var admins = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null); value.SetOwner(admins);
+        foreach (var sid in new[] { admins, new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null) })
+            value.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
+        value.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null), FileSystemRights.ReadAndExecute,
+            InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow)); return value;
+    }
+    static void CreateRecoveryDirectory(string path)
+    {
+        if (Directory.Exists(path)) { ValidateProtectedDirectory(path); return; }
+        new DirectoryInfo(path).Create(RecoveryDirectorySecurity());
+    }
+    static FileStream CreateRecoveryFile(string path)
+    {
+        var security = new FileSecurity(); security.SetAccessRuleProtection(true, false);
+        var admins = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null); security.SetOwner(admins);
+        foreach (var sid in new[] { admins, new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null) })
+            security.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, AccessControlType.Allow));
+        security.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null), FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+        return new FileInfo(path).Create(FileMode.CreateNew, FileSystemRights.FullControl, FileShare.None, 4096, FileOptions.None, security);
+    }
+    static FileStream CreateStartupMarker(string path)
+    {
+        var security = new FileSecurity(); security.SetAccessRuleProtection(true, false);
+        var admins = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null); security.SetOwner(admins);
+        foreach (var sid in new[] { admins, new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null) })
+            security.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, AccessControlType.Allow));
+        security.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null),
+            FileSystemRights.Read | FileSystemRights.AppendData | FileSystemRights.Synchronize, AccessControlType.Allow));
+        return new FileInfo(path).Create(FileMode.CreateNew, FileSystemRights.FullControl, FileShare.None, 4096, FileOptions.WriteThrough, security);
+    }
+    static void ValidateProtectedTree(string root)
+    {
+        ValidateProtectedDirectory(root);
+        foreach (var entry in new DirectoryInfo(root).EnumerateFileSystemInfos())
+        {
+            if ((entry.Attributes & FileAttributes.ReparsePoint) != 0) throw new IOException("Protected payload contains a reparse point");
+            if (entry is DirectoryInfo) ValidateProtectedTree(entry.FullName);
+            else
+            {
+                var acl = ((FileInfo)entry).GetAccessControl();
+                if (!TrustedOwner(acl.GetOwner(typeof(SecurityIdentifier)))) throw new UnauthorizedAccessException("Payload input owner is not trusted");
+                foreach (FileSystemAccessRule rule in acl.GetAccessRules(true, true, typeof(SecurityIdentifier)))
+                    if (rule.AccessControlType == AccessControlType.Allow && (rule.FileSystemRights & WriteRights) != 0 && !TrustedOwner((SecurityIdentifier)rule.IdentityReference))
+                        throw new UnauthorizedAccessException("Payload input is writable outside installer principals");
+            }
+        }
     }
 
     static void EnsureProtectedRoot(string root)

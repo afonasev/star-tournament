@@ -5,6 +5,21 @@ namespace StarTournament.ProvingGround
     public enum VisualEffect { Lighting, Materials, AmbientOcclusion, Bloom, Reflections, ColorGrading }
     public static class NativeVisualPreferences
     {
+        public const string QualityKey="StarTournament.Graphics.Quality";
+        public const int DefaultQuality=2;
+        public static readonly string[] QualityNames={"Низкое","Среднее","Высокое"};
+        static readonly int[] QualityTiers={0,2,5};
+        public static int Quality {get{int value=PlayerPrefs.GetInt(QualityKey,DefaultQuality);return value>=0&&value<QualityTiers.Length?value:DefaultQuality;}}
+        public static int QualityTier(int value)=>QualityTiers[value>=0&&value<QualityTiers.Length?value:DefaultQuality];
+        public static void SetQuality(int value){PlayerPrefs.SetInt(QualityKey,value>=0&&value<QualityTiers.Length?value:DefaultQuality);PlayerPrefs.Save();}
+        public static void ApplyQuality()
+        {
+            int tier=QualityTier(Quality);
+            if(tier>=QualitySettings.names.Length)throw new InvalidOperationException("Required native quality tier is missing");
+            int aa=QualitySettings.antiAliasing;bool reflections=QualitySettings.realtimeReflectionProbes;
+            QualitySettings.SetQualityLevel(tier,true);
+            QualitySettings.antiAliasing=aa;QualitySettings.realtimeReflectionProbes=reflections;
+        }
         public const string AntialiasingKey="StarTournament.Graphics.Antialiasing";
         public const int AntialiasingOff=0,AntialiasingLow=1,AntialiasingMedium=2,AntialiasingHigh=3;
         public const int DefaultAntialiasing=AntialiasingMedium;
