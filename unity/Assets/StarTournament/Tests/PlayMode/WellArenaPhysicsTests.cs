@@ -148,13 +148,14 @@ namespace StarTournament.ProvingGround.Tests
         [UnityTest] public IEnumerator GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround()
         {
             yield return null;Physics.SyncTransforms();
-            foreach(var solid in arena.Definition.Solids.Where(s=>s.Id.Contains("gallery-cover")))
+            foreach(var solid in arena.Definition.Solids.Where(s=>s.Id.Contains("gallery-cover")||s.Id.Contains("-corridor-")))
             {
                 float floor=solid.Position.y-solid.Size.y/2;
-                var start=new Vector3(solid.Position.x-3,floor,solid.Position.z);var goal=start+Vector3.right*6;
-                Assert.That(Physics.Raycast(start+Vector3.up*.7f,Vector3.right,out var hit,6,ProvingArena.ShotMask),Is.True,solid.Id);
+                float reach=solid.Id.Contains("-corridor-")?solid.Size.x/2+movement.Get("player.capsule.radius")+movement.Get("player.capsule.skinWidth")+.2f:3;
+                var start=new Vector3(solid.Position.x-reach,floor,solid.Position.z);var goal=start+Vector3.right*(2*reach);
+                Assert.That(Physics.Raycast(start+Vector3.up*.7f,Vector3.right,out var hit,2*reach,ProvingArena.ShotMask),Is.True,solid.Id);
                 Assert.That(hit.collider.name,Is.EqualTo(solid.Id));
-                Assert.That(Physics.Raycast(start+Vector3.up*(solid.Size.y+.3f),Vector3.right,out _,6,ProvingArena.ShotMask),Is.False,"Fire above low case");
+                Assert.That(Physics.Raycast(start+Vector3.up*(solid.Size.y+.3f),Vector3.right,out _,2*reach,ProvingArena.ShotMask),Is.False,"Fire above low case");
                 var motor=Motor(start);for(int i=0;i<90;i++)Tick(motor,new LocalAction{Move=Vector2.right});
                 Assert.That(motor.State.Position.x,Is.LessThan(solid.Position.x-solid.Size.x/2),"real capsule must not enter case");
                 UnityEngine.Object.DestroyImmediate(motor.gameObject);motor=Motor(start);for(int i=0;i<5;i++)Tick(motor);

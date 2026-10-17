@@ -1,0 +1,9 @@
+# Affected QA
+Baseline main 48e1e1f4ed4101858b5dd8b1562514d212b1eb1c; branch codex/well-corridor-cover.
+
+- `UNITY_RUN_MODE=shared unity/tools.sh test-edit-filter WellArenaTests`: карта revision 4, 12 новых/44 прежних корпуса, no overlap/point clearance, frozen v3 из оригинального arena.json, компактная/expanded миграция Lab v3 и прежние v2/v1.
+- Shared graphical PlayMode: `WellArenaPhysicsTests.EverySpawnAndPickupHasCapsuleClearanceAndCorrectPhysicalSupport;WellArenaPhysicsTests.EightParticipantPlacementAndEveryPickupUseTheRealSession;WellArenaPhysicsTests.StairRoutesAndRoomBypassesConnectAllFloors;WellArenaPhysicsTests.GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround;WellArenaPhysicsTests.BotBoardsExitsSecondStoreyAndEmptyTripCompletes;WellArenaPhysicsTests.UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor;WellArenaPhysicsTests.SecondFloorOuterCorridorsRemainOpenPastBothStairs;WellCorridorVisualTests`. Проверяются все новые корпуса, все прежние точки/маршруты и восемь участников, реальный motor/shot/nav, лифты/лестницы, 9 PNG и audit поверхности/ресурсные лимиты.
+
+Wrapper route inspected: no Player build, -noaudio -muted from startup, isolated QA Lab history, unity-run shared. Full suite/Player build/deploy/human acceptance не запускать и не считать пройденными. Старые mesh unit fixtures не повторяются: source mesh алгоритмов не меняется, новую геометрию проверяет настоящий render fixture.
+
+После первой попытки: 26 EditMode passed; 7/8 PlayMode passed. Bypass case-wall обнаружил тесный endpoint возле стены. Перемещение пары кейсов на 0.7м к середине торца обеспечило запас для реальной капсулы. Размеры, blocking/fire assertions и 1200 motor ticks сохранены. Повторены 3 affected authoring checks и 3 PlayMode fixtures (все маршруты/все новые корпуса/новые PNG); всё passed. Остальные успешные сценарии не повторялись после этой локальной правки, их зависимости проверены по diff.

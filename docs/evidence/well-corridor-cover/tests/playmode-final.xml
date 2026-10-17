@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:11Z" duration="13.7419741">
+  <test-suite type="TestSuite" id="1420" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="337" result="Passed" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:11Z" duration="13.741974" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1412" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-corridor-cover/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="337" result="Passed" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:11Z" duration="13.734001" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="94785" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1413" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="337" result="Passed" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:11Z" duration="13.730745" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1414" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="337" result="Passed" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:11Z" duration="13.727821" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1415" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="337" result="Passed" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:11Z" duration="13.724823" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1066" name="WellArenaPhysicsTests" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:06Z" duration="7.762752" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1074" name="GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround" methodname="GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" seed="1848697179" result="Passed" start-time="2026-10-17 18:35:58Z" end-time="2026-10-17 18:36:02Z" duration="4.114235" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1069" name="StairRoutesAndRoomBypassesConnectAllFloors" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.StairRoutesAndRoomBypassesConnectAllFloors" methodname="StairRoutesAndRoomBypassesConnectAllFloors" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" seed="228409980" result="Passed" start-time="2026-10-17 18:36:02Z" end-time="2026-10-17 18:36:06Z" duration="3.639176" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1078" name="WellCorridorVisualTests" fullname="StarTournament.ProvingGround.Tests.WellCorridorVisualTests" classname="StarTournament.ProvingGround.Tests.WellCorridorVisualTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-17 18:36:06Z" end-time="2026-10-17 18:36:11Z" duration="5.952194" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1079" name="CorridorZonesKeepClearStructureAndSaveAllFloors" fullname="StarTournament.ProvingGround.Tests.WellCorridorVisualTests.CorridorZonesKeepClearStructureAndSaveAllFloors" methodname="CorridorZonesKeepClearStructureAndSaveAllFloors" classname="StarTournament.ProvingGround.Tests.WellCorridorVisualTests" runstate="Runnable" seed="1671206450" result="Passed" start-time="2026-10-17 18:36:06Z" end-time="2026-10-17 18:36:11Z" duration="5.950465" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

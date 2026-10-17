@@ -1,0 +1,334 @@
+{
+  "change": "add-well-corridor-cover",
+  "baseline": "48e1e1f4ed4101858b5dd8b1562514d212b1eb1c",
+  "branch": "codex/well-corridor-cover",
+  "source_files": [
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/AuthoredArenaCatalog.cs",
+      "sha256": "da7452010423778518136d91e3c7664b2f84ff2b5062e5c545f1cc61e4d15db7"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/WellArenaCatalog.cs",
+      "sha256": "d5a6dd2ba7777788329ff29e8f9a4ac8c9c61d15f5eb557571e1b706f71e213e"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/WellFurniturePlan.cs",
+      "sha256": "00a9cb07592a44cf3815717e1c40244f54961f858bc89ab205cd374226a21759"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs",
+      "sha256": "ee043721b5dc2827c0a305f20fb85b568d9efc6e5f1e1fbe13dfd81271011a67"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/LabParameterStorage.cs",
+      "sha256": "8e0bd26db80534154cfd09a767586a67dd4f32756b54338d16bf243703a938f4"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WellArenaProfile.cs",
+      "sha256": "33198bfe8252aa92cb43613d494182f3dec3783637ed8ff3de48afab5109fc75"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/WellArenaTests.cs",
+      "sha256": "723fe56be54f6ca3c38ce806e3e75bd19f4749908c1062792702ac686766c455"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/WellArenaPhysicsTests.cs",
+      "sha256": "f155d827647bda7a88af65da909f8211c8ee10d396223e227227ef2c457c058c"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/WellArenaRevisionThree.cs",
+      "sha256": "b13be4035e95c93c3f8a32bb93980eb62e493853d9e9912cc28f4deea2a2f338"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/WellCorridorVisualTests.cs",
+      "sha256": "b94b2012cea7a69249f600081a1c0b9b9ed34c3c129bb9b6b6b6cfba705612b4"
+    }
+  ],
+  "checks": [
+    {
+      "name": "editmode-initial",
+      "command": "UNITY_RUN_MODE=shared unity/tools.sh test-edit-filter WellArenaTests",
+      "xml": "tests/editmode-initial.xml",
+      "log": "tests/editmode-initial.log.gz",
+      "result": "Passed",
+      "total": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "duration_xml_seconds": 119.4234006,
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.AddingWellProfilesPreservesHistoricalLabHashAndEditableValues",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.ApprovedRoomsSpawnsAndPickupSectorsAreExplicit",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.AuthoredIdentityGeometryAndLoadoutAreValid",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.BoardingCancelsIdleAndKeepsOneSecondDelay",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.CorridorZonesAreSparseGroupedAndPreserveRevisionThreeExactly",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyArrivalAndPassengerExitStartFreshIdleWait",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyLiftDepartsAtExactlyFifteenSecondsAndUsesTickRemainder",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.ExactDelayEmptyTripTerminalStopAndReboarding",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.HistoricalWellProfileUsesDefaultIdleDelayWithoutMutation",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.IdleDelayUsesValidatedLabProfileAndRejectsInvalidSnapshotsAtomically",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.IdleRestoreResetAndLargeTickMatchSmallTicks",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellCorridorLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellCorridorLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "playmode-attempt-1",
+      "command": "shared graphical Editor, 7 affected WellArenaPhysicsTests methods + WellCorridorVisualTests",
+      "xml": "tests/playmode-attempt-1.xml",
+      "log": "tests/playmode-attempt-1.log.gz",
+      "result": "Failed(Child)",
+      "total": 8,
+      "passed": 7,
+      "failed": 1,
+      "skipped": 0,
+      "duration_xml_seconds": 46.6401428,
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.BotBoardsExitsSecondStoreyAndEmptyTripCompletes",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.EightParticipantPlacementAndEveryPickupUseTheRealSession",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.EverySpawnAndPickupHasCapsuleClearanceAndCorrectPhysicalSupport",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround",
+          "result": "Failed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.SecondFloorOuterCorridorsRemainOpenPastBothStairs",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.StairRoutesAndRoomBypassesConnectAllFloors",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellCorridorVisualTests.CorridorZonesKeepClearStructureAndSaveAllFloors",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "editmode-final",
+      "command": "test-edit-filter AuthoredIdentityGeometryAndLoadoutAreValid;FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement;CorridorZonesAreSparseGroupedAndPreserveRevisionThreeExactly",
+      "xml": "tests/editmode-final.xml",
+      "log": "tests/editmode-final.log.gz",
+      "result": "Passed",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "duration_xml_seconds": 0.2112811,
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.AuthoredIdentityGeometryAndLoadoutAreValid",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.CorridorZonesAreSparseGroupedAndPreserveRevisionThreeExactly",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "playmode-final",
+      "command": "shared graphical Editor: StairRoutesAndRoomBypassesConnectAllFloors;GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround;WellCorridorVisualTests",
+      "xml": "tests/playmode-final.xml",
+      "log": "tests/playmode-final.log.gz",
+      "result": "Passed",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "duration_xml_seconds": 13.7419741,
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.StairRoutesAndRoomBypassesConnectAllFloors",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellCorridorVisualTests.CorridorZonesKeepClearStructureAndSaveAllFloors",
+          "result": "Passed"
+        }
+      ]
+    }
+  ],
+  "successful_unique_tests": 34,
+  "successful_tests": {
+    "StarTournament.ProvingGround.Tests.WellArenaTests.AddingWellProfilesPreservesHistoricalLabHashAndEditableValues": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.ApprovedRoomsSpawnsAndPickupSectorsAreExplicit": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.AuthoredIdentityGeometryAndLoadoutAreValid": "editmode-final",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.BoardingCancelsIdleAndKeepsOneSecondDelay": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.CorridorZonesAreSparseGroupedAndPreserveRevisionThreeExactly": "editmode-final",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyArrivalAndPassengerExitStartFreshIdleWait": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyLiftDepartsAtExactlyFifteenSecondsAndUsesTickRemainder": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.ExactDelayEmptyTripTerminalStopAndReboarding": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement": "editmode-final",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.HistoricalWellProfileUsesDefaultIdleDelayWithoutMutation": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.IdleDelayUsesValidatedLabProfileAndRejectsInvalidSnapshotsAtomically": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.IdleRestoreResetAndLargeTickMatchSmallTicks": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellCorridorLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellCorridorLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.BotBoardsExitsSecondStoreyAndEmptyTripCompletes": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.EightParticipantPlacementAndEveryPickupUseTheRealSession": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.EverySpawnAndPickupHasCapsuleClearanceAndCorrectPhysicalSupport": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.SecondFloorOuterCorridorsRemainOpenPastBothStairs": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.StairRoutesAndRoomBypassesConnectAllFloors": "playmode-final",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.WellCorridorVisualTests.CorridorZonesKeepClearStructureAndSaveAllFloors": "playmode-final",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.GalleryCasesBlockCapsulesAndShotsWhileRoutesGoAround": "playmode-final"
+  },
+  "layout": {
+    "map_revision": 4,
+    "previous_furniture_unchanged": 44,
+    "new_objects": 12,
+    "new_per_floor": {
+      "case": 2,
+      "bench": 1,
+      "cabinet": 1
+    },
+    "total_furniture": 56
+  },
+  "visual_evidence": {
+    "directory": "views",
+    "png_count": 9,
+    "inspected": [
+      "storage-floor-0.png",
+      "bench-floor-0.png",
+      "bench-floor-1.png",
+      "cabinet-floor-0.png"
+    ],
+    "audit": "views/surface-audit.txt",
+    "budgets": "<650000 vertices, <64 renderers, exactly 24 lights; passed"
+  },
+  "failure_resolution": "Initial case-wall bypass failed: selected endpoint on the far side lacked capsule clearance from adjacent wall. Moved all case pairs 0.7m away from the side wall (x=+/-6.8) preserving the tested body dimensions, blocking and route assertions. Repeated affected authoring/clearance, all spawn-to-pickup routes, all 12 new body bypass/shot/motor checks and final renders. Earlier old-point/lift/stair fixtures passed and their implementations are unchanged.",
+  "quiet": "Every Editor invocation shared, -noaudio -muted from process startup, isolated QA Lab history. No physical input/screen/audio device use.",
+  "not_run": [
+    "full suite - no separate authorization",
+    "Player build - not required for affected Editor checks and not requested",
+    "deploy/installed game update - not requested",
+    "human/device acceptance"
+  ],
+  "timing": "Queue, fresh Library import and compilation precede XML. XML durations are not total wall time."
+}

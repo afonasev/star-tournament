@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Structure 03; north = +Z. Dimensions are immutable map authoring, not editable balance.</summary>
     public static class WellArenaCatalog
     {
-        public const string Id="well-laboratory-v1", Revision="3", Identity=Id+"@"+Revision;
+        public const string Id="well-laboratory-v1", Revision="4", Identity=Id+"@"+Revision;
         public const float Storey=7.2f, Slab=.8f, ClearHeight=Storey-Slab, Edge=24.8f, Pit=9.6f;
         const float DoorHeight=3.2f, DoorHalf=1.6f, Wall=.3f;
         public static string Support(int floor)=>"support:well-"+floor;

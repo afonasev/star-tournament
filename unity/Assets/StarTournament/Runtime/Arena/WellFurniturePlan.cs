@@ -2,16 +2,35 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace StarTournament.ProvingGround
 {
-    /// <summary>well-workstations-v1: immutable authored placements, exposed by the map's Lab profile.
-    /// These dimensions define map revision 3, not independently adjustable balance or random decoration.</summary>
+    /// <summary>Immutable room furniture and sparse corridor service/storage zones, exposed by the map's Lab profile.</summary>
     public static class WellFurniturePlan
     {
         public static bool IsFurniture(ArenaSolid solid)=>solid.Surface!=null&&solid.Surface.StartsWith("well-furniture-");
         public static ArenaSolid[] Build()
         {
+            var result=new List<ArenaSolid>(BuildRevisionThree());
+            // well-corridor-zones-v1: fixed authoring, four deliberate additions per storey.
+            // Dimensions belong to immutable map revision 4 and are visible in the authoring Lab profile.
+            for(int f=0;f<3;f++)
+            {
+                int side=f==1?-1:1,end=f==1?-1:1;
+                void Add(string id,string kind,float x,float z,Vector3 size)
+                    =>result.Add(new ArenaSolid{Id="furniture-f"+f+"-corridor-"+id,Position=new Vector3(x,f*WellArenaCatalog.Storey+size.y/2,z),Size=size,Rotation=Quaternion.identity,Material="equipment",Surface="well-furniture-"+kind,Layer=ProvingArena.WorldLayer,Support=""});
+                // Paired transport cases form one staging bay beside a blank end-wall section, off the lift approach.
+                Add("case-wall","case",side*6.8f,end*23.8f,new Vector3(1.6f,1.05f,1.1f));
+                Add("case-aisle","case",side*6.8f,end*21.9f,new Vector3(1.6f,1.05f,1.1f));
+                // A single service bench by the lab doors; floor 2's corridor runs outside its shifted rooms.
+                Add("bench","bench",side*(f==1?22:12.7f),-end*6.4f,new Vector3(1.1f,1.14f,2));
+                Add("cabinet","cabinet",side*11,-end*15.25f,new Vector3(1.1f,1.9f,.9f));
+            }
+            return result.ToArray();
+        }
+        /// <summary>Frozen revision-3 furniture. Never add new placements here: historical Lab hashes depend on it.</summary>
+        public static ArenaSolid[] BuildRevisionThree()
+        {
             var result=new List<ArenaSolid>();
             void Add(string id,string kind,float x,float z,float width,float height,float depth,int floor)
-            {result.Add(new ArenaSolid{Id="furniture-f"+floor+"-"+id,Position=new Vector3(x,floor*WellArenaCatalog.Storey+height/2,z),Size=new Vector3(width,height,depth),Rotation=Quaternion.identity,Material="equipment",Surface="well-furniture-"+kind,Layer=ProvingArena.WorldLayer,Support=""});}
+            {result.Add(new ArenaSolid{Id="furniture-f"+floor+"-"+id,Position=new Vector3(x,floor*WellArenaRevisionTwo.Storey+height/2,z),Size=new Vector3(width,height,depth),Rotation=Quaternion.identity,Material="equipment",Surface="well-furniture-"+kind,Layer=ProvingArena.WorldLayer,Support=""});}
             for(int f=0;f<3;f++)
             {
                 foreach(int x in new[]{-1,1})foreach(int z in new[]{-1,1})
@@ -32,7 +51,8 @@ namespace StarTournament.ProvingGround
         }
         public static Vector3 Front(ArenaSolid solid)
         {
-            bool xFace=solid.Id.Contains("cabinet")||solid.Id.Contains("side-bench")||solid.Id.Contains("supply");
+            if(solid.Id.Contains("-corridor-cabinet"))return Vector3.back*Mathf.Sign(solid.Position.z);
+            bool xFace=solid.Id.Contains("cabinet")||solid.Id.Contains("side-bench")||solid.Id.Contains("supply")||solid.Id.Contains("-corridor-bench");
             return xFace?Vector3.left*Mathf.Sign(solid.Position.x):Vector3.back*Mathf.Sign(solid.Position.z);
         }
     }
