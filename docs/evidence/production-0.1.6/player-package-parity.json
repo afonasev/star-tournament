@@ -1,0 +1,25 @@
+{
+  "initialAudit": "Audit setup corrected for deliberately excluded Windows Burst debug sidecars and actual macOS outer-bundle archive prefix. No game content/assertion changed.",
+  "results": [
+    {
+      "runtime": "win-x64",
+      "regularFiles": 173,
+      "bytes": 288256372,
+      "allEligiblePlayerRegularFileSha256Equal": true,
+      "excludedByExistingPackagePolicy": [
+        "Star Tournament Unity Proving Ground_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt"
+      ],
+      "archivePrefix": "lib/app/game/",
+      "scope": "Actual raw Player vs full archive. Windows existing package.py ignore_patterns(*_DoNotShip,*.pdb); macOS complete outer bundle prefix. Symlinks checked separately by DMG validation."
+    },
+    {
+      "runtime": "osx-arm64",
+      "regularFiles": 177,
+      "bytes": 308040589,
+      "allEligiblePlayerRegularFileSha256Equal": true,
+      "excludedByExistingPackagePolicy": [],
+      "archivePrefix": "lib/app/Contents/MacOS/game/Player.app/",
+      "scope": "Actual raw Player vs full archive. Windows existing package.py ignore_patterns(*_DoNotShip,*.pdb); macOS complete outer bundle prefix. Symlinks checked separately by DMG validation."
+    }
+  ]
+}

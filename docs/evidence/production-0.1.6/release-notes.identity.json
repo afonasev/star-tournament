@@ -1,0 +1,12 @@
+{
+  "body_sha256": "421bba7e575bd2fd1884a74e86d50180462136ff1a123dc03eb45526653e569a",
+  "channel": "production",
+  "previous_release": {
+    "revision": "d9c985a0df995abd783ce6661174b835391c55f8",
+    "tag": "v0.1.5"
+  },
+  "review_sha256": "f82596799d3b018720055e05bd935f48e6185a6d5201764e41e47afef877c1f1",
+  "schema": 1,
+  "source_ref": "eba44b3102eb820e9983244e77683fba82524965",
+  "version": "0.1.6"
+}

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "source_ref": "eba44b3102eb820e9983244e77683fba82524965",
+  "channel": "production",
+  "previous_release": {
+    "tag": "v0.1.5",
+    "revision": "d9c985a0df995abd783ce6661174b835391c55f8"
+  },
+  "pending": [],
+  "changes": [
+    {
+      "commits": [
+        "83c3b2a43d96e96e25d38e95f2f69de3959b6396"
+      ],
+      "category": "improved",
+      "ru": "Обновлены меню, настройки, справка и лаборатория баланса: сохранение авторских версий, совместимых значений и отображение активной версии. Добавлены компоненты обновления и восстановления; нативная проверка ещё предстоит. Установите эту версию вручную: автоматический переход со старых установок пока не подтверждён. Переход с исторических тестовых версий не требуется. Установщики не подписаны сертификатом издателя.",
+      "en": "Updated menus, settings, help and Balance Lab: authored revisions, compatible values and active-version information. Added update and recovery components; native validation is still pending. Install this version manually: automatic transition from older installations has not yet been verified. Migration from historical test versions is not required. Installers are not signed with a publisher certificate."
+    }
+  ],
+  "omitted": [
+    {
+      "commits": [
+        "eba44b3102eb820e9983244e77683fba82524965"
+      ],
+      "reason": "Test-only fixture filename correction for the macOS DMG packaging route; no additional player behavior."
+    }
+  ]
+}

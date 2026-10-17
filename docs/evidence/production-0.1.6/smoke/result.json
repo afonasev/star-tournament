@@ -1,0 +1,16 @@
+{
+  "status": "NotRun",
+  "args": [
+    "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/.local/production-0.1.6/players/StarTournament.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+    "-batchmode",
+    "-nographics",
+    "-noaudio",
+    "-muted",
+    "-logFile",
+    "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/.local/production-0.1.6/smoke/Player.log"
+  ],
+  "elapsedSeconds": 72.40750870900229,
+  "ready": null,
+  "exitCodeAfterOwnedQaTermination": 0,
+  "scope": "Release Player critical startup and two-loop menu-ready only; not rendering, installed launcher, Windows or human acceptance"
+}
