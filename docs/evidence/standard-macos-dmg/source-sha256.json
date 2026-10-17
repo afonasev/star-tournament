@@ -1,0 +1,5 @@
+{
+  "distribution/macos_dmg.py": "71c0c499c4320d0b44f2f016274156a1dc9fe994bf1581e3c943cc3c6a5c23eb",
+  "distribution/macos/requirements.txt": "57505a88b62049d539f4248a80b096dc3e32ba18b6bde713a30c227f28abde42",
+  "distribution/tests/test_macos_dmg.py": "b741080b4f16137197b264604befe22fce630007d30edfb5f6685daab80a9d6e"
+}

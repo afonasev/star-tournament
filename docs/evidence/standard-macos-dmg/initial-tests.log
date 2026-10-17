@@ -1,0 +1,38 @@
+test_complete_launcher_bundle_and_internal_link (test_macos_dmg.MacDmg.test_complete_launcher_bundle_and_internal_link) ... ok
+test_escaping_symlink_and_missing_update_trust_are_rejected (test_macos_dmg.MacDmg.test_escaping_symlink_and_missing_update_trust_are_rejected) ... ok
+test_existing_output_and_failed_builder_preserve_bytes_and_cleanup (test_macos_dmg.MacDmg.test_existing_output_and_failed_builder_preserve_bytes_and_cleanup) ... ok
+test_minimum_os_and_finder_version_must_match_payload (test_macos_dmg.MacDmg.test_minimum_os_and_finder_version_must_match_payload) ... ok
+test_non_runnable_or_missing_components_are_rejected (test_macos_dmg.MacDmg.test_non_runnable_or_missing_components_are_rejected) ... ok
+test_output_collision_during_build_is_not_overwritten (test_macos_dmg.MacDmg.test_output_collision_during_build_is_not_overwritten) ... ok
+test_recording_builder_gets_approved_layout_and_input_stays_intact (test_macos_dmg.MacDmg.test_recording_builder_gets_approved_layout_and_input_stays_intact) ... FAIL
+test_rejects_nested_player_or_wrong_version_architecture (test_macos_dmg.MacDmg.test_rejects_nested_player_or_wrong_version_architecture) ... ok
+
+======================================================================
+FAIL: test_recording_builder_gets_approved_layout_and_input_stays_intact (test_macos_dmg.MacDmg.test_recording_builder_gets_approved_layout_and_input_stays_intact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 99, in test_recording_builder_gets_approved_layout_and_input_stays_intact
+    dmg.build(self.app, self.output, 'osx-arm64', self.config['version'], builder=builder)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/macos_dmg.py", line 108, in build
+    builder(str(candidate), 'Star Tournament · '+version, settings=settings(app.resolve(), background))
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 92, in builder
+    self.assertEqual(settings['files'], [(str(self.app), dmg.APP_NAME)])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [('/private/var/folders/qn/x21djjbx077gql9yn0[60 chars]pp')] != [('/var/folders/qn/x21djjbx077gql9yn0kbyg2m00[52 chars]pp')]
+
+First differing element 0:
+('/private/var/folders/qn/x21djjbx077gql9yn0[59 chars]app')
+('/var/folders/qn/x21djjbx077gql9yn0kbyg2m00[51 chars]app')
+
+- [('/private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmp8vgz3y8j/Original.app',
+?    --------
+
++ [('/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmp8vgz3y8j/Original.app',
+    'Star Tournament.app')]
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.130s
+
+FAILED (failures=1)
