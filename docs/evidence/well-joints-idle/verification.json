@@ -1,0 +1,397 @@
+{
+  "change": "fix-well-joints-and-idle-lifts",
+  "branch": "codex/well-joints-idle",
+  "baseline": "67ef83a33cbb93d44cc5e7422147dc00040b6cf0",
+  "source_files": [
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs",
+      "sha256": "5e3dc28453b34a414fa3bdbb789be283ee5bcbb6de385d9d833aae7ba0ecc2a3"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/WellDetailMesh.cs",
+      "sha256": "3d315707cdfef58db7782ae1c164afa73fdfc3a9a48ff012aec68da57c4695a2"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs",
+      "sha256": "62588424908ffc5f4b6a318d8f900d10c4563c9c4d552c07033ecc03e8d350ba"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Arena/WellSurfaceMesh.cs",
+      "sha256": "7ca5d866386721f34e7e1e1af4c8978ff1bdff7ac71aeb5809116bb94723e490"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs",
+      "sha256": "2987e5d6a15b3f6f02d682fa06c4942a03484225cbc061e1a1991e6ef32de901"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WellArenaProfile.cs",
+      "sha256": "f7ec69264b466ee3cd4d48483546da5f51d91087f07cad9c26f8fd5a711402e2"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Runtime/Core/WellLiftSystem.cs",
+      "sha256": "248e0d36ff041173628e4671eab5f85a59c9aa8e6b331e9fcc40d88ddbc422f0"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/WellArenaTests.cs",
+      "sha256": "eb7fa307dc617b4a63c6746a3a74848234d6308627da9aeefbde2ade587a7b82"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/EditMode/WellSurfaceMeshTests.cs",
+      "sha256": "a904d6fd5cfdda913bdf1c7130bc08a0f9a251114db5efef392c2309c270d8fc"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs",
+      "sha256": "0ee39c918d3b50060437fd2895225ab5b4254deec91656e60cfa6d4498035ffc"
+    },
+    {
+      "path": "unity/Assets/StarTournament/Tests/PlayMode/WellJointStabilityTests.cs",
+      "sha256": "43086a8fbc1b110a79e6aad6313ba6cc5ec5653aabed9f59cde0bde688e73e37"
+    }
+  ],
+  "checks": [
+    {
+      "name": "editmode-initial",
+      "xml": "tests/editmode-initial.xml",
+      "log": "tests/editmode-initial.log.gz",
+      "result": "Passed",
+      "total": "32",
+      "passed": "32",
+      "failed": "0",
+      "skipped": "0",
+      "duration_xml_seconds": "100.7745623",
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.AddingWellProfilesPreservesHistoricalLabHashAndEditableValues",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.ApprovedRoomsSpawnsAndPickupSectorsAreExplicit",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.AuthoredIdentityGeometryAndLoadoutAreValid",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.BoardingCancelsIdleAndKeepsOneSecondDelay",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyArrivalAndPassengerExitStartFreshIdleWait",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyLiftDepartsAtExactlyFifteenSecondsAndUsesTickRemainder",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.ExactDelayEmptyTripTerminalStopAndReboarding",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.HistoricalWellProfileUsesDefaultIdleDelayWithoutMutation",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.IdleDelayUsesValidatedLabProfileAndRejectsInvalidSnapshotsAtomically",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.IdleRestoreResetAndLargeTickMatchSmallTicks",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.AdjacentOverlappingAndDuplicateBoxesHaveOnlyExteriorFaces",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.ContactVisibilityPreservesExposedGeometryAndRespondsOnlyToNearbyObstruction",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.CoplanarMaterialsKeepExactlyOneExposedSurfaceWithoutHoles",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.JoinedSurfacesUseContinuousWorldMetreUvs",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.MachinedFittingsHaveFiniteOutwardNormalsAndStayInsideTheirEnvelope",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.MaterialPartitionPreservesEveryTriangleAndVertexAttribute",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.OtherMaterialsOccludeInternalFacesWithoutRemovingExposedSurface",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.PartialTJunctionRemovesOnlyBuriedPortion",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.WallSkinsCloseEveryPerpendicularEndpointAndShaftBottomWithoutMutatingAuthoring",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "editmode-mesh-final",
+      "xml": "tests/editmode-mesh-final.xml",
+      "log": "tests/editmode-mesh-final.log.gz",
+      "result": "Passed",
+      "total": "11",
+      "passed": "11",
+      "failed": "0",
+      "skipped": "0",
+      "duration_xml_seconds": "0.1224443",
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.AdjacentOverlappingAndDuplicateBoxesHaveOnlyExteriorFaces",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.ContactVisibilityPreservesExposedGeometryAndRespondsOnlyToNearbyObstruction",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.CoplanarMaterialsKeepExactlyOneExposedSurfaceWithoutHoles",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.FlushDoorFittingsRemoveBuriedTrianglesAndKeepVisibleEnvelope",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.JoinedFittingTrianglesRemoveOnlyCoplanarOverlapAndPreserveAttributes",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.JoinedSurfacesUseContinuousWorldMetreUvs",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.MachinedFittingsHaveFiniteOutwardNormalsAndStayInsideTheirEnvelope",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.MaterialPartitionPreservesEveryTriangleAndVertexAttribute",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.OtherMaterialsOccludeInternalFacesWithoutRemovingExposedSurface",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.PartialTJunctionRemovesOnlyBuriedPortion",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.WallSkinsCloseEveryPerpendicularEndpointAndShaftBottomWithoutMutatingAuthoring",
+          "result": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "playmode-attempt-1",
+      "xml": "tests/playmode-attempt-1.xml",
+      "log": "tests/playmode-attempt-1.log.gz",
+      "result": "Failed(Child)",
+      "total": "5",
+      "passed": "3",
+      "failed": "2",
+      "skipped": "0",
+      "duration_xml_seconds": "42.6076032",
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests.RealMatchPauseDriverRestoreAndRepeatResetLiftState",
+          "result": "Failed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.BotBoardsExitsSecondStoreyAndEmptyTripCompletes",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.LiftCarriesRealCapsuleRestoreAndStopsWithPassenger",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews",
+          "result": "Failed"
+        }
+      ]
+    },
+    {
+      "name": "playmode-attempt-2",
+      "xml": "tests/playmode-attempt-2.xml",
+      "log": "tests/playmode-attempt-2.log.gz",
+      "result": "Failed(Child)",
+      "total": "2",
+      "passed": "1",
+      "failed": "1",
+      "skipped": "0",
+      "duration_xml_seconds": "20.5862648",
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests.RealMatchPauseDriverRestoreAndRepeatResetLiftState",
+          "result": "Passed"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews",
+          "result": "Failed"
+        }
+      ]
+    },
+    {
+      "name": "playmode-attempt-3",
+      "xml": "tests/playmode-attempt-3.xml",
+      "log": "tests/playmode-attempt-3.log.gz",
+      "result": "Failed(Child)",
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "skipped": "0",
+      "duration_xml_seconds": "3.9961014",
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews",
+          "result": "Failed"
+        }
+      ]
+    },
+    {
+      "name": "playmode-render-final",
+      "xml": "tests/playmode-render-final.xml",
+      "log": "tests/playmode-render-final.log.gz",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration_xml_seconds": "4.9200874",
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews",
+          "result": "Passed"
+        }
+      ]
+    }
+  ],
+  "successful_unique_tests": 39,
+  "successful_tests": {
+    "StarTournament.ProvingGround.Tests.WellArenaTests.AddingWellProfilesPreservesHistoricalLabHashAndEditableValues": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.ApprovedRoomsSpawnsAndPickupSectorsAreExplicit": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.AuthoredIdentityGeometryAndLoadoutAreValid": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.BoardingCancelsIdleAndKeepsOneSecondDelay": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyArrivalAndPassengerExitStartFreshIdleWait": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.EmptyLiftDepartsAtExactlyFifteenSecondsAndUsesTickRemainder": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.ExactDelayEmptyTripTerminalStopAndReboarding": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.HistoricalWellProfileUsesDefaultIdleDelayWithoutMutation": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.IdleDelayUsesValidatedLabProfileAndRejectsInvalidSnapshotsAtomically": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.IdleRestoreResetAndLargeTickMatchSmallTicks": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousUnfurnishedWellLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellGeometryLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(False)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(True)": "editmode-initial",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.AdjacentOverlappingAndDuplicateBoxesHaveOnlyExteriorFaces": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.ContactVisibilityPreservesExposedGeometryAndRespondsOnlyToNearbyObstruction": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.CoplanarMaterialsKeepExactlyOneExposedSurfaceWithoutHoles": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.JoinedSurfacesUseContinuousWorldMetreUvs": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.MachinedFittingsHaveFiniteOutwardNormalsAndStayInsideTheirEnvelope": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.MaterialPartitionPreservesEveryTriangleAndVertexAttribute": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.OtherMaterialsOccludeInternalFacesWithoutRemovingExposedSurface": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.PartialTJunctionRemovesOnlyBuriedPortion": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.WallSkinsCloseEveryPerpendicularEndpointAndShaftBottomWithoutMutatingAuthoring": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.FlushDoorFittingsRemoveBuriedTrianglesAndKeepVisibleEnvelope": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellSurfaceMeshTests.JoinedFittingTrianglesRemoveOnlyCoplanarOverlapAndPreserveAttributes": "editmode-mesh-final",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.BotBoardsExitsSecondStoreyAndEmptyTripCompletes": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.LiftCarriesRealCapsuleRestoreAndStopsWithPassenger": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor": "playmode-attempt-1",
+    "StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests.RealMatchPauseDriverRestoreAndRepeatResetLiftState": "playmode-attempt-2",
+    "StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews": "playmode-render-final"
+  },
+  "visual_audit": "views/surface-audit.txt",
+  "visual_qa": "9 RenderTexture PNGs, 3 viewpoints with 3 close camera positions each. Room door, room joint and stair entry inspected. Colliders and authored definition unchanged; <650000 vertices, <64 renderers, exactly24 lights.",
+  "failure_resolution": [
+    "Attempt 1: manually moved snapshot retained nonzero idle; fixture now sets idle=0 for Moving. Audit found doorway overlap; corrected classification of bevel triangles by actual plane.",
+    "Attempt 2: pause/restore/Repeat passed. Flat overlaps remained in window corners; union of trim/alloy flat faces added.",
+    "Attempt 3: vertex budget failed; preserved the budget and fixed vertex reuse and unnecessary subdivision. Final render and mesh checks pass."
+  ],
+  "repeat_scope": "Lift state machine/profile/migration and physics unchanged after their successful checks; later changes only affect cosmetic meshes/audit. Repeated the affected mesh fixture and render audit.",
+  "muted": "All commands -noaudio -muted from startup, shared unity-run, isolated QA Lab history.",
+  "not_run": [
+    "Full suite: no separate authorization",
+    "Player build: no requirement to check this change and no delivery build requested",
+    "Player/device/human acceptance",
+    "Deployment/publication"
+  ],
+  "timing": "First Editor required admission queue and fresh Library import. XML duration is reported separately and is not total wall time."
+}

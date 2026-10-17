@@ -212,6 +212,45 @@ namespace StarTournament.ProvingGround.Tests
                 if(System.IO.File.Exists(path+".schema1-backup.json"))System.IO.File.Delete(path+".schema1-backup.json");
             }
         }
+        [TestCase(false)][TestCase(true)] public void PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(bool compact)
+        {
+            var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"well-idle-"+Guid.NewGuid()+".json");
+            try
+            {
+                var current=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.Shipped();
+                var method=typeof(ProvingProfile).GetMethod("BeforeWellIdleDeparture",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList();
+                var history=new DesignLabHistory(path,old);history.Create("Колодец 02");var draft=history.Selected.Snapshot;draft.Set("well.liftSpeed",5);draft.Set("well.lamp",9);draft.Set("well.glassOpacity",.4f);history.Save(draft);
+                var prior=history.Selected;string priorHash=prior.Hash;int priorNumber=prior.Number;
+                if(!compact)
+                {
+                    var file=typeof(DesignLabHistory).GetField("data",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(history);
+                    System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
+                }
+                var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
+                var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
+                Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
+                Assert.That(preserved.Snapshot.Get("well.fill"),Is.EqualTo(.42f));
+                Assert.That(preserved.Snapshot.Get("well.daylight"),Is.EqualTo(.8f));
+                Assert.That(preserved.Snapshot.Descriptors.Any(d=>d.Path=="well.idleDepartureSeconds"),Is.False);
+                Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
+                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(.42f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.lamp"),Is.EqualTo(9));
+                Assert.That(migrated.Selected.Snapshot.Get("well.plantHeight"),Is.EqualTo(.5f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.glassOpacity"),Is.EqualTo(.4f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.daylight"),Is.EqualTo(.8f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.glassSmoothness"),Is.EqualTo(.85f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.idleDepartureSeconds"),Is.EqualTo(15));
+                var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);
+                Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
+                Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber).Hash,Is.EqualTo(priorHash));
+            }
+            finally
+            {
+                if(System.IO.File.Exists(path))System.IO.File.Delete(path);
+                if(System.IO.File.Exists(path+".schema1-backup.json"))System.IO.File.Delete(path+".schema1-backup.json");
+            }
+        }
         WellLiftSystem Lifts()=>new WellLiftSystem(WellArenaCatalog.Build().Lifts,ProvingProfile.CreateWellDefault());
         int[][] Occupied()=>new[]{Array.Empty<int>(),new[]{0}};
         int[][] Empty()=>new[]{Array.Empty<int>(),Array.Empty<int>()};
@@ -222,7 +261,7 @@ namespace StarTournament.ProvingGround.Tests
             lifts.Advance(1.25f,Empty());Assert.That(lifts.Capture()[1].Height,Is.EqualTo(5));
             var copy=lifts.Capture();var restored=Lifts();restored.Restore(JsonUtility.FromJson<Payload>(JsonUtility.ToJson(new Payload{Lifts=copy})).Lifts);
             float remaining=(2*WellArenaCatalog.Storey-5)/4;lifts.Advance(remaining,Empty());restored.Advance(remaining,Empty());Assert.That(JsonUtility.ToJson(new Payload{Lifts=lifts.Capture()}),Is.EqualTo(JsonUtility.ToJson(new Payload{Lifts=restored.Capture()})));
-            Assert.That(lifts.Capture()[1].Height,Is.EqualTo(2*WellArenaCatalog.Storey));lifts.Advance(10,Empty());Assert.That(lifts.Capture()[1].Height,Is.EqualTo(2*WellArenaCatalog.Storey),"empty platform stops until a new boarding");
+            Assert.That(lifts.Capture()[1].Height,Is.EqualTo(2*WellArenaCatalog.Storey));lifts.Advance(10,Empty());Assert.That(lifts.Capture()[1].Height,Is.EqualTo(2*WellArenaCatalog.Storey),"empty platform remains docked before idle timeout");
             lifts.Advance(.1f,Empty());lifts.Advance(.5f,Occupied());Assert.That(lifts.Capture()[1].Target,Is.EqualTo(0));Assert.That(lifts.Capture()[1].Countdown,Is.EqualTo(.5));
         }
         [Test] public void PassengerStayingAtTerminalCannotRearmAndEmptyArrivalAllowsNewBoarding()
@@ -232,6 +271,62 @@ namespace StarTournament.ProvingGround.Tests
             lifts.Advance(.1f,Empty());lifts.Advance(.5f,Occupied());Assert.That(lifts.Capture()[1].Countdown,Is.EqualTo(.5));
             var emptyTrip=Lifts();emptyTrip.Advance(1,Occupied());emptyTrip.Advance(2*WellArenaCatalog.Storey/4,Empty());Assert.That(emptyTrip.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Ready));
             emptyTrip.Advance(.5f,Occupied());Assert.That(emptyTrip.Capture()[1].Countdown,Is.EqualTo(.5));Assert.That(emptyTrip.Capture()[1].Target,Is.EqualTo(0),"new boarding after an empty arrival");
+        }
+        [Test] public void EmptyLiftDepartsAtExactlyFifteenSecondsAndUsesTickRemainder()
+        {
+            var lifts=Lifts();lifts.Advance(14.5f,Empty());
+            Assert.That(lifts.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Ready));
+            Assert.That(lifts.Capture()[1].IdleSeconds,Is.EqualTo(14.5));
+            lifts.Advance(.5f,Empty());var state=lifts.Capture()[1];
+            Assert.That(state.Phase,Is.EqualTo(WellLiftPhase.Moving));Assert.That(state.Height,Is.Zero);Assert.That(state.Countdown,Is.Zero);Assert.That(state.IdleSeconds,Is.Zero);
+            lifts.Advance(.25f,Empty());Assert.That(lifts.Capture()[1].Height,Is.EqualTo(1));
+            var spanning=Lifts();spanning.Advance(15.25f,Empty());Assert.That(spanning.Capture()[1].Height,Is.EqualTo(1));
+            Assert.That(spanning.Capture()[0].Height,Is.EqualTo(2*WellArenaCatalog.Storey-1));
+        }
+        [Test] public void EmptyArrivalAndPassengerExitStartFreshIdleWait()
+        {
+            var lifts=Lifts();lifts.Advance(1,Occupied());lifts.Advance(2*WellArenaCatalog.Storey/4,Empty());
+            lifts.Advance(14.5f,Empty());Assert.That(lifts.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Ready));
+            lifts.Advance(.5f,Empty());Assert.That(lifts.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Moving));Assert.That(lifts.Capture()[1].Target,Is.Zero);
+            var passenger=Lifts();passenger.Advance(10,Occupied());passenger.Advance(30,Occupied());
+            Assert.That(passenger.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.AwaitEmpty));Assert.That(passenger.Capture()[1].IdleSeconds,Is.Zero);
+            passenger.Advance(14.5f,Empty());Assert.That(passenger.Capture()[1].IdleSeconds,Is.EqualTo(14.5));
+            passenger.Advance(.5f,Empty());Assert.That(passenger.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Moving));
+        }
+        [Test] public void BoardingCancelsIdleAndKeepsOneSecondDelay()
+        {
+            var lifts=Lifts();lifts.Advance(14.5f,Empty());lifts.Advance(.5f,Occupied());
+            Assert.That(lifts.Capture()[1].IdleSeconds,Is.Zero);Assert.That(lifts.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Boarding));
+            Assert.That(lifts.Capture()[1].Countdown,Is.EqualTo(.5));lifts.Advance(.5f,Occupied());Assert.That(lifts.Capture()[1].Height,Is.Zero);
+            lifts.Advance(.25f,Occupied());Assert.That(lifts.Capture()[1].Height,Is.EqualTo(1));
+        }
+        [Test] public void IdleRestoreResetAndLargeTickMatchSmallTicks()
+        {
+            var lifts=Lifts();lifts.Advance(7.5f,Empty());var restored=Lifts();restored.Restore(JsonUtility.FromJson<Payload>(JsonUtility.ToJson(new Payload{Lifts=lifts.Capture()})).Lifts);
+            lifts.Advance(7.75f,Empty());restored.Advance(7.75f,Empty());
+            Assert.That(JsonUtility.ToJson(new Payload{Lifts=restored.Capture()}),Is.EqualTo(JsonUtility.ToJson(new Payload{Lifts=lifts.Capture()})));
+            restored.Reset();Assert.That(restored.Capture().All(l=>l.IdleSeconds==0&&l.Phase==WellLiftPhase.Ready),Is.True);
+            var small=Lifts();var large=Lifts();for(int i=0;i<800;i++)small.Advance(.125f,Empty());large.Advance(100,Empty());
+            for(int i=0;i<2;i++)
+            {var a=large.Capture()[i];var b=small.Capture()[i];Assert.That(a.Phase,Is.EqualTo(b.Phase));Assert.That(a.Target,Is.EqualTo(b.Target));Assert.That(a.Height,Is.EqualTo(b.Height).Within(.0001f));Assert.That(a.IdleSeconds,Is.EqualTo(b.IdleSeconds).Within(.00001));}
+        }
+        [Test] public void HistoricalWellProfileUsesDefaultIdleDelayWithoutMutation()
+        {
+            var method=typeof(ProvingProfile).GetMethod("BeforeWellIdleDeparture",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=(ProvingProfile)method.Invoke(ProvingProfile.CreateWellDefault(),null);string before=JsonUtility.ToJson(old);
+            var lifts=new WellLiftSystem(WellArenaCatalog.Build().Lifts,old);lifts.Advance(15,Empty());
+            Assert.That(lifts.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Moving));Assert.That(JsonUtility.ToJson(old),Is.EqualTo(before));
+        }
+        [Test] public void IdleDelayUsesValidatedLabProfileAndRejectsInvalidSnapshotsAtomically()
+        {
+            var profile=ProvingProfile.CreateWellDefault();var descriptor=profile.Descriptors.Single(d=>d.Path=="well.idleDepartureSeconds");
+            Assert.That(descriptor.Group,Is.EqualTo("well-lifts"));profile.Set("well.idleDepartureSeconds",3);
+            var lifts=new WellLiftSystem(WellArenaCatalog.Build().Lifts,profile);lifts.Advance(3,Empty());Assert.That(lifts.Capture()[1].Phase,Is.EqualTo(WellLiftPhase.Moving));
+            lifts.Reset();string before=JsonUtility.ToJson(new Payload{Lifts=lifts.Capture()});
+            foreach(double invalid in new[]{double.NaN,double.PositiveInfinity,-1,3})
+            {var snapshot=lifts.Capture();snapshot[1].IdleSeconds=invalid;Assert.Throws<ArgumentException>(()=>lifts.Restore(snapshot));Assert.That(JsonUtility.ToJson(new Payload{Lifts=lifts.Capture()}),Is.EqualTo(before));}
+            var moving=lifts.Capture();moving[1].Phase=WellLiftPhase.Moving;moving[1].Target=2*WellArenaCatalog.Storey;moving[1].IdleSeconds=1;
+            Assert.Throws<ArgumentException>(()=>lifts.Restore(moving));
         }
         [Serializable] public sealed class Payload{public WellLiftState[] Lifts;}
         [Test] public void InvalidRestoreIsAtomicAndNoStationaryMidFloorAllowed()

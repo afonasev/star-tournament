@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:15Z" duration="42.6076032">
+  <test-suite type="TestSuite" id="1418" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:15Z" duration="42.607603" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1410" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:15Z" duration="42.599685" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="72172" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1411" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:15Z" duration="42.596705" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1412" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:15Z" duration="42.593666" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1413" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:15Z" duration="42.590673" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="SetUpFixture" id="1104" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" classname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" runstate="Runnable" testcasecount="268" result="Failed" site="Child" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:04Z" duration="31.979877" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1406" name="WellArenaMatchTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" classname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:04Z" duration="31.954598" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1407" name="RealMatchPauseDriverRestoreAndRepeatResetLiftState" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests.RealMatchPauseDriverRestoreAndRepeatResetLiftState" methodname="RealMatchPauseDriverRestoreAndRepeatResetLiftState" classname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" runstate="Runnable" seed="1654365494" result="Failed" label="Error" start-time="2026-10-17 17:10:32Z" end-time="2026-10-17 17:11:04Z" duration="31.948220" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.ArgumentException : Invalid lift idle time]]></message>
+                    <stack-trace><![CDATA[  at StarTournament.ProvingGround.WellLiftSystem.Validate (StarTournament.ProvingGround.WellLiftState[] snapshot) [0x00238] in /Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Assets/StarTournament/Runtime/Core/WellLiftSystem.cs:41 
+  at StarTournament.ProvingGround.WellLiftSystem.Restore (StarTournament.ProvingGround.WellLiftState[] snapshot) [0x0000d] in /Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Assets/StarTournament/Runtime/Core/WellLiftSystem.cs:46 
+  at StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests+<RealMatchPauseDriverRestoreAndRepeatResetLiftState>d__2.MoveNext () [0x001f9] in /Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellArenaMatchTests.cs:23 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 ]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Lab startup: published Default ready in 11.64 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 25.47 seconds; Default 5d66f936050271a3ad006083cc55834e0102f313f5d604381bd4ea938746feda
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1066" name="WellArenaPhysicsTests" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-17 17:11:04Z" end-time="2026-10-17 17:11:12Z" duration="7.268133" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1071" name="BotBoardsExitsSecondStoreyAndEmptyTripCompletes" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.BotBoardsExitsSecondStoreyAndEmptyTripCompletes" methodname="BotBoardsExitsSecondStoreyAndEmptyTripCompletes" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" seed="898347853" result="Passed" start-time="2026-10-17 17:11:04Z" end-time="2026-10-17 17:11:07Z" duration="2.454206" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1070" name="LiftCarriesRealCapsuleRestoreAndStopsWithPassenger" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.LiftCarriesRealCapsuleRestoreAndStopsWithPassenger" methodname="LiftCarriesRealCapsuleRestoreAndStopsWithPassenger" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" seed="1777661839" result="Passed" start-time="2026-10-17 17:11:07Z" end-time="2026-10-17 17:11:09Z" duration="2.438429" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1072" name="UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor" fullname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests.UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor" methodname="UnavailableLiftsKeepStairFallbackAndMotorReachesSecondFloor" classname="StarTournament.ProvingGround.Tests.WellArenaPhysicsTests" runstate="Runnable" seed="2077781683" result="Passed" start-time="2026-10-17 17:11:09Z" end-time="2026-10-17 17:11:12Z" duration="2.369316" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1078" name="WellJointStabilityTests" fullname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" classname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-17 17:11:12Z" end-time="2026-10-17 17:11:15Z" duration="3.330090" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1079" name="JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" fullname="StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" methodname="JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" classname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" runstate="Runnable" seed="138347935" result="Failed" start-time="2026-10-17 17:11:12Z" end-time="2026-10-17 17:11:15Z" duration="3.328955" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Well ceramic white / Well details / Well brushed metal at (-2.2037, 3.2000, -24.8500) vs (-1.2257, 3.2000, -24.6388) area=0.0001335363
+Well ceramic white / Well details / Well brushed metal at (-2.2037, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0004768735
+Well ceramic white / Well details / Well brushed metal at (-2.9815, 3.2000, -24.8500) vs (-1.2257, 3.2000, -24.6388) area=0.0003082319
+Well ceramic white / Well details / Well brushed metal at (-2.9815, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0003021769
+Well ceramic white / Well details / Well brushed metal at (-2.4630, 3.2000, -24.7500) vs (-1.2257, 3.2000, -24.6388) area=0.009723252
+Well ceramic white / Well details / Well brushed metal at (-2.4630, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.006544052
+Well ceramic white / Well details / Well brushed metal at (0.1296, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0006104074
+Well ceramic white / Well details / Well brushed metal at (-1.6852, 3.2000, -24.7500) vs (-1.2257, 3.2000, -24.6388) area=0.005762485
+Well ceramic white / Well details / Well brushed metal at (-1.6852, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.01050482
+Well ceramic white / Well details / Well brushed metal at (-1.4259, 3.2000, -24.8500) vs (-1.2257, 3.2000, -24.6388) area=3.085888E-05
+Well ceramic white / Well details / Well brushed metal at (-1.4259, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0005795509
+Well ceramic white / Well details / Well brushed metal at (-0.9074, 3.2000, -24.7500) vs (-1.2257, 3.2000, -24.6388) area=0.001741111
+Well ceramic white / Well details / Well brushed metal at (-0.9074, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.01452618
+Well ceramic white / Well details / Well brushed metal at (-3.2407, 3.2000, -24.7500) vs (-1.2257, 3.2000, -24.6388) area=0.01361198
+Well ceramic white / Well details / Well brushed metal at (-3.2407, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.002655308
+Well ceramic white / Well details / Well brushed metal at (-0.6481, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0006104112
+Well ceramic white / Well details / Well brushed metal at (2.4630, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0006104112
+Well ceramic white / Well details / Well brushed metal at (2.2037, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.01626729
+Well ceramic white / Well details / Well brushed metal at (1.6852, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0006104074
+Well ceramic white / Well details / Well brushed metal at (1.4259, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.01626729
+  Expected: <empty>
+  But was:  < "Well ceramic white / Well details / Well brushed metal at (-2.2037, 3.2000, -24.8500) vs (-1.2257, 3.2000, -24.6388) area=0.0001335363", "Well ceramic white / Well details / Well brushed metal at (-2.2037, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0004768735", "Well ceramic white / Well details / Well brushed metal at (-2.9815, 3.2000, -24.8500) vs (-1.2257, 3.2000, -24.6388) area=0.0003082319", "Well ceramic white / Well details / Well brushed metal at (-2.9815, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0003021769", "Well ceramic white / Well details / Well brushed metal at (-2.4630, 3.2000, -24.7500) vs (-1.2257, 3.2000, -24.6388) area=0.009723252", "Well ceramic white / Well details / Well brushed metal at (-2.4630, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.006544052", "Well ceramic white / Well details / Well brushed metal at (0.1296, 3.2000, -24.8500) vs (1.2257, 3.2000, -24.6552) area=0.0006104074", "Well ceramic white / Well details / Well brushed metal at (-1.6852, 3.2000, -24.7500) vs (-1.2257, 3.2000, -24.6388) area=0.005762485", "Well ceramic white / Well details / Well brushed metal at (-1.6852, 3.2000, -24.7500) vs (1.2257, 3.2000, -24.6552) area=0.01050482", "Well ceramic white / Well details / Well brushed metal at (-1.4259, 3.2000, -24.8500) vs (-1.2257, 3.2000, -24.6388) area=3.085888E-05"... >
+]]></message>
+                  <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.WellJointStabilityTests+<JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews>d__4.MoveNext () [0x004b3] in /Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellJointStabilityTests.cs:100
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

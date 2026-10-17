@@ -5,6 +5,56 @@ namespace StarTournament.ProvingGround.Tests
 {
     public sealed class WellSurfaceMeshTests
     {
+        [Test] public void JoinedFittingTrianglesRemoveOnlyCoplanarOverlapAndPreserveAttributes()
+        {
+            var a=WellSurfaceMesh.Build(new[]{new Bounds(Vector3.zero,new Vector3(4,1,4))});
+            var b=WellSurfaceMesh.Build(new[]{new Bounds(Vector3.right,new Vector3(4,1,2))});
+            var combined=new Mesh();combined.CombineMeshes(new[]{new CombineInstance{mesh=a,transform=Matrix4x4.identity},new CombineInstance{mesh=b,transform=Matrix4x4.identity}});
+            var joined=WellDetailMesh.JoinFlatFaces(combined);var untouched=WellDetailMesh.JoinFlatFaces(a);
+            try
+            {
+                Assert.That(Area(combined),Is.EqualTo(76).Within(.001f));Assert.That(Area(joined),Is.EqualTo(64).Within(.001f));
+                Assert.That(Area(untouched),Is.EqualTo(Area(a)).Within(.001f));Assert.That(joined.bounds,Is.EqualTo(combined.bounds));
+                Assert.That(joined.normals.All(n=>Mathf.Abs(n.magnitude-1)<.0001f),Is.True);
+                Assert.That(joined.uv.Length,Is.EqualTo(joined.vertexCount));Assert.That(joined.tangents.Length,Is.EqualTo(joined.vertexCount));
+                Assert.That(joined.vertices.All(p=>!float.IsNaN(p.sqrMagnitude)&&!float.IsInfinity(p.sqrMagnitude)),Is.True);
+            }
+            finally{Object.DestroyImmediate(a);Object.DestroyImmediate(b);Object.DestroyImmediate(combined);Object.DestroyImmediate(joined);Object.DestroyImmediate(untouched);}
+        }
+        [Test] public void FlushDoorFittingsRemoveBuriedTrianglesAndKeepVisibleEnvelope()
+        {
+            var source=WellDetailMesh.Bevel(new Vector3(3.6f,.2f,.095f));var clipped=WellDetailMesh.ClipBack(source,-.003f);
+            try
+            {
+                Assert.That(clipped.bounds.max,Is.EqualTo(source.bounds.max));
+                Assert.That(clipped.bounds.min.x,Is.EqualTo(source.bounds.min.x));Assert.That(clipped.bounds.min.y,Is.EqualTo(source.bounds.min.y));
+                Assert.That(clipped.vertices.All(p=>p.z>=-.00301f),Is.True);
+                var vertices=clipped.vertices;var normals=clipped.normals;var indices=clipped.triangles;
+                Assert.That(indices.Length,Is.GreaterThan(0));Assert.That(Area(clipped),Is.LessThan(Area(source)));
+                for(int i=0;i<indices.Length;i+=3)
+                {
+                    var a=indices[i];var b=indices[i+1];var c=indices[i+2];
+                    Assert.That(Vector3.Dot(Vector3.Cross(vertices[b]-vertices[a],vertices[c]-vertices[a]),normals[a]+normals[b]+normals[c]),Is.GreaterThan(0));
+                }
+                Assert.That(normals.All(n=>Mathf.Abs(n.magnitude-1)<.0001f),Is.True);
+            }
+            finally{Object.DestroyImmediate(source);Object.DestroyImmediate(clipped);}
+        }
+        [Test] public void CoplanarMaterialsKeepExactlyOneExposedSurfaceWithoutHoles()
+        {
+            var a=new[]{new Bounds(Vector3.zero,new Vector3(4,1,4))};
+            var b=new[]{new Bounds(Vector3.right,new Vector3(4,1,2))};
+            var first=WellSurfaceMesh.Build(a,b);var second=WellSurfaceMesh.Build(b,a,a);
+            var prior=WellSurfaceMesh.Build(b,a);
+            try
+            {
+                // Union footprint = 18 m², perimeter = 18 m, height = 1 m.
+                Assert.That(Area(first)+Area(second),Is.EqualTo(54).Within(.001f));
+                Assert.That(Area(first)+Area(prior),Is.EqualTo(66).Within(.001f),"Previously duplicated the shared top and underside");
+                Assert.That(second.bounds.max.x,Is.EqualTo(3));
+            }
+            finally{Object.DestroyImmediate(first);Object.DestroyImmediate(second);Object.DestroyImmediate(prior);}
+        }
         static float Area(Mesh mesh)
         {
             var v=mesh.vertices;var t=mesh.triangles;float a=0;

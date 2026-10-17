@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.9961014">
+  <test-suite type="TestSuite" id="1418" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.996101" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1410" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.989127" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="81448" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1411" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.986148" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1412" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.983688" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1413" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.981173" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1078" name="WellJointStabilityTests" fullname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" classname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.977932" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1079" name="JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" fullname="StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" methodname="JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" classname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" runstate="Runnable" seed="438517825" result="Failed" start-time="2026-10-17 17:17:08Z" end-time="2026-10-17 17:17:12Z" duration="3.972632" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Existing Well presentation geometry budget
+  Expected: less than 650000
+  But was:  1666168
+]]></message>
+                  <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.WellJointStabilityTests+<JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews>d__4.MoveNext () [0x001cb] in /Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellJointStabilityTests.cs:88
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

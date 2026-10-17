@@ -141,10 +141,12 @@ namespace StarTournament.ProvingGround
                 detail.Plants(centre);
             }
             detail.Finish();
+            var surfaceOwners=new List<Bounds>();
             foreach(var pair in batches)
             {
                 var blockers=pair.Key==glass?null:batches.Where(p=>p.Key!=pair.Key&&p.Key!=glass).SelectMany(p=>p.Value).ToArray();
-                var mesh=WellSurfaceMesh.Build(pair.Value,blockers);owned.Add(mesh);
+                var mesh=WellSurfaceMesh.Build(pair.Value,blockers,pair.Key==glass?null:surfaceOwners);owned.Add(mesh);
+                if(pair.Key!=glass)surfaceOwners.AddRange(pair.Value);
                 if(pair.Key==white||pair.Key==floor)
                 {
                     var contact=WellContactMesh.Build(mesh,definition.Solids.Where(s=>s.Material!="glass"&&s.Surface!="well-grate").Select(s=>new Bounds(s.Position,s.Size)).ToArray());owned.Add(contact);mesh=contact;

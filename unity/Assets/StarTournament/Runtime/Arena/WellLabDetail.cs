@@ -8,6 +8,7 @@ namespace StarTournament.ProvingGround
         readonly Transform parent;readonly List<Object> owned;readonly ProvingProfile profile;
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
         readonly Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
+        readonly Dictionary<Vector3,Mesh> doorBevels=new Dictionary<Vector3,Mesh>();
         readonly Material trim,panel,screen,green,leaf,porcelain,alloy,blue,amber;readonly Material display;
         // Fixed tessellation/texture resolution are bounded resource tiers, not gameplay tuning.
         const int TextureSize=256;
@@ -118,9 +119,14 @@ namespace StarTournament.ProvingGround
             batch.Add(new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(center,rotation,size)});
         }
         void FaceBox(Material m,Vector3 face,Quaternion rotation,Vector3 local,Vector3 size)=>Box(m,face+rotation*local,size,rotation);
-        void Round(Material m,Vector3 face,Quaternion rotation,Vector3 local,Vector3 size)
+        void Round(Material m,Vector3 face,Quaternion rotation,Vector3 local,Vector3 size,bool flushDoor=false)
         {
             if(!bevels.TryGetValue(size,out var mesh)){mesh=WellDetailMesh.Bevel(size);bevels[size]=mesh;owned.Add(mesh);}
+            if(flushDoor)
+            {
+                // Door face stands 3 mm off the wall. Clip at that wall plane, keeping the visible envelope exact.
+                if(!doorBevels.TryGetValue(size,out var clipped)){clipped=WellDetailMesh.ClipBack(mesh,-.003f);doorBevels[size]=clipped;owned.Add(clipped);}mesh=clipped;
+            }
             if(!batches.TryGetValue(m,out var batch))batches[m]=batch=new List<CombineInstance>();
             batch.Add(new CombineInstance{mesh=mesh,transform=Matrix4x4.TRS(face+rotation*local,rotation,Vector3.one)});
         }
@@ -286,11 +292,13 @@ namespace StarTournament.ProvingGround
             {
                 if(solid.Id.Contains("outer-")&&Vector3.Dot(normal*side,solid.Position)>0)continue;
                 var rotation=Quaternion.LookRotation(normal*side);var face=solid.Position+normal*side*(depth/2+.003f);face.y=solid.Position.y-solid.Size.y/2+.1f;
-                Round(trim,face,rotation,Vector3.zero,new Vector3(width+.40f,.20f,.095f));
+                Round(trim,face,rotation,Vector3.zero,new Vector3(width+.40f,.20f,.095f),true);
                 Round(alloy,face,rotation,new Vector3(0,.015f,.055f),new Vector3(width+.34f,.12f,.035f));
                 foreach(int edge in new[]{-1,1})
                 {
-                    Round(trim,face,rotation,new Vector3(edge*(width/2+.10f),-1.65f,0),new Vector3(.20f,3.2f,.095f));
+                    // Jamb ends at the underside of the lintel. Previously their front
+                    // faces overlapped by 5 cm at exactly the same depth and flickered.
+                    Round(trim,face,rotation,new Vector3(edge*(width/2+.10f),-1.675f,0),new Vector3(.20f,3.15f,.095f),true);
                     Round(alloy,face,rotation,new Vector3(edge*(width/2+.10f),-1.65f,.055f),new Vector3(.13f,3.2f,.035f));
                 }
             }
@@ -332,7 +340,9 @@ namespace StarTournament.ProvingGround
         {
             foreach(var pair in batches)
             {
-                var mesh=new Mesh{name="Well batched fittings",indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.CombineMeshes(pair.Value.ToArray(),true,true);owned.Add(mesh);Render(mesh,pair.Key,"Well details / "+pair.Key.name);
+                var mesh=new Mesh{name="Well batched fittings",indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.CombineMeshes(pair.Value.ToArray(),true,true);owned.Add(mesh);
+                if(pair.Key==trim||pair.Key==alloy){var joined=WellDetailMesh.JoinFlatFaces(mesh);owned.Add(joined);mesh=joined;}
+                Render(mesh,pair.Key,"Well details / "+pair.Key.name);
             }
         }
     }

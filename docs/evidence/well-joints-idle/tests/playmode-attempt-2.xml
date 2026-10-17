@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:14:00Z" duration="20.5862648">
+  <test-suite type="TestSuite" id="1418" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:14:00Z" duration="20.586265" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1410" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:14:00Z" duration="20.578954" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="77012" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1411" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:14:00Z" duration="20.576517" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1412" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:14:00Z" duration="20.574388" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1413" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:14:00Z" duration="20.572163" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="SetUpFixture" id="1104" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" classname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" runstate="Runnable" testcasecount="268" result="Passed" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:13:56Z" duration="17.104413" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1406" name="WellArenaMatchTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" classname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:13:56Z" duration="17.085747" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1407" name="RealMatchPauseDriverRestoreAndRepeatResetLiftState" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests.RealMatchPauseDriverRestoreAndRepeatResetLiftState" methodname="RealMatchPauseDriverRestoreAndRepeatResetLiftState" classname="StarTournament.ProvingGround.Tests.PlayMode.WellArenaMatchTests" runstate="Runnable" seed="410481045" result="Passed" start-time="2026-10-17 17:13:39Z" end-time="2026-10-17 17:13:56Z" duration="17.081018" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 10.83 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Game startup: menu ready at 15.14 seconds; Default 5d66f936050271a3ad006083cc55834e0102f313f5d604381bd4ea938746feda
+Lab startup: validating local history in background
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1078" name="WellJointStabilityTests" fullname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" classname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-17 17:13:56Z" end-time="2026-10-17 17:14:00Z" duration="3.463783" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1079" name="JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" fullname="StarTournament.ProvingGround.Tests.WellJointStabilityTests.JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" methodname="JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews" classname="StarTournament.ProvingGround.Tests.WellJointStabilityTests" runstate="Runnable" seed="1820518282" result="Failed" start-time="2026-10-17 17:13:56Z" end-time="2026-10-17 17:14:00Z" duration="3.459072" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.4400, -9.5631) vs (9.5631, 3.4400, -9.5348) area=0.0002049328
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.4400, -9.5631) vs (9.5869, 3.4400, -9.5452) area=5.750936E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.3500, -7.4648) vs (8.5352, 3.3500, -9.5452) area=1.950189E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.3500, -8.5352) vs (8.5352, 3.3500, -9.5452) area=0.0009340793
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.3500, -8.5352) vs (7.4648, 3.3500, -9.5348) area=1.950094E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.4500, -7.4648) vs (8.5352, 3.4500, -9.5452) area=1.950189E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.4500, -8.5352) vs (8.5352, 3.4500, -9.5452) area=0.0009340756
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.4500, -8.5352) vs (7.4648, 3.4500, -9.5348) area=1.950157E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5869, 10.6400, 9.5452) vs (-9.5452, 10.6400, 9.5631) area=5.750259E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5631, 10.6400, 9.5348) vs (-9.5452, 10.6400, 9.5631) area=0.0002049241
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5452, 10.5500, 7.4648) vs (-8.5352, 10.5500, 9.5452) area=1.950189E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5348, 10.5500, 8.5352) vs (-7.4648, 10.5500, 9.5348) area=1.950094E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5348, 10.5500, 8.5352) vs (-8.5352, 10.5500, 9.5452) area=0.0009340793
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5452, 10.6500, 7.4648) vs (-8.5352, 10.6500, 9.5452) area=1.950189E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5348, 10.6500, 8.5352) vs (-7.4648, 10.6500, 9.5348) area=1.950157E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (-9.5348, 10.6500, 8.5352) vs (-8.5352, 10.6500, 9.5452) area=0.0009340756
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 17.8400, -9.5631) vs (9.5869, 17.8400, -9.5452) area=5.750936E-05
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 17.8400, -9.5631) vs (9.5631, 17.8400, -9.5348) area=0.0002049328
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 17.7500, -8.5352) vs (8.5352, 17.7500, -9.5452) area=0.0009340793
+Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 17.7500, -8.5352) vs (7.4648, 17.7500, -9.5348) area=1.950094E-05
+  Expected: <empty>
+  But was:  < "Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.4400, -9.5631) vs (9.5631, 3.4400, -9.5348) area=0.0002049328", "Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.4400, -9.5631) vs (9.5869, 3.4400, -9.5452) area=5.750936E-05", "Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.3500, -7.4648) vs (8.5352, 3.3500, -9.5452) area=1.950189E-05", "Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.3500, -8.5352) vs (8.5352, 3.3500, -9.5452) area=0.0009340793", "Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.3500, -8.5352) vs (7.4648, 3.3500, -9.5348) area=1.950094E-05", "Well details / Well brushed metal / Well details / Well brushed metal at (9.5452, 3.4500, -7.4648) vs (8.5352, 3.4500, -9.5452) area=1.950189E-05", "Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.4500, -8.5352) vs (8.5352, 3.4500, -9.5452) area=0.0009340756", "Well details / Well brushed metal / Well details / Well brushed metal at (9.5348, 3.4500, -8.5352) vs (7.4648, 3.4500, -9.5348) area=1.950157E-05", "Well details / Well brushed metal / Well details / Well brushed metal at (-9.5869, 10.6400, 9.5452) vs (-9.5452, 10.6400, 9.5631) area=5.750259E-05", "Well details / Well brushed metal / Well details / Well brushed metal at (-9.5631, 10.6400, 9.5348) vs (-9.5452, 10.6400, 9.5631) area=0.0002049241"... >
+]]></message>
+                  <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.WellJointStabilityTests+<JoinedDoorsAndStairsHaveSingleSurfacesAndSaveViews>d__4.MoveNext () [0x004b3] in /Users/eaafonasev/.codex/worktrees/well-joints-idle/star-tournament/unity/Assets/StarTournament/Tests/PlayMode/WellJointStabilityTests.cs:101
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@bd7f943e9647/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

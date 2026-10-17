@@ -21,10 +21,17 @@ namespace StarTournament.ProvingGround
                 Add("well.map.lift-"+lift.Id+".initial","geometry","Начальная высота "+lift.Id,"Immutable начальный этаж.","m",0,100,.01f,lift.InitialHeight);
             }
         }
+        internal ProvingProfile BeforeWellIdleDeparture()
+        {
+            if(id!="well-gameplay-presentation-v1"||version<4)return this;
+            var copy=DetachedCopy();copy.version=3;
+            copy.descriptors.RemoveAll(d=>d.Path=="well.idleDepartureSeconds");copy.values.RemoveAll(v=>v.Path=="well.idleDepartureSeconds");
+            return copy;
+        }
         internal ProvingProfile BeforeWellDepth()
         {
             if(id!="well-gameplay-presentation-v1"||version<3)return this;
-            var copy=DetachedCopy();copy.version=2;
+            var copy=BeforeWellIdleDeparture().DetachedCopy();copy.version=2;
             var added=new System.Collections.Generic.HashSet<string>{"well.daylightShadow","well.glassSmoothness","well.fittingDepth","well.contactShade"};
             copy.descriptors.RemoveAll(d=>added.Contains(d.Path));copy.values.RemoveAll(v=>added.Contains(v.Path));
             copy.FindDescriptor("well.daylight").DefaultValue=.5f;copy.Set("well.daylight",.5f);
@@ -48,9 +55,10 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateWellDefault()
         {
-            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=3};
+            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=4};
             void V(string key,string group,string label,string desc,string unit,float min,float max,float step,float value)=>p.Add("well."+key,group,label,desc,unit,min,max,step,value);
             V("liftSpeed","well-lifts","Скорость лифта","Быстрый рейс; влияет на окно выхода на втором этаже.","m/s",1,8,.1f,4);
+            V("idleDepartureSeconds","well-lifts","Автоотправка пустого лифта","Игровое время простоя пустой платформы до рейса к противоположному крайнему этажу; посадка сбрасывает таймер.","s",1,120,1,15);
             // Delay = exactly 1 second is the explicit approved rule, not an adjustable balance value.
             V("boardingTolerance","well-lifts","Допуск опоры","Контакт ног с платформой, без подхвата прыгающего персонажа.","m",.05f,.4f,.01f,.2f);
             V("botDockRange","well-bots","Радиус выбора лифта","Доступный лифт полезен рядом с ботом; иначе используются лестницы.","m",2,40,.5f,18);
