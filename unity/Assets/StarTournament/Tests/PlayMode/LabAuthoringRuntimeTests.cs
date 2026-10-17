@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 namespace StarTournament.ProvingGround.Tests.PlayMode
@@ -344,7 +346,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(reason.text,Does.Contain(ground.LabHistoryLoadError));Assert.That(reason.text,Does.Contain("DesignLab/authoring-history-v1.json"));
             string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_AUTHOR_FALLBACK_QA_IMAGES");
             if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,Path.Combine(output,"author-history-error-720.png"),1280,720);}
-            Click("author-history-back");yield return null;Assert.That(Field<bool>("authorStartupResolved"),Is.False);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+            var fallbackPad=InputSystem.AddDevice<Gamepad>();try
+            {
+                InputSystem.QueueStateEvent(fallbackPad,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;InputSystem.QueueStateEvent(fallbackPad,new GamepadState());yield return null;
+            }
+            finally{if(fallbackPad.added)InputSystem.RemoveDevice(fallbackPad);}
+            Assert.That(Field<object>("phase").ToString(),Is.EqualTo("MainMenu"));Assert.That(Field<bool>("authorStartupResolved"),Is.False);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
             var errorField=typeof(ProvingGround).GetField("historyLoadError",BindingFlags.NonPublic|BindingFlags.Instance);string actualError=ground.LabHistoryLoadError;
             errorField.SetValue(ground,actualError+"\n"+string.Join("\n",Enumerable.Repeat("Длинная диагностика <b>plain text</b> — исходная история сохранена.",32)));
             Click("main-action-0");yield return null;

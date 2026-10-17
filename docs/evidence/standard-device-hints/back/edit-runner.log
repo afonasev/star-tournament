@@ -1,0 +1,3 @@
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+unity-run: started shared:2; guardian=51934 pid=51935
+unity-run: finished pid=51935 exit=0; capacity released

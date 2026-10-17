@@ -97,6 +97,8 @@ namespace StarTournament.ProvingGround
 
                 resetAllButton=MenuButton(settingsScreen.transform,StandardName("settings-reset-all"),"Сбросить все настройки",new Vector2(.05f,.035f),new Vector2(.34f,.09f),OpenReset);
                 settingsWriteError=Label(settingsScreen.transform,StandardName("settings-save-error"),"",17,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(255,218,184,255));
+                var backContext=Label(settingsScreen.transform,StandardName("settings-back-context"),"",18,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+                backContext.gameObject.AddComponent<MenuContextHint>().Value=BackContextCaption;
                 resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,new Color32(4,10,17,250));
                 var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);
                 Label(card.transform,"title","Сбросить все настройки?",30,new Vector2(.06f,.76f),new Vector2(.94f,.94f),TextAnchor.MiddleLeft,MenuGold);
@@ -135,16 +137,16 @@ namespace StarTournament.ProvingGround
                 for(int i=0;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 resetAllButton.interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 var pad=InMatch?owner.input.DeviceAt(Seat) as UnityEngine.InputSystem.Gamepad:owner.menuDevice as UnityEngine.InputSystem.Gamepad;
-                resetAllButton.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Сбросить все настройки",pad,owner.menuGamepadCursor&&resetAllButton.IsInteractable(),MenuPadButton.North);
+                resetAllButton.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Сбросить все настройки",pad,owner.menuGamepadCursor&&resetAllButton.IsInteractable()&&CanHintAssignedShortcut()&&CanResetShortcut(),MenuPadButton.North);
             }
             void ChooseAutoResolution()
             {var d=Screen.currentResolution;int w=d.width>0?d.width:Screen.width,h=d.height>0?d.height:Screen.height;displayReturnButton=settingsAutoButton;owner.BeginDisplayChange(this,w,h,EffectiveDisplayMode(),true);}
-            public void ResetShortcut()
+            bool CanResetShortcut()
             {
                 var editing=EventSystem.current?.currentSelectedGameObject?.GetComponent<InputField>();
-                if(Time.frameCount<=settingsOpenedFrame||resetOpen||displayConfirmationActive||owner.displayConfirmationActive||resolutionPickerOpen||settingsHelpOpen||settingsDevicesOpen||editing&&editing.isFocused)return;
-                OpenReset();
+                return Time.frameCount>settingsOpenedFrame&&!resetOpen&&!displayConfirmationActive&&!owner.displayConfirmationActive&&!resolutionPickerOpen&&!settingsHelpOpen&&!settingsDevicesOpen&&!(editing&&editing.isFocused);
             }
+            public void ResetShortcut(){if(CanResetShortcut())OpenReset();}
             void OpenReset()
             {if(owner.displayConfirmationActive||resetOpen||resolutionPickerOpen)return;resetReturn=InMatch?Selected:EventSystem.current?.currentSelectedGameObject?.GetComponent<Selectable>();resetOpen=true;RefreshSettingsUi();ConfigureSettingsNavigation();Select(resetCancel);}
             void CloseReset()

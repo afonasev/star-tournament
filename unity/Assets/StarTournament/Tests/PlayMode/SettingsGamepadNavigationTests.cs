@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem.Layouts;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -21,6 +23,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         InputSettings.BackgroundBehavior priorCursorBackground;
         bool cursorInputCaptured;
         ProvingGround ground;
+        bool hadLastMap;string priorLastMap;
+        [SetUp]public void PreserveLastMap(){hadLastMap=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);priorLastMap=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);}
         GamepadLookSettings originalGamepad;
         float originalMouse;
         bool preferencesCaptured;
@@ -115,6 +119,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 
         [UnityTearDown] public IEnumerator Cleanup()
         {
+            if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);PlayerPrefs.Save();
             if(preferencesCaptured){GamepadLookSettings.SaveGeneral(originalGamepad);MouseSensitivityPreference.Set(ground.Profile,originalMouse);preferencesCaptured=false;}
             if(pad!=null && pad.added)InputSystem.RemoveDevice(pad);
             if(unsupported!=null && unsupported.added)InputSystem.RemoveDevice(unsupported);
@@ -128,6 +133,160 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
 
+        [UnityTest] public IEnumerator ProfilesBackReturnsToMainOnOneEastPress()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("main-action-3").onClick.Invoke();yield return null;
+            Assert.That(Button("profiles-back").gameObject.activeInHierarchy,Is.True);yield return Press(GamepadButton.East);
+            Assert.That(Button("main-action-3").gameObject.activeInHierarchy,Is.True,"East must perform the visible profiles Back action");
+            Assert.That(Focus,Is.EqualTo("main-action-0"));
+        }
+        [UnityTest] public IEnumerator HistoryBackAcceptsANewPadsFirstNonSubmitPress()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;
+            typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,pad);
+            Button("release-history-action").onClick.Invoke();yield return null;Assert.That(Button("release-history-back").gameObject.activeInHierarchy,Is.True);
+            var second=InputSystem.AddDevice<Gamepad>();try
+            {
+                InputSystem.QueueStateEvent(second,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;
+                InputSystem.QueueStateEvent(second,new GamepadState());yield return null;yield return null;
+                Assert.That(Button("release-history-action").gameObject.activeInHierarchy,Is.True,"The first East press must use the actual current pad before routing");
+                Assert.That(Focus,Is.EqualTo("release-history-action"));
+                Assert.That(typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground),Is.SameAs(second));
+            }
+            finally{if(second.added)InputSystem.RemoveDevice(second);}
+        }
+        [UnityTest] public IEnumerator BackFromSettingsOpenedOverSetupDoesNotAlsoPopSetup()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("main-action-0").onClick.Invoke();yield return null;
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            int before=(int)typeof(ProvingGround).GetField("setupStep",flags).GetValue(ground);
+            typeof(ProvingGround).GetMethod("OpenSettings",flags).Invoke(ground,new object[]{-1});yield return null;
+            yield return Press(GamepadButton.East);
+            Assert.That(Button("setup-previous").gameObject.activeInHierarchy,Is.True,"One Back must close settings without executing Setup Back again");
+            Assert.That((int)typeof(ProvingGround).GetField("setupStep",flags).GetValue(ground),Is.EqualTo(before));
+        }
+        [UnityTest] public IEnumerator HistoryScrollCapturesSmallRightStickFromANewPadBeforeRouting()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("release-history-action").onClick.Invoke();yield return null;yield return null;
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var scroll=(ScrollRect)typeof(ProvingGround).GetField("historyScroll",flags).GetValue(ground);scroll.content.sizeDelta=new Vector2(0,2400);Canvas.ForceUpdateCanvases();scroll.verticalNormalizedPosition=.5f;float before=scroll.verticalNormalizedPosition;
+            var second=InputSystem.AddDevice<Gamepad>();try
+            {
+                float raw=Mathf.Lerp(InputSystem.settings.defaultDeadzoneMin,InputSystem.settings.defaultDeadzoneMax,.2f);
+                InputSystem.QueueStateEvent(second,new GamepadState{rightStick=new Vector2(0,raw)});yield return null;yield return null;
+                Assert.That(second.rightStick.ReadValue().y,Is.GreaterThan(.15f).And.LessThan(.5f),"Fixture supplies a small processed UI scroll input, not a raw value inside deadzone");
+                InputSystem.QueueStateEvent(second,new GamepadState());yield return null;
+                Assert.That(typeof(ProvingGround).GetField("menuDevice",flags).GetValue(ground),Is.SameAs(second));
+                Assert.That(scroll.verticalNormalizedPosition,Is.GreaterThan(before),"Existing .15 scroll threshold also defines device activity");
+            }
+            finally{if(second.added)InputSystem.RemoveDevice(second);}
+        }
+        [UnityTest] public IEnumerator FamilyHintsAndBackStayBoundAcrossProfilesTextModalAndHandover()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;
+            priorCursorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorCursorBackground=InputSystem.settings.backgroundBehavior;cursorInputCaptured=true;
+            InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            var familyPads=new List<Gamepad>();var layouts=new List<string>();
+            string[] confirm={"A","×","B"},back={"B","○","A"},north={"Y","△","X"},west={"X","□","Y"},start={"Menu","Options","+"};
+            string output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BACK_HINT_QA_IMAGES");
+            try
+            {
+                InputSystem.RegisterLayout<HintXboxGamepad>();layouts.Add(nameof(HintXboxGamepad));familyPads.Add(InputSystem.AddDevice<HintXboxGamepad>());
+                InputSystem.RegisterLayout<HintDualSenseGamepad>();layouts.Add(nameof(HintDualSenseGamepad));familyPads.Add(InputSystem.AddDevice<HintDualSenseGamepad>());
+                InputSystem.RegisterLayout<HintSwitchGamepad>();layouts.Add(nameof(HintSwitchGamepad));familyPads.Add(InputSystem.AddDevice<HintSwitchGamepad>());
+                for(int i=0;i<familyPads.Count;i++)
+                {
+                    var device=familyPads[i];EventSystem.current.SetSelectedGameObject(Button("main-action-0").gameObject);
+                    InputSystem.QueueStateEvent(device,new GamepadState().WithButton(GamepadButton.West));yield return null;yield return null;InputSystem.QueueStateEvent(device,new GamepadState());yield return null;
+                    var action=Button("main-action-0").GetComponent<MenuActionHint>();Assert.That(action.GlyphLabel.enabled,Is.True);Assert.That(action.GlyphLabel.text,Is.EqualTo(confirm[i]));Assert.That(action.PlainCaption,Is.EqualTo("Битва"));
+                    if(!string.IsNullOrEmpty(output)){System.IO.Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"family-"+i+"-main-720.png"),1280,720);}
+                    Button("main-action-3").onClick.Invoke();yield return null;yield return null;
+                    var backHint=Button("profiles-back").GetComponent<MenuActionHint>();Assert.That(backHint.GlyphLabel.enabled,Is.True);Assert.That(backHint.GlyphLabel.text,Does.Contain(back[i]));
+                    if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"family-"+i+"-profiles-720.png"),1280,720);
+                    var field=ground.GetComponentsInChildren<InputField>(true).Single(x=>x.name=="profile-name-input");string original=field.text;
+                    EventSystem.current.SetSelectedGameObject(field.gameObject);yield return null;
+                    InputSystem.QueueStateEvent(device,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;InputSystem.QueueStateEvent(device,new GamepadState());yield return null;yield return null;
+                    Assert.That(Button("text-space").GetComponentInChildren<Text>().text,Is.EqualTo("Пробел · "+north[i]));Assert.That(Button("text-delete").GetComponentInChildren<Text>().text,Is.EqualTo("Удалить · "+west[i]));Assert.That(Button("text-cancel").GetComponentInChildren<Text>().text,Is.EqualTo("Отмена · "+back[i]));Assert.That(Button("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить · "+start[i]));
+                    Assert.That(backHint.GlyphLabel.enabled,Is.False,"A covered parent must not advertise the modal's Back input");
+                    if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"family-"+i+"-keyboard-720.png"),1280,720);
+                    InputSystem.QueueStateEvent(device,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;InputSystem.QueueStateEvent(device,new GamepadState());yield return null;yield return null;
+                    Assert.That(Button("profiles-back").gameObject.activeInHierarchy,Is.True,"One Back closes only text entry");Assert.That(field.text,Is.EqualTo(original));
+                    InputSystem.QueueStateEvent(device,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;InputSystem.QueueStateEvent(device,new GamepadState());yield return null;yield return null;
+                    Assert.That(Button("main-action-3").gameObject.activeInHierarchy,Is.True);
+                }
+            }
+            finally
+            {
+                foreach(var device in familyPads)if(device.added)InputSystem.RemoveDevice(device);
+                foreach(string layout in layouts)InputSystem.RemoveLayout(layout);
+            }
+        }
+        [UnityTest] public IEnumerator SettingsBackHintNamesOnlyTheActualCurrentTarget()
+        {
+            yield return Load();InputSystem.RegisterLayout<HintXboxGamepad>();InputSystem.RemoveDevice(pad);pad=InputSystem.AddDevice<HintXboxGamepad>();
+            try
+            {
+                yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.DpadUp);
+                Assert.That(Button("settings-back").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+                yield return Press(GamepadButton.DpadRight);yield return null;
+                var hint=Button("settings-back").GetComponent<MenuActionHint>();Assert.That(hint.GlyphLabel.enabled,Is.False,"Parameter Back selects navigation, not Close");
+                Assert.That(ground.GetComponentsInChildren<Text>().Single(x=>x.name=="settings-back-context").text,Is.EqualTo("B — к разделам"));
+                string output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BACK_HINT_QA_IMAGES");
+                if(!string.IsNullOrEmpty(output)){System.IO.Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"settings-parameter-back-720.png"),1280,720);}
+                yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-0"));Assert.That(Button("settings-back").gameObject.activeInHierarchy,Is.True);
+                yield return Press(GamepadButton.North);Assert.That(Focus,Is.EqualTo("settings-reset-cancel"));Assert.That(Button("settings-reset-cancel").GetComponent<MenuActionHint>().GlyphLabel.text,Does.Contain("B"));Assert.That(hint.GlyphLabel.enabled,Is.False);
+                yield return Press(GamepadButton.East);Assert.That(Button("settings-back").gameObject.activeInHierarchy,Is.True,"Reset Back must not also close settings");
+                yield return Press(GamepadButton.East);Assert.That(Button("main-action-4").gameObject.activeInHierarchy,Is.True);
+            }
+            finally{if(pad.added)InputSystem.RemoveDevice(pad);InputSystem.RemoveLayout(nameof(HintXboxGamepad));}
+        }
+        [UnityTest] public IEnumerator PersonalSetupShortcutsDoNotAdvertiseAnotherPadsCommands()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("main-action-0").onClick.Invoke();yield return null;
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var inputs=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",flags).GetValue(ground);Assert.That(inputs.Replace(0,pad),Is.True);
+            typeof(ProvingGround).GetMethod("OpenSettings",flags).Invoke(ground,new object[]{0});yield return null;
+            var foreign=InputSystem.AddDevice<Gamepad>();try
+            {
+                InputSystem.QueueStateEvent(foreign,new GamepadState().WithButton(GamepadButton.West));yield return null;yield return null;InputSystem.QueueStateEvent(foreign,new GamepadState());yield return null;
+                Assert.That(Button("settings-reset-all").GetComponentInChildren<Text>().text,Is.EqualTo("Сбросить все настройки"));
+                Assert.That(Button("settings-back").GetComponent<MenuActionHint>().ShortcutActive(),Is.False);
+                InputSystem.QueueStateEvent(foreign,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;InputSystem.QueueStateEvent(foreign,new GamepadState());yield return null;
+                Assert.That(Button("settings-back").gameObject.activeInHierarchy,Is.True,"Foreign Back cannot replace the existing assigned-device policy");
+                yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.DpadUp);Assert.That(Button("settings-back").GetComponent<MenuActionHint>().ShortcutActive(),Is.True);
+                yield return Press(GamepadButton.East);Assert.That(Button("setup-previous").gameObject.activeInHierarchy,Is.True);
+            }
+            finally{if(foreign.added)InputSystem.RemoveDevice(foreign);}
+        }
+        [UnityTest] public IEnumerator DiagnosticEscapeCanResumeWithoutReopeningPauseInTheSameFrame()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;
+            priorCursorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorCursorBackground=InputSystem.settings.backgroundBehavior;cursorInputCaptured=true;
+            InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            Button("Диагностика четырёх камер · без управления").onClick.Invoke();yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
+            var keyboard=InputSystem.AddDevice<Keyboard>();try
+            {
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Escape));yield return null;yield return null;InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;Assert.That(ground.Running,Is.False);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Escape));yield return null;yield return null;InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+                Assert.That(ground.Running,Is.True,"A consumed Back press cannot immediately reopen diagnostic pause");
+            }
+            finally{if(keyboard.added)InputSystem.RemoveDevice(keyboard);}
+        }
+        [UnityTest] public IEnumerator ProfilesEscapeFirstEndsKeyboardEditingThenNavigatesBack()
+        {
+            yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("main-action-3").onClick.Invoke();yield return null;
+            priorCursorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorCursorBackground=InputSystem.settings.backgroundBehavior;cursorInputCaptured=true;
+            InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            var field=ground.GetComponentsInChildren<InputField>(true).Single(x=>x.name=="profile-name-input");EventSystem.current.SetSelectedGameObject(field.gameObject);field.ActivateInputField();yield return null;yield return null;Assert.That(field.isFocused,Is.True);
+            var keyboard=InputSystem.AddDevice<Keyboard>();try
+            {
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Escape));yield return null;yield return null;InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+                Assert.That(Button("profiles-back").gameObject.activeInHierarchy,Is.True);Assert.That(field.isFocused,Is.False);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Escape));yield return null;yield return null;InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+                Assert.That(Button("main-action-3").gameObject.activeInHierarchy,Is.True);
+            }
+            finally{if(keyboard.added)InputSystem.RemoveDevice(keyboard);}
+        }
         [UnityTest] public IEnumerator FocusHintsFollowPadKeyboardMouseAndDisabledActionsWithoutChangingCaptions()
         {
             yield return Load();priorCursorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorCursorBackground=InputSystem.settings.backgroundBehavior;cursorInputCaptured=true;
@@ -317,7 +476,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.East);yield return Press(GamepadButton.East);
             Assert.That(Focus,Is.EqualTo("settings-section-1"));yield return Press(GamepadButton.East);
             Assert.That(Focus,Is.EqualTo("fallback-settings"));Assert.That(ground.Running,Is.False);
-            Button("Продолжить").onClick.Invoke();yield return new WaitForFixedUpdate();yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
+            Assert.That(Button("Продолжить").GetComponent<MenuActionHint>().GlyphLabel.text,Does.Contain("Правая"));
+            yield return Press(GamepadButton.East);yield return new WaitForFixedUpdate();yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
         }
         [UnityTest] public IEnumerator DevicePageShowsSupportedAndUnsupportedControllers()
         {
@@ -464,4 +624,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
         }
     }
+    [InputControlLayout(displayName="Virtual Xbox hint fixture")]public sealed class HintXboxGamepad : Gamepad { }
+    [InputControlLayout(displayName="Virtual DualSense hint fixture")]public sealed class HintDualSenseGamepad : Gamepad { }
+    [InputControlLayout(displayName="Virtual Switch hint fixture")]public sealed class HintSwitchGamepad : Gamepad { }
+
 }

@@ -299,13 +299,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Button("pause-action-0-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);Assert.That(Button("pause-action-1-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
             string hintImages=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_FOCUS_HINT_QA_IMAGES");
             if(!string.IsNullOrEmpty(hintImages)){System.IO.Directory.CreateDirectory(hintImages);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(hintImages,"two-seat-focused-pad-720.png"),1280,720);}
-            yield return Press(0,GamepadButton.DpadDown);Assert.That(Button("pause-action-0-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False);Assert.That(Button("pause-action-0-1").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);Assert.That(Button("pause-action-1-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            yield return Press(0,GamepadButton.DpadDown);Assert.That(Button("pause-action-0-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);Assert.That(Button("pause-action-0-0").GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Правая"),"Unfocused Resume may advertise its actual Back shortcut, never South");Assert.That(Button("pause-action-0-1").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);Assert.That(Button("pause-action-1-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
             yield return Press(0,GamepadButton.South);
             Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
             Assert.That(Object("pause-action-1-0").activeInHierarchy,Is.True);
             yield return Press(1,GamepadButton.DpadDown);yield return Press(1,GamepadButton.DpadDown);
             yield return Press(1,GamepadButton.South);
             Assert.That(Object("pause-repeat-yes-1").activeInHierarchy,Is.True);
+            Assert.That(Button("pause-repeat-no-1").GetComponent<MenuActionHint>().GlyphLabel.text,Does.Contain("Правая"));
+            Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
+            yield return Press(1,GamepadButton.East);Assert.That(Button("pause-action-1-2").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True,"Cancel returns to its initiating action");
+            yield return Press(1,GamepadButton.DpadDown);yield return Press(1,GamepadButton.South);Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
+            yield return Press(1,GamepadButton.East);Assert.That(Button("pause-action-1-3").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
             Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
             Assert.That(ground.Running,Is.False);
         }

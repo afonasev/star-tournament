@@ -39,6 +39,18 @@ namespace StarTournament.ProvingGround.Tests
             hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False,"A value beginning inside the action consumes its real right-side space");
             caption.rectTransform.anchorMin=Vector2.zero;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(caption.text,Is.EqualTo("1234"));
         }
+        [Test]public void ExplicitShortcutAppearsOnlyForTheActualAvailableRoute()
+        {
+            bool route=true;hint.Shortcut=MenuPadButton.East;hint.ShortcutActive=()=>route;focused=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo("Правая"));
+            route=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);focused=true;hint.Refresh();Assert.That(hint.GlyphLabel.text,Is.EqualTo("Нижняя"));
+            route=true;hint.Refresh();Assert.That(hint.GlyphLabel.text,Is.EqualTo("Нижняя / Правая"));button.interactable=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);
+        }
+        [Test]public void ReservedDecorationSpaceProtectsInstalledBadgeOrDropdownArrow()
+        {
+            caption.alignment=TextAnchor.MiddleLeft;caption.text="Версия";caption.rectTransform.anchorMin=Vector2.zero;caption.rectTransform.anchorMax=Vector2.one;caption.rectTransform.offsetMin=caption.rectTransform.offsetMax=Vector2.zero;
+            hint.ReservedRightInset=()=>250;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.rectTransform.offsetMax.x,Is.EqualTo(-250));
+            hint.ReservedRightInset=()=>790;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);Assert.That(caption.text,Is.EqualTo("Версия"));
+        }
         [Test]public void ContextSpecificFocusDoesNotDependOnASingleGlobalSelection()
         {
             var second=Object.Instantiate(root);try

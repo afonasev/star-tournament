@@ -1,0 +1,13 @@
+{
+  "baseline": "76b9e43d",
+  "runtime": "unchanged",
+  "test_sha256": "eb396050fc53d375701cfcfd47d619719e2a874c191672aa1e56e10bdb3156db",
+  "runner_exit": 2,
+  "total": 2,
+  "failed": 2,
+  "reasons": [
+    "Profiles East does not return to Main",
+    "History first East from another pad is lost before device identity capture"
+  ],
+  "mode": "shared Editor -nographics -noaudio -muted; actual UI/input body assertions"
+}

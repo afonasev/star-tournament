@@ -91,6 +91,27 @@ namespace StarTournament.ProvingGround
                 if(submit&&Selected.IsInteractable())
                 {if(Selected is Button button)button.onClick.Invoke();else if(Selected is Toggle toggle)toggle.isOn=!toggle.isOn;owner.gameAudio?.MenuConfirm();}
             }
+            bool CanHintAssignedShortcut()=>InMatch||Seat<0||owner.menuDevice==owner.input.DeviceAt(Seat);
+            bool BackIsClose()
+            {
+                var current=InMatch?Selected:EventSystem.current?EventSystem.current.currentSelectedGameObject?.GetComponent<Selectable>():null;
+                return current==settingsBackButton||Array.IndexOf(settingsSectionButtons,current)>=0;
+            }
+            Button BackActionTarget()
+            {
+                if(resetOpen)return resetCancel;
+                if(displayConfirmationActive)return settingsRevertButton;
+                if(resolutionPickerOpen)return resolutionCancelButton;
+                if(settingsHelpOpen)return settingsHelpBack;
+                if(settingsDevicesOpen)return settingsDevicesBack;
+                return BackIsClose()?settingsBackButton:null;
+            }
+            string BackContextCaption()
+            {
+                var device=InMatch?owner.input.DeviceAt(Seat):owner.menuDevice;
+                if(!CanHintAssignedShortcut()||!(device is Gamepad)||!device.added||!device.enabled||!owner.menuGamepadCursor||!owner.menuWindowFocused||owner.textEntryPanel||owner.textClosing||BackActionTarget()!=null||!string.IsNullOrEmpty(settingsWriteError.text))return "";
+                return MenuGamepadHints.Glyph(MenuGamepadHints.Family(device.layout,device.description.product),MenuPadButton.East)+" — к разделам";
+            }
             public void Back()
             {
                 owner.gameAudio?.MenuBack();
@@ -101,10 +122,7 @@ namespace StarTournament.ProvingGround
                 else if(settingsDevicesOpen)SetDevices(false);
                 else
                 {
-                    var current=InMatch?Selected:EventSystem.current?EventSystem.current.currentSelectedGameObject?.GetComponent<Selectable>():null;
-                    bool inNavigation=current==settingsBackButton;
-                    foreach(var button in settingsSectionButtons)inNavigation|=current==button;
-                    if(inNavigation)Close();else Select(settingsSectionButtons[(int)settingsSection]);
+                    if(BackIsClose())Close();else Select(settingsSectionButtons[(int)settingsSection]);
                 }
             }
             public void FinishDisplay()
@@ -122,7 +140,7 @@ namespace StarTournament.ProvingGround
                 hint.Initialize(control,()=>InMatch?owner.input.DeviceAt(Seat):owner.menuDevice,()=>owner.menuGamepadCursor&&owner.menuWindowFocused,()=>InMatch?Selected==control:EventSystem.current&&EventSystem.current.currentSelectedGameObject==control.gameObject);
             }
             Button MenuButton(Transform p,string n,string t,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action)
-            {var button=owner.MenuButton(p,n,t,min,max,action);BindSettingsHint(button);return button;}
+            {var button=owner.MenuButton(p,n,t,min,max,action);BindSettingsHint(button);owner.BindMenuShortcut(button,MenuPadButton.East,()=>CanHintAssignedShortcut()&&BackActionTarget()==button);return button;}
             Slider NumericSetting(Transform p,string n,string t,Vector2 min,Vector2 max,NumericDescriptor d,UnityEngine.Events.UnityAction<float> action)=>owner.NumericSetting(p,n,t,min,max,d,v=>SaveStandard(()=>action(v)));
             Toggle BooleanSetting(Transform p,string n,string t,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction<bool> action)
             {var toggle=owner.BooleanSetting(p,n,t,min,max,v=>SaveStandard(()=>action(v)));BindSettingsHint(toggle);return toggle;}

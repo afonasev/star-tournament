@@ -514,7 +514,10 @@ namespace StarTournament.ProvingGround
         {
             if(phase==Phase.Loading)return;
             if(UpdateTextEntry()){UpdateMenuCursor();UpdateTextEntryCursor();UpdateMenuSelectionAudio();TickGameMusic();return;}
+            var phaseAtInput=phase;
+            UpdateMenuCursor();
             TickDisplayConfirmation();
+            UpdateShellBackInput();
             UpdateSettingsBackInput();
             UpdateReleaseHistory();
             UpdateRosterInput();
@@ -545,9 +548,9 @@ namespace StarTournament.ProvingGround
             }
             else if(phase==Phase.Paused && UseSeatPauseMenus)UpdateSeatPauseInput();
             UpdateDesignLab();
-            if (diagnostic && phase==Phase.Running && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
+            if (diagnostic && phase==Phase.Running && menuBackConsumedFrame!=Time.frameCount && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Pause("Диагностическая пауза");
             RefreshInterface();
-            UpdateMenuCursor();
+            if(phase!=phaseAtInput)UpdateMenuCursor();
             UpdateMenuSelectionAudio();
             TickGameMusic();
         }
@@ -963,7 +966,7 @@ namespace StarTournament.ProvingGround
             foreach(var pad in Gamepad.all)
             {
                 if(!pad.enabled)continue;
-                bool activity=pad.leftStick.ReadValue().sqrMagnitude>=.25f||pad.dpad.ReadValue()!=Vector2.zero;
+                bool activity=pad.leftStick.ReadValue().sqrMagnitude>=.25f||pad.dpad.ReadValue()!=Vector2.zero||Mathf.Abs(pad.rightStick.ReadValue().y)>MenuHistoryScrollDeadzone;
                 foreach(var control in pad.allControls)
                     if(control is UnityEngine.InputSystem.Controls.ButtonControl button&&button.wasPressedThisFrame)activity=true;
                 if(activity){menuGamepadCursor=true;menuDevice=pad;}
@@ -1143,6 +1146,7 @@ namespace StarTournament.ProvingGround
             var teamLayout=teamRow.GetComponent<HorizontalLayoutGroup>();teamLayout.childControlWidth=teamLayout.childControlHeight=true;teamLayout.childForceExpandWidth=teamLayout.childForceExpandHeight=true;
             for(int i=0;i<teamButtons.Length;i++) { int seat=i;teamButtons[i]=ButtonElement(teamRow.transform,"Команда P"+(i+1),()=>SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA));teamButtons[i].gameObject.name="team-seat-"+i; }
             resume=ButtonElement(column.transform,"Продолжить",Resume);
+            BindMenuShortcut(resume,MenuPadButton.East,()=>phase==Phase.Paused&&!UseSeatPauseMenus&&FocusAllowsResume);
             fallbackSettings=ButtonElement(column.transform,"Настройки",()=>OpenSettings(-1));operatorSettingsButton=fallbackSettings;
             fallbackSettings.gameObject.name="fallback-settings";
             repeat=ButtonElement(column.transform,"Повторить матч",Repeat);

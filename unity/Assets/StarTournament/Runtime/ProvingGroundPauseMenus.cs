@@ -94,6 +94,7 @@ namespace StarTournament.ProvingGround
                 ()=>RunSeatPauseAction(seat,0),seat,0);
             no=PauseButton(page.transform,"pause-"+name+"-no-"+seat,"Отмена",new Vector2(.08f,.07f),new Vector2(.92f,.21f),
                 ()=>RunSeatPauseAction(seat,1),seat,1);
+            BindMenuShortcut(no,MenuPadButton.East,()=>seatPausePages[seat]==SeatPausePage.ConfirmRepeat||seatPausePages[seat]==SeatPausePage.ConfirmExit);
             return page;
         }
 
@@ -101,6 +102,7 @@ namespace StarTournament.ProvingGround
         {
             var button=MenuButton(parent,name,value,min,max,action);
             button.GetComponent<MenuActionHint>().Initialize(button,()=>input.DeviceAt(seat),()=>menuGamepadCursor&&menuWindowFocused,()=>seatPauseCursor[seat]==index);
+            if(index==0)BindMenuShortcut(button,MenuPadButton.East,()=>seatPausePages[seat]==SeatPausePage.Actions&&button==seatPauseActionButtons[seat,0]&&FocusAllowsResume);
             button.transition=Selectable.Transition.None;
             var trigger=button.GetComponent<EventTrigger>()??button.gameObject.AddComponent<EventTrigger>();
             var entry=new EventTrigger.Entry { eventID=EventTriggerType.PointerEnter };
@@ -199,7 +201,7 @@ namespace StarTournament.ProvingGround
         void BackSeatPause(int seat)
         {
             if(seatPausePages[seat]==SeatPausePage.Actions)CloseSeatPause(seat);
-            else {seatPausePages[seat]=SeatPausePage.Actions;seatPauseCursor[seat]=1;RefreshSeatPauseUi();}
+            else {var previous=seatPausePages[seat];seatPausePages[seat]=SeatPausePage.Actions;seatPauseCursor[seat]=previous==SeatPausePage.ConfirmRepeat?2:previous==SeatPausePage.ConfirmExit?3:1;RefreshSeatPauseUi();}
         }
 
         void CloseSeatPause(int seat)
@@ -244,11 +246,11 @@ namespace StarTournament.ProvingGround
                         if(!input.Ready)return;
                         ClearSeatPauseMenus();Repeat();RefreshInterface();
                     }
-                    else SetSeatPausePage(seat,SeatPausePage.Actions);
+                    else BackSeatPause(seat);
                     break;
                 case SeatPausePage.ConfirmExit:
                     if(item==0){ClearSeatPauseMenus();ToMainMenu();}
-                    else SetSeatPausePage(seat,SeatPausePage.Actions);
+                    else BackSeatPause(seat);
                     break;
             }
             RefreshSeatPauseUi();

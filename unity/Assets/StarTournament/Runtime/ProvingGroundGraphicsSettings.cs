@@ -88,9 +88,7 @@ namespace StarTournament.ProvingGround
         void UpdateSettingsBackInput()
         {
             if(phase!=Phase.Settings)return;
-            bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
-            if(settingsSeat>=0){if(input.DeviceAt(settingsSeat) is Gamepad pad)back|=pad.buttonEast.wasPressedThisFrame;}
-            else foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
+            bool back=TryTakeMenuBack(input.DeviceAt(settingsSeat) as Gamepad,settingsSeat>=0);
             if(back){settingsView.Back();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;}
             else if(settingsSeat>=0){if(input.DeviceAt(settingsSeat) is Gamepad assigned&&assigned.buttonNorth.wasPressedThisFrame)settingsView.ResetShortcut();}
             else foreach(var pad in Gamepad.all)if(pad.buttonNorth.wasPressedThisFrame){settingsView.ResetShortcut();break;}

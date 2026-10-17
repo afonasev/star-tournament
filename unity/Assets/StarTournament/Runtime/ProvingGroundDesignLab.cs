@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
         DesignLabHistory labHistory; LabBundle labDraft,labBaseline;
         ScrollRect labTreeScroll,labFieldsScroll; Transform labTree,labFields;
         Text labIdentity,labStatus,labHint,labFieldsTitle,labReleaseReason,labDefaultSource; Button labSave,labDelete,labBack,labProfileSelector,labRevisionSelector,labRelease,labCreate,labRename,labResetRelease;
-        InputField labSearch; GameObject labDialog; string labGroup="rifle",labQuery="",labError;
+        InputField labSearch; Button labCancelAction; GameObject labDialog; string labGroup="rifle",labQuery="",labError;
         GameObject labDialogReturn; readonly Dictionary<Selectable,bool> labDialogControls=new Dictionary<Selectable,bool>();
         bool labAllChanges; readonly Dictionary<string,string> labRaw=new Dictionary<string,string>();
         readonly Dictionary<string,LabFieldView> labViews=new Dictionary<string,LabFieldView>();
@@ -233,6 +233,11 @@ namespace StarTournament.ProvingGround
             var button=MenuButton(parent,name,text,min,max,action);
             button.GetComponentInChildren<Text>().fontSize=16;return button;
         }
+        Button LabCancelButton(Transform parent,string name,string value,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action)
+        {
+            var button=LabButton(parent,name,value,min,max,action);labCancelAction=button;
+            BindMenuShortcut(button,MenuPadButton.East,()=>phase==Phase.Lab&&labDialog&&button.transform.IsChildOf(labDialog.transform));return button;
+        }
         InputField LabInput(Transform parent,string name,string text,Vector2 min,Vector2 max)
         {
             var panel=Panel(parent,name,min,max,new Color32(35,51,68,255));var input=panel.AddComponent<InputField>();
@@ -251,6 +256,7 @@ namespace StarTournament.ProvingGround
         {
             labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
             labBack=LabButton(labScreen.transform,"lab-back","‹ НАЗАД",new Vector2(.04f,.845f),new Vector2(.15f,.90f),ToMainMenu);
+            BindMenuShortcut(labBack,MenuPadButton.East,()=>phase==Phase.Lab&&labDialog==null&&(!authorHistoryFailure||!authorHistoryFailure.activeSelf));
             Label(labScreen.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",21,new Vector2(.17f,.845f),new Vector2(.70f,.90f),TextAnchor.MiddleLeft,MenuGold);
             var clear=LabButton(labScreen.transform,"lab-clear","Сбросить правки",new Vector2(.806f,.115f),new Vector2(.96f,.169f),()=>GuardLabSelection(()=>{ResetLabDraft();RefreshLabWorkspace();}));
             labSave=LabButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.379f,.715f),new Vector2(.504f,.772f),()=>LabOperation(()=>labHistory.Save(labDraft),true));
@@ -300,6 +306,7 @@ namespace StarTournament.ProvingGround
             var layout=content.gameObject.AddComponent<VerticalLayoutGroup>();layout.childControlHeight=true;layout.childForceExpandHeight=false;layout.childControlWidth=true;layout.childForceExpandWidth=true;
             authorHistoryFailureSession=Label(card.transform,"author-history-session","",26,new Vector2(.025f,.22f),new Vector2(.975f,.34f),TextAnchor.MiddleLeft,Color.white);
             authorHistoryBack=LabButton(card.transform,"author-history-back","Назад",new Vector2(.025f,.06f),new Vector2(.29f,.18f),ToMainMenu);
+            BindMenuShortcut(authorHistoryBack,MenuPadButton.East,()=>phase==Phase.Lab&&labDialog==null&&authorHistoryFailure.activeSelf);
             authorHistoryDefault=LabButton(card.transform,"author-history-default","Использовать Default из поставки",new Vector2(.32f,.06f),new Vector2(.975f,.18f),UsePackagedLabForSession);
             foreach(var button in new[]{authorHistoryBack,authorHistoryDefault})
             {button.GetComponentInChildren<Text>().fontSize=26;button.gameObject.AddComponent<LabErrorScrollNavigation>().Scroll=scroll;}
@@ -468,7 +475,7 @@ namespace StarTournament.ProvingGround
         {
             if(labHistory.Busy)yield break;
             var card=LabDialog("Выбор ревизии…");
-            var cancel=LabButton(card,"cancel","Назад",new Vector2(.70f,.10f),new Vector2(.95f,.185f),CloseLabDialog);
+            var cancel=LabCancelButton(card,"cancel","Назад",new Vector2(.70f,.10f),new Vector2(.95f,.185f),CloseLabDialog);
             cancel.interactable=false;
             Task operation=labHistory.SelectAsync(profile,revision);
             while(!operation.IsCompleted)yield return null;
@@ -503,7 +510,7 @@ namespace StarTournament.ProvingGround
         {
             if(labHistory!=null&&labHistory.Busy)return;
             if(labDialog==null&&labDialogControls.Count==0)return;
-            if(labDialog!=null){labDialog.SetActive(false);Destroy(labDialog);labDialog=null;}
+            if(labDialog!=null){labDialog.SetActive(false);Destroy(labDialog);labDialog=null;}labCancelAction=null;
             foreach(var pair in labDialogControls)if(pair.Key)pair.Key.interactable=pair.Value;labDialogControls.Clear();
             if(EventSystem.current&&labDialogReturn&&labDialogReturn.activeInHierarchy)EventSystem.current.SetSelectedGameObject(labDialogReturn);else Select(labBack);labDialogReturn=null;if(labDraft!=null)RefreshLabValues();
         }
@@ -517,7 +524,7 @@ namespace StarTournament.ProvingGround
             Label(card.transform,"title",title,20,new Vector2(.05f,.76f),new Vector2(.95f,.96f),TextAnchor.MiddleLeft,MenuGold);return card.transform;
         }
         void LabConfirm(string title,string confirm,Action action)
-        {var card=LabDialog(title);var cancel=LabButton(card,"cancel","Продолжить редактирование",new Vector2(.05f,.10f),new Vector2(.55f,.185f),CloseLabDialog);LabButton(card,"confirm",confirm,new Vector2(.60f,.10f),new Vector2(.95f,.185f),()=>action());Select(cancel);}
+        {var card=LabDialog(title);var cancel=LabCancelButton(card,"cancel","Продолжить редактирование",new Vector2(.05f,.10f),new Vector2(.55f,.185f),CloseLabDialog);LabButton(card,"confirm",confirm,new Vector2(.60f,.10f),new Vector2(.95f,.185f),()=>action());Select(cancel);}
         void ConfirmLabDiscard(Action next)
         {
             var card=LabDialog("Отбросить несохранённые изменения?");
@@ -544,7 +551,7 @@ namespace StarTournament.ProvingGround
             ((RectTransform)list).sizeDelta=new Vector2(0,index*76);scroll.verticalNormalizedPosition=1;
             Label(card,"discard-consequences","Несохранённые изменения будут потеряны.",17,
                 new Vector2(.04f,.20f),new Vector2(.96f,.28f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-            var cancel=LabButton(card,"cancel","Продолжить редактирование",new Vector2(.04f,.07f),new Vector2(.52f,.17f),CloseLabDialog);
+            var cancel=LabCancelButton(card,"cancel","Продолжить редактирование",new Vector2(.04f,.07f),new Vector2(.52f,.17f),CloseLabDialog);
             cancel.GetComponentInChildren<Text>().fontSize=20;
             var confirm=LabButton(card,"confirm","Отбросить и продолжить",new Vector2(.54f,.07f),new Vector2(.96f,.17f),()=>{ResetLabDraft();CloseLabDialog();next();});
             confirm.GetComponentInChildren<Text>().fontSize=20;
@@ -555,7 +562,7 @@ namespace StarTournament.ProvingGround
         {
             var issues=LabIssues();var card=LabDialog(issues.Count==0?"Нет ошибок":"Ошибки черновика");var scroll=LabScroll(card,"error-options",new Vector2(.05f,.17f),new Vector2(.95f,.75f),out var list);int i=0;
             foreach(var issue in issues){string path=issue.Path;var b=LabButton(list,"error-"+path,path+" · "+issue.Message,Vector2.zero,Vector2.one,()=>{CloseLabDialog();labQuery=path;labAllChanges=false;labSearch.SetTextWithoutNotify(path);RefreshLabWorkspace();if(labViews.TryGetValue(path,out var field))SelectLabControl(field.Focus);});PlaceLabRow((RectTransform)b.transform,i++,50);b.GetComponentInChildren<Text>().fontSize=16;}
-            ((RectTransform)list).sizeDelta=new Vector2(0,i*50);var cancel=LabButton(card,"cancel","Назад",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);Select(cancel);
+            ((RectTransform)list).sizeDelta=new Vector2(0,i*50);var cancel=LabCancelButton(card,"cancel","Назад",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);Select(cancel);
         }
         Transform LabDropdown(Button source)
         {
@@ -577,7 +584,7 @@ namespace StarTournament.ProvingGround
                 });
                 PlaceLabRow((RectTransform)b.transform,i++,LabOptionRowHeight);first=first??b;
             }
-            ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
+            ((RectTransform)list).sizeDelta=new Vector2(0,i*LabOptionRowHeight);LabCancelButton(card,"cancel","Отмена",new Vector2(.70f,.06f),new Vector2(.95f,.145f),CloseLabDialog);if(first!=null)Select(first);
         }
         void ShowLabRevisions()=>InspectLabRevision(labHistory.Selected.Number,true);
         void InspectLabRevision(int number,bool focusList=false,string profileId=null)
@@ -627,7 +634,7 @@ namespace StarTournament.ProvingGround
             var choose=LabButton(detail,"revision-select","Выбрать",new Vector2(.04f,.01f),new Vector2(.96f,.12f),()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(profileId,number))));
             choose.interactable=compatible;
             Label(card,"revision-active","Для следующей игры: "+labActiveLabel,20,new Vector2(.03f,.035f),new Vector2(.69f,.12f),TextAnchor.MiddleLeft,Color.white);
-            var close=LabButton(card,"cancel","Закрыть",new Vector2(.72f,.035f),new Vector2(.97f,.12f),CloseLabDialog);
+            var close=LabCancelButton(card,"cancel","Закрыть",new Vector2(.72f,.035f),new Vector2(.97f,.12f),CloseLabDialog);
             close.GetComponentInChildren<Text>().fontSize=20;choose.GetComponentInChildren<Text>().fontSize=22;
             if(focusList&&inspected)SelectLabControl(inspected);else Select(close);
             if(inspected)inspected.GetComponent<MenuScrollFocus>().Reveal();
@@ -646,15 +653,17 @@ namespace StarTournament.ProvingGround
             }
             var name=LabInput(card,"lab-profile-name",rename?labHistory.SelectedProfileName:"Новый профиль",new Vector2(.05f,rename?.52f:.36f),new Vector2(.95f,rename?.605f:.47f));
             var submit=LabButton(card,"submit",rename?"Переименовать":"Создать",new Vector2(rename?.60f:.55f,rename?.15f:.06f),new Vector2(.95f,rename?.235f:.16f),()=>{string value=name.text;if(rename)LabOperation(()=>labHistory.Rename(value),false,false);else GuardLabSelection(()=>LabOperation(()=>labHistory.Create(value),true));});
-            var cancel=LabButton(card,"cancel","Отмена",new Vector2(.05f,rename?.15f:.06f),new Vector2(rename?.55f:.45f,rename?.235f:.16f),CloseLabDialog);
+            var cancel=LabCancelButton(card,"cancel","Отмена",new Vector2(.05f,rename?.15f:.06f),new Vector2(rename?.55f:.45f,rename?.235f:.16f),CloseLabDialog);
             if(!rename){name.textComponent.fontSize=26;submit.GetComponentInChildren<Text>().fontSize=26;cancel.GetComponentInChildren<Text>().fontSize=26;}
             SelectLabControl(name);
         }
         void UpdateDesignLab()
         {
-            if(phase!=Phase.Lab||labHistory?.Busy==true)return;bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
-            foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
-            if(back){if(labDialog!=null)CloseLabDialog();else ToMainMenu();}
+            if(phase!=Phase.Lab||labHistory?.Busy==true||!TryTakeMenuBack())return;
+            if(labDialog!=null)
+            {if(labCancelAction&&labCancelAction.IsInteractable())labCancelAction.onClick.Invoke();else CloseLabDialog();}
+            else if(authorHistoryFailure.activeSelf)authorHistoryBack.onClick.Invoke();
+            else labBack.onClick.Invoke();
         }
     }
     sealed class LabErrorScrollNavigation : MonoBehaviour, IMoveHandler
