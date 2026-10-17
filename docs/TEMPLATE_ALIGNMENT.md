@@ -17,7 +17,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | MENU-ACTIONS-02 | МакетQ5: duplicate/state operations20–25; особая greatest-marked Default route описана, не удаляется как обычный latest selector. |
 | MENU-ACTIONS-03 | МакетQ5: boolean Off/On отдельные кнопки ещё нарушают single-toggle; release source flag уже исправлен без нового UI. |
 | MENU-INPUT-01 | Код/QA: InputSystem/UI navigation, SettingsGamepadNavigationTests, NativeMenuPresentation keyboard/NativeTextEntry grid; physical devices pending. |
-| MENU-INPUT-02 | Проверить/разрыв: text keyboard/reset умеют family glyphs, но generic Back содержит постоянный B. Нужна общая binding схема по позиции, не Xbox для всех. |
+| MENU-INPUT-02 | МакетQ8: text keyboard/reset умеют family glyphs, generic Back содержит постоянный B. Device-aware макет29 показан; до ответа runtime UI не менять. |
 | MENU-INPUT-03 | Код/QA: top modal/field/seat ownership, input clear/frozen pause; NativeTextEntry/LabDiscard/IndependentPause tests. |
 | MENU-INPUT-04 | Код/QA: opening frames/wasPressed/async Busy/UpdateSession operation guards; held submit and match drain проверены. |
 | MENU-INPUT-05 | Код/QA: NativeTextEntry draft/grid/keyboard handover/reconnect/cancel, поля защищены от outer navigation; approved15. |
@@ -26,9 +26,9 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | MENU-FOCUS-03 | Код/QA: MenuScrollFocus reveal + history resize/long descriptions + settings split-view fixtures. |
 | MENU-DEVICE-01 | Код/QA: real input/drift gating, shared focus, NativeTextEntry handover; standard-menu-contracts5 focused cases. |
 | MENU-DEVICE-02 | Код/QA: новый window focus guard в menu и text-entry cursor owners;5 actual PlayMode cases, visible/unlocked background. Native focus event still device gate. |
-| MENU-HINTS-01 | Разрыв: main «controls» и release-history-controls постоянно показывают keyboard/mouse/pad legend. Нужен approved conditional pad-only view. |
-| MENU-HINTS-02 | Разрыв: general legend вместо явной привязки к действиям; focused bottom confirm и Back должны иметь device-aware glyphs. |
-| MENU-HINTS-03 | Разрыв: fixed A/B/PgUp/Esc в history/Main; text-entry/reset partly correct. Правка нового визуального направления ждёт preview. |
+| MENU-HINTS-01 | МакетQ8: main controls и release-history-controls постоянно показывают keyboard/mouse/pad legend; макет29 показан и ожидает решения. |
+| MENU-HINTS-02 | МакетQ8: general legend вместо привязки к действиям; focused confirm/Back proposal29 ожидает решения. |
+| MENU-HINTS-03 | МакетQ8: fixed A/B/PgUp/Esc в history/Main; text-entry/reset partly correct. Direction29 показан, runtime до ответа не менять. |
 | MENU-LAYOUT-01 | Код/QA частично: approved A/03–19, top Back и modal consistent внутри контекстов; Q5/Q6/Q7 меняют ещё не принятые состояния. |
 | MENU-LAYOUT-02 | Код/QA: fixed screens + internal scrolls for fields/history/settings; headers/actions outside scroll. |
 | MENU-LAYOUT-03 | Код/QA частично: saved actual1080p/720p/short/split captures; physicalTV/все устройства и новые20–28 pending. |
@@ -116,16 +116,16 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | UPDATES-CHANGELOG-01 | Код/QA: Git-derived paired reviewed notes/generator before packaging; standard-release-changelog20+16 targeted Python tests. Actual next release notes not generated without publication command. |
 | UPDATES-TRUST-01 | Код/QA: RSA-PSS admission, pinned identity/channel/asset/version/size/hash, HTTPS bounded redirects, activation reverification; native chain pending. |
 | UPDATES-INSTALL-01 | Платформа: payload snapshots/durable journal/root transaction/restore portable fixtures, Windows registry callbacks compiled; installed crash/UAC/ACL not executed. |
-| UPDATES-INSTALL-02 | **Разрыв перехода**: текущий schema2-only issuer/старые schema1 readers требуют ручной installer; это не соответствует seamless routine update и не принято исключением. Реальные0.1.5/test.1 source подтверждены. Modern/legacy endpoint routing source готов, bootstrap issuer/automatic Windows broker1→2/legacy recovery ещё OPEN. Normal quit/restart/supervisor source остаётся; native installed acceptance pending. |
+| UPDATES-INSTALL-02 | **Разрыв legacy перехода**: modern/legacy endpoint routing, подписанный Windows component producer/startup adapter и recoverable full-payload apply source реализованы; это не ретроактивное исправление установленной0.1.5/test.1. First bootstrap issuer/publication, старые native handoff/argv/6arg activation/old Player health и native acceptance OPEN. Child compatibility Q1 спрашивает о разовом installer exception; ответа нет, исходное требование автоматического перехода сохранено. |
 | UPDATES-DATA-01 | Платформа: versioned user data preserves actual v0.1.2 namespaces and failed-write paths; installed previous→candidate→failed startup→previous not executed. |
-| UPDATES-RECOVERY-01 | Платформа: payload/health/journal/observer/backup transfer source wired; exact Player startup/restore on native installations pending. |
-| UPDATES-ARGS-01 | Платформа: source forwarding and -muted/-noaudio contracts, stable entry/supervisor arguments; real native restart acceptance pending. |
+| UPDATES-RECOVERY-01 | Платформа + source: owned WindowsFullPayload apply не вызывает kill-root native updater; protected rollback сохраняет новый broker/reader2. Cleanup двух транзакций проверена161 affected contracts/8 child exits (rollback-component/). First legacy transition и actual installed menu-ready/restore не доказаны. |
+| UPDATES-ARGS-01 | Платформа + legacy разрыв: текущие normal launcher/supervisor сохраняют argv/-muted/-noaudio; native installed restart acceptance pending. Старый0.1.5 передаёт argv normal supervisor, native apply запускает --norestart и может завершить supervisor. Optional rotating native-stub log не является гарантией восстановления (legacy-handoff/). |
 | UPDATES-RELEASE-01 | Код/QA + публикация отдельно: complete signed release metadata/assets/immutable source custody and exact body readback; no release generated/published in this work. |
 | UPDATES-QA-01 | Политика соблюдена: affected/reused/native NotRun separate; no full/Player/build/deploy inferred from standard. |
 
 ## Installer — 17 требований
 
-Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installation/NSIS. **Разрыв с platforms.md: требуется DMG с переносом в Applications, а package.py/publisher требуют PKG.** Новый DMG workflow сначала требует saved preview; упаковка/публикация отдельно. Intel Mac/universal compilation не является заявлением acceptance для Intel. Browser installer не поставляется. Test unsigned delivery explicitly documented; signed update trust remains mandatory.
+Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installation/NSIS. **Разрыв с platforms.md: требуется DMG с переносом в Applications, а package.py/publisher требуют PKG.** DMG preview30 уже показан, Q9 ожидает ответа; runtime/packaging по новому направлению до ответа не менять, build/publication отдельно. Intel Mac/universal compilation не является заявлением acceptance для Intel. Browser installer не поставляется. Test unsigned delivery explicitly documented; signed update trust remains mandatory.
 
 | ID | Состояние и основание / граница |
 | --- | --- |
@@ -157,7 +157,7 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 - `settings/options.md`: все30 option IDs перечислены. Quality применима; source consumers/макет31 подтверждены, Q10/runtime/QA OPEN.
 - `design-lab/parameter-catalog.md`:9 metadata columns, grouping/search/diff/consumer boundary сопоставлены с actual638 registry/inventory и Lab matrix; примеры новых полей не являются требованиями их добавить.
 - `installer/platforms.md`: PKG≠DMG остаётся Q9/open; source OS/target policy реализована, macOS first-install/native checks не закрыты.
-- `updates/release-format.md`: signature/identity/version/channel/asset/size/hash/body code есть. Новый schema2 задаёт minimumOS/reader/payload/data policy; producer/consumer/publisher/activation и ZIP config binding согласованы, отрицательные fixtures выполнены. Schema1 immutable historical baseline; старые readers требуют нового installer. Native installed acceptance и macOS first-install preflight/DMG остаются OPEN; контракт в distribution/COMPATIBILITY.md.
+- `updates/release-format.md`: signature/identity/version/channel/asset/size/hash/body code есть. Новый schema2 задаёт minimumOS/reader/payload/data policy; producer/consumer/publisher/activation и ZIP config binding согласованы, отрицательные fixtures выполнены. Schema1 immutable historical baseline; безопасный автоматический переход старых readers ещё не завершён, installer exception не принят. Native installed acceptance и macOS first-install preflight/DMG остаются OPEN; контракт в distribution/COMPATIBILITY.md.
 
 ## Следующее действие
 

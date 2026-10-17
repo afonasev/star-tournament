@@ -1,0 +1,49 @@
+{
+  "oldSources": {
+    "distribution/launcher/Program.cs": {
+      "revision": "d9c985a0df995abd783ce6661174b835391c55f8",
+      "file": "legacy-launcher.cs",
+      "sha256": "59036b23437538c41e30f1639fca48ae06fcecb928bf2ec3783aec3409c390ff"
+    },
+    "distribution/launcher/WindowsInstallation.cs": {
+      "revision": "d9c985a0df995abd783ce6661174b835391c55f8",
+      "file": "legacy-windows-installation.cs",
+      "sha256": "8aabd4be837fe17e5608a868cf6af53acd3ceae9b6ceb8e43cf6846587cfb21c"
+    }
+  },
+  "currentSources": {
+    "distribution/maintenance/Program.cs": "cd81da8c9cd82748272b3068ce91b0a968a60a0800b2c5569905bfd541f51023",
+    "distribution/launcher/StartupRecovery.cs": "e23e6d707d8897d2cd8ada1a9571cb3e2c9b4c83245e742fa4af2bee926d6afd",
+    "distribution/launcher/ReleaseCompatibility.cs": "fb8186392c1bdd58a517f8bea8023b077d4e0564301fbc6c4c397ff549f2df79",
+    "distribution/maintenance/WindowsFullPayload.cs": "a29eb94f8ca824bbefae880ecd4e50451b3796d90a7bbbb8fdb695192c717d98"
+  },
+  "observations": [
+    "Released old activation sends6 arguments; current Main dispatch accepts7 only",
+    "Current Activate requires HealthyVersion=current and no pending Launch; old launcher has no such startup journal path",
+    "Current full payload/admission must bind modern signed compatibility; merely accepting old arity cannot provide bootstrap/health proof",
+    "Old --norestart native/root-kill and optional stub argv logging remain as separately evidenced"
+  ],
+  "scope": "Source mismatch evidence only; not native Windows execution or proof of universal impossibility",
+  "testReleaseSources": {
+    "distribution/launcher/Program.cs": {
+      "revision": "eab6bdd310b1e24be7e24ef499bc9c261617b5da",
+      "file": "legacy-test-launcher.cs",
+      "sha256": "c8f0d027e0177af6a62ee507d25dec007ad4a099380d6d5c0760db1b04914ee1"
+    },
+    "distribution/launcher/WindowsInstallation.cs": {
+      "revision": "eab6bdd310b1e24be7e24ef499bc9c261617b5da",
+      "file": "legacy-test-windows-installation.cs",
+      "sha256": "8aabd4be837fe17e5608a868cf6af53acd3ceae9b6ceb8e43cf6846587cfb21c"
+    }
+  },
+  "nativeStartupHealthFileAbsent": {
+    "d9c985a0df995abd783ce6661174b835391c55f8": {
+      "exit": 128,
+      "stderr": "fatal: path 'unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs' exists on disk, but not in 'd9c985a0df995abd783ce6661174b835391c55f8'"
+    },
+    "eab6bdd310b1e24be7e24ef499bc9c261617b5da": {
+      "exit": 128,
+      "stderr": "fatal: path 'unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs' exists on disk, but not in 'eab6bdd310b1e24be7e24ef499bc9c261617b5da'"
+    }
+  }
+}
