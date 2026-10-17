@@ -126,6 +126,9 @@ public sealed partial class WindowsRecoveryStore
         var expected = attempt.Phase == "installed" ? attempt.Target : attempt.Phase == "restored" ? attempt.Previous.Version : null;
         if (expected == null || expected != confirmedInstalledVersion || attempt.Phase == "installed" && (!File.Exists(ReadyPath(attempt.Id)) || new FileInfo(ReadyPath(attempt.Id)).Length == 0)) throw new IOException("Confirm or restore this transaction before cleanup");
         AssertConfig(attempt.Previous, expected);
+        // The restored contract/root entry are proof for component cleanup. Keep the
+        // protected rollback snapshot until that other committed journal is settled.
+        if(attempt.Phase=="restored")CleanupRestoredBroker(attempt);
         RemoveRetained(attempt.Id,keepLatch:true);
         foreach(var id in state.Retained??[])RemoveRetained(id);
         Write(state with { Attempt = null, Retained = null, Blocked = attempt.Phase == "installed" ? state.Blocked.Where(v => v != attempt.Target).ToArray() : state.Blocked });
@@ -152,13 +155,39 @@ public sealed partial class WindowsRecoveryStore
         // Keep the new protected broker executable. Only its playback-facing config is
         // restored, so a legacy launcher requiring protocol1 can start offline.
         var path=Path.Combine(root,"maintenance","maintenance.json");Plain(path);var next=path+".restore-"+Guid.NewGuid().ToString("N");
+        try{using(var output=create(next)){output.Write(RestoredMaintenanceContract(attempt));output.Flush(true);}File.Move(next,path,true);}finally{File.Delete(next);}
+    }
+    static byte[] RestoredMaintenanceContract(WindowsRecoveryAttempt attempt)
+    {
         using var config=JsonDocument.Parse(JsonSerializer.Serialize(attempt.Previous,new JsonSerializerOptions{PropertyNamingPolicy=JsonNamingPolicy.CamelCase}));
         var fields=config.RootElement.EnumerateObject().ToDictionary(p=>p.Name,p=>p.Value.Clone());
         // Older protocol2 producer records omitted this field; their activation route required2.
         fields["protocol"]=JsonSerializer.SerializeToElement(attempt.PreviousProtocol??2);
         // The retained executable is this broker; playback identity can be older.
         fields["metadataReader"]=JsonSerializer.SerializeToElement(ReleaseCompatibility.ReaderProtocol);
-        try{using(var output=create(next)){JsonSerializer.Serialize(output,fields);output.Flush(true);}File.Move(next,path,true);}finally{File.Delete(next);}
+        return JsonSerializer.SerializeToUtf8Bytes(fields);
+    }
+    internal void VerifyRestoredBrokerPlayback(string expectedRoot,LauncherConfig expectedPlayback)
+    {
+        if(root!=Path.TrimEndingDirectorySeparator(Path.GetFullPath(expectedRoot)))throw new IOException("Foreign rollback proof root");
+        var state=Read();var attempt=state.Attempt;
+        if(attempt is not {Phase:"restored"}||attempt.Previous!=expectedPlayback)throw new IOException("Restored protected playback proof required");
+        var actual=JsonSerializer.Deserialize<LauncherConfig>(BrokerUpgradeCandidate.ReadBounded(Path.Combine(current,"release.json"),65536),new JsonSerializerOptions{PropertyNameCaseInsensitive=true});
+        if(actual!=attempt.Previous)throw new IOException("Restored current differs from rollback identity");
+        payload.Verify(attempt.Id,current);VerifyBootstrap(attempt);
+        if(attempt.Bootstrap.Length!=Names.Length)throw new IOException("Complete restored bootstrap proof required");
+        foreach(var entry in attempt.Bootstrap)
+        {var path=Path.Combine(root,entry.Name);Plain(path);if(new FileInfo(path).Length!=entry.Size||Hash(path)!=entry.Sha256)throw new IOException("Restored bootstrap differs from protected snapshot");}
+        if(!BrokerUpgradeCandidate.ReadBounded(Path.Combine(root,"maintenance","maintenance.json"),65536).SequenceEqual(RestoredMaintenanceContract(attempt)))throw new IOException("Restored playback contract differs from protected proof");
+    }
+    void CleanupRestoredBroker(WindowsRecoveryAttempt attempt)
+    {
+        var state=BrokerUpgradeStateStore.Read(root,attempt.Previous);if(state==null)return;
+        if(state.Phase!="committed")throw new IOException("Settle component recovery before removing payload proof");
+        var component=new WindowsBrokerUpgradeTransaction(root,attempt.Previous,mkdir,create);
+        var anchor=System.Text.Encoding.UTF8.GetString(BrokerUpgradeCandidate.ReadBounded(Path.Combine(root,"maintenance","update-public.pem"),65536));
+        var actor=WindowsBrokerUpgradeStartup.Retained(root,state.ManifestHash,anchor,attempt.Previous);
+        component.CleanupAfterPayloadRestore(actor,this);
     }
     string ReadyPath(string id) => Path.Combine(store, id + ".ready");
     void VerifyBootstrap(WindowsRecoveryAttempt attempt)

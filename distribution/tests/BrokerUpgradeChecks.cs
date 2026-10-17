@@ -28,6 +28,19 @@ static class BrokerUpgradeChecks
         }
         public BrokerUpgradeCandidate Load()=>BrokerUpgradeCandidate.Load(Candidate,Public,Payload);
         public WindowsBrokerUpgradeTransaction Tx(Action<string>? checkpoint=null)=>new(Root,Payload,checkpoint:checkpoint);
+        public (WindowsRecoveryStore Recovery,BrokerUpgradeCandidate Actor,LauncherConfig Previous) RollbackWithCommittedBroker()
+        {
+            var previous=Payload with{Version="1.5.0",Compatibility=null};
+            File.WriteAllText(Path.Combine(Root,"current/release.json"),JsonSerializer.Serialize(previous,Camel));
+            File.WriteAllText(Path.Combine(Root,"Update.exe"),"old updater");File.WriteAllBytes(Path.Combine(Root,".portable"),[]);
+            var recovery=new WindowsRecoveryStore(Root,previous);recovery.Prepare(previous,Payload.Version,false);
+            recovery.Apply(()=>File.WriteAllText(Path.Combine(Root,"current/release.json"),JsonSerializer.Serialize(Payload,Camel)));
+            var candidate=Load();var tx=Tx();tx.Prepare(candidate);tx.Apply(candidate);
+            var retained=Path.Combine(Root,"maintenance/broker-upgrade-hosts",candidate.ManifestHash);Directory.CreateDirectory(retained);
+            foreach(var name in BrokerUpgradeCandidate.FileNames.Append(BrokerUpgradeCandidate.EnvelopeName))File.Copy(Path.Combine(Candidate,name),Path.Combine(retained,name));
+            var actor=BrokerUpgradeCandidate.Load(retained,Public,Payload);recovery.Restore();
+            return(recovery,actor,previous);
+        }
         public void Sign(Action<Dictionary<string,object?>>? edit=null,RSA? signer=null)
         {
             var files=BrokerUpgradeCandidate.FileNames.Select(name=>new Dictionary<string,object?>{["name"]=name,["size"]=new FileInfo(Path.Combine(Candidate,name)).Length,["sha256"]=Hash(File.ReadAllBytes(Path.Combine(Candidate,name)))}).ToList();
@@ -98,6 +111,42 @@ static class BrokerUpgradeChecks
         Test("retained signed actor retries without current candidate",f=>{var c=f.Load();var path=Path.Combine(f.Root,"maintenance/broker-upgrade-hosts",c.ManifestHash);Directory.CreateDirectory(path);foreach(var name in BrokerUpgradeCandidate.FileNames.Append(BrokerUpgradeCandidate.EnvelopeName))File.Copy(Path.Combine(f.Candidate,name),Path.Combine(path,name));var retained=BrokerUpgradeCandidate.Load(path,f.Public,Payload);Directory.Delete(f.Candidate,true);var tx=f.Tx();tx.PrepareRetained(retained);tx.ApplyRetained(retained);retained.VerifyFile(Path.Combine(f.Root,"Star Tournament.exe"),"StarTournamentMaintenance.exe");Require(tx.Read()?.Phase=="committed");tx.CleanupRetained(retained);f.AssertPayload();});
         Test("pending recovery falls back to signed current actor if retained copy missing",f=>{var tx=f.Tx();tx.Prepare(f.Load());var selected=WindowsBrokerUpgradeStartup.SelectActor(f.Root,f.Public,Payload,tx.Read());Require(selected.DirectoryPath==f.Candidate);f.AssertOld();});
         Test("actor selection never admits invalid current or retained signature",f=>{var tx=f.Tx();tx.Prepare(f.Load());File.AppendAllText(Path.Combine(f.Candidate,"StarTournamentMaintenance.exe"),"bad");Reject(()=>WindowsBrokerUpgradeStartup.SelectActor(f.Root,f.Public,Payload,tx.Read()));f.AssertOld();});
+        Test("ordinary cleanup still rejects legitimately restored playback bytes",f=>
+        {var rollback=f.RollbackWithCommittedBroker();var tx=new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous);Reject(()=>tx.CleanupRetained(rollback.Actor));Require(tx.Read()?.Phase=="committed"&&rollback.Recovery.Read().Attempt?.Phase=="restored");});
+        Test("payload cleanup settles committed component before deleting rollback proof",f=>
+        {
+            var rollback=f.RollbackWithCommittedBroker();rollback.Recovery.Cleanup(rollback.Previous.Version);
+            Require(new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()==null&&rollback.Recovery.Read().Attempt==null);
+            rollback.Actor.VerifyFile(Path.Combine(f.Root,"maintenance/StarTournamentMaintenance.exe"),"StarTournamentMaintenance.exe");
+            Require(File.ReadAllText(Path.Combine(f.Root,"Star Tournament.exe"))=="old root entry"&&WindowsInstallation.MetadataReader(f.Root)==2);f.AssertPayload();
+        });
+        Test("payload cleanup retries after component journal already removed",f=>
+        {var rollback=f.RollbackWithCommittedBroker();new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).CleanupAfterPayloadRestore(rollback.Actor,rollback.Recovery);Require(rollback.Recovery.Read().Attempt?.Phase=="restored");rollback.Recovery.Cleanup(rollback.Previous.Version);Require(rollback.Recovery.Read().Attempt==null);f.AssertPayload();});
+        foreach(var name in new[]{"maintenance/StarTournamentMaintenance.exe","Star Tournament.exe","maintenance/maintenance.json","Update.exe"})
+        Test("rollback cleanup rejects changed installed file "+name,f=>
+        {var rollback=f.RollbackWithCommittedBroker();var path=Path.Combine(f.Root,name);File.AppendAllText(path,"changed");Reject(()=>rollback.Recovery.Cleanup(rollback.Previous.Version));Require(new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()?.Phase=="committed"&&rollback.Recovery.Read().Attempt?.Phase=="restored");Require(File.ReadAllText(path).EndsWith("changed"));});
+        Test("rollback cleanup preserves both journals if retained snapshot changed",f=>
+        {var rollback=f.RollbackWithCommittedBroker();var id=rollback.Recovery.Read().Attempt!.Id;File.AppendAllText(Path.Combine(f.Root,"maintenance/recovery",id+".bootstrap","Star Tournament.exe"),"changed");Reject(()=>rollback.Recovery.Cleanup(rollback.Previous.Version));Require(new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()?.Phase=="committed"&&rollback.Recovery.Read().Attempt?.Phase=="restored");});
+        Test("restored cleanup needs restored protected phase",f=>
+        {var rollback=f.RollbackWithCommittedBroker();var path=Path.Combine(f.Root,"maintenance/recovery/state.json");File.WriteAllText(path,File.ReadAllText(path).Replace("\"restored\"","\"installed\""));Reject(()=>new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).CleanupAfterPayloadRestore(rollback.Actor,rollback.Recovery));Require(new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()?.Phase=="committed");});
+        Test("unknown component files preserve payload rollback proof",f=>
+        {var rollback=f.RollbackWithCommittedBroker();var path=Path.Combine(f.Root,"maintenance/broker-upgrade-v1/foreign");File.WriteAllText(path,"preserve");Reject(()=>rollback.Recovery.Cleanup(rollback.Previous.Version));Require(rollback.Recovery.Read().Attempt?.Phase=="restored"&&File.ReadAllText(path)=="preserve");});
+        Test("another root cannot authorize rollback cleanup",f=>
+        {var rollback=f.RollbackWithCommittedBroker();using var other=new Fixture();var foreign=other.RollbackWithCommittedBroker();Reject(()=>new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).CleanupAfterPayloadRestore(rollback.Actor,foreign.Recovery));Require(rollback.Recovery.Read().Attempt?.Phase=="restored"&&foreign.Recovery.Read().Attempt?.Phase=="restored"&&new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()?.Phase=="committed");});
+        Test("rollback cleanup rejects changed current publication identity",f=>
+        {var rollback=f.RollbackWithCommittedBroker();File.WriteAllText(Path.Combine(f.Root,"current/release.json"),JsonSerializer.Serialize(rollback.Previous with{PublicationDate="2026-10-16"},Camel));Reject(()=>rollback.Recovery.Cleanup(rollback.Previous.Version));Require(new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()?.Phase=="committed");});
+        Test("invalid retained actor preserves both rollback journals",f=>
+        {var rollback=f.RollbackWithCommittedBroker();File.AppendAllText(Path.Combine(rollback.Actor.DirectoryPath,"StarTournamentMaintenance.exe"),"changed");Reject(()=>rollback.Recovery.Cleanup(rollback.Previous.Version));Require(rollback.Recovery.Read().Attempt?.Phase=="restored"&&new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()?.Phase=="committed");});
+        using(var f=new Fixture())
+        {
+            var rollback=f.RollbackWithCommittedBroker();var start=new ProcessStartInfo(Environment.ProcessPath!){UseShellExecute=false};
+            if(Path.GetFileNameWithoutExtension(Environment.ProcessPath)=="dotnet")start.ArgumentList.Add(typeof(BrokerUpgradeChecks).Assembly.Location);
+            start.ArgumentList.Add("--broker-rollback-cleanup-crash");start.ArgumentList.Add(f.Root);
+            using var child=Process.Start(start)??throw new Exception("Child missing");await child.WaitForExitAsync();Require(child.ExitCode==73);
+            Require(new WindowsBrokerUpgradeTransaction(f.Root,rollback.Previous).Read()==null&&rollback.Recovery.Read().Attempt?.Phase=="restored");
+            rollback.Recovery.Cleanup(rollback.Previous.Version);Require(rollback.Recovery.Read().Attempt==null);f.AssertPayload();
+            count++;Console.WriteLine("PASS real process death between component cleanup and payload cleanup");
+        }
         foreach(var point in new[]{"intent-prepared","capture-started","prepared","replaced-broker","replaced-contract","replaced-entry","committed"})
         {
             using var f=new Fixture();var start=new ProcessStartInfo(Environment.ProcessPath!){UseShellExecute=false};if(Path.GetFileNameWithoutExtension(Environment.ProcessPath)=="dotnet")start.ArgumentList.Add(typeof(BrokerUpgradeChecks).Assembly.Location);
@@ -114,5 +163,12 @@ static class BrokerUpgradeChecks
     {
         var candidate=BrokerUpgradeCandidate.Load(Path.Combine(root,"current/broker-upgrade"),File.ReadAllText(Path.Combine(root,"maintenance/update-public.pem")),Payload);
         var tx=new WindowsBrokerUpgradeTransaction(root,Payload,checkpoint:p=>{if(p==point)Environment.Exit(73);});tx.Prepare(candidate);tx.Apply(candidate);throw new Exception("Missing crash checkpoint");
+    }
+    public static void CrashRollbackCleanup(string root)
+    {
+        var previous=JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root,"current/release.json")),new JsonSerializerOptions{PropertyNameCaseInsensitive=true})!;
+        var tx=new WindowsBrokerUpgradeTransaction(root,previous);var state=tx.Read()!;
+        var actor=WindowsBrokerUpgradeStartup.Retained(root,state.ManifestHash,File.ReadAllText(Path.Combine(root,"maintenance/update-public.pem")),previous);
+        tx.CleanupAfterPayloadRestore(actor,new WindowsRecoveryStore(root,previous));Environment.Exit(73);
     }
 }

@@ -78,10 +78,22 @@ public sealed class WindowsBrokerUpgradeTransaction
     }
     public void Cleanup(BrokerUpgradeCandidate? candidate=null)=>CleanupCore(candidate,false);
     public void CleanupRetained(BrokerUpgradeCandidate actor)=>CleanupCore(actor,true);
-    void CleanupCore(BrokerUpgradeCandidate? candidate,bool retained)
+    public void CleanupAfterPayloadRestore(BrokerUpgradeCandidate actor,WindowsRecoveryStore recovery)=>CleanupCore(actor,true,recovery);
+    void CleanupCore(BrokerUpgradeCandidate? candidate,bool retained,WindowsRecoveryStore? recovery=null)
     {
         var state=Read();if(state==null)return;
-        if(state.Phase=="committed"){if(candidate==null)throw new IOException("Signed committed candidate required for cleanup");if(retained)Retained(candidate);else Candidate(candidate);if(state.ManifestHash!=candidate.ManifestHash)throw new IOException("Wrong committed candidate");VerifyNew(candidate);}
+        if(state.Phase=="committed")
+        {
+            if(candidate==null)throw new IOException("Signed committed candidate required for cleanup");
+            if(retained)Retained(candidate);else Candidate(candidate);
+            if(state.ManifestHash!=candidate.ManifestHash)throw new IOException("Wrong committed candidate");
+            if(recovery==null)VerifyNew(candidate);
+            else
+            {
+                candidate.VerifyFile(Target(0),"StarTournamentMaintenance.exe");
+                recovery.VerifyRestoredBrokerPlayback(root,payload);
+            }
+        }
         else if(state.Phase=="restored")VerifyOld(state);else throw new IOException("Settle broker recovery before cleanup");
         // Fixed names only. Never recursively remove unknown or foreign storage.
         var expected=state.Previous.Select(f=>f.Name+".previous").Append("state.json").Append("state.json.next-"+state.Id).ToHashSet(StringComparer.Ordinal);

@@ -12,6 +12,7 @@ if (args.Length == 4 && args[0] == "--verify-produced-broker")
 }
 if (args.SequenceEqual(new[] { "--broker-startup" })) { await BrokerStartupChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--broker-upgrade" })) { await BrokerUpgradeChecks.Run(); return; }
+if (args.Length == 2 && args[0] == "--broker-rollback-cleanup-crash") { BrokerUpgradeChecks.CrashRollbackCleanup(args[1]); return; }
 if (args.Length == 3 && args[0] == "--broker-upgrade-crash") { BrokerUpgradeChecks.Crash(args[1],args[2]); return; }
 if (args.Length == 3 && args[0] == "--inspect-windows-full-payload") { await WindowsFullPayloadChecks.InspectReleased(args[1],args[2]); return; }
 if (args.SequenceEqual(new[] { "--windows-full-payload" })) { await WindowsFullPayloadChecks.Run(); return; }
