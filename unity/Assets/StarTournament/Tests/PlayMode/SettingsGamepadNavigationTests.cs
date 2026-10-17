@@ -90,11 +90,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var look=GamepadLookSettings.Default(ground.Profile);look.InvertY=true;catalog.SetGamepad(record.Id,look);
                 typeof(ProvingGround).GetField("playerProfiles",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,catalog);
                 NativeUserPreferences.SetScale(125);NativeUserPreferences.SetContrast(true);NativeAudioPreferences.SetMaster(25);
+                NativeVisualPreferences.SetQuality(2);Button("settings-quality").onClick.Invoke();Assert.That(QualitySettings.GetQualityLevel(),Is.EqualTo(0));
                 Button("settings-reset-all").onClick.Invoke();yield return null;
                 Assert.That(Focus,Is.EqualTo("settings-reset-cancel"));
                 Button("settings-reset-confirm").onClick.Invoke();yield return null;yield return null;
                 Assert.That(NativeUserPreferences.Scale,Is.EqualTo(100));Assert.That(NativeUserPreferences.HighContrast,Is.False);
                 Assert.That(NativeAudioPreferences.Master,Is.EqualTo(100));
+                Assert.That(PlayerPrefs.HasKey(NativeVisualPreferences.QualityKey),Is.False);Assert.That(NativeVisualPreferences.Quality,Is.EqualTo(2));Assert.That(QualitySettings.GetQualityLevel(),Is.EqualTo(5));
                 Assert.That(GamepadLookSettings.General(ground.Profile).InvertY,Is.False);
                 var reloaded=new PlayerProfileCatalog(path);Assert.That(reloaded.Profiles.Count,Is.EqualTo(1));
                 Assert.That(reloaded.Find(record.Id).Name,Is.EqualTo("Reset identity"));Assert.That(reloaded.Find(record.Id).GamepadLookVersion,Is.EqualTo(0));
@@ -192,7 +194,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadUp);Assert.That(Focus,Is.EqualTo("settings-resolution-auto"));
             yield return Press(GamepadButton.DpadLeft);Assert.That(Focus,Is.EqualTo("settings-section-0"));
             yield return MoveStick(Vector2.down);Assert.That(Focus,Is.EqualTo("settings-section-4"));
-            yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-antialiasing"));
+            yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-quality"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-antialiasing"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-shadows"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-4"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-3"));

@@ -104,6 +104,38 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var shared=Object("operator-balance").GetComponent<Text>();Assert.That(shared.gameObject.activeInHierarchy,Is.True);Assert.That(shared.text,Is.EqualTo(longIdentity));
             if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"pause-operator.png"));
         }
+        [UnityTest] public IEnumerator QualityChangesAcrossSeatsPreserveIndependentPreferencesAndFrozenBalance()
+        {
+            var keys=new[]{NativeVisualPreferences.QualityKey,NativeVisualPreferences.AntialiasingKey,"StarTournament.Graphics.VSync","StarTournament.Graphics.Shadows",NativeUserPreferences.FrameCapKey,NativeVisualPreferences.Key(VisualEffect.Bloom)+".Enabled"};
+            var saved=keys.ToDictionary(k=>k,k=>(PlayerPrefs.HasKey(k),PlayerPrefs.GetInt(k)));
+            try
+            {
+                NativeVisualPreferences.SetQuality(2);NativeVisualPreferences.SetAntialiasingLevel(3);
+                PlayerPrefs.SetInt(keys[2],0);PlayerPrefs.SetInt(keys[3],0);PlayerPrefs.SetInt(keys[4],60);NativeVisualPreferences.SetEnabled(VisualEffect.Bloom,false);PlayerPrefs.Save();
+                yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+                string frozen=ground.FrozenLabIdentity;double clock=ground.Session.Time;bool probes=QualitySettings.realtimeReflectionProbes;int aa=QualitySettings.antiAliasing;
+                Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+                Button("seat-settings-0-settings-section-4").onClick.Invoke();Button("seat-settings-1-settings-section-4").onClick.Invoke();yield return null;
+                for(int value=0;value<3;value++)
+                {
+                    Button("seat-settings-0-settings-quality").onClick.Invoke();yield return null;
+                    Assert.That(NativeVisualPreferences.Quality,Is.EqualTo(value));Assert.That(QualitySettings.GetQualityLevel(),Is.EqualTo(new[]{0,2,5}[value]));
+                    foreach(int seat in new[]{0,1})Assert.That(Button("seat-settings-"+seat+"-settings-quality").GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.QualityNames[value]));
+                    Assert.That(QualitySettings.vSyncCount,Is.Zero);Assert.That(QualitySettings.shadows,Is.EqualTo(ShadowQuality.Disable));Assert.That(Application.targetFrameRate,Is.EqualTo(60));
+                    Assert.That(QualitySettings.antiAliasing,Is.EqualTo(aa));Assert.That(QualitySettings.realtimeReflectionProbes,Is.EqualTo(probes));
+                    Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(3));Assert.That(NativeVisualPreferences.Enabled(VisualEffect.Bloom),Is.False);
+                    Assert.That(ground.FrozenLabIdentity,Is.EqualTo(frozen));Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                }
+                var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QUALITY_QA_IMAGES");
+                if(!string.IsNullOrEmpty(output))
+                {yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"quality-two-720.png"),1280,720);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"quality-two-1080.png"));}
+                typeof(ProvingGround).GetMethod("ToMainMenu",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(ground,null);
+                Button("main-action-4").onClick.Invoke();Button("settings-section-4").onClick.Invoke();yield return null;
+                Assert.That(Button("settings-quality").GetComponentInChildren<Text>().text,Is.EqualTo("Высокое"));
+                if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"quality-main.png"));
+            }
+            finally{foreach(var entry in saved){if(entry.Value.Item1)PlayerPrefs.SetInt(entry.Key,entry.Value.Item2);else PlayerPrefs.DeleteKey(entry.Key);}PlayerPrefs.Save();}
+        }
         [UnityTest] public IEnumerator SplitScreenDrawsOneGlobalFpsCounter()
         {
             yield return Load();yield return Press(0,GamepadButton.Start);
@@ -155,6 +187,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
                 Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
                 Button("seat-settings-0-settings-section-4").onClick.Invoke();Button("seat-settings-1-settings-section-4").onClick.Invoke();
+                yield return Press(0,GamepadButton.DpadDown);yield return Press(1,GamepadButton.DpadDown);
                 var first=Button("seat-settings-0-settings-antialiasing");var second=Button("seat-settings-1-settings-antialiasing");
                 var scroll=Object("seat-settings-0-settings-graphics").GetComponent<ScrollRect>();
                 for(int i=0;i<NativeVisualPreferences.Names.Length+1;i++)yield return Press(0,GamepadButton.DpadDown);

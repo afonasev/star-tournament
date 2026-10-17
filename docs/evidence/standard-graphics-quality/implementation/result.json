@@ -1,0 +1,50 @@
+{
+  "baseline": "b5fbc331",
+  "branch": "codex/game-standard-alignment",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "approval": "Q10 / mockup31",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/NativeUserPreferences.cs": "679d5559ee541d3fe464511b53e391cd7583beb640bcebf0b9235ddea14b7a95",
+    "unity/Assets/StarTournament/Runtime/NativeVisualPreferences.cs": "1d046704411e9e2eb06cd84978201059ee51d3d47268a1426b7afddb6393b477",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs": "51dda790923908142cdcb6553ecd7d5f54c8bca06d92c5b5441cb5537c6b5ad8",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs": "83e978d1b748e2e44f879539aaad88e39452154c4ffc77a0a4b0555807255286",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "9f7426cb2d73c9d51fb303b9e72cc07c48d61fd49c748b7b91e752e6f91fcbd7",
+    "unity/Assets/StarTournament/Tests/EditMode/StandardUserPreferencesTests.cs": "d972d6d284f998fc5b4ab7c184ad42d3c95a1eb3f8efc384d55f732e98dd9cf0",
+    "unity/Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs": "c21c4bc5c5fe3f7e679552be80ab735bf2bb505bc5210915d177c3646d2f83ed",
+    "unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs": "d12f958811a0c7e6e0cf58ab68fe90303b0ab0243c85a77b6e65ddef143a30f3"
+  },
+  "results": {
+    "edit": {
+      "result": "Passed",
+      "total": "6",
+      "passed": "6",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.0833372"
+    },
+    "play": {
+      "result": "Passed",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "34.7948643"
+    }
+  },
+  "initial_attempt": "CS0266 double-to-float compile error; NotRun, no XML. Corrected to double before successful tests.",
+  "runner_exits": {
+    "initial": 1,
+    "edit": 0,
+    "play": 0
+  },
+  "mode": "shared Editor -noaudio -muted; PlayMode graphics enabled for screenshots",
+  "not_run": [
+    "full suite",
+    "Player",
+    "installer",
+    "release",
+    "deploy",
+    "native device/human acceptance"
+  ],
+  "screenshots": "Actual Editor PlayMode main and two-seat 720/1080; visually inspected; diagnostic FPS is not performance evidence. Known fixed B hints belong to separately approved Q8."
+}

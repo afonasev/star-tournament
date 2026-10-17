@@ -339,7 +339,7 @@ namespace StarTournament.ProvingGround
                     selectOnLeft=left,selectOnRight=right };
             }
             Selectable FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
-                settingsSection==SettingsSection.Graphics?settingsAntialiasingButton:settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?settingsScaleSlider:settingsMasterSlider;
+                settingsSection==SettingsSection.Graphics?settingsQualityButton:settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?settingsScaleSlider:settingsMasterSlider;
             void ConfigureSettingsNavigation()
             {
                 if(resetOpen){Link(resetCancel,resetConfirm,resetConfirm,null,resetConfirm);Link(resetConfirm,resetCancel,resetCancel,resetCancel);return;}

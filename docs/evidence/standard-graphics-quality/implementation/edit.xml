@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.0833372">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.083337" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1832" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.077005" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29831" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1833" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.073847" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1834" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.070664" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1835" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.067426" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1836" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="536" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.063084" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1760" name="StandardUserPreferencesTests" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.057799" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1764" name="FailedProfileResetRestoresPreviousInMemoryPreferences" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.FailedProfileResetRestoresPreviousInMemoryPreferences" methodname="FailedProfileResetRestoresPreviousInMemoryPreferences" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="2144734310" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.014661" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1765" name="PersonalDeadzoneAndInversionAffectLookButDoNotInvertMovement" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.PersonalDeadzoneAndInversionAffectLookButDoNotInvertMovement" methodname="PersonalDeadzoneAndInversionAffectLookButDoNotInvertMovement" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="203077838" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.029101" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1766" name="PreferenceMetadataSnapsInvalidScaleSafely" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.PreferenceMetadataSnapsInvalidScaleSafely" methodname="PreferenceMetadataSnapsInvalidScaleSafely" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="1218914912" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.000243" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1763" name="ProfileResetKeepsIdentitiesAndSurvivesReload" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.ProfileResetKeepsIdentitiesAndSurvivesReload" methodname="ProfileResetKeepsIdentitiesAndSurvivesReload" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="25591316" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.002683" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1762" name="QualityPreferenceUsesThreeNativeTiersAndPreservesIndependentGates" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.QualityPreferenceUsesThreeNativeTiersAndPreservesIndependentGates" methodname="QualityPreferenceUsesThreeNativeTiersAndPreservesIndependentGates" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="633693880" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.003840" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1761" name="ResetAllowListPreservesConsentProgressAndUnconfirmedDisplay" fullname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests.ResetAllowListPreservesConsentProgressAndUnconfirmedDisplay" methodname="ResetAllowListPreservesConsentProgressAndUnconfirmedDisplay" classname="StarTournament.ProvingGround.Tests.EditMode.StandardUserPreferencesTests" runstate="Runnable" seed="216221520" result="Passed" start-time="2026-10-17 07:23:57Z" end-time="2026-10-17 07:23:57Z" duration="0.000835" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
