@@ -1,0 +1,114 @@
+{
+  "baseline": "1e1536c37201f764f06604d62b00a006ab9289a4",
+  "purpose": "Review-only, pending human direction choice; runtime unchanged",
+  "fixture_sha256": "7bfcf6c60ccce5eac3e1e27ab57745e2bd4d626f13b119a3c0fcb2fb2d2ce3f5",
+  "test": {
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "18.505082"
+  },
+  "capture_count": 28,
+  "pixel_statistics_not_acceptance": {
+    "0-current": {
+      "lift-1": {
+        "all_rgb_ge_250_percent": 0.4269
+      },
+      "lift-0": {
+        "all_rgb_ge_250_percent": 0.4317
+      },
+      "lift-2": {
+        "all_rgb_ge_250_percent": 0.4317
+      },
+      "room-2": {
+        "all_rgb_ge_250_percent": 0.0307
+      },
+      "room-0": {
+        "all_rgb_ge_250_percent": 0.0304
+      },
+      "room-1": {
+        "all_rgb_ge_250_percent": 0.0302
+      },
+      "atrium": {
+        "all_rgb_ge_250_percent": 0.3746
+      }
+    },
+    "1-laboratory": {
+      "lift-1": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "lift-0": {
+        "all_rgb_ge_250_percent": 0.0001
+      },
+      "lift-2": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "room-2": {
+        "all_rgb_ge_250_percent": 0.0112
+      },
+      "room-0": {
+        "all_rgb_ge_250_percent": 0.0497
+      },
+      "room-1": {
+        "all_rgb_ge_250_percent": 0.0141
+      },
+      "atrium": {
+        "all_rgb_ge_250_percent": 0.9455
+      }
+    },
+    "2-daylight": {
+      "lift-1": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "lift-0": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "lift-2": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "room-2": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "room-0": {
+        "all_rgb_ge_250_percent": 0.0217
+      },
+      "room-1": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "atrium": {
+        "all_rgb_ge_250_percent": 0.4529
+      }
+    },
+    "3-practicals": {
+      "lift-1": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "lift-0": {
+        "all_rgb_ge_250_percent": 0.0001
+      },
+      "lift-2": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "room-2": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "room-0": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "room-1": {
+        "all_rgb_ge_250_percent": 0.0
+      },
+      "atrium": {
+        "all_rgb_ge_250_percent": 0.0
+      }
+    }
+  },
+  "limits": [
+    "Gamma baseline retained",
+    "Unity reduces local shadow resolution to fit existing 1024 atlas",
+    "No performance/device/Player/human acceptance",
+    "Experimental spot intensities exceed current Lab maximum 50; no runtime descriptors edited"
+  ]
+}

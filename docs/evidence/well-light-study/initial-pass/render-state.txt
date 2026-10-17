@@ -1,0 +1,4 @@
+0-current colorSpace=Gamma ambient=RGBA(0.500, 0.495, 0.485, 0.500) key=0.8 keyRotation=(50.00, 330.00, 0.00) lamp=7 lamps=24 geometry=exact colliders=0 furniture=56
+1-laboratory colorSpace=Gamma ambient=RGBA(0.263, 0.272, 0.280, 0.280) key=0.95 keyRotation=(50.00, 330.00, 0.00) lamp=30 lamps=24 geometry=exact colliders=0 furniture=56
+2-daylight colorSpace=Gamma ambient=RGBA(0.152, 0.170, 0.200, 0.200) key=1.65 keyRotation=(32.00, 305.00, 0.00) lamp=18 lamps=24 geometry=exact colliders=0 furniture=56
+3-practicals colorSpace=Gamma ambient=RGBA(0.120, 0.130, 0.144, 0.160) key=0.35 keyRotation=(50.00, 330.00, 0.00) lamp=42 lamps=24 geometry=exact colliders=0 furniture=56
