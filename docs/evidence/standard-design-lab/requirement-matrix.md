@@ -23,7 +23,7 @@ Evidence paths ниже относительно этого каталога. «
 | LAB-DEV-01 | authoring-model/runtime writable author Default/all profiles, rename/copy/new immutable saves, protected Default deletion. |
 | LAB-DEV-02 | unity/DesignLab/authoring-history-v1.json tracked in Git; LabProjectStorage author path + runtime project-vs-player writes/status; Development Player wiring not built/tested. |
 | LAB-PROD-01 | LabReleaseCatalogTests whole-profile guard all data APIs, copies survive updates; package-authority explicit old copy/readonly/current catalogue selection. |
-| LAB-RELEASE-01 | authoring/staging all-and-only marks, project missing-Default editable/error; default-source old compatible source resolves without freezing flag. Incompatible-only author error fallback open below. |
+| LAB-RELEASE-01 | authoring/staging all-and-only marks, project missing-Default editable/error; default-source old compatible source resolves without freezing flag. Approved28 author fallback implemented; exact source/write/reload guards in author-fallback/, native process gate still open. |
 | LAB-RELEASE-02 | default-source startup/reset original identity; public-order highest public; package-authority no factory-tail substitution/current catalogue wins. |
 | LAB-RELEASE-03 | flag-only data/API and actual UI tests, no activation/new version, explicit Save only; package projection detached, no commit/build/publish hidden. |
 | LAB-ACTIVE-01 | runtime/workspace selected/saved→active, pending async selection guards, error previous active intact; current displayed base vs active in approved19. |
