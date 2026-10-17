@@ -63,7 +63,8 @@ namespace StarTournament.ProvingGround
         LabReleaseCatalog historyStartupCatalogue;
         LabRevisionReference activeLabReference;
         string historyStartupPath,historyStartupLegacyPath,historyLoadError,labProjectRoot;
-        bool authorStartupResolved;
+        bool authorStartupResolved,authorSessionFallback;
+        GameObject authorHistoryFailure;Text authorHistoryFailureReason,authorHistoryFailureSession;Button authorHistoryBack,authorHistoryDefault;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         internal static Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory> LabHistoryLoaderForTests;
 #endif
@@ -279,13 +280,53 @@ namespace StarTournament.ProvingGround
             labTreeScroll=LabScroll(labScreen.transform,"lab-tree",new Vector2(.04f,.20f),new Vector2(.236f,.607f),out labTree);
             labFieldsTitle=Label(labScreen.transform,"lab-fields-title","",18,new Vector2(.25f,.553f),new Vector2(.96f,.607f),TextAnchor.MiddleLeft,MenuGold);
             labFieldsScroll=LabScroll(labScreen.transform,"lab-fields",new Vector2(.25f,.20f),new Vector2(.96f,.548f),out labFields);
+            BuildAuthorHistoryFailure();
         }
-        void OpenDesignLab(){if(phase!=Phase.MainMenu)return;phase=Phase.Lab;if(IsLabHistoryReady){SetLabHistoryWaiting(false);ResetLabDraft();RefreshLabWorkspace();}else SetLabHistoryWaiting(true);labTreeScroll.verticalNormalizedPosition=1;labFieldsScroll.verticalNormalizedPosition=1;var group=labTree.Find("group-"+labGroup);if(group)RevealLabFocus(group.gameObject);RefreshInterface();Select(labBack);}
+        void BuildAuthorHistoryFailure()
+        {
+            authorHistoryFailure=Panel(labScreen.transform,"author-history-failure",Vector2.zero,Vector2.one,MenuInk);
+            Label(authorHistoryFailure.transform,"author-history-title","ИСТОРИЯ ПРОЕКТА НЕДОСТУПНА",40,new Vector2(.04f,.83f),new Vector2(.96f,.92f),TextAnchor.MiddleLeft,MenuGold);
+            Label(authorHistoryFailure.transform,"author-history-subtitle","Исходный файл сохранён; запись в Lab заблокирована",26,new Vector2(.04f,.76f),new Vector2(.96f,.82f),TextAnchor.MiddleLeft,Color.white);
+            var card=Panel(authorHistoryFailure.transform,"author-history-card",new Vector2(.04f,.15f),new Vector2(.96f,.73f),MenuCard);
+            Label(card.transform,"author-history-heading","Не удалось открыть авторский баланс",34,new Vector2(.025f,.84f),new Vector2(.975f,.96f),TextAnchor.MiddleLeft,MenuGold);
+            var scroll=LabScroll(card.transform,"author-history-details",new Vector2(.025f,.35f),new Vector2(.975f,.83f),out var content);
+            authorHistoryFailureReason=Label(content,"author-history-reason","",30,Vector2.zero,Vector2.one,TextAnchor.UpperLeft,Color.white);
+            authorHistoryFailureReason.supportRichText=false;
+            var fit=authorHistoryFailureReason.gameObject.AddComponent<ContentSizeFitter>();fit.verticalFit=ContentSizeFitter.FitMode.PreferredSize;
+            authorHistoryFailureReason.rectTransform.anchorMin=new Vector2(0,1);authorHistoryFailureReason.rectTransform.anchorMax=Vector2.one;authorHistoryFailureReason.rectTransform.pivot=new Vector2(.5f,1);
+            var contentFit=content.gameObject.AddComponent<ContentSizeFitter>();contentFit.verticalFit=ContentSizeFitter.FitMode.PreferredSize;
+            var layout=content.gameObject.AddComponent<VerticalLayoutGroup>();layout.childControlHeight=true;layout.childForceExpandHeight=false;layout.childControlWidth=true;layout.childForceExpandWidth=true;
+            authorHistoryFailureSession=Label(card.transform,"author-history-session","",26,new Vector2(.025f,.22f),new Vector2(.975f,.34f),TextAnchor.MiddleLeft,Color.white);
+            authorHistoryBack=LabButton(card.transform,"author-history-back","Назад",new Vector2(.025f,.06f),new Vector2(.29f,.18f),ToMainMenu);
+            authorHistoryDefault=LabButton(card.transform,"author-history-default","Использовать Default из поставки",new Vector2(.32f,.06f),new Vector2(.975f,.18f),UsePackagedLabForSession);
+            foreach(var button in new[]{authorHistoryBack,authorHistoryDefault})
+            {button.GetComponentInChildren<Text>().fontSize=26;button.gameObject.AddComponent<LabErrorScrollNavigation>().Scroll=scroll;}
+            var backNav=new Navigation{mode=Navigation.Mode.Explicit,selectOnRight=authorHistoryDefault};authorHistoryBack.navigation=backNav;
+            authorHistoryDefault.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=authorHistoryBack};
+            authorHistoryFailure.SetActive(false);
+        }
+        void UsePackagedLabForSession()
+        {
+            if(phase!=Phase.Lab||labProjectRoot==null||historyLoadError==null||IsLabHistoryLoading||authorSessionFallback)return;
+            // Keep the failed author source and write guard. The trusted shipped snapshot
+            // is a session-only choice; no repair, replacement or persisted selection.
+            CacheLabIdentity(DesignLabHistory.ResolvePublishedDefault(historyStartupBaseline,historyStartupCatalogue));
+            ApplySavedLabRevision();authorSessionFallback=true;authorStartupResolved=true;ToMainMenu();
+        }
+        void OpenDesignLab(){if(phase!=Phase.MainMenu)return;phase=Phase.Lab;if(IsLabHistoryReady){SetLabHistoryWaiting(false);ResetLabDraft();RefreshLabWorkspace();}else SetLabHistoryWaiting(true);labTreeScroll.verticalNormalizedPosition=1;labFieldsScroll.verticalNormalizedPosition=1;var group=labTree.Find("group-"+labGroup);if(group)RevealLabFocus(group.gameObject);RefreshInterface();Select(authorHistoryFailure.activeSelf?authorHistoryBack:labBack);}
         void SetLabHistoryWaiting(bool waiting)
         {
+            bool authorFailure=waiting&&labProjectRoot!=null&&historyLoadError!=null;
+            authorHistoryFailure.SetActive(authorFailure);
             foreach(var button in labScreen.GetComponentsInChildren<Button>(true))
                 if(button!=labBack)button.interactable=!waiting;
             foreach(var inputField in labScreen.GetComponentsInChildren<InputField>(true))inputField.interactable=!waiting;
+            if(authorFailure)
+            {
+                labBack.interactable=false;authorHistoryBack.interactable=true;authorHistoryDefault.interactable=!authorSessionFallback;
+                authorHistoryFailureReason.text=historyLoadError+"\n\nФайл: DesignLab/authoring-history-v1.json\n\nВаши сохранённые значения, версии и релизные отметки не изменены.\nМожно вернуться к файлу проекта или продолжить на Default из поставки.";
+                authorHistoryFailureSession.text=authorSessionFallback?"В этой сессии выбран Default из поставки. Запись авторской истории заблокирована.":"Временный выбор действует только в этой сессии. После перезапуска выбор повторяется.";
+            }
             if(waiting)
             {
                 ClearLabContent(labTree);ClearLabContent(labFields);labViews.Clear();
@@ -580,6 +621,15 @@ namespace StarTournament.ProvingGround
             if(phase!=Phase.Lab||labHistory?.Busy==true)return;bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
             foreach(var pad in Gamepad.all)back|=pad.buttonEast.wasPressedThisFrame;
             if(back){if(labDialog!=null)CloseLabDialog();else ToMainMenu();}
+        }
+    }
+    sealed class LabErrorScrollNavigation : MonoBehaviour, IMoveHandler
+    {
+        public ScrollRect Scroll;
+        public void OnMove(AxisEventData data)
+        {
+            if(data.moveDir!=MoveDirection.Up&&data.moveDir!=MoveDirection.Down)return;
+            Scroll.verticalNormalizedPosition=Mathf.Clamp01(Scroll.verticalNormalizedPosition+(data.moveDir==MoveDirection.Up?.25f:-.25f));data.Use();
         }
     }
 }

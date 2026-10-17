@@ -291,6 +291,51 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(File.Exists(historyPath),Is.False);
             CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
         }
+        [UnityTest] public IEnumerator BrokenAuthorHistoryRequiresExplicitSessionDefaultAndPreservesOriginalAcrossRestart()
+        {
+            File.WriteAllText(historyPath,"invalid-json <b>original author source</b>");var bytes=File.ReadAllBytes(historyPath);
+            var expected=DesignLabHistory.ResolvePublishedDefault(baseline,catalog).Selected;
+            yield return LoadAuthor();Assert.That(ground.LabHistoryLoadError,Is.Not.Null);Assert.That(ground.IsLabHistoryReady,Is.False);
+            Assert.That(Field<bool>("authorStartupResolved"),Is.False);Click("main-action-0");yield return null;
+            Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Lab"));Assert.That(B("author-history-default").interactable,Is.True);
+            Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject,Is.EqualTo(B("author-history-back").gameObject));
+            Assert.That(B("author-history-back").navigation.selectOnRight,Is.EqualTo(B("author-history-default")));
+            Assert.That(B("lab-save").interactable,Is.False);Assert.That(B("lab-create").interactable,Is.False);Assert.That(B("lab-back").interactable,Is.False);
+            var reason=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="author-history-reason");Assert.That(reason.supportRichText,Is.False);
+            Assert.That(reason.text,Does.Contain(ground.LabHistoryLoadError));Assert.That(reason.text,Does.Contain("DesignLab/authoring-history-v1.json"));
+            string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_AUTHOR_FALLBACK_QA_IMAGES");
+            if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,Path.Combine(output,"author-history-error-720.png"),1280,720);}
+            Click("author-history-back");yield return null;Assert.That(Field<bool>("authorStartupResolved"),Is.False);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+            var errorField=typeof(ProvingGround).GetField("historyLoadError",BindingFlags.NonPublic|BindingFlags.Instance);string actualError=ground.LabHistoryLoadError;
+            errorField.SetValue(ground,actualError+"\n"+string.Join("\n",Enumerable.Repeat("Длинная диагностика <b>plain text</b> — исходная история сохранена.",32)));
+            Click("main-action-0");yield return null;
+            using(var viewport=EditorUiCapture.FixedViewport(ground,1280,720))
+            {
+                yield return null;Canvas.ForceUpdateCanvases();var scroll=ground.GetComponentsInChildren<ScrollRect>().Single(x=>x.name=="author-history-details");
+                Assert.That(scroll.content.rect.height,Is.GreaterThan(scroll.viewport.rect.height));scroll.verticalNormalizedPosition=1;
+                var move=new UnityEngine.EventSystems.AxisEventData(UnityEngine.EventSystems.EventSystem.current){moveDir=UnityEngine.EventSystems.MoveDirection.Down,moveVector=Vector2.down};
+                UnityEngine.EventSystems.ExecuteEvents.Execute(B("author-history-back").gameObject,move,UnityEngine.EventSystems.ExecuteEvents.moveHandler);
+                Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(1));Assert.That(reason.supportRichText,Is.False);
+                Assert.That(reason.text,Does.Contain("<b>plain text</b>"));
+            }
+            if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,Path.Combine(output,"author-history-long-720.png"),1280,720);
+            errorField.SetValue(ground,actualError);Click("author-history-back");yield return null;
+            Click("main-action-0");yield return null;Click("author-history-default");yield return null;
+            Assert.That(Field<object>("phase").ToString(),Is.EqualTo("MainMenu"));Assert.That(Field<bool>("authorStartupResolved"),Is.True);
+            Assert.That(ground.ActiveLabReference.Hash,Is.EqualTo(expected.Hash));Assert.That(ground.CaptureLabBundle().Hash(),Is.EqualTo(expected.Snapshot.Hash()));
+            Assert.That(ground.IsLabHistoryReady,Is.False);Assert.That(ground.LabHistoryLoadError,Is.Not.Null);
+            Click("main-action-2");yield return null;Assert.That(B("author-history-default").interactable,Is.False);Assert.That(B("lab-save").interactable,Is.False);
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="author-history-session").text,Does.Contain("В этой сессии выбран"));
+            if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,Path.Combine(output,"author-history-session-1080.png"),1920,1080);
+            // Disabled controls also retain the data API guard if a callback is invoked directly.
+            Click("lab-save");CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
+            Click("author-history-back");yield return null;Click("main-action-0");yield return null;Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Setup"));
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));Assert.That(File.Exists(qaHistory),Is.False);
+            yield return SceneManager.UnloadSceneAsync(scene);scene=default;ground=null;
+            yield return LoadAuthor();Assert.That(Field<bool>("authorStartupResolved"),Is.False);Assert.That(Field<bool>("authorSessionFallback"),Is.False);
+            Click("main-action-0");yield return null;Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Lab"));Assert.That(B("author-history-default").interactable,Is.True);
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
         [UnityTest] public IEnumerator MissingDefaultKeepsLabEditableAndFlagsOrRenameDoNotActivatePreviousExperiment()
         {
             var h=Open(false);

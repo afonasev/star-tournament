@@ -6,7 +6,7 @@ The full objective is NOT achieved. Live read-only git ls-remote confirms templa
 User «согласовано» approves mockups20–31; parent Q5–Q10 resolved in planning main95efe1e. Do not ask again. These approvals allow implementation, not native/human acceptance or build/publication.
 - Q5,20–25 actions/single toggles/copy/Auto: implementation remains open.
 - Q6,26–27 frozen pause balance identity: source21fe689d,4 PlayMode passed +7 actual screenshots in standard-design-lab/pause-identity; physical acceptance separate.
-- Q7,28 explicit temporary shipped Default fallback for unreadable author history: implementation remains open, original must remain untouched and Save blocked.
+- Q7,28 author read-error/session-only shipped Default implemented:4 affected PlayMode passed,3 new PNGs plus2 neighbors in standard-design-lab/author-fallback. Original/package exact bytes and write guard preserved; scene reload repeats explicit choice. Standalone process/device/human acceptance separate.
 - Q8,29 device-family/action-bound hints: implementation remains open.
 - Q9,30 macOS DMG workflow: implementation remains open.
 - Q10,31 graphics quality: implemented with preference0/1/2→existing engine tiers0/2/5, high default/reset. Independent controls and frozen balance preserved.6 EditMode +4 PlayMode passed, actual main/two-seat720p/1080p screenshots in standard-graphics-quality/implementation. Native/device/human acceptance remains open.
@@ -18,4 +18,4 @@ Old source sends6 activation args; current broker accepts7 and requires a ready 
 ## Other completion boundaries
 Current source has signed component producer/startup/recovery, owned full-payload apply, retained reader and cross-transaction cleanup proof; those source milestones do not prove a runnable embedded PE or installed Windows/macOS behavior. Current actual Player/installer candidates, native ACL/UAC/fresh+repeat install/update/crash/restart/data/args acceptance and physical UI/device/human acceptance remain unproven. Separate human build/publication instructions still apply. Branch has not been integrated into main. Canonical spec sync/final report/cleanup acceptance must be completed with the full approved implementation, not treated as complete by this audit.
 
-Next agent: continue approved Q5/Q7/Q8/Q9 and mandatory legacy automatic-transition source work. Preserve the explicit release gate; do not reopen resolved approvals. This audit itself is progress/evidence, not a blocker-status declaration or completion certificate.
+Next agent: continue approved Q5/Q8/Q9 and mandatory legacy automatic-transition source work. Preserve the explicit release gate; do not reopen resolved approvals. This audit itself is progress/evidence, not a blocker-status declaration or completion certificate.
