@@ -1,0 +1,78 @@
+{
+  "baseline": "codex/game-standard-alignment@9b27f727",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "is_completion_certificate": false,
+  "checks": {
+    "full-payload": 44,
+    "windows-recovery": 35,
+    "payload-recovery": 40,
+    "startup-watch": 10,
+    "compatibility": 48
+  },
+  "total": 177,
+  "full_payload_exit": 0,
+  "affected_group_exits": {
+    "windows-recovery": 0,
+    "payload-recovery": 0,
+    "startup-watch": 0,
+    "compatibility": 0
+  },
+  "maintenance_compile": {
+    "errors": 0,
+    "warnings": 0,
+    "publish": false
+  },
+  "actual_archive": {
+    "actualPublishedPackage": true,
+    "version": "0.1.5",
+    "SHA256": "C40D8C8CE6FC601BA4B3C4F1248F214072C584D0CF1CDFAB1BF7EF8535F5918A",
+    "Size": 142106989,
+    "payloadFiles": 363,
+    "nativeMetadata": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<package xmlns=\"http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd\">\n<metadata>\n<id>tech.afonasev.star-tournament.win-x64</id>\n<title>Star Tournament</title>\n<description>Star Tournament</description>\n<authors>tech.afonasev.star-tournament.win-x64</authors>\n<version>0.1.5</version>\n<channel>win-x64</channel>\n<mainExe>StarTournamentLauncher.exe</mainExe>\n<os>win</os>\n<rid>win-x64</rid>\n<shortcutLocations>None</shortcutLocations>\n<shortcutAumid>velopack.tech.afonasev.star-tournament.win-x64</shortcutAumid>\n<machineArchitecture>x64</machineArchitecture>\n</metadata>\n</package>",
+    "gameExecuted": false,
+    "activated": false
+  },
+  "source_prerequisite_2_7": true,
+  "native_windows_acl_uac_acceptance": false,
+  "legacy_bootstrap_migration": false,
+  "player_build": false,
+  "installer_build": false,
+  "full_suite": false,
+  "deploy": false,
+  "sources": {
+    "distribution/maintenance/Program.cs": "1bbed645f4957a77207b5c2fd95974d4e1f981c570aa9122f086e7a8c0673b63",
+    "distribution/maintenance/WindowsFullPayload.cs": "a29eb94f8ca824bbefae880ecd4e50451b3796d90a7bbbb8fdb695192c717d98",
+    "distribution/tests/WindowsFullPayloadChecks.cs": "b16eed7eb0c61e1cc118a8b0ab3a7d4891afbdc91167e3f37e97dceea7903538",
+    "distribution/tests/Program.cs": "c606a0662829aa64eb0d541a09ff94893f39d64ff8e051876f4f1c6e4d3c58c8",
+    "distribution/tests/Launcher.Contracts.csproj": "2a640e6c90058d118dadb0b1631c88114287a238b1cfad4fa19fdf2b62d38d8f",
+    "distribution/tests/fixtures/released-windows-0.1.5.nuspec": "10d14a72b3282e2bb5436cfbc74f3e5fe470526c2cf264750cfcaf7b6a68adb9",
+    "distribution/maintenance/WindowsRecoveryStore.cs": "4c0a78ed48464f151cf7afe1b814bbd6a381b3ad57fbab7478faa5e8cb14c928",
+    "distribution/launcher/PayloadRecovery.cs": "9dc01d60398b5f07a3ca23c44130a13d9c0006a0380a27cfb0828e65d6f3488f",
+    "distribution/maintenance/WindowsStartupWatch.cs": "c6c1ce4ea355081346ec66a518b603f5b94a2560256b758902a6c5c5dd1ef754",
+    "distribution/launcher/AuthenticatedSource.cs": "b590a21706333c94c507b4f6fcdd14b7a5b0d9049a01a1ab8bb4818eabbf03b8",
+    "distribution/launcher/ReleaseCompatibility.cs": "fb8186392c1bdd58a517f8bea8023b077d4e0564301fbc6c4c397ff549f2df79",
+    "distribution/COMPATIBILITY.md": "0d4f441eb87e5a94b8a4e4dc3c92fd2fb9f3ca5a73c7325cd1254da67b9d54c7",
+    "distribution/README.md": "36f5af4f5f5558c10f1c97df013942ededcf9167fbc753d678f9619a25f3d2c7",
+    "docs/TEMPLATE_ALIGNMENT.md": "750fefe09150b2afd1f6d0a3e2978ab29e3f53ca32dc60a1976f0efff8dd1bde"
+  },
+  "evidence": {
+    "checks.json": "203a6b607e1847d9b2da3085f5898ed777d368633931e1ea9095cae1fd02ce45",
+    "compatibility.log": "223934b8ee30e17febe4ad0e3fa33972e1ce66dd7ee7b068f24897e78762a392",
+    "download.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "full-payload-initial.log": "709939be9285b6bc07ccf66079be95d6386df8083a20e4b8059852fbf10a6807",
+    "full-payload.log": "0060b48424b1e3f829cac14a0a9873b261caf9cd1fc0170e3d05e23d1609f079",
+    "maintenance-restore.log": "3e973593222ad9c97206ea46a7f96c4760fc91a4cc95a6191e2476829385bc82",
+    "maintenance.log": "44384117f71638e9bc54e50a4fc71b6658544d4f34db169806d4c61ae1e692d7",
+    "payload-recovery.log": "8e37cb6183c06ab6c50354b04709b53b7d903d6abfd35305c04dd725b44ae7bf",
+    "plan.md": "9c185aa50994925fc1b1bae9b99e759760b7e4c39b667f2b0c80a1d88c0e51e0",
+    "released-package.log": "7fe3e21079ef71beac19a799e7ec8b8d5ad4257d61df27f536bd746d6d05be1b",
+    "restore.log": "b7a3769001f2cb7b9968207e5d4799d0e65162b66b074370bf5e931837e94609",
+    "startup-watch.log": "cbae1d7cd94e4673dc44e6aae2a4da654ba867442090d415bdff2f7a99a82a91",
+    "verification.md": "542252bae72b1827a781f4ae8203a6ba2d917f9c7c8ff065a2601f93eef99a2e",
+    "windows-recovery.log": "7a67b76ce5e1339ef4a63ea48d77b18e23d464202bb97c0a9a83dcf95f6fd017"
+  },
+  "primary_format_source": {
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-rust/src/bundle.rs",
+    "sha256": "3f79ce9a86819fdb54206a116ad70194c57f031c4d690ef6c2d0a087237e3b9d"
+  }
+}

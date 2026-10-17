@@ -581,21 +581,17 @@ static partial class Maintenance
             var copied = ProtectedPackage.CopyAndVerifyAsync(verifier, envelope, asset, sourcePackage, staging).GetAwaiter().GetResult();
             var copiedPackage = copied.PackagePath;
             using var held = new FileStream(copiedPackage, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var updater = Path.Combine(root, "Update.exe");
-        if (!File.Exists(updater) || (File.GetAttributes(updater) & FileAttributes.ReparsePoint) != 0)
-            throw new InvalidOperationException("Protected updater is missing or reparse");
-        var psi = new ProcessStartInfo(updater) { UseShellExecute = false, WorkingDirectory = root };
-        foreach (var v in new[] { "apply", "--package", copiedPackage, "--rootDir", root, "--packageDir", staging, "--norestart" }) psi.ArgumentList.Add(v);
+            var candidate = WindowsFullPayload.Stage(verifier, asset, copiedPackage, Path.Combine(staging, "payload"),
+                CreateRecoveryDirectory, CreateRecoveryFile).GetAwaiter().GetResult();
+            ValidateProtectedTree(Path.Combine(staging, "payload"));
             try
             {
                 recovery.Prepare(config, asset.Version.ToString(), explicitRetry);
                 recovery.Apply(() =>
                 {
-                    using var update = Process.Start(psi) ?? throw new IOException("Protected updater did not start"); update.WaitForExit();
-                    if (update.ExitCode != 0) throw new IOException("Protected updater failed with exit code " + update.ExitCode);
-                    // Native apply may replace the root stub. Reinstall the stable entry from
-                    // this protected, still-running maintenance version before committing installed.
-                    RestoreStableEntry(root);
+                    CheckNoProcesses(root, supervisor.Pid); // Recheck after potentially lengthy staging/snapshot.
+                    candidate.Activate(root); // No native apply: resident supervisor/broker survive.
+                    // Root entry/updater/registration remain installer-owned and unchanged.
                     ValidateProtectedTree(currentDir);
                 });
             }
@@ -607,19 +603,6 @@ static partial class Maintenance
             return 0;
         }
         finally { try { Directory.Delete(staging, true); } catch { } }
-    }
-
-    static void RestoreStableEntry(string root)
-    {
-        var source = Path.Combine(root, "maintenance", "StarTournamentMaintenance.exe");
-        var destination = Path.Combine(root, "Star Tournament.exe"); var next = destination + ".stable-" + Guid.NewGuid().ToString("N");
-        try
-        {
-            using (var input = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var output = CreateRecoveryFile(next)) { input.CopyTo(output); output.Flush(true); }
-            File.Move(next, destination, true);
-        }
-        finally { File.Delete(next); }
     }
 
     static int RecoverUser()

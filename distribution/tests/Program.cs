@@ -4,6 +4,9 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+if (args.Length == 3 && args[0] == "--inspect-windows-full-payload") { await WindowsFullPayloadChecks.InspectReleased(args[1],args[2]); return; }
+if (args.SequenceEqual(new[] { "--windows-full-payload" })) { await WindowsFullPayloadChecks.Run(); return; }
+if (args.Length == 3 && args[0] == "--windows-payload-crash") { await WindowsFullPayloadChecks.Crash(args[1],args[2]); return; }
 if (args.SequenceEqual(new[] { "--legacy-reader-routing" })) { await LegacyReaderRoutingChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--release-compatibility" })) { await ReleaseCompatibilityChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--platform-requirements" })) { PlatformRequirementsChecks.Run(); return; }
