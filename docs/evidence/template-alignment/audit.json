@@ -26,7 +26,7 @@
     "MENU-HINTS-03": "Код/QA Q8/29: East вызывает фактический Back/Cancel текущего контекста один раз за кадр; Start Setup делит predicate с AdvanceSetupInput. Неверные roster Y/X удалены (shortcut и экранное действие различаются); submit сохраняется. Virtual family/device/editor/invalid-roster checks; physical proof остаётся открыт.",
     "MENU-LAYOUT-01": "Код/QA: A/03–19 и согласованные20–31 реализованы в соответствующих source milestones; Q5/Q6/Q7/Q8/Q10 имеют affected Editor/PNG proof, Q9 — DMG layout/source/recording proof. Реальный Finder/Player/TV/physical/human acceptance не выполнен.",
     "MENU-LAYOUT-02": "Код/QA: fixed screens + internal scrolls for fields/history/settings; headers/actions outside scroll.",
-    "MENU-LAYOUT-03": "Код/QA частично: saved actual1080p/720p/short/split captures; physicalTV/все устройства и новые20–28 pending.",
+    "MENU-LAYOUT-03": "Код/QA частично: actual1080p/720p/short/split Editor captures, including approved20–28 milestones. Native Player/physicalTV/device/human coverage remains unverified; screenshots do not close those gates.",
     "MENU-STATE-01": "Код/QA Q7/28: author load-error имеет безопасный Back и явный session-only Default из поставки; исходник сохранён, запись/Save/Create блокируются, reload требует нового выбора. fa13ca57,4 PlayMode; East/Back сосед повторён в Q8. Native process/storage gate открыт.",
     "MENU-STATE-02": "Код/QA: background Lab/discovery/history/download with Busy/drain/cancel; late completion does not steal focus.",
     "MENU-PAUSE-01": "Код/QA: IndependentPauseMenuTests freeze one local match until last menu closes, per-seat settings ownership; online game unavailable.",
@@ -58,11 +58,11 @@
     "UPDATES-CHECK-02": "Код/QA: per-page ETag/body/hash/Link cache,304 свежий next-link, Retry-After/reset across launches, successful remaining0 guard, no stale-current on error; actual API→UpdateSession integration once. Cache parsing вне launch path; native installed gate отдельно.",
     "UPDATES-CONSENT-01": "Код/QA: download only after update action, no forced timer/settings/channel control, stage waits normal exit/restart.",
     "UPDATES-FLOW-01": "Код/QA: UpdateSession.Command match drains download/history before ack; NativeUpdateMenu QueueMatch/return/resume, ordinary quit/discard protection.",
-    "UPDATES-UI-01": "Код/QA: actual available/downloading/verifying/ready/error/current panels; active version separate from candidate/ready, history17 highlight. Generic glyph/legend gap inherited.",
+    "UPDATES-UI-01": "Код/QA: available/downloading/verifying/ready/error/current panels; active version separate from candidate/ready, history17 highlight. Shared action/family/Back hints implemented by Q8; native/physical/human acceptance remains open.",
     "UPDATES-DOWNLOAD-01": "Код/QA: temp package, signed size/hash/free-space/admitted target, retry same candidate/cancel/no duplicate operation; source tests standard-update-download-flow.",
     "UPDATES-HISTORY-01": "Код/QA: ReleaseHistory ten recent+exact installed tag, RU/EN bodies/current RU, separate cached HTTP/drain; installed permanent marker/scroll/resize verified.",
     "UPDATES-CHANGELOG-01": "Код/QA: Git-derived paired reviewed notes/generator before packaging; standard-release-changelog20+16 targeted Python tests. Actual next release notes not generated without publication command.",
-    "UPDATES-TRUST-01": "Pinned RSA-PSS/hash/size/channel/repo + schema2 requirements binding to actual package release.json; RequireCompatibleTarget in discovery/staged/Windows activate+elevated/macOS ValidateTarget. Schema1 immutable historical, old readers need installer. Source negative fixtures passed; native installed acceptance OPEN.",
+    "UPDATES-TRUST-01": "Pinned RSA-PSS/hash/size/channel/repo + schema2 requirements binding to actual package release.json; RequireCompatibleTarget in discovery/staged/Windows activate+elevated/macOS ValidateTarget. Schema1 immutable historical; automatic compatible legacy bootstrap remains mandatory and incomplete. A manual installer is not the ordinary transition. Source negative fixtures passed; native installed acceptance OPEN.",
     "UPDATES-INSTALL-01": "Платформа: payload snapshots/durable journal/root transaction/restore portable fixtures, Windows registry callbacks compiled; installed crash/UAC/ACL not executed.",
     "UPDATES-INSTALL-02": "OPEN semantic gap: schema2-only pipeline vs deployed0.1.5/test.1 schema1/protocol1. Manual installer ordinary transition not accepted. Modern/legacy routing source and actual released source fixtures ready; bootstrap producer/publisher, automatic protected broker1→2, legacy recovery and installed acceptance remain mandatory.",
     "UPDATES-DATA-01": "Source versioned user-data migration preserves v0.1.2 namespaces; signed profiles2-lab3-prefs1 gate bound to actual package config. Native previous→candidate→failed startup→previous/data acceptance not executed. Original own Lab values/history preservation unchanged.",
@@ -271,5 +271,24 @@
     "evidence": "docs/evidence/template-alignment/refresh/verification.json",
     "meaning": "110 requirement/30 option structural reconciliation and inspected source milestones, not completion certificate",
     "legacy_windows_environment_question": "compatibility Q2 pending; verified-stage gate only; automatic transition requirement unchanged"
+  },
+  "continuation_2026_10_17": {
+    "codeBaseline": "codex/game-standard-alignment@87eddb4e",
+    "planningBaseline": "main@18353a3",
+    "windowsEnvironment": "User selected their Windows PC; inventory report not yet supplied",
+    "kit": "docs/evidence/standard-release-compatibility/windows-inventory/StarTournament-Windows-legacy-check.zip",
+    "kitSha256": "eb426412603b00ed7462b768f5ec3bfbc4f04683ea8a21fcdfed1cae8140353b",
+    "completionProven": false,
+    "independentCanonicalSync": "12 child deltas/50 requirement titles present; semantic/runtime/native completeness not inferred",
+    "blockingSourceGap": "First legacy transition issuer + pre-stop protected argv/authority/recovery handoff not complete",
+    "nextHuman": "Run read-only inventory and return JSON",
+    "nextAgent": "Match installed updater/stub/broker/launcher bytes, then establish and verify supported automatic handoff/rollback before release",
+    "deferredGates": [
+      "actual Windows ACL/UAC/handles/NSIS/recovery/data",
+      "actual macOS DMG/install/update/data",
+      "Development Player labProject/native/physical/human acceptance",
+      "code main integration and final acceptance"
+    ],
+    "noManualInstallerException": true
   }
 }
