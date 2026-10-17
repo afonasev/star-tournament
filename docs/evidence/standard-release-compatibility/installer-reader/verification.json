@@ -1,0 +1,27 @@
+{
+  "baseline": "codex/game-standard-alignment@06deb060",
+  "beforeExit": 134,
+  "beforePassed": 37,
+  "beforeFailure": "WindowsInstallerTransferChecks.cs:160 expects effective reader1 despite retained broker declaration2",
+  "afterExit": 0,
+  "installerTransferChecks": 39,
+  "runtimeCodeChanged": false,
+  "testContractChange": "Correct effective reader to2 per explicit spec; retain all other assertions and add post-cleanup broker/reader/old-files assertions",
+  "nativeWindowsExecuted": false,
+  "playerInstallerReleaseBuild": false,
+  "fullSuite": false,
+  "deploy": false,
+  "sources": {
+    "distribution/tests/WindowsInstallerTransferChecks.cs": "5988cc0de5f276fa9fe5e8ab0572118453c26296046919abb379c507ebfe22da",
+    "distribution/launcher/WindowsInstallation.cs": "bbe0cb2d0dcba324264a4f9eede8f6dba732d3f7a0eac31a2aa193cd6445d9fc",
+    "distribution/maintenance/WindowsInstallerTransaction.cs": "d6e593ae353cfa14837ce0236357c0521a6a04711a28a1ec576f9d9853d80b39",
+    "distribution/maintenance/WindowsRecoveryTransfer.cs": "95896e87d35bd9c1813369886ae32884663d3bd6d72562b5178174a93ec49067",
+    "distribution/maintenance/WindowsRecoveryStore.cs": "6acfd025585356c79050cd7a66bfa59ea92f688e625200cd2c6048206409a741",
+    "distribution/maintenance/WindowsBrokerUpgradeTransaction.cs": "4c65d728ac4c3be56b58a20c365cd23c20a003db196395a689d77b946d2c0fa3"
+  },
+  "logs": {
+    "restore.log": "712e9267eac8c5c3644d5ac59a8c922e6661d841c739f9c9552fbb439372f7fa",
+    "before.log": "6443f2edf4bac7a264dd8dbf3c46626cca598e5a14e59f76a237ef45701956db",
+    "after.log": "890f4c385471089f8b90d590426e4d7a14878e71f6e9c714b852771193812bdd"
+  }
+}
