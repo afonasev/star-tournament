@@ -1,0 +1,7 @@
+{
+  "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "e284895dd8b7f6c0ec4e5d65588bc898c721cf7cc72f0b484022698f3bf31652",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "bbb1ad14be7600bd99e1baa354193a8b0a64965a21be3b9de879e200635ba421",
+  "unity/Assets/StarTournament/Tests/PlayMode/DesignLabWorkspaceTests.cs": "5e8ed80a9efdcefbdf84d8453d80aa8f66d3d3421b03dcba36db672d733d9d9d",
+  "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "2ddc0b3c15dbb4c9b0eec3dbdda8da652b892cba548d675a23474229c87b414c",
+  "unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs": "86bb188e43d41bae51cec56f041072445a8a8aec40f3f014656603d957a677c3"
+}

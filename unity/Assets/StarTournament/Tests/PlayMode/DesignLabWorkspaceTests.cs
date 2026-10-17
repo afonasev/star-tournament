@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();pad=InputSystem.AddDevice<Gamepad>();
             yield return NativeLoadingTestScene.WaitLabHistory(ground);Click("main-action-2");yield return null;
-            Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("в клиенте"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-release-reason").text,Does.Contain("Профиль пакета"));
             Assert.That(Button("lab-release").interactable,Is.False);
             Assert.That(Input("input-rifle.damage").interactable,Is.False);
             foreach(var name in new[]{"lab-save","lab-rename","plus-rifle.damage","minus-rifle.damage","reset-rifle.damage"})Assert.That(Button(name).interactable,Is.False);
@@ -57,7 +57,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             int nextRevision=history.SelectedProfile.Revisions.Max(r=>r.Number)+1;
             Input("input-rifle.damage").text="33";Click("lab-save");yield return null;Assert.That(history.Selected.Number,Is.EqualTo(nextRevision));Assert.That(ground.LabSavedIdentity,Does.Contain("v"+nextRevision+"-"));Assert.That(ground.CombatProfile.Get("rifle.damage"),Is.EqualTo(original));
             string savedIdentity=ground.LabSavedIdentity;Assert.That(Button("lab-release").interactable,Is.True);Click("lab-release");yield return null;
-            Assert.That(Button("lab-release").GetComponentInChildren<Text>().text,Does.Contain("да · локально"));Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
+            Assert.That(Button("lab-release").transform.Find("state-box/state-check").gameObject.activeSelf,Is.True);Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-release-reason").text,Does.Contain("Локальная отметка"));Assert.That(ground.LabSavedIdentity,Is.EqualTo(savedIdentity));
             Input("input-rifle.damage").text="34";yield return null;Assert.That(Button("lab-release").interactable,Is.False);
             Assert.That(Input("input-rifle.damage").interactable,Is.True,"A local mark does not lock the separate local profile");Click("lab-clear");yield return null;
             Assert.That(Button("confirm"),Is.Not.Null,"Clearing a changed draft requires confirmation");Click("confirm");yield return null;
@@ -141,8 +141,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();yield return NativeLoadingTestScene.WaitLabHistory(ground);
             Click("main-action-2");yield return null;
             Input("lab-search").text="blood.enabled";yield return null;
-            Assert.That(Button("bool-off-blood.enabled").interactable,Is.False,"Package controls are protected");
-            Assert.That(Button("bool-on-blood.enabled").interactable,Is.False);
+            Assert.That(Button("bool-toggle-blood.enabled").interactable,Is.False,"Package control is protected");
+            Assert.That(ground.GetComponentsInChildren<Button>().Count(b=>b.name=="bool-toggle-blood.enabled"),Is.EqualTo(1));
             Click("lab-create");yield return null;Input("lab-profile-name").text="Очень длинное название профиля для проверки";Click("submit");yield return null;
             Assert.That(File.Exists(path),Is.True,"Valid profile creation must persist before editing");
             foreach(string key in new[]{"blood.enabled","hit.enabled"})
@@ -150,20 +150,26 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Input("lab-search").text=key;yield return null;
                 Assert.That(ground.GetComponentsInChildren<InputField>().Any(f=>f.name=="input-"+key),Is.False,"Boolean fields cannot accept fractional text");
                 var before=ground.ActiveLabReference.Clone();var bytes=File.ReadAllBytes(path);
-                Click("bool-off-"+key);yield return null;Assert.That(Button("lab-save").interactable,Is.True);
+                Click("bool-toggle-"+key);yield return null;Assert.That(Button("lab-save").interactable,Is.True);
                 Assert.That(ground.ActiveLabReference.Matches(before),Is.True);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
-                Assert.That(Button("bool-off-"+key).GetComponent<Image>().color,Is.Not.EqualTo(Button("bool-on-"+key).GetComponent<Image>().color));
-                Click("bool-on-"+key);yield return null;Assert.That(Button("lab-save").interactable,Is.False,"Returning to baseline clears the draft change");
+                Assert.That(Button("bool-toggle-"+key).transform.Find("state-box/state-check").gameObject.activeSelf,Is.False);Assert.That(Button("bool-toggle-"+key).GetComponentInChildren<Text>().text,Is.EqualTo("Выкл"));
+                Click("bool-toggle-"+key);yield return null;Assert.That(Button("lab-save").interactable,Is.False,"Returning to baseline clears the draft change");
                 if(key=="blood.enabled")
                 {
-                    pad=InputSystem.AddDevice<Gamepad>();EventSystem.current.SetSelectedGameObject(Button("bool-off-"+key).gameObject);
+                    pad=InputSystem.AddDevice<Gamepad>();EventSystem.current.SetSelectedGameObject(Button("bool-toggle-"+key).gameObject);
                     InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadRight));yield return null;yield return null;
                     InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
-                    Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(Button("bool-on-"+key).gameObject));
+                    Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(Button("reset-"+key).gameObject));
                     InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
                     InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;Assert.That(Button("lab-save").interactable,Is.False);
                 }
-                Click("bool-off-"+key);yield return null;EventSystem.current.SetSelectedGameObject(Button("bool-off-"+key).gameObject);
+                if(key=="blood.enabled")
+                {
+                    EventSystem.current.SetSelectedGameObject(Button("bool-toggle-"+key).gameObject);
+                    for(int press=0;press<2;press++)
+                    {InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;Assert.That(Button("lab-save").interactable,Is.EqualTo(press==0));}
+                }
+                Click("bool-toggle-"+key);yield return null;EventSystem.current.SetSelectedGameObject(Button("bool-toggle-"+key).gameObject);
                 if(key=="blood.enabled")
                 {
                     foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1280,720),new Vector2Int(1920,650)})
@@ -176,7 +182,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                             for(int j=1;j<toolbar.Length;j++)Assert.That(Bounds(toolbar[j]).xMin,Is.GreaterThan(Bounds(toolbar[j-1]).xMax),"Toolbar controls must not overlap");
                             Assert.That(Bounds(search).width,Is.GreaterThan(Bounds(toolbar[0]).width*3),"Search spans the workspace");
                             Assert.That(Bounds(search).yMax,Is.LessThan(Bounds(toolbar[0]).yMin));
-                            Assert.That(Bounds((RectTransform)Button("bool-off-"+key).transform).xMax,Is.LessThan(Bounds((RectTransform)Button("bool-on-"+key).transform).xMin));
+                            Assert.That(Bounds((RectTransform)Button("bool-toggle-"+key).transform).xMax,Is.LessThan(Bounds((RectTransform)Button("reset-"+key).transform).xMin));
                         }
                         var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/approved-ui"));Directory.CreateDirectory(output);
                         yield return EditorUiCapture.Capture(ground,Path.Combine(output,"18-switches-"+size.x+"x"+size.y+".png"),size.x,size.y);

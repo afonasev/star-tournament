@@ -54,7 +54,8 @@ namespace StarTournament.ProvingGround
                 Move(settingsResolution.transform,settingsImagePage.transform,new Vector2(.02f,.57f),new Vector2(.55f,.76f));
                 Move(settingsResolutionButton.transform,settingsImagePage.transform,new Vector2(.60f,.63f),new Vector2(.98f,.75f));
                 settingsModeButton.GetComponent<MenuScrollFocus>().Scroll=null;settingsResolutionButton.GetComponent<MenuScrollFocus>().Scroll=null;
-                settingsAutoButton=MenuButton(settingsImagePage.transform,StandardName("settings-resolution-auto"),"AUTO",new Vector2(.60f,.50f),new Vector2(.98f,.61f),ChooseAutoResolution);
+                settingsAutoButton=MenuButton(settingsImagePage.transform,StandardName("settings-resolution-auto"),"Автоматически",new Vector2(.60f,.50f),new Vector2(.98f,.61f),ChooseAutoResolution);
+                Label(settingsImagePage.transform,StandardName("settings-auto-explanation"),"Автоподбор по текущему экрану",20,new Vector2(.02f,.50f),new Vector2(.56f,.61f),TextAnchor.MiddleLeft,Color.white);
                 Move(settingsVSyncToggle.transform,settingsImagePage.transform,new Vector2(.02f,.29f),new Vector2(.98f,.45f));
                 settingsVSyncToggle.GetComponent<MenuScrollFocus>().Scroll=null;
                 Label(settingsImagePage.transform,StandardName("settings-frame-cap-label"),"Ограничение FPS",23,new Vector2(.02f,.08f),new Vector2(.57f,.23f),TextAnchor.MiddleLeft,Color.white);

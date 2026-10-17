@@ -92,7 +92,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(hint.supportRichText,Is.False);CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
             var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/catalogue"));Directory.CreateDirectory(output);
             yield return EditorUiCapture.Capture(ground,Path.Combine(output,"catalogue-hint-720p.png"),1280,720);
-            Click("lab-revision-select");yield return null;Click("revision-unmark");yield return null;Click("cancel");yield return null;
+            Click("lab-revision-select");yield return null;Click("revision-release");yield return null;Click("cancel");yield return null;
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(I("input-rifle.damage").gameObject);yield return null;
             Assert.That(hint.text,Does.Contain("Релизный Default: "+baseline.Get("rifle.damage").ToString(System.Globalization.CultureInfo.InvariantCulture)));
             Assert.That(I("input-rifle.damage").text,Is.EqualTo("33"));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
@@ -133,13 +133,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             deadline=Time.realtimeSinceStartup+120;while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}yield return null;
             var active=ground.ActiveLabReference;var selected=h.Selected;bytes=File.ReadAllBytes(historyPath);
             Click("lab-revision-select");yield return null;Click("revision-1");yield return null;
-            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-unmark").interactable,Is.True);
+            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-release").interactable,Is.True);
             var reason=ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-status");
             Assert.That(reason.text,Does.Contain("well.fill"));Assert.That(reason.supportRichText,Is.False);
             Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
             CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
             yield return EditorUiCapture.Capture(ground,Path.Combine(output,"incompatible-row-720p.png"),1280,720);
-            Click("revision-unmark");yield return null;
+            Click("revision-release");yield return null;
             Assert.That(ground.ActiveLabReference.Matches(active),Is.True);Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));
             var retained=h.Profiles.Single(p=>p.Id=="legacy-light").Revisions.Single(r=>r.Number==1);
             Assert.That(retained.ReleaseCandidate,Is.False);Assert.That(retained.Hash,Is.EqualTo(bad.Hash));Assert.That(retained.Date,Is.EqualTo(bad.Date));
@@ -147,14 +147,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Click("cancel");yield return null;I("input-rifle.damage").text="33";yield return null;
             selected=h.Selected;active=ground.ActiveLabReference;bytes=File.ReadAllBytes(historyPath);
             Click("lab-profile-select");yield return null;Click("profile-legacy-only");yield return null;
-            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-unmark").interactable,Is.True);
+            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-release").interactable,Is.True);
             Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-identity").text,Does.Contain("Только прежняя версия"));
             Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-status").text,Does.Contain("well.fill"));
             Assert.That(h.SelectedProfileId,Is.EqualTo("legacy-light"));Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));
             Assert.That(ground.ActiveLabReference.Matches(active),Is.True);Assert.That(Field<LabBundle>("labDraft").Get("rifle.damage"),Is.EqualTo(33));
             CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));
             yield return EditorUiCapture.Capture(ground,Path.Combine(output,"old-only-profile-720p.png"),1280,720);
-            Click("revision-unmark");yield return null;
+            Click("revision-release");yield return null;
             var only=h.Profiles.Single(p=>p.Id=="legacy-only").Revisions.Single();Assert.That(only.ReleaseCandidate,Is.False);
             Assert.That(only.Hash,Is.EqualTo(bad.Hash));Assert.That(only.Date,Is.EqualTo(bad.Date));
             Assert.That(ground.ActiveLabReference.Matches(active),Is.True);Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));
@@ -170,15 +170,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             I("input-rifle.damage").text="33";yield return null;
             var active=ground.ActiveLabReference.Clone();var h=Field<DesignLabHistory>("labHistory");var selected=h.Selected;var bytes=File.ReadAllBytes(historyPath);
             Click("lab-revision-select");yield return null;Click("revision-"+number);yield return null;
-            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-unmark").interactable,Is.True);
+            Assert.That(B("revision-select").interactable,Is.False);Assert.That(B("revision-release").interactable,Is.True);
             Assert.That(B("revision-"+marked).GetComponentInChildren<Text>().text,Does.Contain("выбранная база"));
             Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-active").text,Does.Contain("v"+marked+"-"));
             Assert.That(h.Selected.Hash,Is.EqualTo(selected.Hash));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
             CollectionAssert.AreEqual(bytes,File.ReadAllBytes(historyPath));Assert.That(Field<LabBundle>("labDraft").Get("rifle.damage"),Is.EqualTo(33));
             var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/approved-ui"));Directory.CreateDirectory(output);
             yield return EditorUiCapture.Capture(ground,Path.Combine(output,"19-historical-720p.png"),1280,720);
-            Click("revision-unmark");yield return null;
-            Assert.That(B("revision-unmark").interactable,Is.False);Assert.That(B("revision-select").interactable,Is.False);
+            Click("revision-release");yield return null;
+            Assert.That(B("revision-release").interactable,Is.False);Assert.That(B("revision-select").interactable,Is.False);
+            Assert.That(B("revision-release").transform.Find("state-box/state-check").gameObject.activeSelf,Is.False);
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="revision-status").text,Does.Contain("Включение недоступно"));
+            string actionImages=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_ACTION_QA_IMAGES");
+            if(!string.IsNullOrEmpty(actionImages)){Directory.CreateDirectory(actionImages);yield return EditorUiCapture.Capture(ground,Path.Combine(actionImages,"23-incompatible-unmarked-720.png"),1280,720);}
             Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject,Is.EqualTo(B("cancel").gameObject));
             var stored=Open(false);var retained=stored.SelectedProfile.Revisions.Single(r=>r.Number==number);
             Assert.That(retained.ReleaseCandidate,Is.False);Assert.That(retained.Hash,Is.EqualTo(original.Hash));Assert.That(retained.Date,Is.EqualTo(original.Date));
@@ -289,6 +293,41 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/standard-design-lab/runtime"));Directory.CreateDirectory(output);
             yield return EditorUiCapture.Capture(ground,Path.Combine(output,"05-project-startup-saved-identity.png"),1600,900);
             Assert.That(File.Exists(historyPath),Is.False);
+            CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
+        }
+        [UnityTest] public IEnumerator ReleaseToggleAndCopyUseSavedSourceWithoutActivatingDraft()
+        {
+            yield return LoadAuthor();Click("main-action-2");yield return null;
+            var h=Field<DesignLabHistory>("labHistory");var selected=h.Selected;var active=ground.ActiveLabReference.Clone();
+            var originals=h.SelectedProfile.Revisions.Select(r=>new[]{r.Number.ToString(),r.Hash,r.Date,JsonUtility.ToJson(r.Snapshot)}).ToArray();
+            I("lab-search").text="rifle.damage";yield return null;I("input-rifle.damage").text="33";yield return null;
+            Assert.That(B("lab-create").GetComponentInChildren<Text>().text,Is.EqualTo("Создать копию"));
+            Assert.That(B("lab-clear").GetComponentInChildren<Text>().text,Is.EqualTo("Сбросить правки"));
+            Assert.That(B("lab-reset-release").GetComponentInChildren<Text>().text,Is.EqualTo("Версия по умолчанию"));
+            Assert.That(B("reset-rifle.damage").GetComponentInChildren<Text>().text,Is.EqualTo("Вернуть"));
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(B("reset-rifle.damage").gameObject);yield return null;
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-hint").text,Does.Contain("Вернуть значение выбранной сохранённой версии: 31"));
+            Assert.That(B("lab-release").interactable,Is.False);Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="lab-release-reason").text,Is.EqualTo("Сначала сохраните правки"));
+            Click("lab-revision-select");yield return null;Click("revision-"+unmarked);yield return null;
+            Assert.That(B("revision-release").interactable,Is.True);Assert.That(B("revision-release").transform.Find("state-box/state-check").gameObject.activeSelf,Is.False);
+            string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_ACTION_QA_IMAGES");
+            if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,Path.Combine(output,"21-compatible-release-720.png"),1280,720);}
+            Click("revision-release");yield return null;Assert.That(h.IsMarkedForRelease(h.SelectedProfileId,unmarked),Is.True);
+            Assert.That(B("revision-release").transform.Find("state-box/state-check").gameObject.activeSelf,Is.True);
+            Assert.That(h.Selected.Number,Is.EqualTo(selected.Number));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);Assert.That(Field<LabBundle>("labDraft").Get("rifle.damage"),Is.EqualTo(33));
+            Click("revision-release");yield return null;Assert.That(h.IsMarkedForRelease(h.SelectedProfileId,unmarked),Is.False);
+            Assert.That(B("revision-release").interactable,Is.True);Assert.That(B("revision-release").transform.Find("state-box/state-check").gameObject.activeSelf,Is.False);
+            CollectionAssert.AreEqual(originals,h.SelectedProfile.Revisions.Select(r=>new[]{r.Number.ToString(),r.Hash,r.Date,JsonUtility.ToJson(r.Snapshot)}).ToArray());
+            Click("cancel");yield return null;Click("lab-create");yield return null;
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="copy-source").text,Does.Contain(h.SelectedProfileName).And.Contain("v"+selected.Number));
+            Assert.That(I("lab-profile-name").text,Is.EqualTo("Новый профиль"));
+            I("lab-profile-name").text="Saved source copy";yield return null;
+            if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,Path.Combine(output,"25-copy-profile-720.png"),1280,720);
+            Click("submit");yield return null;Assert.That(B("confirm"),Is.Not.Null);Click("cancel");yield return null;
+            Assert.That(h.Selected.Number,Is.EqualTo(selected.Number));Assert.That(Field<LabBundle>("labDraft").Get("rifle.damage"),Is.EqualTo(33));Assert.That(ground.ActiveLabReference.Matches(active),Is.True);
+            Click("lab-create");yield return null;I("lab-profile-name").text="Saved source copy";Click("submit");yield return null;Click("confirm");yield return null;
+            Assert.That(h.SelectedProfileName,Is.EqualTo("Saved source copy"));Assert.That(h.SelectedProfile.Revisions.Count,Is.EqualTo(1));Assert.That(h.Selected.Snapshot.Get("rifle.damage"),Is.EqualTo(31));Assert.That(h.SelectedReleaseMarked,Is.False);
+            var source=h.Profiles.Single(p=>p.Id==active.ProfileId);CollectionAssert.AreEqual(originals,source.Revisions.Select(r=>new[]{r.Number.ToString(),r.Hash,r.Date,JsonUtility.ToJson(r.Snapshot)}).ToArray());
             CollectionAssert.AreEqual(packageBytes,File.ReadAllBytes(PackagePath));
         }
         [UnityTest] public IEnumerator BrokenAuthorHistoryRequiresExplicitSessionDefaultAndPreservesOriginalAcrossRestart()

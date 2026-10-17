@@ -182,6 +182,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("resolution-choice-1"));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-resolution"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-resolution-auto"));
+            Assert.That(Button("settings-resolution-auto").GetComponentInChildren<Text>().text,Is.EqualTo("Автоматически"));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(t=>t.name=="settings-auto-explanation").text,Is.EqualTo("Автоподбор по текущему экрану"));
+            string actionOutput=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_ACTION_QA_IMAGES");
+            if(!string.IsNullOrEmpty(actionOutput)){System.IO.Directory.CreateDirectory(actionOutput);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(actionOutput,"24-auto-screen-720.png"),1280,720);}
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-vsync"));
             var vsync=ground.GetComponentsInChildren<Toggle>(true).Single(t=>t.name=="settings-vsync");bool priorVSync=vsync.isOn;
             const string vsyncKey="StarTournament.Graphics.VSync";bool hadVSync=PlayerPrefs.HasKey(vsyncKey);int savedVSync=PlayerPrefs.GetInt(vsyncKey),qualityVSync=QualitySettings.vSyncCount;

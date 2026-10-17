@@ -1,0 +1,79 @@
+{
+  "baseline": "codex/game-standard-alignment@fa13ca57",
+  "approval": "Q5 / mockups20–25; planning main95efe1e",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66 / menu-base0.2.0",
+  "initial": {
+    "id": "2",
+    "testcasecount": "8",
+    "result": "Passed",
+    "total": "8",
+    "passed": "8",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-17 07:44:32Z",
+    "end-time": "2026-10-17 07:49:28Z",
+    "duration": "296.7197908"
+  },
+  "final": {
+    "id": "2",
+    "testcasecount": "4",
+    "result": "Passed",
+    "total": "4",
+    "passed": "4",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-17 07:50:27Z",
+    "end-time": "2026-10-17 07:54:09Z",
+    "duration": "221.5451719"
+  },
+  "unique_cases": 9,
+  "executions": 12,
+  "runner_exits": {
+    "61773": 0,
+    "34181": 0
+  },
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "1fb250b4498a52750aff1a896c865508ba077a69029b82bc166629d8be353679",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "bbb1ad14be7600bd99e1baa354193a8b0a64965a21be3b9de879e200635ba421",
+    "unity/Assets/StarTournament/Tests/PlayMode/DesignLabWorkspaceTests.cs": "5e8ed80a9efdcefbdf84d8453d80aa8f66d3d3421b03dcba36db672d733d9d9d",
+    "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "4762fcc90344cfef246f79443d3bc9da01032d559bc7acbfea9f20d3ad6b454b",
+    "unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs": "86bb188e43d41bae51cec56f041072445a8a8aec40f3f014656603d957a677c3"
+  },
+  "initial_source_hashes": "initial/initial-source.json",
+  "final_delta": "copy/history typography, copy initial name, original rename placement; final4 cover these and historical source/draft/flags. Unchanged behavior uses initial affected8; no claim12 unique tests.",
+  "proof": [
+    "single boolean check with Off/On text, A toggle twice, right to reset, readonly/draft/persistence and720/1080/short viewport geometry",
+    "toolbar release checkbox with explicit disabled reason",
+    "compatible inspected version mark/unmark preserves base/draft/active and original snapshot/hash/date",
+    "incompatible marked allows unmark then unchecked disabled with explicit reason; inspected profile distinct from selected",
+    "copy names saved source, cancel preserves dirty draft, explicit discard creates separate unmarked history from saved values",
+    "selected baseline reset hint and release Default role",
+    "Auto label/explanation and gamepad navigation; confirmation/revert implementation unchanged"
+  ],
+  "screenshots_neighbors": [
+    "docs/evidence/standard-design-lab/approved-ui/18-switches-1280x720.png",
+    "docs/evidence/standard-design-lab/approved-ui/18-switches-1920x1080.png",
+    "docs/evidence/standard-design-lab/approved-ui/18-switches-1920x650.png",
+    "docs/evidence/standard-design-lab/approved-ui/19-historical-720p.png",
+    "docs/evidence/standard-design-lab/catalogue/catalogue-hint-720p.png",
+    "docs/evidence/standard-design-lab/mixed-history/incompatible-row-720p.png",
+    "docs/evidence/standard-design-lab/mixed-history/old-only-profile-720p.png",
+    "docs/evidence/standard-design-lab/mixed-history/saved-source-720p.png",
+    "docs/evidence/standard-design-lab/runtime/05-missing-default-720p.png"
+  ],
+  "mode": "shared Editor graphics; -noaudio -muted from start",
+  "limitations": [
+    "Editor/input fixtures and rendered PNGs do not replace native physical/device/TV/human acceptance",
+    "fixed B/Верх glyphs remain approved Q8 scope",
+    "no full suite, Player, installer, build, deploy",
+    "all five-package goal remains active; legacy automatic0.1.5/test.1 transition is mandatory and release gated"
+  ]
+}

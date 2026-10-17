@@ -2,7 +2,7 @@
 
 Проверяемый pin game-spec-templates60fe3d2787dfb860722372791ee67dc8453f6f66 (local и origin HEAD проверены17.10.2026). Полная цель включает ещё четыре пакета. Эта матрица не закрывает parent/change и не подменяет native/human acceptance. Source до текущих test-only дополнений: codex/game-standard-alignment@f38103cc. Ранее проверенные контракты учитываются по неизменённым областям и более новым affected QA, а не автоматически по наличию отчёта.
 
-Evidence paths ниже относительно этого каталога. «Техническое основание» включает inspected source + перечисленные executed assertions, не означает проверку всех устройств/всех runtime веток. Общие MENU-ACTIONS-01/02/03 согласованы по Q5, но ещё ждут реализации, поэтому общий UX пока не завершён. Native Development Player -labProject остаётся отдельным непроверенным gate без команды на сборку.
+Evidence paths ниже относительно этого каталога. «Техническое основание» включает inspected source + перечисленные executed assertions, не означает проверку всех устройств/всех runtime веток. Общие MENU-ACTIONS-01/02/03 реализованы по Q5/20–25 с9 unique affected Editor cases в ../standard-menu-actions/implementation; native/human gates отдельно открыты, поэтому общий UX пока не завершён. Native Development Player -labProject остаётся отдельным непроверенным gate без команды на сборку.
 
 | ID | Техническое основание и текущая граница |
 | --- | --- |
@@ -11,8 +11,8 @@ Evidence paths ниже относительно этого каталога. «
 | LAB-GROUPS-01 | ResetLabDraft/RefreshLabWorkspace единый registry→groups/search/diff; approved-ui actual rendered tree. |
 | LAB-CATALOG-01 | catalogue/: все actual visible metadata валидны, numeric155integer/481decimal/2boolean, defaults source/NextGame checked. В editable catalogue нет text/enum/resource selectors, их domain widgets не требуются. |
 | LAB-CATALOG-02 | consumers/:638 source bindings, actual selected→frozen lifecycle; hud-lifecycle/ устранил найденные startup-only UI caches. Это source+targeted lifecycle proof, не638 executed effects. |
-| LAB-FIND-01 | DesignLabWorkspaceTests search hidden paths/global changes; LabDiscardWarningTests hidden changes. Reset via clear search; new short copy Q5 pending. |
-| LAB-EDIT-01 | Workspace partial raw input/focus/step/save; typed-values/ boolean guards; approved-ui18. Новый single-toggle вид Q5 pending. |
+| LAB-FIND-01 | DesignLabWorkspaceTests search hidden paths/global changes; LabDiscardWarningTests hidden changes. Reset via clear search; short actions/source copy20–25 implemented and checked in ../standard-menu-actions/implementation. |
+| LAB-EDIT-01 | Workspace partial raw input/focus/step/save; typed-values/ boolean guards; approved-ui18. Approved20 single checkbox button/state/0or1 implemented; A toggle twice, readonly/save/focus/viewport assertions in ../standard-menu-actions/implementation. |
 | LAB-DRAFT-01 | Workspace draft vs saved/live, per-field diff, exact baseline reset; discard/ and approved-ui/ checked. |
 | LAB-DRAFT-02 | discard/: hidden/raw/long diff, cancel focus, guard leave/profile/revision/reset/create/delete/quit; approved06 UI. |
 | LAB-VALIDATE-01 | LabParameterTypeTests trusted metadata/0or1/NaN/Infinity, History range/step/relations, hud-lifecycle kill bounds; invalid draft not published. |
@@ -32,7 +32,7 @@ Evidence paths ниже относительно этого каталога. «
 | LAB-UPGRADE-01 | saved-values exact compatible own values incl old default/0/false; repeated-upgrade current Default fields; default-source identity/full Save; structural-policy three maps×three roles. |
 | LAB-UPGRADE-02 | structural-policy known rename/split; Diagnostics/Type strict unknown/removed/type/range/resource rejection, original preserved; mixed-history valid selection isolated and old-only inspect/unmark. Approved Q7 author read-error fallback implemented and Editor-tested in author-fallback/; source is never repaired or overwritten. Automatic history repair optional by STORAGE-01, not implemented/claimed. |
 | LAB-TEST-01 | Lab selection and ordinary setup/start freeze exact config/reference. Approved26–27 implemented: frozen profile/source version/known date visible in seat/operator pause;4 actual PlayMode checks and7 rendered PNGs in pause-identity/,1/2/4 viewport1080p/720p/long names. Physical/device/human acceptance separate. Deterministic test instrument not required/claimed. |
-| LAB-UX-01 | approved-ui/ typed fields, focus/footer,720p/short viewport; other menu-base source audit and new20–25 pendingQ5; pause26–27 and author error28 implemented with scoped Editor evidence. Physical device/human gates not replaced. |
+| LAB-UX-01 | approved-ui/ typed fields, focus/footer,720p/short viewport; menu-base action source audit and approved20–25 implemented with9 unique affected cases; pause26–27 and author error28 implemented with scoped Editor evidence. Physical device/human gates not replaced. |
 | LAB-EXTEND-01 | No user preview/import/export/series editor added. Explicit build catalog tooling validates originals/prospective hashes and stages under ownership; not automatic publication. Legacy QA/review modes are project test tooling, no cross-release deterministic promise. |
 
-Q5–Q10 согласованы; повторное согласование не требуется. Следующий обязательный Lab UI шаг: реализовать20–25(Q5) с affected state/focus/input/rendered verification и сохранением originals.26–28 реализованы с Editor evidence, native/human gates остаются отдельно открытыми. Полный набор тестов/Player/build/deploy не разрешён этим отчётом.
+Q5–Q10 согласованы; повторное согласование не требуется. 20–28 реализованы с affected state/focus/input/rendered verification и сохранением originals. Следующий общий UI шаг: Q8/device-aware hints29.26–28 имеют Editor evidence, native/human gates остаются отдельно открытыми. Полный набор тестов/Player/build/deploy не разрешён этим отчётом.
