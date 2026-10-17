@@ -22,6 +22,13 @@ public static class WindowsInstallation
         return Math.Min(protocol, ReleaseCompatibility.ReaderProtocol);
     }
 
+    public static string? MarkedRoot(IVelopackLocator locator)
+    {
+        if(!OperatingSystem.IsWindows()||locator.RootAppDir==null)return null;
+        var root=Path.TrimEndingDirectorySeparator(Path.GetFullPath(locator.RootAppDir));
+        return File.Exists(Path.Combine(root,".star-tournament-install.json"))?root:null;
+    }
+
     public static string? MachineRoot(IVelopackLocator locator)
     {
         if (!OperatingSystem.IsWindows() || locator.RootAppDir == null) return null;

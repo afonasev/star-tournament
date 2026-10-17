@@ -6,9 +6,6 @@ using Velopack;
 
 namespace StarTournament.Distribution;
 
-public sealed record BrokerPreviousFile(string Name,long Size,string Sha256);
-public sealed record BrokerUpgradeState(int Schema,string RootId,string AppId,string Version,string Channel,string Id,string ManifestHash,string Phase,BrokerPreviousFile[] Previous);
-
 /// <summary>Fixed-file durable transaction only. Elevated adapter MUST validate root/candidate
 /// ownership/ACLs, exact caller/process fence and installation lease before use.</summary>
 public sealed class WindowsBrokerUpgradeTransaction
@@ -28,19 +25,12 @@ public sealed class WindowsBrokerUpgradeTransaction
         slot=Path.Combine(this.root,"maintenance","broker-upgrade-v1");statePath=Path.Combine(slot,"state.json");Plain(slot);
         this.mkdir=mkdir??(p=>Directory.CreateDirectory(p));this.create=create??(p=>new FileStream(p,FileMode.CreateNew,FileAccess.Write,FileShare.None));this.checkpoint=checkpoint??(_=>{});
     }
-    public BrokerUpgradeState? Read()
+    public BrokerUpgradeState? Read()=>BrokerUpgradeStateStore.Read(root,payload);
+    public void Prepare(BrokerUpgradeCandidate candidate)=>PrepareCore(candidate,false);
+    public void PrepareRetained(BrokerUpgradeCandidate candidate)=>PrepareCore(candidate,true);
+    void PrepareCore(BrokerUpgradeCandidate candidate,bool retained)
     {
-        Plain(statePath);if(File.Exists(slot))throw new IOException("Broker upgrade storage is a file");if(!File.Exists(statePath)){if(Directory.Exists(slot)&&Directory.EnumerateFileSystemEntries(slot).Any())throw new IOException("Unowned broker upgrade storage");return null;}
-        var state=JsonSerializer.Deserialize<BrokerUpgradeState>(BrokerUpgradeCandidate.ReadBounded(statePath,65536),Json)??throw new IOException("Broker upgrade state missing");
-        if(state.Schema!=1||state.RootId!=StartupRecovery.InstallationId(root)||state.AppId!=payload.AppId||(!SemanticVersion.TryParse(state.Version,out var version)||version.ToString()!=state.Version||version.IsPrerelease!=(payload.UpdateChannel=="test"))||state.Channel!=payload.UpdateChannel||
-            !Regex.IsMatch(state.Id??"",@"\A[a-f0-9]{32}\z")||!Digest(state.ManifestHash)||state.Phase is not("capturing" or "prepared" or "replacing" or "restoring" or "restored" or "committed")||
-            state.Previous==null||state.Previous.Length!=3||state.Previous.Any(f=>f==null)||!state.Previous.Select(f=>f.Name).ToHashSet(StringComparer.Ordinal).SetEquals(Names)||
-            state.Previous.Any(f=>f.Size<=0||f.Size>(f.Name=="contract"?65536:128*1024*1024)||!Digest(f.Sha256)))throw new IOException("Foreign/damaged broker transaction");
-        return state;
-    }
-    public void Prepare(BrokerUpgradeCandidate candidate)
-    {
-        Candidate(candidate);if(Read()!=null)throw new IOException("Settle the prior broker transaction first");
+        Candidate(candidate,retained);if(Read()!=null)throw new IOException("Settle the prior broker transaction first");
         ValidatePreviousContract();var previous=new List<BrokerPreviousFile>();
         for(int i=0;i<Targets.Length;i++){var source=Target(i);var (size,hash)=Identity(source);if(size<=0||size>(i==1?65536:128*1024*1024))throw new IOException("Previous broker component exceeds bounds");previous.Add(new(Names[i],size,hash));}
         var state=new BrokerUpgradeState(1,StartupRecovery.InstallationId(root),payload.AppId,payload.Version,payload.UpdateChannel!,Guid.NewGuid().ToString("N"),candidate.ManifestHash,"capturing",previous.ToArray());
@@ -53,9 +43,11 @@ public sealed class WindowsBrokerUpgradeTransaction
         {var index=Array.IndexOf(Names,file.Name);Copy(Target(index),Backup(file.Name));if(Identity(Target(index))!=(file.Size,file.Sha256)||Identity(Backup(file.Name))!=(file.Size,file.Sha256))throw new IOException("Previous broker changed during snapshot");checkpoint("captured-"+file.Name);}
         Write(state with{Phase="prepared"});checkpoint("prepared");
     }
-    public void Apply(BrokerUpgradeCandidate candidate)
+    public void Apply(BrokerUpgradeCandidate candidate)=>ApplyCore(candidate,false);
+    public void ApplyRetained(BrokerUpgradeCandidate candidate)=>ApplyCore(candidate,true);
+    void ApplyCore(BrokerUpgradeCandidate candidate,bool retained)
     {
-        Candidate(candidate);var state=Read()??throw new IOException("Broker snapshot missing");
+        Candidate(candidate,retained);var state=Read()??throw new IOException("Broker snapshot missing");
         if(state.Phase!="prepared"||state.Version!=candidate.Payload.Version||state.ManifestHash!=candidate.ManifestHash)throw new IOException("Broker transaction/consent changed");
         VerifyBackups(state);VerifyOld(state);
         try
@@ -84,10 +76,12 @@ public sealed class WindowsBrokerUpgradeTransaction
         }
         Write(state with{Phase="restored"});checkpoint("restored");
     }
-    public void Cleanup(BrokerUpgradeCandidate? candidate=null)
+    public void Cleanup(BrokerUpgradeCandidate? candidate=null)=>CleanupCore(candidate,false);
+    public void CleanupRetained(BrokerUpgradeCandidate actor)=>CleanupCore(actor,true);
+    void CleanupCore(BrokerUpgradeCandidate? candidate,bool retained)
     {
         var state=Read();if(state==null)return;
-        if(state.Phase=="committed"){if(candidate==null)throw new IOException("Signed committed candidate required for cleanup");Candidate(candidate);if(state.ManifestHash!=candidate.ManifestHash)throw new IOException("Wrong committed candidate");VerifyNew(candidate);}
+        if(state.Phase=="committed"){if(candidate==null)throw new IOException("Signed committed candidate required for cleanup");if(retained)Retained(candidate);else Candidate(candidate);if(state.ManifestHash!=candidate.ManifestHash)throw new IOException("Wrong committed candidate");VerifyNew(candidate);}
         else if(state.Phase=="restored")VerifyOld(state);else throw new IOException("Settle broker recovery before cleanup");
         // Fixed names only. Never recursively remove unknown or foreign storage.
         var expected=state.Previous.Select(f=>f.Name+".previous").Append("state.json").Append("state.json.next-"+state.Id).ToHashSet(StringComparer.Ordinal);
@@ -95,9 +89,17 @@ public sealed class WindowsBrokerUpgradeTransaction
         if(entries.Any(p=>!expected.Contains(Path.GetFileName(p))||Directory.Exists(p)))throw new IOException("Unknown retained broker upgrade files");
         foreach(var file in entries.Where(p=>Path.GetFileName(p)!="state.json")){Plain(file);File.Delete(file);}File.Delete(statePath);Directory.Delete(slot);
     }
-    void Candidate(BrokerUpgradeCandidate candidate)
+    void Retained(BrokerUpgradeCandidate candidate)
     {
-        if(candidate.Payload!=payload||!string.Equals(candidate.DirectoryPath,Path.Combine(root,"current","broker-upgrade"),StringComparison.OrdinalIgnoreCase))throw new IOException("Candidate is not this fixed current payload");
+        if(candidate.Payload.AppId!=payload.AppId||candidate.Payload.UpdateChannel!=payload.UpdateChannel||
+            candidate.DirectoryPath!=Path.Combine(root,"maintenance","broker-upgrade-hosts",candidate.ManifestHash))throw new IOException("Foreign retained upgrade actor");
+        var anchor=System.Text.Encoding.UTF8.GetString(BrokerUpgradeCandidate.ReadBounded(Path.Combine(root,"maintenance","update-public.pem"),65536));
+        if(BrokerUpgradeCandidate.Load(candidate.DirectoryPath,anchor,candidate.Payload).ManifestHash!=candidate.ManifestHash)throw new CryptographicException("Retained actor changed");
+    }
+    void Candidate(BrokerUpgradeCandidate candidate,bool retained=false)
+    {
+        var allowed=retained?Path.Combine(root,"maintenance","broker-upgrade-hosts",candidate.ManifestHash):Path.Combine(root,"current","broker-upgrade");
+        if(candidate.Payload!=payload||!string.Equals(candidate.DirectoryPath,allowed,StringComparison.OrdinalIgnoreCase))throw new IOException("Candidate is not this fixed current payload");
         candidate.Reverify();
         var current=JsonSerializer.Deserialize<LauncherConfig>(BrokerUpgradeCandidate.ReadBounded(Path.Combine(root,"current","release.json"),65536),new JsonSerializerOptions{PropertyNameCaseInsensitive=true});
         if(current!=payload)throw new IOException("Current payload differs from upgrade identity");

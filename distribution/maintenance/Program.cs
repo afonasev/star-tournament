@@ -29,6 +29,7 @@ static partial class Maintenance
             if (args.FirstOrDefault() == "--launch-stable") return LaunchStable(args[1..]).GetAwaiter().GetResult();
             return args.Length switch
             {
+                5 when args[0] == "--upgrade-broker" => UpgradeBroker(args[1], new Caller(int.Parse(args[2]), long.Parse(args[3])), args[4]),
                 2 when args[0] == "--validate-root" => ValidateRoot(args[1]),
                 2 when args[0] == "--check-idle" => CheckIdle(args[1]),
                 3 when args[0] == "--check-install" => InstallerOperation("plan",args[1],args[2]),

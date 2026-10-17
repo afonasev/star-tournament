@@ -10,6 +10,9 @@
     <PackageReference Include="Velopack" Version="1.2.158" />
     <PackageReference Include="System.Threading.AccessControl" Version="8.0.0" />
     <RuntimeHostConfigurationOption Include="System.StartupHookProvider.IsSupported" Value="false" />
+    <Compile Include="../launcher/BrokerUpgradeState.cs" Link="BrokerUpgradeState.cs" />
+    <Compile Include="../launcher/WindowsBrokerUpgradeStartup.cs" Link="WindowsBrokerUpgradeStartup.cs" />
+    <Compile Include="../launcher/WindowsBrokerUpgradeAccess.cs" Link="WindowsBrokerUpgradeAccess.cs" />
     <Compile Include="../launcher/BrokerUpgradeCandidate.cs" Link="BrokerUpgradeCandidate.cs" />
     <Compile Include="../launcher/AuthenticatedSource.cs" Link="AuthenticatedSource.cs" />
     <Compile Include="../launcher/GitHubDiscovery.cs" Link="GitHubDiscovery.cs" />

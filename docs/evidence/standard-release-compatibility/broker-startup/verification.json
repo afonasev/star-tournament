@@ -1,0 +1,38 @@
+{
+  "baseline": "codex/game-standard-alignment@d6708ff2",
+  "startup": 12,
+  "upgrade": 59,
+  "compatibility": 48,
+  "recovery": 35,
+  "total": 154,
+  "maintenance": {
+    "warnings": 0,
+    "errors": 0,
+    "publish": false
+  },
+  "nativeWindowsExecuted": false,
+  "producerImplemented": false,
+  "legacyHandoffResolved": false,
+  "completionCertificate": false,
+  "sources": {
+    "distribution/launcher/BrokerUpgradeState.cs": "75cf687edbe8d73c0a16190efd4bd16ccb35ee64b683a1ff33176c727dbb5ea5",
+    "distribution/launcher/WindowsBrokerUpgradeStartup.cs": "58a49c50e33a1e65f23300fe5872eaeaf6a2cd306559743027e0e80e684a7889",
+    "distribution/launcher/WindowsBrokerUpgradeAccess.cs": "88ab9eefe19652100192fe92b90f890aa542f7ceb9994cc54c9fd52b40c4d6f3",
+    "distribution/launcher/BrokerUpgradeCandidate.cs": "eaa0d68ad0be119e4965f0b29d8aa26d611079d3c5a37a02fb9f165c130b4ddd",
+    "distribution/maintenance/BrokerUpgradeOperations.cs": "4ae1eace3e77c60b9313529c91c34bd60d06fdd880ec3c4ea88357cce8072439",
+    "distribution/maintenance/WindowsBrokerUpgradeTransaction.cs": "d92afc791ac8b4e8f9b22a64e6a0251f99cf2f2101845b9e8ac6d79e2ff03ab1",
+    "distribution/tests/BrokerStartupChecks.cs": "af8ef070c0ca85943f24a22d3fb408b0123c2e5f712adaf4a84dc313be145a32",
+    "distribution/tests/BrokerUpgradeChecks.cs": "b99920cacc777f388849ea331db2a2cdc2d0129126cdde869fca198ea4068274"
+  },
+  "logs": {
+    "compatibility.log": "223934b8ee30e17febe4ad0e3fa33972e1ce66dd7ee7b068f24897e78762a392",
+    "upgrade.log": "a2fdbe98a0ec2ef443173b1e8303c32c7f3797a5e2e839159d98e21f835eb8ed",
+    "maintenance-initial.log": "9a7c6bcbf74e8b358ecbcb834314a5975f131290aa1a4f56d8f5e9e236b9a453",
+    "restore.log": "a449adee8db1841e525b991ef5e6c14eca867b5daa9389185ccc4a0cf5d9aec3",
+    "startup.log": "e7ded46263d354e9661d9c07a6eae45378ce834bd3ce26fb76942884c256a854",
+    "compile.log": "d3be9a4f7f754ea2535d180db7d6bfb940940d15923849a02069ff3933aa9fa4",
+    "maintenance-restore.log": "d58c94c9d5ce1471edd4639e88a87a25fe9d8631712c2c3b3920e18757e7a562",
+    "maintenance.log": "183a1a802c4f3ea8dca9f6f4a2e53222a89b3008ce892c60fd3694d3ae0014e7",
+    "recovery.log": "7a67b76ce5e1339ef4a63ea48d77b18e23d464202bb97c0a9a83dcf95f6fd017"
+  }
+}

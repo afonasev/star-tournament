@@ -84,6 +84,8 @@ static class Launcher
         }
         var key = File.ReadAllText(Path.Combine(baseDir, "update-public.pem"));
         var locator = VelopackLocator.Current;
+        var markedRoot=WindowsInstallation.MarkedRoot(locator);
+        if(markedRoot!=null)await WindowsBrokerUpgradeStartup.EnsureWindows(markedRoot,config);
         var machineRoot = WindowsInstallation.MachineRoot(locator);
         var readerProtocol = machineRoot == null ? ReleaseCompatibility.ReaderProtocol : WindowsInstallation.MetadataReader(machineRoot);
         using var source = new AuthenticatedSource(config, key, discoveryCachePath: Path.Combine(logRoot, "release-discovery-v1"), readerProtocol: readerProtocol);
