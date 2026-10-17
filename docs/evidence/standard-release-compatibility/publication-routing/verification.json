@@ -1,0 +1,45 @@
+{
+  "baseline": "codex/game-standard-alignment@6fa17889",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "is_completion_certificate": false,
+  "python_cases": 69,
+  "node_cases": 6,
+  "total": 75,
+  "python_exit": 0,
+  "node_exit": 0,
+  "bootstrap_producer": false,
+  "automatic_broker_migration": false,
+  "native_installed_acceptance": false,
+  "player_build": false,
+  "installer_build": false,
+  "full_suite": false,
+  "deploy": false,
+  "release_mutations": false,
+  "remaining": [
+    "constrained first-bootstrap producer and signed embedded broker candidate",
+    "automatic protected Windows broker1→2/startup/retry",
+    "actual legacy native updater recovery and platform acceptance",
+    "parent Q5–Q10 visuals/integration"
+  ],
+  "sources": {
+    "distribution/package.py": "2fb5e7a4c6875992167b4a1232071bbbd7516232bfcd042f9e3ca3fc8147814e",
+    "distribution/publish_release.py": "84f42b7b369333c1e266140c2b79a5db3c50e164562d97a85ca697dcfdefef16",
+    "distribution/review-page/downloads.js": "73619a41799e01ae687a9299741031ea969941d0c15be4ac709ed0b8e05ecdfc",
+    "distribution/tests/test_legacy_bridge_publication.py": "397997c7b2f56af23065fff96e9f32926f74821eaa58ca36c31314173ece976c",
+    "distribution/tests/test_release_compatibility.py": "cc0710a088c76adc66f3047742b2b3eb83570621920e8b0ab6cc5aea717c41df",
+    "distribution/tests/test_github_publisher.py": "f8b6fe2f9e7b3c9a1635132d2999cf79f95f30de37adf82cc9eb845a4b909204",
+    "distribution/tests/test_release_changelog.py": "d9cbe8f7f8ba514af146fbdb495dd9e34d8a27ee5946b090d6ed56fe1cb69974",
+    "distribution/tests/downloads.test.cjs": "50ebce7e7f878c4de03c370b8d3fb81b1fac430f14e05c66dd95aec1eb6b2b9f",
+    "distribution/COMPATIBILITY.md": "f9e1d1f74cb589b355ecc4ed79632b21d0213c791f5eccc61f869d2e13d0019d",
+    "distribution/README.md": "c8b0ec354bd83517993846f987ebf4d7c80f50ef31b488e83a73529061e600a4",
+    "docs/TEMPLATE_ALIGNMENT.md": "2e947a58487a6cefda827d71bc9fba70ba49c7b3c4560dc1f50326a445bb92cc"
+  },
+  "evidence": {
+    "landing.log": "56ac435d641e4adbfb7275b0d60805219cc80ca01a72313f2d01322e69cdff11",
+    "plan.md": "a52fddccc6015c823c24ae4e75293ec885d27ce67c5c021daae7fc3aa6242cce",
+    "python-cli-fixture.log": "dc50455552d8063d5b48297034f2c26bd4112233de42e414cdb3af051a846771",
+    "python-initial.log": "24b65eddbd9e061f5032c9243d832d0627edf3692fb129983bc8cc62d7768bd0",
+    "python.log": "24d42ded6df351d93fd7b8bb9cc2fc228be5bcdb4535685d8599f380282c215e",
+    "verification.md": "abc91df9520f9efabd39ba66dd42d1c11e9bf4d80088b912c98a0f4eb314aba2"
+  }
+}

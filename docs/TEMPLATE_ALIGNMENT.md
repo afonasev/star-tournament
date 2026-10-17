@@ -165,3 +165,6 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 2. Закрыть macOS first-install preflight и Mac PKG/DMG разрыв с отдельным preview. Quality consumer audit выполнен; реализовать selector31 только после Q10. MacDMG30 ждёт Q9.
 3. После human decisions внедрить20–28 и общий device-aware hints direction; новые визуальные изменения сначала saved preview.
 4. После source fixes — affected integration, canonical spec sync и итоговый отчёт. Native build/platform/device/human gates остаются отдельными и не выдаются за успешные.
+
+
+2026-10-17 publication-routing source continuation: package/collector/landing understand modern metadata; production frozen legacy aliases and published signed bootstrap preflight/readback/snapshot are wired. No compatible bootstrap is produced yet. UPDATES-INSTALL-02 stays OPEN until constrained bootstrap producer, automatic protected broker1→2/startup/retry and actual legacy recovery are implemented and verified. Evidence: `docs/evidence/standard-release-compatibility/publication-routing/`.

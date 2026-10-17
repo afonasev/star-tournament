@@ -17,6 +17,16 @@ from windows_dpi import validate_windows_dpi
 from windows_stable_entry import install_stable_entry
 
 
+def write_metadata(output, runtime, version, envelope):
+    """Only modern discovery names; old names are publisher-owned frozen aliases."""
+    raw = (json.dumps(envelope)+'\n').encode()
+    paths = [output/f'{version}.signed.json', output/f'latest-v2-{runtime}.json']
+    for path in paths:
+        if path.is_symlink() or (path.exists() and path.read_bytes() != raw):
+            raise ValueError('Immutable signed metadata output differs')
+    for path in paths: path.write_bytes(raw)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--runtime', choices=['osx-arm64', 'osx-x64', 'win-x64'], required=True)
@@ -119,9 +129,7 @@ def main():
                              '-sigopt','rsa_padding_mode:pss','-sigopt','rsa_pss_saltlen:32'], input=payload,
                             capture_output=True, check=True).stdout
     envelope = dict(payload=base64.b64encode(payload).decode(), signature=base64.b64encode(signed).decode())
-    (output/f'{a.version}.signed.json').write_text(json.dumps(envelope)+'\n')
-    (output/'latest.json').write_text(json.dumps(envelope)+'\n')  # Bridge feed compatibility.
-    (output/f'latest-{a.runtime}.json').write_text(json.dumps(envelope)+'\n')
+    write_metadata(output, a.runtime, a.version, envelope)
     files = []
     for f in sorted(output.iterdir()):
         if f.is_file() and f.suffix in ('.nupkg','.exe','.pkg','.zip'):

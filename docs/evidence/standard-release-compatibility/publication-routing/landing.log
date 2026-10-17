@@ -1,0 +1,14 @@
+✔ modern-only test is eligible (0.64025ms)
+✔ current production with frozen legacy aliases still selects current installers (0.095542ms)
+✔ historical complete legacy release stays eligible (0.095333ms)
+✔ mixed incomplete metadata families are not a pair (0.064958ms)
+✔ metadata does not excuse missing or tampered installer (0.102542ms)
+✔ drafts and missing metadata remain ineligible (0.060667ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 44.28625

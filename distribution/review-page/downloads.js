@@ -4,7 +4,8 @@ const RELEASES_PAGE='https://github.com/afonasev/star-tournament/releases';
 function installers(release){
   if(release.draft || !(release.prerelease ? /^v\d+\.\d+\.\d+-[A-Za-z0-9.-]+$/ : /^v\d+\.\d+\.\d+$/).test(release.tag_name)) return null;
   const version=release.tag_name.slice(1),assets=release.assets||[];
-  if(!['latest-win-x64.json','latest-osx-arm64.json'].every(name=>assets.some(a=>a.name===name)))return null;
+  const metadataPair=prefix=>['win-x64','osx-arm64'].every(runtime=>assets.some(a=>a.name===`${prefix}${runtime}.json`));
+  if(!metadataPair('latest-v2-')&&!metadataPair('latest-'))return null;
   const result={};
   for(const [id,name] of [['windows',`Star-Tournament-${version}-Windows-x64-Setup.exe`],['mac',`Star-Tournament-${version}-macOS-arm64.pkg`]]){
     const asset=assets.find(a=>a.name===name);

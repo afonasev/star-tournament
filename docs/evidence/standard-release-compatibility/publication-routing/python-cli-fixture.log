@@ -1,0 +1,86 @@
+test_actual_zip_custody_collector_uses_modern_and_frozen_legacy_aliases (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_actual_zip_custody_collector_uses_modern_and_frozen_legacy_aliases) ... ok
+test_bad_signature_after_valid_first_platform_writes_nothing (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_bad_signature_after_valid_first_platform_writes_nothing) ... 408FE0F601000000:error:02000086:rsa routines:ossl_rsa_verify_PKCS1_PSS_mgf1:last octet invalid:crypto/rsa/rsa_pss.c:103:
+408FE0F601000000:error:1C880004:Provider routines:rsa_verify_directly:RSA lib:providers/implementations/signature/rsa_sig.c:1106:
+ok
+test_bool_or_extra_bootstrap_contract_not_accepted (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_bool_or_extra_bootstrap_contract_not_accepted) ... ok
+test_changed_package_metadata_or_missing_installer_rejected (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_changed_package_metadata_or_missing_installer_rejected) ... ok
+test_cli_without_published_bootstrap_stops_before_packaging_or_draft_mutation (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_cli_without_published_bootstrap_stops_before_packaging_or_draft_mutation) ... FAIL
+test_collector_cannot_publish_modern_only_production_without_bridge (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_collector_cannot_publish_modern_only_production_without_bridge) ... ok
+test_historical_schema1_alone_is_not_a_bootstrap (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_historical_schema1_alone_is_not_a_bootstrap) ... ok
+test_immutable_collision_never_overwrites_any_alias (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_immutable_collision_never_overwrites_any_alias) ... ok
+test_legacy_override_and_same_version_different_package_are_rejected (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_legacy_override_and_same_version_different_package_are_rejected) ... ok
+test_live_preflight_uses_only_get_then_reads_all_descriptors_packages_and_installers (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_live_preflight_uses_only_get_then_reads_all_descriptors_packages_and_installers) ... ok
+test_missing_bridge_blocks_publication (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_missing_bridge_blocks_publication) ... ok
+test_modern_without_signed_bootstrap_declaration_is_rejected (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_modern_without_signed_bootstrap_declaration_is_rejected) ... ok
+test_oversized_or_symlink_metadata_rejected (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_oversized_or_symlink_metadata_rejected) ... ok
+test_packager_outputs_modern_metadata_without_old_reader_names (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_packager_outputs_modern_metadata_without_old_reader_names) ... ok
+test_platform_pair_disagreement_writes_nothing (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_platform_pair_disagreement_writes_nothing) ... ok
+test_production_frozen_aliases_are_exact_bytes_and_resume_is_identical (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_production_frozen_aliases_are_exact_bytes_and_resume_is_identical) ... ok
+test_public_bytes_readback_failure_is_not_a_successful_receipt (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_public_bytes_readback_failure_is_not_a_successful_receipt) ... ok
+test_raised_os_floor_or_different_data_policy_not_a_legacy_bridge (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_raised_os_floor_or_different_data_policy_not_a_legacy_bridge) ... ok
+test_readback_inputs_are_frozen_even_if_original_directory_changes (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_readback_inputs_are_frozen_even_if_original_directory_changes) ... ok
+test_test_channel_has_no_legacy_names_to_confuse_old_selector (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_test_channel_has_no_legacy_names_to_confuse_old_selector) ... ok
+test_unpublished_or_wrong_channel_release_rejected_before_readback (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_unpublished_or_wrong_channel_release_rejected_before_readback) ... ok
+test_wrong_channel_or_same_or_future_bridge_is_rejected (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_wrong_channel_or_same_or_future_bridge_is_rejected) ... ok
+test_cross_language_fixture_is_actual_producer_output (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_cross_language_fixture_is_actual_producer_output) ... ok
+test_data_contract_matches_current_namespace_generation (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_data_contract_matches_current_namespace_generation) ... ok
+test_invalid_or_missing_mac_floor_is_not_silently_defaulted (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_invalid_or_missing_mac_floor_is_not_silently_defaulted) ... ok
+test_missing_or_extra_requirements_are_rejected (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_missing_or_extra_requirements_are_rejected) ... ok
+test_payload_config_must_be_unique_and_bounded (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_payload_config_must_be_unique_and_bounded) ... ok
+test_payload_mismatch_is_rejected_even_with_signed_contract (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_payload_mismatch_is_rejected_even_with_signed_contract) ... ok
+test_producer_uses_actual_mac_floor_and_emits_schema2 (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_producer_uses_actual_mac_floor_and_emits_schema2) ... ok
+test_publisher_verifies_real_pss_before_schema_and_requirements (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_publisher_verifies_real_pss_before_schema_and_requirements) ... 408FE0F601000000:error:02000086:rsa routines:ossl_rsa_verify_PKCS1_PSS_mgf1:last octet invalid:crypto/rsa/rsa_pss.c:103:
+408FE0F601000000:error:1C880004:Provider routines:rsa_verify_directly:RSA lib:providers/implementations/signature/rsa_sig.c:1106:
+ok
+test_unsupported_contract_never_emitted (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_unsupported_contract_never_emitted) ... ok
+test_windows_floor_and_reader_are_explicit (distribution.tests.test_release_compatibility.ReleaseCompatibility.test_windows_floor_and_reader_are_explicit) ... ok
+test_changed_body_never_mutates_existing_draft_or_published (distribution.tests.test_github_publisher.GithubPublication.test_changed_body_never_mutates_existing_draft_or_published) ... ok
+test_changed_local_input_never_uploaded (distribution.tests.test_github_publisher.GithubPublication.test_changed_local_input_never_uploaded) ... ok
+test_draft_body_readback_mismatch_never_publishes (distribution.tests.test_github_publisher.GithubPublication.test_draft_body_readback_mismatch_never_publishes) ... ok
+test_draft_only_never_publishes (distribution.tests.test_github_publisher.GithubPublication.test_draft_only_never_publishes) ... ok
+test_duplicate_drafts_require_identity_review (distribution.tests.test_github_publisher.GithubPublication.test_duplicate_drafts_require_identity_review) ... ok
+test_generated_body_used_when_creating_draft (distribution.tests.test_github_publisher.GithubPublication.test_generated_body_used_when_creating_draft) ... ok
+test_immutable_collision_never_overwrites (distribution.tests.test_github_publisher.GithubPublication.test_immutable_collision_never_overwrites) ... ok
+test_incomplete_draft_never_published (distribution.tests.test_github_publisher.GithubPublication.test_incomplete_draft_never_published) ... ok
+test_missing_language_rejected_before_network (distribution.tests.test_github_publisher.GithubPublication.test_missing_language_rejected_before_network) ... ok
+test_production_explicit_latest (distribution.tests.test_github_publisher.GithubPublication.test_production_explicit_latest) ... ok
+test_publish_only_after_readback (distribution.tests.test_github_publisher.GithubPublication.test_publish_only_after_readback) ... ok
+test_published_release_lookup_needs_no_draft_scan (distribution.tests.test_github_publisher.GithubPublication.test_published_release_lookup_needs_no_draft_scan) ... ok
+test_published_resume_never_mutates_release (distribution.tests.test_github_publisher.GithubPublication.test_published_resume_never_mutates_release) ... ok
+test_resume_finds_draft_without_published_git_tag (distribution.tests.test_github_publisher.GithubPublication.test_resume_finds_draft_without_published_git_tag) ... ok
+test_unknown_extra_asset_rejected (distribution.tests.test_github_publisher.GithubPublication.test_unknown_extra_asset_rejected) ... ok
+test_wrong_digest_never_published (distribution.tests.test_github_publisher.GithubPublication.test_wrong_digest_never_published) ... ok
+test_body_categories_must_match_between_languages (distribution.tests.test_release_changelog.ReleaseNotes.test_body_categories_must_match_between_languages) ... ok
+test_body_limit_matches_unity_utf16_reader (distribution.tests.test_release_changelog.ReleaseNotes.test_body_limit_matches_unity_utf16_reader) ... ok
+test_channel_selection_semver_draft_and_future (distribution.tests.test_release_changelog.ReleaseNotes.test_channel_selection_semver_draft_and_future) ... ok
+test_cli_rejects_incomplete_review_before_packaging_or_uploads (distribution.tests.test_release_changelog.ReleaseNotes.test_cli_rejects_incomplete_review_before_packaging_or_uploads) ... ok
+test_cli_scaffold_and_render_are_offline (distribution.tests.test_release_changelog.ReleaseNotes.test_cli_scaffold_and_render_are_offline) ... ok
+test_cli_wrong_checkout_rejected_before_api_or_packaging (distribution.tests.test_release_changelog.ReleaseNotes.test_cli_wrong_checkout_rejected_before_api_or_packaging) ... ok
+test_control_headers_and_raw_subjects_cannot_replace_player_notes (distribution.tests.test_release_changelog.ReleaseNotes.test_control_headers_and_raw_subjects_cannot_replace_player_notes) ... ok
+test_custody_source_must_match_notes_source (distribution.tests.test_release_changelog.ReleaseNotes.test_custody_source_must_match_notes_source) ... ok
+test_divergent_and_moved_previous_tag_rejected (distribution.tests.test_release_changelog.ReleaseNotes.test_divergent_and_moved_previous_tag_rejected) ... ok
+test_first_release_includes_initial_history (distribution.tests.test_release_changelog.ReleaseNotes.test_first_release_includes_initial_history) ... ok
+test_foreign_duplicate_and_overlapping_omissions_fail (distribution.tests.test_release_changelog.ReleaseNotes.test_foreign_duplicate_and_overlapping_omissions_fail) ... ok
+test_incomplete_shallow_git_rejected (distribution.tests.test_release_changelog.ReleaseNotes.test_incomplete_shallow_git_rejected) ... ok
+test_merge_and_side_branch_commit_not_silently_omitted (distribution.tests.test_release_changelog.ReleaseNotes.test_merge_and_side_branch_commit_not_silently_omitted) ... ok
+test_missing_translation_empty_pending_and_uncovered_fail (distribution.tests.test_release_changelog.ReleaseNotes.test_missing_translation_empty_pending_and_uncovered_fail) ... ok
+test_paired_categories_no_empty_sections_or_commit_subjects (distribution.tests.test_release_changelog.ReleaseNotes.test_paired_categories_no_empty_sections_or_commit_subjects) ... ok
+test_prepare_preserves_notes_identity_on_resume (distribution.tests.test_release_changelog.ReleaseNotes.test_prepare_preserves_notes_identity_on_resume) ... ok
+test_previous_tag_remote_identity_and_annotated_peel (distribution.tests.test_release_changelog.ReleaseNotes.test_previous_tag_remote_identity_and_annotated_peel) ... ok
+test_scaffold_contains_exact_range_and_pending_evidence (distribution.tests.test_release_changelog.ReleaseNotes.test_scaffold_contains_exact_range_and_pending_evidence) ... ok
+test_technical_omissions_explicit_and_not_rendered (distribution.tests.test_release_changelog.ReleaseNotes.test_technical_omissions_explicit_and_not_rendered) ... ok
+test_wrong_source_channel_or_baseline_boundaries_fail (distribution.tests.test_release_changelog.ReleaseNotes.test_wrong_source_channel_or_baseline_boundaries_fail) ... ok
+
+======================================================================
+FAIL: test_cli_without_published_bootstrap_stops_before_packaging_or_draft_mutation (distribution.tests.test_legacy_bridge_publication.LegacyBridgePublication.test_cli_without_published_bootstrap_stops_before_packaging_or_draft_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_legacy_bridge_publication.py", line 76, in test_cli_without_published_bootstrap_stops_before_packaging_or_draft_mutation
+    self.assertFalse((self.root/'output').exists())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 68 tests in 6.793s
+
+FAILED (failures=1)

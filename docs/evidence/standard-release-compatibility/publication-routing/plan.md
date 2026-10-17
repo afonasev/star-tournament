@@ -1,0 +1,7 @@
+# Affected verification
+Baseline codex/game-standard-alignment@6fa17889. Template60fe3d2, UPDATES-INSTALL-02 still OPEN.
+Changed package metadata endpoint output; publisher paired modern collector and immutable signed bootstrap aliases; landing metadata completeness only (no layout change).
+Commands:
+- python3 -m unittest distribution.tests.test_legacy_bridge_publication distribution.tests.test_release_compatibility distribution.tests.test_github_publisher distribution.tests.test_release_changelog -v
+- node --test distribution/tests/downloads.test.cjs
+These cover actual PSS signatures, ZIP config/custody, semantic bridge version/channel/platform identity and no-write failures; adjacent publication immutability/changelog source gates; actual landing selector. Live bootstrap preflight is exercised with recording API/readback mocks: it must GET the published same-channel tag and read back all four signed descriptors plus both full packages/installers before packaging/draft mutations. No network mutation, real installer/Player generation, Unity, full suite or deploy. Fixtures declare bootstrap support but do not prove an actual bootstrap. Producer for schema1-compatible bootstrap and protected broker migration/native legacy recovery remain mandatory. Modern publication cannot proceed without explicit signed paired bootstrap declarations; old historical schema1 alone is insufficient.
