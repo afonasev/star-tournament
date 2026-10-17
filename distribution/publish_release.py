@@ -92,12 +92,27 @@ def verify_envelope(raw, version, runtime, channel, *, schema=2):
     return data, package
 
 
-def collect(output, version, date, channel, source_ref=None, *, legacy_bridge=None):
+def publication_mode(channel, legacy_bridge, new_install_only):
+    if new_install_only and (channel != 'production' or legacy_bridge is not None):
+        raise ValueError('New-install-only requires production and no legacy bridge')
+    return 'production-new-install-only' if new_install_only else 'legacy-compatible'
+
+
+def require_new_install_notice(body):
+    if 'Установите эту версию вручную' not in body or 'Install this version manually' not in body:
+        raise ValueError('New-install-only requires explicit Russian/English manual installation notes')
+
+
+def collect(output, version, date, channel, source_ref=None, *, legacy_bridge=None, new_install_only=False):
+    publication_mode(channel, legacy_bridge, new_install_only)
     assets = []; dates = set(); revisions = set()
     for runtime in RUNTIMES:
         base = output/runtime; releases = base/'releases'
         manifest = releases/f'latest-v2-{runtime}.json'
         data, package = verify_manifest(manifest,version,runtime,channel)
+        if new_install_only:
+            if 'legacyBootstrap' in data or any((releases/name).exists() for name in (f'latest-{runtime}.json', 'latest.json', f'legacy-bootstrap-{runtime}.json')):
+                raise ValueError('New-install-only cannot claim or contain legacy bootstrap aliases')
         dates.add(data['publicationDate'])
         full = identity(releases/package['FileName'])
         if (full['size'],full['sha256'].lower()) != (package['Size'],package['SHA256'].lower()):
@@ -122,7 +137,7 @@ def collect(output, version, date, channel, source_ref=None, *, legacy_bridge=No
         assets.extend((full,installer,identity(manifest),identity(release_identity)))
     if dates != {date} or len(revisions) != 1: raise ValueError('Paired assets must share date and source revision')
     if source_ref is not None and revisions != {source_ref}: raise ValueError('Assets do not match changelog source revision')
-    assets.extend(collect_bridge(output, version, channel, legacy_bridge))
+    if not new_install_only: assets.extend(collect_bridge(output, version, channel, legacy_bridge))
     return assets
 
 
@@ -355,12 +370,14 @@ def main():
     for name in ('windows-player','mac-player','output','key','dotnet','vpk'): p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--changelog-review',type=Path,required=True,help='Reviewed RU/EN Git coverage JSON from release_changelog.py')
     p.add_argument('--legacy-bridge',type=Path,help='Authenticated paired schema1/schema2 compatible bootstrap metadata; required for publication')
+    p.add_argument('--new-install-only',action='store_true',help='Explicit owner-authorized production installation check; no legacy transition claim or aliases')
     p.add_argument('--nsis-host',choices=['gfe'],default='gfe')
     p.add_argument('--draft-only',action='store_true',help='Prepare and verify a draft for pre-publication QA')
     p.add_argument('--resume',action='store_true',help='Validate and resume an already packaged exact output')
     a=p.parse_args()
     if a.channel not in ('test','production') or not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?',a.version) or ('-' in a.version)!=(a.channel=='test'):
         p.error('Channel/version mismatch')
+    mode=publication_mode(a.channel,a.legacy_bridge,a.new_install_only)
     token=sys.stdin.read(1024).strip()
     if not token: p.error('GitHub credential required on stdin')
     if not re.fullmatch(r'[0-9a-f]{40}',a.source_ref): p.error('Full reviewed public commit SHA required for --source-ref')
@@ -368,11 +385,19 @@ def main():
         raise ValueError('Run publication from the clean exact source-ref checkout; keep review/output ignored or outside it')
     commit=api('GET','/commits/'+a.source_ref,token)
     if commit['sha']!=a.source_ref: raise ValueError('Public source identity mismatch')
-    bridge_readback=verify_published_bridge(a.version,a.channel,a.legacy_bridge,token)
+    bridge_readback=None if a.new_install_only else verify_published_bridge(a.version,a.channel,a.legacy_bridge,token)
     a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=True)
-    bridge_snapshot=snapshot_bridge(a.output,bridge_readback)
-    (a.output/'legacy-bridge-readback.json').write_text(json.dumps(bridge_readback,indent=2)+'\n')
+    policy=(json.dumps(dict(mode=mode,version=a.version,channel=a.channel,source_ref=a.source_ref),sort_keys=True,indent=2)+'\n').encode()
+    policy_path=a.output/'publication-policy.json'
+    if policy_path.is_symlink() or (policy_path.exists() and policy_path.read_bytes()!=policy):
+        raise ValueError('Publication policy differs from immutable output')
+    policy_path.write_bytes(policy)
+    bridge_snapshot=None
+    if bridge_readback is not None:
+        bridge_snapshot=snapshot_bridge(a.output,bridge_readback)
+        (a.output/'legacy-bridge-readback.json').write_text(json.dumps(bridge_readback,indent=2)+'\n')
     body=prepare_changelog(a.changelog_review,ROOT.parent,a.source_ref,a.version,a.channel,token,a.output)
+    if a.new_install_only: require_new_install_notice(body)
     if not a.resume:
         for runtime,player in zip(RUNTIMES,(a.windows_player,a.mac_player)):
             cmd=[sys.executable,str(ROOT/'package.py'),'--runtime',runtime,'--player',str(player.resolve()),
@@ -380,7 +405,7 @@ def main():
                  '--output',str(a.output/runtime),'--dotnet',str(a.dotnet.resolve()),'--vpk',str(a.vpk.resolve())]
             if runtime=='win-x64':cmd+=['--nsis-host',a.nsis_host]
             subprocess.run(cmd,check=True)
-    assets=collect(a.output,a.version,a.date,a.channel,a.source_ref,legacy_bridge=bridge_snapshot)
+    assets=collect(a.output,a.version,a.date,a.channel,a.source_ref,legacy_bridge=bridge_snapshot,new_install_only=a.new_install_only)
     (a.output/'asset-manifest.json').write_text(json.dumps(assets,indent=2)+'\n')
     release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref,a.draft_only,body=body)
     (a.output/'publication.json').write_text(json.dumps(dict(release=release,readback=checks),indent=2)+'\n')

@@ -282,6 +282,31 @@ class LegacyBridgePublication(unittest.TestCase):
         self.assertTrue({'latest-v2-win-x64.json','latest-v2-osx-arm64.json'}<=names)
         self.assertFalse({'latest-win-x64.json','latest-osx-arm64.json'}&names)
 
+    def test_explicit_owner_production_keeps_signed_modern_pair_without_legacy_claim(self):
+        self.make_current_packages()
+        assets=publisher.collect(self.output,self.version,'2026-10-17','production','a'*40,new_install_only=True)
+        self.assertEqual(len(assets),8)
+        self.assertFalse({'latest-win-x64.json','latest-osx-arm64.json','legacy-bootstrap-win-x64.json'} & {a['name'] for a in assets})
+        full=self.output/'win-x64/releases/win-x64-full.nupkg';full.write_bytes(b'tampered')
+        with self.assertRaisesRegex(ValueError,'Package changed'):
+            publisher.collect(self.output,self.version,'2026-10-17','production','a'*40,new_install_only=True)
+
+    def test_owner_mode_cannot_mix_bridge_test_channel_or_stale_alias(self):
+        with self.assertRaisesRegex(ValueError,'production and no legacy bridge'):
+            publisher.publication_mode('test',None,True)
+        with self.assertRaisesRegex(ValueError,'production and no legacy bridge'):
+            publisher.publication_mode('production',self.bridge,True)
+        self.make_current_packages()
+        (self.output/'win-x64/releases/latest-win-x64.json').write_bytes(b'old alias')
+        with self.assertRaisesRegex(ValueError,'cannot claim or contain'):
+            publisher.collect(self.output,self.version,'2026-10-17','production','a'*40,new_install_only=True)
+
+    def test_owner_notes_require_both_languages(self):
+        for body in ('', 'Установите эту версию вручную', 'Install this version manually'):
+            with self.assertRaisesRegex(ValueError,'Russian/English'):
+                publisher.require_new_install_notice(body)
+        publisher.require_new_install_notice('Установите эту версию вручную. Install this version manually.')
+
     def test_collector_cannot_publish_modern_only_production_without_bridge(self):
         self.make_current_packages()
         with self.assertRaisesRegex(ValueError,'bootstrap directory required'):

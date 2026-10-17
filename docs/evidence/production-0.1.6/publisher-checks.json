@@ -1,0 +1,10 @@
+{
+  "baseline": "codex/game-standard-alignment@f9587719",
+  "affected": {
+    "test_legacy_bridge_publication": 29,
+    "test_github_publisher": 16
+  },
+  "status": "passed",
+  "fullSuiteExecuted": false,
+  "nativeAcceptance": "pending owner installation"
+}
