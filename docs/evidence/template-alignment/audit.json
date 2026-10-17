@@ -12,7 +12,7 @@
     "MENU-ACTIONS-02": "МакетQ5: duplicate/state operations20–25; особая greatest-marked Default route описана, не удаляется как обычный latest selector.",
     "MENU-ACTIONS-03": "МакетQ5: boolean Off/On отдельные кнопки ещё нарушают single-toggle; release source flag уже исправлен без нового UI.",
     "MENU-INPUT-01": "Код/QA: InputSystem/UI navigation, SettingsGamepadNavigationTests, NativeMenuPresentation keyboard/NativeTextEntry grid; physical devices pending.",
-    "MENU-INPUT-02": "Проверить/разрыв: text keyboard/reset умеют family glyphs, но generic Back содержит постоянный B. Нужна общая binding схема по позиции, не Xbox для всех.",
+    "MENU-INPUT-02": "Код/QA Q8/29: общий physical-position formatter для South/East/West/North/Start; Xbox/PlayStation/Switch и безопасный generic. Реальные action/Back/top-context predicates, Settings assigned-seat и operator/seat ownership. core/focus/back/setup evidence; physical/native gate открыт.",
     "MENU-INPUT-03": "Код/QA: top modal/field/seat ownership, input clear/frozen pause; NativeTextEntry/LabDiscard/IndependentPause tests.",
     "MENU-INPUT-04": "Код/QA: opening frames/wasPressed/async Busy/UpdateSession operation guards; held submit and match drain проверены.",
     "MENU-INPUT-05": "Код/QA: NativeTextEntry draft/grid/keyboard handover/reconnect/cancel, поля защищены от outer navigation; approved15.",
@@ -21,9 +21,9 @@
     "MENU-FOCUS-03": "Код/QA: MenuScrollFocus reveal + history resize/long descriptions + settings split-view fixtures.",
     "MENU-DEVICE-01": "Код/QA: real input/drift gating, shared focus, NativeTextEntry handover; standard-menu-contracts5 focused cases.",
     "MENU-DEVICE-02": "Код/QA: новый window focus guard в menu и text-entry cursor owners;5 actual PlayMode cases, visible/unlocked background. Native focus event still device gate.",
-    "MENU-HINTS-01": "Разрыв: main «controls» и release-history-controls постоянно показывают keyboard/mouse/pad legend. Нужен approved conditional pad-only view.",
-    "MENU-HINTS-02": "Разрыв: general legend вместо явной привязки к действиям; focused bottom confirm и Back должны иметь device-aware glyphs.",
-    "MENU-HINTS-03": "Разрыв: fixed A/B/PgUp/Esc в history/Main; text-entry/reset partly correct. Правка нового визуального направления ждёт preview.",
+    "MENU-HINTS-01": "Код/QA Q8/29: pad-only focused actions и main/history footer; keyboard/mouse handover скрывает glyphs. Удалены permanent legends в Setup/roster. Evidence standard-device-hints/{core,focus,back,setup}; native/human acceptance отдельно.",
+    "MENU-HINTS-02": "Код/QA Q8/29: отдельный MenuActionHint у реального focused Button/Toggle/text action и доступного shortcut; caption/value не изменяются, узкие/inset/badge/dropdown bounds не перекрываются. Settings Back parameter→section имеет отдельный context hint.",
+    "MENU-HINTS-03": "Код/QA Q8/29: East вызывает фактический Back/Cancel текущего контекста один раз за кадр; Start Setup делит predicate с AdvanceSetupInput. Неверные roster Y/X удалены (shortcut и экранное действие различаются); submit сохраняется. Virtual family/device/editor/invalid-roster checks; physical proof остаётся открыт.",
     "MENU-LAYOUT-01": "Код/QA частично: approved A/03–19, top Back и modal consistent внутри контекстов; Q5/Q6/Q7 меняют ещё не принятые состояния.",
     "MENU-LAYOUT-02": "Код/QA: fixed screens + internal scrolls for fields/history/settings; headers/actions outside scroll.",
     "MENU-LAYOUT-03": "Код/QA частично: saved actual1080p/720p/short/split captures; physicalTV/все устройства и новые20–28 pending.",
@@ -206,5 +206,20 @@
     "sampled_textures": 30,
     "sampled_ignore_mipmap_limit": 30,
     "proposal": "UI31, tiers0/2/5; parent Q10 pending"
+  },
+  "menu_hints_evidence": {
+    "baseline": "codex/game-standard-alignment@9a4e083c",
+    "scope": "Q8 implementation/source/Editor virtual input and rendered UI; native/physical/human gates remain open",
+    "paths": [
+      "docs/evidence/standard-device-hints/core",
+      "docs/evidence/standard-device-hints/focus",
+      "docs/evidence/standard-device-hints/back",
+      "docs/evidence/standard-device-hints/setup"
+    ],
+    "latest_template_check": {
+      "local": "9cc4415db05976b7a67eadcbbccaad5ffa984c79",
+      "origin_main": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+      "feature_diff": "none; only AGENTS.md added locally"
+    }
   }
 }

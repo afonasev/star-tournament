@@ -103,7 +103,7 @@ namespace StarTournament.ProvingGround
                 "Выберите арену для матча.":setupStep==1?
                 "Настройте режим и условия победы.":
                 "Соберите участников матча.";
-            setupNext.GetComponentInChildren<Text>().text=setupStep==0?"ДАЛЕЕ · A / Start":"ДАЛЕЕ · Start";
+            setupNext.GetComponentInChildren<Text>().text="ДАЛЕЕ";
         }
     }
 }

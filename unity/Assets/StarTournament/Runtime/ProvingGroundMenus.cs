@@ -161,6 +161,8 @@ namespace StarTournament.ProvingGround
             setupPrevious=MenuButton(setupScreen.transform,"setup-previous","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),PreviousSetupStep);
             BindMenuShortcut(setupPrevious,MenuPadButton.East,()=>phase==Phase.Setup&&rosterEditing<0&&pendingSeat<0);
             setupNext=MenuButton(summary.transform,"setup-next","ДАЛЕЕ ›",new Vector2(.07f,.02f),new Vector2(.93f,.10f),NextSetupStep);
+            BindMenuShortcut(setupNext,MenuPadButton.Start,()=>setupStep<2&&CanAdvanceSetupInput());
+            BindMenuShortcut(start,MenuPadButton.Start,()=>setupStep==2&&CanAdvanceSetupInput());
             setupMapPage=Panel(content.transform,"setup-map",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
             Label(setupMapPage.transform,"map-title","ВЫБЕРИТЕ КАРТУ",30,new Vector2(.05f,.86f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,Color.white);
             Label(setupMapPage.transform,"map-help","Выберите арену для матча.",20,new Vector2(.05f,.77f),new Vector2(.95f,.86f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
@@ -223,7 +225,7 @@ namespace StarTournament.ProvingGround
             setupNext.gameObject.SetActive(setupStep<2);
             start.gameObject.SetActive(phase==Phase.Setup && setupStep==2);
             start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
-            start.GetComponentInChildren<Text>().text="НАЧАТЬ МАТЧ  ·  Start";
+            start.GetComponentInChildren<Text>().text="НАЧАТЬ МАТЧ";
             start.GetComponentInChildren<Text>().fontSize=26;
             start.GetComponentInChildren<Text>().color=MenuInk;
             start.GetComponent<Image>().color=MenuGold;
@@ -256,7 +258,7 @@ namespace StarTournament.ProvingGround
             Layout(description.rectTransform,new Vector2(.05f,.86f),new Vector2(.95f,.90f));
             description.color=roster?RosterMuted:Color.white;
             start.GetComponentInChildren<Text>().fontStyle=FontStyle.Bold;
-            setupScreen.transform.Find("setup-description").GetComponent<Text>().text=roster?"Выберите карточку, чтобы изменить участника. Свободный геймпад: Y — присоединиться.":"Выберите карту, задайте правила, соберите игроков и начните матч.";
+            setupScreen.transform.Find("setup-description").GetComponent<Text>().text=roster?"Выберите карточку, чтобы изменить участника.":"Выберите карту, задайте правила, соберите игроков и начните матч.";
             setupLabIdentity.text=LabSavedIdentity;
             RefreshRosterUi();
             var mapCard=setupMapPage.transform.Find("selected-map");

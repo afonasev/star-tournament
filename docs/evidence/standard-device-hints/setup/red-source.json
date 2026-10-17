@@ -1,0 +1,6 @@
+{
+  "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs": "da8196a96312c0def03c93f9c5f472679d48bb3d8e9cb7399dccf36edcc0684f",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundMenuRefinement.cs": "defa56e9cbcc327b1c1d8dbb270478ce961b37ca3c976570f4b62a866e28edc8",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundSetupNavigation.cs": "d1bfff53cfdab4dd7b90454bf1b1e1946a37d7a7e1dbc0cc7fffef25c5264632",
+  "unity/Assets/StarTournament/Tests/PlayMode/SetupGamepadNavigationTests.cs": "fefe066bc70da9834d9d4f0d6d62e053a5c66794605ea3a5de1bbf6e5acb6334"
+}
