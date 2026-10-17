@@ -155,6 +155,18 @@ static class WindowsRecoveryChecks
             {store.Prepare(Config,"1.1.0",false);store.Apply(()=>Changed(install));Reject(()=>WindowsInstallation.StartupConfirmed(install,new string('e',32)));Reject(()=>WindowsInstallation.StartupConfirmed(install,"../escape"));});
             Test("pending installer blocks only activation including trailing-root form",(install,store)=>
             {Require(!WindowsInstallation.InstallerPending(install));Directory.CreateDirectory(install+".installer");File.WriteAllText(Path.Combine(install+".installer","state.json"),"{}");Require(WindowsInstallation.InstallerPending(install)&&WindowsInstallation.InstallerPending(install+Path.DirectorySeparatorChar));Require(!WindowsInstallation.RecoveryNeedsRepair(install));});
+            Test("rollback keeps retained reader2 with previous playback protocol1",(install,store)=>
+            {
+                var maintenance=Path.Combine(install,"maintenance");Directory.CreateDirectory(maintenance);
+                File.WriteAllText(Path.Combine(maintenance,"maintenance.json"),"{\"protocol\":1}");
+                var broker=Path.Combine(maintenance,"StarTournamentMaintenance.exe");File.WriteAllText(broker,"retained new broker fixture");
+                var attempt=store.Prepare(Config,"1.1.0",false);Require(attempt.PreviousProtocol==1);
+                store.Apply(()=>Changed(install));store.Restore();Old(install);
+                using(var restored=JsonDocument.Parse(File.ReadAllText(Path.Combine(maintenance,"maintenance.json"))))
+                {Require(restored.RootElement.GetProperty("protocol").GetInt32()==1&&restored.RootElement.GetProperty("metadataReader").GetInt32()==2);}
+                Require(WindowsInstallation.MetadataReader(install)==2&&File.ReadAllText(broker)=="retained new broker fixture");
+                store.Cleanup("1.0.0");Require(WindowsInstallation.MetadataReader(install)==2);
+            });
             Console.WriteLine($"Windows recovery store: {passed} passed (portable filesystem contracts; Windows ACL/UAC NotRun)");
         }
         finally{Directory.Delete(root,true);}

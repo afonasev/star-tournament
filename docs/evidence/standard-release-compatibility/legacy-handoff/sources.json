@@ -1,0 +1,27 @@
+[
+  {
+    "file": "stub.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/stub.rs",
+    "sha256": "7d7d1ba869ce0850f3141c6e1aa0265faa9a0fdacfb0622edc25571fdc952595"
+  },
+  {
+    "file": "logging.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-rust/src/logging.rs",
+    "sha256": "912756b256ee3ebd9d49bb30f8a2780826aa463dd93012d5f6b7e3781e4c4a1b"
+  },
+  {
+    "file": "apply.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/commands/apply.rs",
+    "sha256": "f12aa15322c2ff4b42f251a78bc234c193168df8d692afc27d0a66276712ab37"
+  },
+  {
+    "file": "start_windows_impl.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/commands/start_windows_impl.rs",
+    "sha256": "581de7b32816c8a61c1c9280134cdeea92ee2923533f0e05fd0374d09a830041"
+  },
+  {
+    "file": "LICENSE",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/LICENSE",
+    "sha256": "91845db83551c877ebbb1118e0fb92e4e527290d23b995c55dcd438b3293943f"
+  }
+]

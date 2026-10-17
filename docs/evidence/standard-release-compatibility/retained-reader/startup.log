@@ -1,0 +1,13 @@
+PASS capable broker requires no elevation
+PASS new reader readback precedes continuation
+PASS pending partial contract is not read before recovery
+PASS cancel never loops or starts game
+PASS failed actor never loops
+PASS exit zero without sufficient reader is not success
+PASS exit zero with pending state is not success
+PASS concurrent successful actor wins over local cancellation
+PASS committed actor cleanup failure cannot block ready broker
+PASS bad status never requests elevation
+PASS restored old component still needs upgrade
+PASS corrupt reader without transaction fails visibly
+Broker startup: 12 passed; orchestrator only, native UAC/ACL/process admission NotRun

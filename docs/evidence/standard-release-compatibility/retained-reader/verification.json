@@ -1,0 +1,36 @@
+{
+  "baseline": "codex/game-standard-alignment@e20df07d",
+  "compatibility": 52,
+  "recovery": 36,
+  "startup": 12,
+  "total": 100,
+  "runnerExits": 0,
+  "maintenanceCompile": {
+    "warnings": 0,
+    "errors": 0,
+    "publish": false
+  },
+  "nativeWindowsExecuted": false,
+  "fullSuite": false,
+  "playerInstallerReleaseBuild": false,
+  "deploy": false,
+  "remaining": [
+    "first legacy native handoff/argv/working snapshot",
+    "legacy6-arg activation and startup health compatibility",
+    "component transaction cleanup after payload rollback",
+    "native installed acceptance"
+  ],
+  "sources": {
+    "distribution/launcher/WindowsInstallation.cs": "bbe0cb2d0dcba324264a4f9eede8f6dba732d3f7a0eac31a2aa193cd6445d9fc",
+    "distribution/tests/ReleaseCompatibilityChecks.cs": "466767040baef80b3a3ae787578bcc2e537e8ac67cb01052f6c4a12772ca2d54",
+    "distribution/tests/WindowsRecoveryChecks.cs": "4c4b4ab1377bfb131e34d9d695e529a1b2413919a7d6a7f31404da1133dfc0a7"
+  },
+  "logs": {
+    "compatibility.log": "c74b308e90481175c1e6d537557048270d92ad0250124c555f7a05adb7fc207d",
+    "restore.log": "5f3a985b971b3c1fb6181dea7741f3acdf10be9cd5e95064a1f717b0369fa3b4",
+    "startup.log": "3e0fdca909b6c6b0fd4d338ed424c72a9fd943c9aeb7d20bb3b44be38d6e6023",
+    "maintenance-restore.log": "f547aacf58c1c3347a856ce2bdb5d7de4d63552527c78727424313113c4683d3",
+    "maintenance.log": "cdecc528ce0c8183086613ceec0281ce5d0c7fcbe0a213b79ee6e9b23ad56da9",
+    "recovery.log": "75722eff863d4460a6dfb43ac40a5992350e61de3cc48449a39303917e37fc2f"
+  }
+}

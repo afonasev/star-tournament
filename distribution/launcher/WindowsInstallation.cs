@@ -15,7 +15,8 @@ public static class WindowsInstallation
         var path = Path.Combine(root, "maintenance", "maintenance.json");
         if (new FileInfo(path).Length > 65536) throw new IOException("Maintenance contract exceeds limit");
         using var data = JsonDocument.Parse(File.ReadAllText(path));
-        if (data.RootElement.GetProperty("protocol").GetInt32() != 2) return 1;
+        // Rollback restores playback IPC1 while retaining the new broker/parser.
+        if (data.RootElement.GetProperty("protocol").GetInt32() is not (1 or 2)) throw new IOException("Unsupported maintenance playback protocol");
         if (!data.RootElement.TryGetProperty("metadataReader", out var reader)) return 1;
         var protocol = reader.GetInt32();
         if (protocol < 1) throw new IOException("Invalid metadata reader capability");

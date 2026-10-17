@@ -1,0 +1,32 @@
+{
+  "removed": [
+    {
+      "path": "distribution/launcher/bin",
+      "bytes": 1130875
+    },
+    {
+      "path": "distribution/launcher/obj",
+      "bytes": 1610270
+    },
+    {
+      "path": "distribution/tests/bin",
+      "bytes": 1958501
+    },
+    {
+      "path": "distribution/tests/obj",
+      "bytes": 1004084
+    },
+    {
+      "path": "distribution/maintenance/bin",
+      "bytes": 84950245
+    },
+    {
+      "path": "distribution/maintenance/obj",
+      "bytes": 11584043
+    }
+  ],
+  "totalBytes": 102238018,
+  "liveTaskRunners": false,
+  "fixtureTreesRemovedByTeardown": true,
+  "activeWorktreeAndSharedCachesRetained": true
+}

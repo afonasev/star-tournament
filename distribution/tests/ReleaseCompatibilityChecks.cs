@@ -110,7 +110,7 @@ static class ReleaseCompatibilityChecks
                 Check(api == 1, "one frozen discovery API snapshot: " + mode);
             }
             var maintenance = Path.Combine(root, "maintenance"); Directory.CreateDirectory(maintenance);
-            foreach (var (protocol, reader, expected) in new[] { (1, 2, 1), (2, 0, 1), (2, 1, 1), (2, 2, 2), (2, 99, 2) })
+            foreach (var (protocol, reader, expected) in new[] { (1, 0, 1), (1, 1, 1), (1, 2, 2), (2, 0, 1), (2, 1, 1), (2, 2, 2), (2, 99, 2) })
             {
                 var values = new Dictionary<string, int> { ["protocol"] = protocol }; if (reader != 0) values["metadataReader"] = reader;
                 File.WriteAllText(Path.Combine(maintenance, "maintenance.json"), JsonSerializer.Serialize(values));
@@ -118,6 +118,11 @@ static class ReleaseCompatibilityChecks
             }
             File.WriteAllText(Path.Combine(maintenance, "maintenance.json"), "{\"protocol\":2,\"metadataReader\":0}");
             await Reject<IOException>(() => { WindowsInstallation.MetadataReader(root); return Task.CompletedTask; }, "invalid capability cannot become supported reader");
+            foreach(var protocol in new[]{0,3})
+            {
+                File.WriteAllText(Path.Combine(maintenance,"maintenance.json"),JsonSerializer.Serialize(new{protocol,metadataReader=2}));
+                await Reject<IOException>(()=>{WindowsInstallation.MetadataReader(root);return Task.CompletedTask;},"unknown playback protocol cannot advertise a supported reader");
+            }
         }
         finally { Directory.Delete(root, true); }
         Console.WriteLine($"Release compatibility: {passed} passed");
