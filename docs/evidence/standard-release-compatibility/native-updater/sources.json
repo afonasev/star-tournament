@@ -1,0 +1,56 @@
+[
+  {
+    "path": "src/bins/src/commands/apply_windows_impl.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/commands/apply_windows_impl.rs",
+    "sha256": "d3db6cfa465053f24245d41ab9532a002091829b2d051eb9942bc64147450d4d",
+    "lines": 280
+  },
+  {
+    "path": "src/bins/src/commands/apply.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/commands/apply.rs",
+    "sha256": "f12aa15322c2ff4b42f251a78bc234c193168df8d692afc27d0a66276712ab37",
+    "lines": 72
+  },
+  {
+    "path": "src/bins/src/shared/util_windows.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/shared/util_windows.rs",
+    "sha256": "6e7603aa4c059341903b673fef39ef51bfc7bde4138cb8b15605993e4bfd81ef",
+    "lines": 218
+  },
+  {
+    "path": "src/bins/src/shared/util_common.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/shared/util_common.rs",
+    "sha256": "4610125beb18c8766bc009afa2f92c6dc05914d14120d42b9de18fdf9499a5e5",
+    "lines": 147
+  },
+  {
+    "path": "src/bins/src/windows/mod.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/windows/mod.rs",
+    "sha256": "c05934f59a82712c38fea4821c3d3ffda8a3ed16e0ab6a1862ac0e3aff9f0661",
+    "lines": 17
+  },
+  {
+    "path": "src/bins/src/windows/util.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/bins/src/windows/util.rs",
+    "sha256": "2a049c423bae091f670c3748ce340af8f026f82b83bf785e7820cb40117c5ee9",
+    "lines": 379
+  },
+  {
+    "path": "src/lib-rust/src/locator.rs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-rust/src/locator.rs",
+    "sha256": "f3bfa1f56e3baee3a51e048a03f175cad68e7fe04768406424c5501cbcfe2a13",
+    "lines": 709
+  },
+  {
+    "path": "src/lib-csharp/VelopackApp.cs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-csharp/VelopackApp.cs",
+    "sha256": "023081386b8dfbef3dcafaa97a014d6471587fbdaf44d15c0065d0b9d140fb34",
+    "lines": 289
+  },
+  {
+    "path": "src/lib-csharp/UpdateManager.cs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-csharp/UpdateManager.cs",
+    "sha256": "638bae24a68702ed1cf56a90fd21e9372138db4b04664c12ccb411cb5d27ddef",
+    "lines": 548
+  }
+]

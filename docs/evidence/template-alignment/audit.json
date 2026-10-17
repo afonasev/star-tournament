@@ -190,7 +190,8 @@
     "macOS PKG vs normative DMG",
     "macOS first-install preflight and native installed pair/data rollback unverified",
     "native installed/device/human acceptance not run",
-    "seamless legacy schema1/protocol1 transition: bootstrap pipeline, automatic broker upgrade and legacy recovery unimplemented"
+    "seamless legacy schema1/protocol1 transition: bootstrap pipeline, automatic broker upgrade and legacy recovery unimplemented",
+    "Native Windows apply/supervisor conflict: actual package updater1.2.158 code matches upstream kill-root policy; resident maintenance/supervisor paths are selected for termination. Native temp backup cleanup is before menu-ready. Fix current apply route before automatic bootstrap; actual Windows execution still NotRun."
   ],
   "latest_discovery_evidence": "docs/evidence/standard-github-discovery/verification.json",
   "quality_applicability": {

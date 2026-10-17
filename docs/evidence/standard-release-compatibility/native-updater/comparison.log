@@ -1,0 +1,1 @@
+Actual production/test updater identical. All non-resource sections match upstream1.2.158; whole files differ in resources and their header sizes. Static only.

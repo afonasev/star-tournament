@@ -1,0 +1,32 @@
+{
+  "baseline": "codex/game-standard-alignment@3fc5c735",
+  "is_completion_certificate": false,
+  "read_only_downloads": true,
+  "actual_signed_packages": 2,
+  "upstream_archive_sha256_verified": true,
+  "actual_production_test_updater_exact_match": true,
+  "upstream_nonresource_sections_exact_match": true,
+  "upstream_whole_file_exact_match": false,
+  "source_commit": "3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b",
+  "native_executed": false,
+  "installed_root_binary_read": false,
+  "player_build": false,
+  "installer_build": false,
+  "full_suite": false,
+  "deploy": false,
+  "mandatory_next": "Fix native apply/resident supervisor kill-root conflict before bootstrap migration",
+  "owned_temporary_bytes_removed": 442028390,
+  "evidence": {
+    "compare_updater.py": "f72f6e6f784b54ca5260e13da55ffb604699c31f56a2fdb44bbd02a2602c8753",
+    "comparison.log": "3ecaeafbc45288545b74536d6d027a1d3f35f4b2e167208016596b610598f44c",
+    "findings.md": "1f349c8c269c9bf2fbd81cd2994454b47d368cb034c3b30ace38e6c08bce645a",
+    "inspect_package.py": "86a44745c7b9b429f818e4e0a1b5fd285d5c872db4cb75f8ca155f448b697d02",
+    "plan.md": "a2f91c8e4b6f75c5291a83cb5b5cf74d9f3697db3de5608d1be0dec028c9482e",
+    "production.json": "d4a4dbdf0887a49c40a2da7b1192e823b55a3779d93e6cc5535ee4b1c806fbb1",
+    "production.log": "39a70647131b55d7088974578ad7fd9c72f46c685cc0b717d9587baf62dbd4f3",
+    "sources.json": "e47fe821ed9dcfc547b4a11a08e2f226395af2d4c9677d365416e5eb72dac3e6",
+    "test.json": "3d212285dcc76bf1fe8afbb9b1c867d69c82ffbea91fe94d02dc0bbdb10ab870",
+    "test.log": "19a1747a79e465ef8997686f89569dd3c5da9c14780f8508f3158e74bd455b2d",
+    "upstream-match.json": "c79cd57476d4bf54d042702a6098d423463934770602d4b3f243ff71cb2ea062"
+  }
+}

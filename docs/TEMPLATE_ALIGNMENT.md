@@ -168,3 +168,6 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 
 
 2026-10-17 publication-routing source continuation: package/collector/landing understand modern metadata; production frozen legacy aliases and published signed bootstrap preflight/readback/snapshot are wired. No compatible bootstrap is produced yet. UPDATES-INSTALL-02 stays OPEN until constrained bootstrap producer, automatic protected broker1→2/startup/retry and actual legacy recovery are implemented and verified. Evidence: `docs/evidence/standard-release-compatibility/publication-routing/`.
+
+
+2026-10-17 actual native updater audit: signed production/test Windows full packages contain the same updater1.2.158; all non-resource PE sections match official vpk1.2.158/tag3c7f52c1. Whole-file hashes differ only in resources and resource-size header fields. Upstream native apply kills accessible root processes (except itself), including our resident maintenance/supervisor source paths, and removes old temp payload before menu-ready. This is an unresolved source conflict in the current native apply route, not a passed native update. Before bootstrap migration, fix apply orchestration/recovery and verify it; see `docs/evidence/standard-release-compatibility/native-updater/findings.md`. Installed Windows/runtime execution remains NotRun.
