@@ -43,6 +43,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     public const string TestLocator = "https://api.github.com/repos/afonasev/star-tournament/releases";
     public const string ProductionBase = "https://github.com/afonasev/star-tournament/releases/latest/download/";
     string ManifestName => $"latest-{config.Platform}-{config.Architecture}.json";
+    string ModernManifestName => $"latest-v2-{config.Platform}-{config.Architecture}.json";
 
     public void Admit(string envelope)
     {
@@ -169,12 +170,15 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
                 var tag = release.GetProperty("tag_name").GetString() ?? "";
                 if (!tag.StartsWith('v') || !SemanticVersion.TryParse(tag[1..], out var version) || version.IsPrerelease != test || tag != "v" + version) continue;
                 var names = release.GetProperty("assets").EnumerateArray().Select(x => x.GetProperty("name").GetString() ?? "").ToHashSet(StringComparer.Ordinal);
-                if (!names.Contains(ManifestName) || !names.Contains("latest-win-x64.json") || !names.Contains("latest-osx-arm64.json") ||
+                bool modernFamily = names.Contains("latest-v2-win-x64.json") && names.Contains("latest-v2-osx-arm64.json");
+                bool modern = modernFamily && names.Contains(ModernManifestName);
+                bool legacy = !modernFamily && names.Contains(ManifestName) && names.Contains("latest-win-x64.json") && names.Contains("latest-osx-arm64.json");
+                if ((!modern && !legacy) ||
                     !names.Contains($"Star-Tournament-{version}-Windows-x64-Setup.exe") ||
                     !names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg") ||
                     names.Count(n => n.EndsWith("-full.nupkg", StringComparison.Ordinal)) < 2) continue;
                 // Locator data cannot assign a different repository or target URL.
-                var uri = new Uri($"https://github.com/afonasev/star-tournament/releases/download/{tag}/{ManifestName}");
+                var uri = new Uri($"https://github.com/afonasev/star-tournament/releases/download/{tag}/{(modern ? ModernManifestName : ManifestName)}");
                 if (!candidates.TryAdd(version, (uri, version.ToString(), names)) && !candidates[version].Assets!.SetEquals(names))
                     throw new InvalidDataException("Conflicting release version in discovery snapshot");
             }

@@ -64,7 +64,7 @@
     "UPDATES-CHANGELOG-01": "Код/QA: Git-derived paired reviewed notes/generator before packaging; standard-release-changelog20+16 targeted Python tests. Actual next release notes not generated without publication command.",
     "UPDATES-TRUST-01": "Pinned RSA-PSS/hash/size/channel/repo + schema2 requirements binding to actual package release.json; RequireCompatibleTarget in discovery/staged/Windows activate+elevated/macOS ValidateTarget. Schema1 immutable historical, old readers need installer. Source negative fixtures passed; native installed acceptance OPEN.",
     "UPDATES-INSTALL-01": "Платформа: payload snapshots/durable journal/root transaction/restore portable fixtures, Windows registry callbacks compiled; installed crash/UAC/ACL not executed.",
-    "UPDATES-INSTALL-02": "Платформа: normal quit/restart guards, Mac stable supervisor/Windows root entry; actual paired launcher/Player/shortcuts/rights native acceptance pending.",
+    "UPDATES-INSTALL-02": "OPEN semantic gap: schema2-only pipeline vs deployed0.1.5/test.1 schema1/protocol1. Manual installer ordinary transition not accepted. Modern/legacy routing source and actual released source fixtures ready; bootstrap producer/publisher, automatic protected broker1→2, legacy recovery and installed acceptance remain mandatory.",
     "UPDATES-DATA-01": "Source versioned user-data migration preserves v0.1.2 namespaces; signed profiles2-lab3-prefs1 gate bound to actual package config. Native previous→candidate→failed startup→previous/data acceptance not executed. Original own Lab values/history preservation unchanged.",
     "UPDATES-RECOVERY-01": "Платформа: payload/health/journal/observer/backup transfer source wired; exact Player startup/restore on native installations pending.",
     "UPDATES-ARGS-01": "Платформа: source forwarding and -muted/-noaudio contracts, stable entry/supervisor arguments; real native restart acceptance pending.",
@@ -189,7 +189,8 @@
     "quality selector31/Q10 pending; source consumers measured, runtime/QA incomplete",
     "macOS PKG vs normative DMG",
     "macOS first-install preflight and native installed pair/data rollback unverified",
-    "native installed/device/human acceptance not run"
+    "native installed/device/human acceptance not run",
+    "seamless legacy schema1/protocol1 transition: bootstrap pipeline, automatic broker upgrade and legacy recovery unimplemented"
   ],
   "latest_discovery_evidence": "docs/evidence/standard-github-discovery/verification.json",
   "quality_applicability": {

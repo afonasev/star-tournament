@@ -1,0 +1,66 @@
+{
+  "baseline": "codex/game-standard-alignment@46085f83",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "is_completion_certificate": false,
+  "actual_gap": "UPDATES-INSTALL-02: manual legacy installer transition does not satisfy seamless updates",
+  "checks": {
+    "routing.log": 16,
+    "security.log": 49,
+    "discovery.log": 71,
+    "compatibility.log": 48,
+    "session.log": 21
+  },
+  "total": 205,
+  "maintenance_compile": {
+    "errors": 0,
+    "warnings": 0,
+    "publish": false
+  },
+  "source_provenance": "actual published custody/tag refs, namespace-only fixture transforms; not installed binary execution",
+  "completed_scope": "modern+legacy endpoint selection and released source routing proof",
+  "mandatory_remaining": [
+    "compatible signed bootstrap producer/collector/publisher/landing wiring",
+    "automatic protected Windows broker1→2 transaction and startup/retry integration",
+    "actual native updater backup/callback identity and legacy working-version recovery",
+    "native installed/platform acceptance and parent pending visuals Q5–Q10"
+  ],
+  "player_build": false,
+  "installer_build": false,
+  "full_suite": false,
+  "deploy": false,
+  "sources": {
+    "distribution/launcher/AuthenticatedSource.cs": "b590a21706333c94c507b4f6fcdd14b7a5b0d9049a01a1ab8bb4818eabbf03b8",
+    "distribution/tests/Program.cs": "ecbeeb0d194d9ca8470b5b5fe6554aca55c465c27c298c75e5068ab5a94be98e",
+    "distribution/tests/LegacyReaderRoutingChecks.cs": "c072b296a49ea80cf40f258a38c1e53ae35c6e71e257616b38a04c8aedaa51a7",
+    "distribution/tests/fixtures/legacy-reader/ReleasedProductionV1.cs": "4f60c2a7bfcab875ee346cf5d0baef5d9efe6dd3beb4565417dde3bd5fa69516",
+    "distribution/tests/fixtures/legacy-reader/ReleasedTestV1.cs": "98ff598fd31d786c63f3aeee9a602565b00672f09d5d16d162bce70688e05acf",
+    "distribution/tests/fixtures/legacy-reader/README.md": "ecf90a6f9da0f1c67fe675ac0a251d3d9144d679b21e0cc25776549cf640ce14",
+    "distribution/COMPATIBILITY.md": "b2453026058513a1609baec8798720f84dfd2865498575596206130a4ad18093"
+  },
+  "evidence": {
+    "security.log": "6f992c1b2710aea81d086587385a1679f9458327d4132729ad3a4c484cb97e37",
+    "compatibility.log": "223934b8ee30e17febe4ad0e3fa33972e1ce66dd7ee7b068f24897e78762a392",
+    "discovery.log": "d3af68f41eb2bd499727606bbcf895530facf613c382d7880495f4d997c403cf",
+    "routing.log": "d45b8533f8a5e0e863081051449f94fec4f41f6550c23710b184f58799df784d",
+    "restore.log": "e50ffb53260401e6a2fb68719c02c6451714f632f70a80f3035012482cb47dcb",
+    "checks.json": "eddd7da834f64ed2eed9ad4f6aacf210603ab00b8f98d1ea69d8e22823932126",
+    "session.log": "1c277332596043470235ba284608b85828d96f43a420b50370ac8b59f1395506",
+    "verification.md": "066c996e3bc065f5bc5c23cf59776cefacce8987aad72312cd0624f892e2a716",
+    "maintenance-restore.log": "f547aacf58c1c3347a856ce2bdb5d7de4d63552527c78727424313113c4683d3",
+    "plan.md": "ba2cc8039b805645f7df1c3e562f54e76bb814df805d6385efae52e56e6d56b2",
+    "maintenance.log": "e93d874fd257761c123c68f64cc109b0fafd41d33d413b22681cb9bb0bb42985",
+    "released-source-inventory.json": "73481ebf37096258bc51f5c2396ceb27f5747afbe0937a6115eefa51da395772",
+    "test/latest-osx-arm64.json": "e6324f2c7ef19ed5136c95c6dbdaeeac544f8739f7a2280db3358927f320eefb",
+    "test/released-maintenance.cs": "3810a14ba61a88ab48e9b98cb803b7b2fb000986d829d3f4f233566e4bda64a3",
+    "test/identity-win-x64.json": "b1f59e833a738c0da9b6f0365761b20475d9dc27abc9dd4e520fc515f15a2dd6",
+    "test/released-authenticated-source.cs": "94acf706c416a9671752a2221a8d94bef9297a9905d4fb17bd6d19e8a30869f0",
+    "test/identity-osx-arm64.json": "ce9f922e05b2c26c082ead83321c4386fdbf288dd57623fa09ef9b5435af13a4",
+    "test/latest-win-x64.json": "210ef4fd4c91c0f937657d83ffe8f58831446ea7e56d1c9bbe01604f4dbb08f1",
+    "production/latest-osx-arm64.json": "27d05f2bd9a3fcf62768b8155ba2e9f34f43a999000e2b6e3fbc35b7d1233295",
+    "production/released-maintenance.cs": "3810a14ba61a88ab48e9b98cb803b7b2fb000986d829d3f4f233566e4bda64a3",
+    "production/identity-win-x64.json": "78b64e6b8df48f8a4ede209ec61bf47e0bfa8d20e868b2d0bdee7f97140ae77e",
+    "production/released-authenticated-source.cs": "6913c81de58e98fb9011d48388cdb54f6427b877c351d32f9cca6537acdc5d72",
+    "production/identity-osx-arm64.json": "102520403af120d57bb3b019d4360e5aca873d29ccdd5e872b0ee454aa0e3b23",
+    "production/latest-win-x64.json": "856df98caf27b908807a71f782ffa751cffb4b07dc979543e25e62f1d313738d"
+  }
+}

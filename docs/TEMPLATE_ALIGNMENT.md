@@ -116,7 +116,7 @@ Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2
 | UPDATES-CHANGELOG-01 | Код/QA: Git-derived paired reviewed notes/generator before packaging; standard-release-changelog20+16 targeted Python tests. Actual next release notes not generated without publication command. |
 | UPDATES-TRUST-01 | Код/QA: RSA-PSS admission, pinned identity/channel/asset/version/size/hash, HTTPS bounded redirects, activation reverification; native chain pending. |
 | UPDATES-INSTALL-01 | Платформа: payload snapshots/durable journal/root transaction/restore portable fixtures, Windows registry callbacks compiled; installed crash/UAC/ACL not executed. |
-| UPDATES-INSTALL-02 | Платформа: normal quit/restart guards, Mac stable supervisor/Windows root entry; actual paired launcher/Player/shortcuts/rights native acceptance pending. |
+| UPDATES-INSTALL-02 | **Разрыв перехода**: текущий schema2-only issuer/старые schema1 readers требуют ручной installer; это не соответствует seamless routine update и не принято исключением. Реальные0.1.5/test.1 source подтверждены. Modern/legacy endpoint routing source готов, bootstrap issuer/automatic Windows broker1→2/legacy recovery ещё OPEN. Normal quit/restart/supervisor source остаётся; native installed acceptance pending. |
 | UPDATES-DATA-01 | Платформа: versioned user data preserves actual v0.1.2 namespaces and failed-write paths; installed previous→candidate→failed startup→previous not executed. |
 | UPDATES-RECOVERY-01 | Платформа: payload/health/journal/observer/backup transfer source wired; exact Player startup/restore on native installations pending. |
 | UPDATES-ARGS-01 | Платформа: source forwarding and -muted/-noaudio contracts, stable entry/supervisor arguments; real native restart acceptance pending. |
@@ -154,14 +154,14 @@ Current delivery: macOS Apple Silicon `.pkg/.app`, Windows x64 system installati
 ## Дополняющие нормативные документы
 
 - `settings/controls-help.md`: ещё5 SETTINGS-HELP IDs включены выше, не потеряны за root requirements.
-- `settings/options.md`: все30 option IDs перечислены. Quality остаётся OPEN, не удобным N/A.
+- `settings/options.md`: все30 option IDs перечислены. Quality применима; source consumers/макет31 подтверждены, Q10/runtime/QA OPEN.
 - `design-lab/parameter-catalog.md`:9 metadata columns, grouping/search/diff/consumer boundary сопоставлены с actual638 registry/inventory и Lab matrix; примеры новых полей не являются требованиями их добавить.
-- `installer/platforms.md`: реальные PKG≠DMG и отсутствующая явная min OS policy открыты. Windows x64 check не подменяет OS-version check.
+- `installer/platforms.md`: PKG≠DMG остаётся Q9/open; source OS/target policy реализована, macOS first-install/native checks не закрыты.
 - `updates/release-format.md`: signature/identity/version/channel/asset/size/hash/body code есть. Новый schema2 задаёт minimumOS/reader/payload/data policy; producer/consumer/publisher/activation и ZIP config binding согласованы, отрицательные fixtures выполнены. Schema1 immutable historical baseline; старые readers требуют нового installer. Native installed acceptance и macOS first-install preflight/DMG остаются OPEN; контракт в distribution/COMPATIBILITY.md.
 
 ## Следующее действие
 
-1. GitHub API discovery/cache source исправлен и прошёл71+49+21 targeted .NET checks; installed pair acceptance остаётся отдельной. Baseline OS guard/maintenance compile исправлены; signed target compatibility source этап выполнен; далее platform packaging gaps и native installed acceptance.
-2. Закрыть macOS first-install preflight и Mac PKG/DMG разрыв с отдельным preview. Завершить source audit effective quality slots before deciding OPT-GRAPHICS-QUALITY; не объявлять N/A из удобства и не придумывать пресеты молча.
+1. GitHub API discovery/cache source исправлен и прошёл71+49+21 targeted .NET checks; installed pair acceptance остаётся отдельной. Baseline OS guard/maintenance compile исправлены; signed target compatibility source этап выполнен; выявлен дополнительный обязательный seamless legacy transition: old reader/broker1 bootstrap и protected migration, затем platform packaging/native acceptance.
+2. Закрыть macOS first-install preflight и Mac PKG/DMG разрыв с отдельным preview. Quality consumer audit выполнен; реализовать selector31 только после Q10. MacDMG30 ждёт Q9.
 3. После human decisions внедрить20–28 и общий device-aware hints direction; новые визуальные изменения сначала saved preview.
 4. После source fixes — affected integration, canonical spec sync и итоговый отчёт. Native build/platform/device/human gates остаются отдельными и не выдаются за успешные.
