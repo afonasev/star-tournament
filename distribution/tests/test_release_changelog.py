@@ -143,7 +143,7 @@ class ReleaseNotes(unittest.TestCase):
             platform,arch=runtime.split('-')
             config=dict(version='2.0.0',platform=platform,architecture=arch,publicationDate='2026-10-16',updateChannel='production',appId='tech.afonasev.star-tournament.'+runtime,compatibility=None)
             with zipfile.ZipFile(full,'w') as archive: archive.writestr('lib/app/release.json',json.dumps(config))
-            filename='Star-Tournament-2.0.0-Windows-x64-Setup.exe' if runtime=='win-x64' else 'Star-Tournament-2.0.0-macOS-arm64.pkg'
+            filename='Star-Tournament-2.0.0-Windows-x64-Setup.exe' if runtime=='win-x64' else 'Star-Tournament-2.0.0-macOS-arm64.dmg'
             setup=releases/filename;setup.write_bytes(b'installer')
             items=[publisher.identity(full),publisher.identity(setup)]
             (base/'2.0.0.identity.json').write_text(json.dumps(dict(version='2.0.0',date='2026-10-16',runtime=runtime,channel='production',revision=self.first,packages=items)))
