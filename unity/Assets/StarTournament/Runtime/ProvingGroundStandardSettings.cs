@@ -134,9 +134,7 @@ namespace StarTournament.ProvingGround
                 for(int i=0;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 resetAllButton.interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 var pad=InMatch?owner.input.DeviceAt(Seat) as UnityEngine.InputSystem.Gamepad:owner.menuDevice as UnityEngine.InputSystem.Gamepad;
-                string device=(pad?.layout+" "+pad?.description.product).ToLowerInvariant();
-                string glyph=device.Contains("dual")||device.Contains("playstation")?"△":device.Contains("switch")||device.Contains("nintendo")?"X":device.Contains("xinput")||device.Contains("xbox")?"Y":"Верх";
-                resetAllButton.GetComponentInChildren<Text>().text="Сбросить все настройки"+(owner.menuGamepadCursor?" · "+glyph:"");
+                resetAllButton.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Сбросить все настройки",pad,owner.menuGamepadCursor&&resetAllButton.IsInteractable(),MenuPadButton.North);
             }
             void ChooseAutoResolution()
             {var d=Screen.currentResolution;int w=d.width>0?d.width:Screen.width,h=d.height>0?d.height:Screen.height;displayReturnButton=settingsAutoButton;owner.BeginDisplayChange(this,w,h,EffectiveDisplayMode(),true);}

@@ -102,13 +102,12 @@ namespace StarTournament.ProvingGround
             textEntryValue.text=(start>0?"…":"")+textDraft.Text.Substring(start,textDraft.Caret-start)+"│"+textDraft.Text.Substring(textDraft.Caret,end-textDraft.Caret)+(end<textDraft.Text.Length?"…":"");
             textEntryCount.text=textDraft.Text.Length+(textDraft.Limit>0?" / "+textDraft.Limit:"");
             textEntryStatus.text=textPad!=null&&(!textPad.added||!textPad.enabled)?"Геймпад отключён. Черновик сохранён; нажмите нижнюю кнопку подключённого геймпада или используйте клавиатуру и мышь.":textDraft.Complete?"":"Введите корректное число.";
-            string device=(textPad?.layout+" "+textPad?.description.product).ToLowerInvariant();
-            bool ps=device.Contains("dual")||device.Contains("playstation"),sw=device.Contains("switch")||device.Contains("nintendo"),xbox=device.Contains("xinput")||device.Contains("xbox");
+            textApply.interactable=textDraft.Complete;
             bool hints=menuGamepadCursor;
-            textSpace.GetComponentInChildren<Text>().text="Пробел"+(hints?(ps?" · △":sw?" · X":xbox?" · Y":" · Верхняя"):"");
-            textDelete.GetComponentInChildren<Text>().text="Удалить"+(hints?(ps?" · □":sw?" · Y":xbox?" · X":" · Левая"):"");
-            textCancel.GetComponentInChildren<Text>().text="Отмена"+(hints?(ps?" · ○":sw?" · A":xbox?" · B":" · Правая"):"");
-            textApply.GetComponentInChildren<Text>().text="Применить"+(hints?(ps?" · Options":sw?" · +":" · Menu"):"");
+            textSpace.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Пробел",textPad,hints&&textSpace.IsInteractable(),MenuPadButton.North);
+            textDelete.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Удалить",textPad,hints&&textDelete.IsInteractable(),MenuPadButton.West);
+            textCancel.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Отмена",textPad,hints&&textCancel.IsInteractable(),MenuPadButton.East);
+            textApply.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Применить",textPad,hints&&textApply.IsInteractable(),MenuPadButton.Start);
         }
         void CloseTextEntry(bool apply)
         {

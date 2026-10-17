@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.0812897">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="687" result="Passed" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.081290" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1842" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="687" result="Passed" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.073293" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="93910" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1843" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="687" result="Passed" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.068189" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1844" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="687" result="Passed" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.063165" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1845" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="687" result="Passed" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.058290" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1080" name="MenuGamepadHintTests" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.051851" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1089" name="HintsRequireActiveConnectedSemanticPadAndNeverChangeInputDevices" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.HintsRequireActiveConnectedSemanticPadAndNeverChangeInputDevices" methodname="HintsRequireActiveConnectedSemanticPadAndNeverChangeInputDevices" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="758235295" result="Passed" start-time="2026-10-17 08:08:45Z" end-time="2026-10-17 08:08:46Z" duration="0.045478" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1088" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.001465" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1081" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;XInputControllerWindows&quot;,&quot;Xbox Wireless Controller&quot;,&quot;A&quot;,&quot;B&quot;,&quot;Y&quot;,&quot;Menu&quot;,&quot;X&quot;)" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;XInputControllerWindows&quot;,&quot;Xbox Wireless Controller&quot;,&quot;A&quot;,&quot;B&quot;,&quot;Y&quot;,&quot;Menu&quot;,&quot;X&quot;)" methodname="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="2040100137" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.000184" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1082" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;DualShockGamepadHID&quot;,&quot;Wireless Controller&quot;,&quot;×&quot;,&quot;○&quot;,&quot;△&quot;,&quot;Options&quot;,&quot;□&quot;)" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;DualShockGamepadHID&quot;,&quot;Wireless Controller&quot;,&quot;×&quot;,&quot;○&quot;,&quot;△&quot;,&quot;Options&quot;,&quot;□&quot;)" methodname="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="594048787" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.000036" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1083" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;Gamepad&quot;,&quot;DualSense Wireless Controller&quot;,&quot;×&quot;,&quot;○&quot;,&quot;△&quot;,&quot;Options&quot;,&quot;□&quot;)" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;Gamepad&quot;,&quot;DualSense Wireless Controller&quot;,&quot;×&quot;,&quot;○&quot;,&quot;△&quot;,&quot;Options&quot;,&quot;□&quot;)" methodname="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="1308821484" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.000032" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1084" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;SwitchProControllerHID&quot;,&quot;Pro Controller&quot;,&quot;B&quot;,&quot;A&quot;,&quot;X&quot;,&quot;+&quot;,&quot;Y&quot;)" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;SwitchProControllerHID&quot;,&quot;Pro Controller&quot;,&quot;B&quot;,&quot;A&quot;,&quot;X&quot;,&quot;+&quot;,&quot;Y&quot;)" methodname="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="1022666255" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.000031" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1085" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;Gamepad&quot;,&quot;Nintendo Switch Pro Controller&quot;,&quot;B&quot;,&quot;A&quot;,&quot;X&quot;,&quot;+&quot;,&quot;Y&quot;)" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;Gamepad&quot;,&quot;Nintendo Switch Pro Controller&quot;,&quot;B&quot;,&quot;A&quot;,&quot;X&quot;,&quot;+&quot;,&quot;Y&quot;)" methodname="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="690322552" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.000032" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1086" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;Gamepad&quot;,&quot;Unknown Controller&quot;,&quot;Нижняя&quot;,&quot;Правая&quot;,&quot;Верхняя&quot;,&quot;Start&quot;,&quot;Левая&quot;)" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;Gamepad&quot;,&quot;Unknown Controller&quot;,&quot;Нижняя&quot;,&quot;Правая&quot;,&quot;Верхняя&quot;,&quot;Start&quot;,&quot;Левая&quot;)" methodname="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="2080718922" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.000031" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1087" name="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;EightBitDoSn30ProGamepad&quot;,&quot;8Bitdo SN30 Pro&quot;,&quot;Нижняя&quot;,&quot;Правая&quot;,&quot;Верхняя&quot;,&quot;Start&quot;,&quot;Левая&quot;)" fullname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests.PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(&quot;EightBitDoSn30ProGamepad&quot;,&quot;8Bitdo SN30 Pro&quot;,&quot;Нижняя&quot;,&quot;Правая&quot;,&quot;Верхняя&quot;,&quot;Start&quot;,&quot;Левая&quot;)" methodname="PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily" classname="StarTournament.ProvingGround.Tests.MenuGamepadHintTests" runstate="Runnable" seed="991518673" result="Passed" start-time="2026-10-17 08:08:46Z" end-time="2026-10-17 08:08:46Z" duration="0.000031" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

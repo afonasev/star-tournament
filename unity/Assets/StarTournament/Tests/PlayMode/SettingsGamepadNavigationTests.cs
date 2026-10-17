@@ -348,8 +348,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             int oldScale=PlayerPrefs.GetInt(NativeUserPreferences.ScaleKey),oldContrast=PlayerPrefs.GetInt(NativeUserPreferences.ContrastKey);
             try
             {
-                yield return Load();
-                yield return Press(GamepadButton.North);Assert.That(Focus,Is.EqualTo("settings-reset-cancel"));
+                yield return Load();yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.DpadUp);
+                Assert.That(Button("settings-reset-all").GetComponentInChildren<Text>().text,Is.EqualTo("Сбросить все настройки · Верхняя"));
+                yield return Press(GamepadButton.North);
+                Assert.That(Button("settings-reset-all").GetComponentInChildren<Text>().text,Is.EqualTo("Сбросить все настройки"));Assert.That(Focus,Is.EqualTo("settings-reset-cancel"));
                 Assert.That(Button("settings-section-0").interactable,Is.False);
                 yield return Press(GamepadButton.North);Assert.That(Focus,Is.EqualTo("settings-reset-cancel"));
                 yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-section-0"));
