@@ -2,9 +2,11 @@
   "baseline": "codex/game-standard-alignment@f9587719",
   "affected": {
     "test_legacy_bridge_publication": 29,
-    "test_github_publisher": 16
+    "test_github_publisher": 16,
+    "test_release_changelog": 20
   },
   "status": "passed",
   "fullSuiteExecuted": false,
-  "nativeAcceptance": "pending owner installation"
+  "nativeAcceptance": "pending owner installation",
+  "initialFailure": "Changelog custody fixture still named PKG after DMG route change; corrected filename only, exact source/custody assertions unchanged; final20 passed."
 }
