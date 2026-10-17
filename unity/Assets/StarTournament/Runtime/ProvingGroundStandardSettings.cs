@@ -24,6 +24,7 @@ namespace StarTournament.ProvingGround
             {node.SetParent(parent,false);Layout((RectTransform)node,min,max);}
             void AddStandardFocus(Selectable control)
             {
+                BindSettingsHint(control);
                 if(control is Button b){settingsFocusButtons.Add(b);return;}
                 var border=Panel(control.transform,"controller-focus",Vector2.zero,Vector2.one,Color.clear);
                 border.GetComponent<Image>().raycastTarget=false;

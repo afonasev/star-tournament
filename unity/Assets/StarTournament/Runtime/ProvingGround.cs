@@ -963,17 +963,18 @@ namespace StarTournament.ProvingGround
             foreach(var pad in Gamepad.all)
             {
                 if(!pad.enabled)continue;
-                if(pad.leftStick.ReadValue().sqrMagnitude>=.25f || pad.dpad.ReadValue()!=Vector2.zero)
-                    menuGamepadCursor=true;
+                bool activity=pad.leftStick.ReadValue().sqrMagnitude>=.25f||pad.dpad.ReadValue()!=Vector2.zero;
                 foreach(var control in pad.allControls)
-                    if(control is UnityEngine.InputSystem.Controls.ButtonControl button && button.wasPressedThisFrame)
-                        menuGamepadCursor=true;
+                    if(control is UnityEngine.InputSystem.Controls.ButtonControl button&&button.wasPressedThisFrame)activity=true;
+                if(activity){menuGamepadCursor=true;menuDevice=pad;}
             }
+            if(Keyboard.current!=null&&Keyboard.current.enabled&&Keyboard.current.anyKey.wasPressedThisFrame)
+            {menuGamepadCursor=false;menuDevice=Keyboard.current;}
             // Mouse movement wins when both devices are used in the same frame.
             // Button releases and small stick drift do not change the cursor mode.
             var mouse=Mouse.current;
             if(mouse!=null && mouse.enabled && (mouse.delta.ReadValue()!=Vector2.zero || mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame || mouse.scroll.ReadValue()!=Vector2.zero))
-                menuGamepadCursor=false;
+            {menuGamepadCursor=false;menuDevice=Keyboard.current;}
             Cursor.visible=!menuGamepadCursor;
         }
         void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
@@ -1292,7 +1293,9 @@ namespace StarTournament.ProvingGround
             var label=TextElement(go.transform,"label",title,(int)Profile.Get("ui.fontSize")); Layout(label.rectTransform,Vector2.zero,Vector2.one); label.alignment=TextAnchor.MiddleCenter;
             label.rectTransform.offsetMin=new Vector2(12,4);label.rectTransform.offsetMax=new Vector2(-12,-4);
             var colors=button.colors;colors.normalColor=Color.white;colors.highlightedColor=colors.selectedColor=Color.white;colors.pressedColor=new Color(.8f,.8f,.8f,1);colors.disabledColor=new Color(.52f,.57f,.62f,1);colors.fadeDuration=.12f;button.colors=colors;
-            go.AddComponent<MenuPresentation>();return button;
+            go.AddComponent<MenuPresentation>();
+            go.AddComponent<MenuActionHint>().Initialize(button,()=>menuDevice,()=>menuGamepadCursor&&menuWindowFocused);
+            return button;
         }
         static void Layout(RectTransform rect,Vector2 min,Vector2 max) { rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero; }
         static RectTransform CreateViewportDivider(Transform parent,string name)

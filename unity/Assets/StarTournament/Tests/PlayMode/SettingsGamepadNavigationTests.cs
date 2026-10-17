@@ -128,6 +128,31 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
 
+        [UnityTest] public IEnumerator FocusHintsFollowPadKeyboardMouseAndDisabledActionsWithoutChangingCaptions()
+        {
+            yield return Load();priorCursorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorCursorBackground=InputSystem.settings.backgroundBehavior;cursorInputCaptured=true;
+            InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            Button("settings-back").onClick.Invoke();yield return null;yield return Press(GamepadButton.DpadDown);
+            var focused=EventSystem.current.currentSelectedGameObject.GetComponent<Button>();Assert.That(focused.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            Assert.That(focused.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Нижняя"));
+            Assert.That(ground.GetComponentsInChildren<MenuActionHint>().Count(x=>x.GlyphLabel.enabled),Is.EqualTo(1));
+            Assert.That(ground.GetComponentsInChildren<Text>().Single(x=>x.name=="controls").enabled,Is.True);
+            string title=focused.GetComponentInChildren<Text>().text;yield return null;Assert.That(focused.GetComponentInChildren<Text>().text,Is.EqualTo(title));
+            string output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_FOCUS_HINT_QA_IMAGES");
+            if(!string.IsNullOrEmpty(output)){System.IO.Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"main-focused-pad-720.png"),1280,720);}
+            var keyboard=InputSystem.AddDevice<Keyboard>();try
+            {
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.UpArrow));yield return null;yield return null;InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+                Assert.That(ground.GetComponentsInChildren<MenuActionHint>().Any(x=>x.GlyphLabel.enabled),Is.False);Assert.That(ground.GetComponentsInChildren<Text>().Single(x=>x.name=="controls").enabled,Is.False);
+                yield return Press(GamepadButton.DpadDown);Assert.That(ground.GetComponentsInChildren<MenuActionHint>().Any(x=>x.GlyphLabel.enabled),Is.True);
+                cursorMouse=InputSystem.AddDevice<Mouse>();InputSystem.QueueDeltaStateEvent(cursorMouse.delta,new Vector2(12,0));yield return null;yield return null;
+                Assert.That(ground.GetComponentsInChildren<MenuActionHint>().Any(x=>x.GlyphLabel.enabled),Is.False);
+                if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"main-mouse-720.png"),1280,720);
+                yield return Press(GamepadButton.DpadUp);EventSystem.current.SetSelectedGameObject(Button("main-action-1").gameObject);yield return null;
+                Assert.That(Button("main-action-1").interactable,Is.False);Assert.That(Button("main-action-1").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False);
+            }
+            finally{if(keyboard.added)InputSystem.RemoveDevice(keyboard);}
+        }
         [UnityTest] public IEnumerator MenuCursorFollowsGamepadAndMouseAcrossScreens()
         {
             yield return Load();

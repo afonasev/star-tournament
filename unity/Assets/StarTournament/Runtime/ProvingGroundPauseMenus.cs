@@ -100,6 +100,7 @@ namespace StarTournament.ProvingGround
         Button PauseButton(Transform parent,string name,string value,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action,int seat,int index)
         {
             var button=MenuButton(parent,name,value,min,max,action);
+            button.GetComponent<MenuActionHint>().Initialize(button,()=>input.DeviceAt(seat),()=>menuGamepadCursor&&menuWindowFocused,()=>seatPauseCursor[seat]==index);
             button.transition=Selectable.Transition.None;
             var trigger=button.GetComponent<EventTrigger>()??button.gameObject.AddComponent<EventTrigger>();
             var entry=new EventTrigger.Entry { eventID=EventTriggerType.PointerEnter };

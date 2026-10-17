@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround
         {
             historyAction=MenuButton(mainMenuScreen.transform,"release-history-action","Что нового",new Vector2(.61f,.072f),new Vector2(.78f,.13f),OpenReleaseHistory);
             historyScreen=Panel(parent,"release-history-screen",Vector2.zero,Vector2.one,MenuInk);AddMenuBackdrop(historyScreen,false);
-            historyBack=MenuButton(historyScreen.transform,"release-history-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.18f,.96f),CloseReleaseHistory);
+            historyBack=MenuButton(historyScreen.transform,"release-history-back","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.18f,.96f),CloseReleaseHistory);
             Label(historyScreen.transform,"release-history-heading","ЧТО НОВОГО",40,new Vector2(.21f,.89f),new Vector2(.94f,.96f),TextAnchor.MiddleLeft,MenuGold);
             historyStatus=Label(historyScreen.transform,"release-history-status","",18,new Vector2(.21f,.83f),new Vector2(.94f,.89f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             historyVersions=RosterScroll(historyScreen.transform,"release-history-versions",new Vector2(.05f,.15f),new Vector2(.29f,.81f),out historyVersionScroll).gameObject;
@@ -35,7 +35,8 @@ namespace StarTournament.ProvingGround
             historyBody=Label(content,"release-history-description","",22,Vector2.zero,Vector2.one,TextAnchor.UpperLeft,Color.white);
             historyBody.supportRichText=false;historyBody.raycastTarget=false;
             historyBody.rectTransform.anchorMin=new Vector2(0,1);historyBody.rectTransform.anchorMax=Vector2.one;historyBody.rectTransform.pivot=new Vector2(.5f,1);
-            Label(historyScreen.transform,"release-history-controls","↑ ↓  Версия     A  Читать     Правый стик / PgUp PgDn: прокрутка     B / Esc: назад",18,new Vector2(.05f,.07f),new Vector2(.95f,.12f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+            var controls=Label(historyScreen.transform,"release-history-controls","Крестовина: версия · Правый стик: прокрутка",18,new Vector2(.05f,.07f),new Vector2(.95f,.12f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+            controls.gameObject.AddComponent<MenuPadOnlyHint>().Show=()=>menuGamepadCursor&&menuWindowFocused&&!textEntryPanel;
             historyScreen.SetActive(false);
         }
         void OpenReleaseHistory()

@@ -250,7 +250,7 @@ namespace StarTournament.ProvingGround
         void CreateDesignLabUi(Transform parent)
         {
             labScreen=Panel(parent,"lab-screen",Vector2.zero,Vector2.one,MenuInk);
-            labBack=LabButton(labScreen.transform,"lab-back","‹ НАЗАД · B",new Vector2(.04f,.845f),new Vector2(.15f,.90f),ToMainMenu);
+            labBack=LabButton(labScreen.transform,"lab-back","‹ НАЗАД",new Vector2(.04f,.845f),new Vector2(.15f,.90f),ToMainMenu);
             Label(labScreen.transform,"lab-heading","ЛАБОРАТОРИЯ ГЕЙМДИЗАЙНА",21,new Vector2(.17f,.845f),new Vector2(.70f,.90f),TextAnchor.MiddleLeft,MenuGold);
             var clear=LabButton(labScreen.transform,"lab-clear","Сбросить правки",new Vector2(.806f,.115f),new Vector2(.96f,.169f),()=>GuardLabSelection(()=>{ResetLabDraft();RefreshLabWorkspace();}));
             labSave=LabButton(labScreen.transform,"lab-save","Сохранить",new Vector2(.379f,.715f),new Vector2(.504f,.772f),()=>LabOperation(()=>labHistory.Save(labDraft),true));
@@ -627,7 +627,7 @@ namespace StarTournament.ProvingGround
             var choose=LabButton(detail,"revision-select","Выбрать",new Vector2(.04f,.01f),new Vector2(.96f,.12f),()=>GuardLabSelection(()=>StartCoroutine(SelectLabRevision(profileId,number))));
             choose.interactable=compatible;
             Label(card,"revision-active","Для следующей игры: "+labActiveLabel,20,new Vector2(.03f,.035f),new Vector2(.69f,.12f),TextAnchor.MiddleLeft,Color.white);
-            var close=LabButton(card,"cancel","Закрыть · B",new Vector2(.72f,.035f),new Vector2(.97f,.12f),CloseLabDialog);
+            var close=LabButton(card,"cancel","Закрыть",new Vector2(.72f,.035f),new Vector2(.97f,.12f),CloseLabDialog);
             close.GetComponentInChildren<Text>().fontSize=20;choose.GetComponentInChildren<Text>().fontSize=22;
             if(focusList&&inspected)SelectLabControl(inspected);else Select(close);
             if(inspected)inspected.GetComponent<MenuScrollFocus>().Reveal();

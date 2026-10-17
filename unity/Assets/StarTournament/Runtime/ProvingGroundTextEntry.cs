@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
 
         void BindTextInput(InputField field,bool numeric=false)
         {
+            field.gameObject.AddComponent<MenuActionHint>().Initialize(field,()=>menuDevice,()=>menuGamepadCursor&&menuWindowFocused&&!textEntryPanel);
             var binding=field.gameObject.AddComponent<NativeGamepadTextField>();
             binding.Open=()=>{if(menuDevice is Gamepad pad)OpenTextEntry(field,pad,numeric);};
             field.onEndEdit.AddListener(_=>textFieldEndedFrame=Time.frameCount);
@@ -56,6 +57,8 @@ namespace StarTournament.ProvingGround
         {
             var button=MenuButton(textEntryPanel.transform,name,caption,min,max,()=>
             {if(Time.frameCount<=textOpenedFrame||!textEntryPanel)return;action();if(textEntryPanel)RefreshTextEntry();});
+            bool extra=name=="text-space"||name=="text-delete"||name=="text-cancel"||name=="text-apply";
+            button.GetComponent<MenuActionHint>().Initialize(button,()=>textPad,()=>menuGamepadCursor&&menuWindowFocused&&textUsingPad&&!extra);
             button.GetComponent<MenuPresentation>().Height=56;
             button.GetComponentInChildren<Text>().fontSize=24;
             return button;
