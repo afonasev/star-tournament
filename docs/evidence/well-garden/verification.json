@@ -1,0 +1,77 @@
+{
+  "baseline": "a8438e3c676c07c71cedc4c631514005ec01a56f",
+  "branch": "codex/well-garden",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabGarden.cs": "53ddf87c544eaafed6718311f2b25bb4acdb7a231b250ed27d26cf42eda1e497",
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "2d9a82942659c8870e194c16c6a0376a4840ff51c84f45e12612330e933830e1",
+    "unity/Assets/StarTournament/Resources/WellMeadowGrass.png": "0cc43facb2aca63ad80878db3a6fcc5894478d4fcac4b884f41a6bc5ea5cd586",
+    "unity/Assets/StarTournament/Resources/WellMeadowGrass.png.meta": "369c3d448f032851e3b12a0ce5086584b664740d7fd1acbf4928eb2fa3f641a9",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellGardenPresentationTests.cs": "c986b9c017c64f31f52ebb13e6fb7860edf354ab355449fb7461bf50d8e6a433"
+  },
+  "checks": [
+    {
+      "kind": "EditMode",
+      "result": "PASS",
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "editmode.xml",
+      "duration_seconds": 169.5983013,
+      "scope": "WellArenaTests;WellDaylightProfileTests",
+      "snapshot": "Initial garden implementation; subsequent art-only refinements did not change map/profile/source dependencies of these checks."
+    },
+    {
+      "kind": "PlayMode",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "playmode.xml",
+      "duration_seconds": 12.1048085,
+      "scope": "WellGardenPresentationTests;WellStoreyPresentationTests",
+      "snapshot": "Final source_sha256 above; includes GPU RGB readback of imported cutout."
+    },
+    {
+      "kind": "visual-inspection",
+      "result": "PASS",
+      "scope": "Agent inspected all six final Unity PNGs: both entrances, atrium, overview, closeup, landing. Paths meet real portals; low vegetation; accepted lighting unchanged. Not human acceptance."
+    }
+  ],
+  "resources": {
+    "map": "well-laboratory-v1@4",
+    "lights": 24,
+    "furniture": 56,
+    "cosmetic_colliders": 0,
+    "vertices": 639609,
+    "renderers": 63,
+    "garden_vertices": 49722
+  },
+  "iterations": [
+    {
+      "phase": "initial procedural grass",
+      "automated": "2/2 PASS",
+      "visual": "FAIL - too sparse and repetitive stones; refined"
+    },
+    {
+      "phase": "denser indexed grass/clover",
+      "automated": "2/2 PASS",
+      "visual": "Insufficient density relative to selected concept; switched to textured cards"
+    },
+    {
+      "phase": "cutout texture initial import",
+      "automated": "2/2 PASS",
+      "visual": "FAIL - black silhouettes; corrected TextureImporter serializedVersion/format and added GPU RGB regression assertion"
+    },
+    {
+      "phase": "final cutout import",
+      "automated": "2/2 PASS",
+      "visual": "PASS - all six views inspected"
+    }
+  ],
+  "not_run": {
+    "full_suite": "No separate human authorization",
+    "player_build": "Not necessary for this presentation-only change; Editor graphics captures sufficient for current scope",
+    "player_device_human": "Separate acceptance",
+    "release_deploy": "Not authorized in this task"
+  }
+}

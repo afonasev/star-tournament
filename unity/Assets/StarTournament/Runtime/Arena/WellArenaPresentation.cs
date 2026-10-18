@@ -231,6 +231,7 @@ namespace StarTournament.ProvingGround
                 Box(white,centre+Vector3.up*.15f,new Vector3(3,.3f,3));Box(soil,centre+Vector3.up*.31f,new Vector3(2.8f,.05f,2.8f));
                 detail.Plants(centre);
             }
+            detail.Garden();
             detail.Finish();
             var surfaceOwners=new List<Bounds>();
             foreach(var pair in batches)

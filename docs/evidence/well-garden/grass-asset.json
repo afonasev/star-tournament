@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "asset": "unity/Assets/StarTournament/Resources/WellMeadowGrass.png",
+  "prompt": "Single dense low meadow grass clump, straight side view, twice as wide as tall, many tapered bent blades and a few low clover leaves, soft neutral diffuse lighting, natural sage/fresh green and muted straw accents, matte stylized 3D game texture, transparent background with clean alpha edges, no soil/pot/flowers/scenery.",
+  "normalization": "Original generated PNG retained unchanged; Unity TextureImporter serializedVersion 13, max 1024, mipmaps, alpha from input, clamp; crossed opaque alpha-clipped URP/Lit cards."
+}
