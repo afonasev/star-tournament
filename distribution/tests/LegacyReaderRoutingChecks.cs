@@ -27,12 +27,12 @@ static class LegacyReaderRoutingChecks
             Check(Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(body))).ToLowerInvariant()==hash,"exact published0.1.6 reader/locator preserved: "+name);
         }
         using var rsa = RSA.Create(3072); string key = rsa.ExportSubjectPublicKeyInfoPem();
-        string Signed(string version, string channel, int schema, string architecture = "arm64")
+        string Signed(string version, string channel, int schema, string architecture = "arm64", string platform = "osx")
         {
-            var value = new Dictionary<string, object?> { ["schema"] = schema, ["platform"] = "osx", ["architecture"] = architecture, ["channel"] = channel,
+            var value = new Dictionary<string, object?> { ["schema"] = schema, ["platform"] = platform, ["architecture"] = architecture, ["channel"] = channel,
                 ["version"] = version, ["publicationDate"] = "2026-10-17", ["downloadUrl"] = $"https://github.com/afonasev/star-tournament/releases/download/v{version}/fixture-{version}-full.nupkg",
                 ["feed"] = new { Assets = new[] { new { PackageId = "tech.test", Version = version, Type = "Full", FileName = $"fixture-{version}-full.nupkg", SHA256 = new string('0',64), Size = 1 } } } };
-            if (schema == 2) value["compatibility"] = new { minimumOsVersion = "12.0", minimumUpdaterProtocol = 2, payloadFormat = ReleaseCompatibility.PayloadFormat, userDataPolicy = ReleaseCompatibility.DataPolicy };
+            if (schema == 2) value["compatibility"] = new { minimumOsVersion = platform=="win"?"10.0.19043":"12.0", minimumUpdaterProtocol = 2, payloadFormat = ReleaseCompatibility.PayloadFormat, userDataPolicy = ReleaseCompatibility.DataPolicy };
             var payload = JsonSerializer.SerializeToUtf8Bytes(value);
             return JsonSerializer.Serialize(new { payload = Convert.ToBase64String(payload), signature = Convert.ToBase64String(rsa.SignData(payload, HashAlgorithmName.SHA256, RSASignaturePadding.Pss)) });
         }
@@ -99,6 +99,22 @@ static class LegacyReaderRoutingChecks
             {
                 await releasedPkg.GetReleaseFeed(null!,releasedConfig.AppId,"");
                 Check(releasedPkg.Asset!.Version.ToString()==future,"real compatibility PKG makes modern target discoverable to published0.1.6 reader: "+channel);
+            }
+            HttpResponseMessage WindowsRoute(HttpRequestMessage request,bool onlyDmg)
+            {
+                if(request.RequestUri!.Host=="api.github.com")return new(HttpStatusCode.OK){Content=new StringContent(JsonSerializer.Serialize(new[]{Row(future,true,dmg:onlyDmg)}))};
+                return new(HttpStatusCode.OK){Content=new StringContent(Signed(future,channel,2,"x64","win"))};
+            }
+            var releasedWindows=new ModernV2.LauncherConfig("tech.test","win","x64","1.0.0","2026-10-17",feed,"game/Player",channel);
+            using(var windowsPkg=new ModernV2.AuthenticatedSource(releasedWindows,key,new Transport(r=>WindowsRoute(r,false)),hostProbe:(_,_)=>true))
+            {
+                await windowsPkg.GetReleaseFeed(null!,releasedWindows.AppId,"");
+                Check(windowsPkg.Asset!.Version.ToString()==future,"published0.1.6 Windows reader discovers compatibility PKG pair: "+channel);
+            }
+            using(var windowsDmg=new AuthenticatedSource(currentConfig with{Platform="win",Architecture="x64"},key,new Transport(r=>WindowsRoute(r,true)),hostProbe:(_,_)=>true))
+            {
+                await windowsDmg.GetReleaseFeed(null!,currentConfig.AppId,"");
+                Check(windowsDmg.Asset!.Version.ToString()==future,"fixed Windows reader discovers DMG-only pair: "+channel);
             }
             int legacyFallback=0;
             using(var badModern=new AuthenticatedSource(currentConfig,key,new Transport(request=>
