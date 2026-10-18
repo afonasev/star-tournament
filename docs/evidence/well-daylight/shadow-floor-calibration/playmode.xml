@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:36Z" duration="17.2585988">
+  <test-suite type="TestSuite" id="1429" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="342" result="Passed" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:36Z" duration="17.258599" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1421" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/well-light-study/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="342" result="Passed" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:36Z" duration="17.251653" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="98015" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1422" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="342" result="Passed" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:36Z" duration="17.248893" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1423" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="342" result="Passed" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:36Z" duration="17.246287" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1424" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="342" result="Passed" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:36Z" duration="17.243732" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1080" name="WellDaylightPresentationTests" fullname="StarTournament.ProvingGround.Tests.WellDaylightPresentationTests" classname="StarTournament.ProvingGround.Tests.WellDaylightPresentationTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:28Z" duration="9.699311" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1081" name="CaptureRuntimeAndVerifyIndependentEffects" fullname="StarTournament.ProvingGround.Tests.WellDaylightPresentationTests.CaptureRuntimeAndVerifyIndependentEffects" methodname="CaptureRuntimeAndVerifyIndependentEffects" classname="StarTournament.ProvingGround.Tests.WellDaylightPresentationTests" runstate="Runnable" seed="1124331110" result="Passed" start-time="2026-10-18 08:27:18Z" end-time="2026-10-18 08:27:28Z" duration="9.693254" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1084" name="WellLabDetailVisualTests" fullname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests" classname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-18 08:27:28Z" end-time="2026-10-18 08:27:36Z" duration="7.538169" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1085" name="PreserveAuthoringAndSaveDetailViews" fullname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests.PreserveAuthoringAndSaveDetailViews" methodname="PreserveAuthoringAndSaveDetailViews" classname="StarTournament.ProvingGround.Tests.WellLabDetailVisualTests" runstate="Runnable" seed="1856988612" result="Passed" start-time="2026-10-18 08:27:28Z" end-time="2026-10-18 08:27:36Z" duration="7.535842" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

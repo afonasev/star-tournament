@@ -11,6 +11,7 @@ namespace StarTournament.ProvingGround
         Material fontMaterial;Font signFont;
         Material white,floor,ceiling,metal,glass,door,soil;Material[] storeyWalls,storeyFloors,storeyPanels;
         readonly HashSet<Material> architecture=new HashSet<Material>();WellLabDetail detail;Material[] colours;ProvingProfile profile;
+        public ProvingProfile Settings=>profile;
         Material Mat(string name,Color colour,bool unlit=false,VisualMaterialRole role=VisualMaterialRole.Wall,bool register=true)
         {var m=new Material(Shader.Find(unlit?"Universal Render Pipeline/Unlit":"Universal Render Pipeline/Lit")){name=name,color=colour};m.SetFloat("_Smoothness",.35f);owned.Add(m);if(!unlit&&register)NativeVisualMaterials.Register(this,m,role);return m;}
         void Texture(Material material,string kind,float metres)
@@ -128,7 +129,8 @@ namespace StarTournament.ProvingGround
         public static void ConfigureDaylight(Light light,ProvingProfile profile)
         {
             light.type=LightType.Directional;light.intensity=profile.Get("well.daylight");
-            light.transform.rotation=Quaternion.Euler(50,-30,0);
+            light.transform.rotation=profile.Version>=5?Quaternion.Euler(profile.Get("well.sunPitch"),profile.Get("well.sunYaw"),0):Quaternion.Euler(50,-30,0);
+            light.color=profile.Version>=5?new Color(profile.Get("well.sunRed"),profile.Get("well.sunGreen"),profile.Get("well.sunBlue")):Color.white;
             light.shadowStrength=profile.Get("well.daylightShadow");light.shadows=light.shadowStrength>0?LightShadows.Soft:LightShadows.None;
             // Sub-centimetre contact offset avoids floating trims; fixed shadow-raster precision.
             light.shadowBias=.03f;light.shadowNormalBias=.12f;
@@ -215,7 +217,12 @@ namespace StarTournament.ProvingGround
                     if(x==0&&z==0)continue;var pos=new Vector3(x,f*WellArenaCatalog.Storey+WellArenaCatalog.ClearHeight-.2f,z);
                     Box(metal,pos,new Vector3(3,.10f,1));Box(diffuser,pos-Vector3.up*.07f,new Vector3(2.8f,.03f,.8f));
                     var go=new GameObject("Office ceiling light");go.transform.SetParent(transform,false);go.transform.localPosition=pos-Vector3.up*.15f;go.transform.localRotation=Quaternion.Euler(90,0,0);
-                    var light=go.AddComponent<Light>();light.type=LightType.Spot;light.spotAngle=profile.Get("well.spotAngle");light.innerSpotAngle=Mathf.Min(light.spotAngle,profile.Get("well.innerAngle"));light.intensity=profile.Get("well.lamp");light.range=profile.Get("well.lampRange");light.color=new Color(1,.98f,.93f);light.shadows=LightShadows.None;
+                    var light=go.AddComponent<Light>();light.type=LightType.Spot;light.spotAngle=profile.Get("well.spotAngle");light.innerSpotAngle=Mathf.Min(light.spotAngle,profile.Get("well.innerAngle"));light.intensity=profile.Get("well.lamp");light.range=profile.Get("well.lampRange");light.color=profile.Version>=5?new Color(1,.97f,.9f):new Color(1,.98f,.93f);
+                    // One existing corner-room fixture per storey: stable, camera-independent ownership.
+                    // Three default high-tier 512px maps fit the existing 1024px atlas without resizing it.
+                    bool shadow=profile.Version>=5&&z==18f&&x==18f;float strength=profile.Version>=5?profile.Get("well.lampShadow"):0;
+                    light.shadows=shadow&&strength>0?LightShadows.Soft:LightShadows.None;
+                    light.shadowStrength=strength;light.shadowBias=.025f;light.shadowNormalBias=.12f;
                 }
             }
             // Low plant beds: no collider clutter. The central garden paths and landing area stay empty.
@@ -241,7 +248,7 @@ namespace StarTournament.ProvingGround
                 else renderer.sharedMaterial=pair.Key;
                 if(pair.Key==glass)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
-            RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=new Color(1,.99f,.97f)*profile.Get("well.fill");
+            RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=(profile.Version>=5?new Color(profile.Get("well.fillRed"),profile.Get("well.fillGreen"),profile.Get("well.fillBlue")):new Color(1,.99f,.97f))*profile.Get("well.fill");
         }
         void OnDestroy(){Font.textureRebuilt-=RefreshFont;RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;foreach(var o in owned)if(o)Destroy(o);}
     }

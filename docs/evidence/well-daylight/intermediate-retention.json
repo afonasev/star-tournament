@@ -1,0 +1,1325 @@
+{
+  "removed": [
+    {
+      "path": "initial-runtime/after/lift-0.png",
+      "sha256": "e064ea434232c6e13f48606e94f9e192ca43ba8f99b43b85b65cfd13412fb672",
+      "bytes": 893246,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/after/lift-1.png",
+      "sha256": "5568fc8676037859eb5cc2468426b33f452eadcc68a37d3eb0d2df05dd1237ab",
+      "bytes": 812607,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/after/lift-2.png",
+      "sha256": "d75e3157d9a0ebe77b8923d5eb2b99c39e562f0c9b55350f3c1aa07f6b3a3fa7",
+      "bytes": 842962,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/after/room-1.png",
+      "sha256": "e73a3ccd66904d0e47d44f5fa1d800e064d829a4507b2fcc2bc31c9d6eae62b8",
+      "bytes": 771315,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/after/room-2.png",
+      "sha256": "b739b45b1f340252df128638b729d7b355b1fdc317c8a7f14f15a9366aa33eb5",
+      "bytes": 761595,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/atrium-before-after.jpg",
+      "sha256": "a3635d099eea9355a0a97136cfeabe5e085c90f78365c38bb5347fd4b7f0b430",
+      "bytes": 283257,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/before/lift-0.png",
+      "sha256": "a73d73122d216fdafe584113184519a4c6a2b01f4fef21b657847ac92f8d8f90",
+      "bytes": 958403,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/before/lift-1.png",
+      "sha256": "660fbd2e659c15a717355b1768be0baa11119150543fa1b6f0c90fe274005773",
+      "bytes": 891046,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/before/lift-2.png",
+      "sha256": "16aacfa23f79befea985a866f6eee44565a9fd5f07a2d6070a1a401c92f5e43e",
+      "bytes": 832873,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/before/room-1.png",
+      "sha256": "f5481038e7f3062afa8d21b768ffcdc30c585cc0244646996ff35b67a1bbdb0e",
+      "bytes": 802650,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/before/room-2.png",
+      "sha256": "27080e5d13ee30937c51e6762fa2384b3ee30aca5c75353107b8c8a0dcc66200",
+      "bytes": 760742,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/before-board.jpg",
+      "sha256": "3a3b55631c463747f9748b6a761e45ec87139ad3379bf8a288a261e19da0a013",
+      "bytes": 345777,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-review-1.jpg",
+      "sha256": "d6674e007ca29a1efaeac84c8d68ece95c41434c34816a9710a8199e783e4455",
+      "bytes": 457855,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-review-2.jpg",
+      "sha256": "8ce422c4283e1a9d8a03b4f327f202438429f0b84825910427e740e547442728",
+      "bytes": 408080,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-review-3.jpg",
+      "sha256": "8106380d646a8e06b855a9536dca5053f07a246e356f444254d9d38ab55cdc95",
+      "bytes": 386740,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/atrium-corner.png",
+      "sha256": "a8f187778015fecf9c311c69ced5973f77ad35daa6183475fe3efdd9e2544097",
+      "bytes": 1824976,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/ceiling-0.png",
+      "sha256": "b88332751643ba13d58e69064de9493508ab9ad9ac87a126cbfa85a543fe76aa",
+      "bytes": 1622456,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/ceiling-1.png",
+      "sha256": "43063487b1570ff11b69cedd027201dc7e7b4e5ccb865f24eaa638ea3164334d",
+      "bytes": 1622371,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/ceiling-2.png",
+      "sha256": "44666bb79306ca56bb43707c1f66f203c15fdb4223c63b01ce1bcd64fe838794",
+      "bytes": 1557099,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/department-module-0.png",
+      "sha256": "e9db857f7bd72d7fddae926f27319b8f83fa86c1ce2ed8064782a5735e2e8d21",
+      "bytes": 1038108,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/department-module-1.png",
+      "sha256": "ea150e53a576e5ba15cb5fd6832e73f441752f1165f0f9cf8646b6a2e5310400",
+      "bytes": 1052393,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/department-module-2.png",
+      "sha256": "ca873b4730f873b9df6f07982c66f9d02cb609db506d5d7dc800cffadb03163a",
+      "bytes": 1064827,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/electronics-gallery.png",
+      "sha256": "c7d907164d424b5ca40c744c8a5cab3fe976227ce006b30060f0327359fe559d",
+      "bytes": 1560716,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/gallery-cover-0.png",
+      "sha256": "67349768bcf338f5518e1bab26771e8180a87cc6d0749d0948f759bf94fe8915",
+      "bytes": 1594008,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/gallery-cover-1.png",
+      "sha256": "07c47c483ebad5d3c5998bf21e8887640c0c2353fd90dc11f63ac59a62b82637",
+      "bytes": 1495258,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/gallery-cover-2.png",
+      "sha256": "feda98ee5aae6ce02b1369c045ac7f4100f2b8d3e941821a6076b17e19e3c840",
+      "bytes": 1391907,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/garden-detail.png",
+      "sha256": "d87ee6ab2681536a23305398f43c7852c3fdcc5f5dc71454e0c34239e13bea40",
+      "bytes": 1638056,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift--1-floor-0-back.png",
+      "sha256": "3193100ff19b00a191a060e88fcf22d8e5e7f166157417e98905579058e1f968",
+      "bytes": 998363,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift--1-floor-0-entry.png",
+      "sha256": "46a74bd7acfd245173c0dd677db49a52e7eab591b063da9c16bed9fbe4b83042",
+      "bytes": 1712467,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift--1-floor-1-back.png",
+      "sha256": "773dee7a306b5edf46f41d7ed852eb1df918c1de5f38f12b6ead887ff0c76079",
+      "bytes": 1230546,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift--1-floor-1-entry.png",
+      "sha256": "a937330297b582eda35f4bf1e5faeee6f1cb5dae478e99041dfc3fc46a0b4a16",
+      "bytes": 1766884,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift--1-floor-2-back.png",
+      "sha256": "03f485458365f9243ecaa414ab9b90b17bb8436bfef08bee44a3d008090ef94e",
+      "bytes": 1226772,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift--1-floor-2-entry.png",
+      "sha256": "3a03c7bf09b9b8d7a59a0d4e5034341c9493e7ad281cf2b8ec239f63daf4561a",
+      "bytes": 1803476,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift-1-floor-0-back.png",
+      "sha256": "67a6a41bf7c6d44aae8a43e736f9ba65dd86782e770c8eeb3a06c6649e7d096c",
+      "bytes": 1724410,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift-1-floor-0-entry.png",
+      "sha256": "e531ab7850aa5d102fc59d9699c95982466ccc00ff05e94ab536e17c1286b774",
+      "bytes": 1803165,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift-1-floor-1-back.png",
+      "sha256": "158d390898fca14b240ea7ee7634bcc75eabe13d58c31eb34a2dd6a18a260ada",
+      "bytes": 1317720,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift-1-floor-1-entry.png",
+      "sha256": "9b0090076c3a50be70f223893a42cc0d26d2bd94e2de22f858ac0d72632d1da8",
+      "bytes": 1606236,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift-1-floor-2-back.png",
+      "sha256": "98bab7771d91d21d5be2e594c35883280ed585c0a3ae8853fc797bd5d26c893b",
+      "bytes": 936265,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/lift-1-floor-2-entry.png",
+      "sha256": "994c5c21396e9ecb752425838ea94825ff1107b83ab624f8d2a9ffc07690f7a3",
+      "bytes": 1669153,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/physics-gallery.png",
+      "sha256": "cf16b82bb12c84fb36ed43dd6d6635fdc892cb68c03c8f951367e5bdf184ad5e",
+      "bytes": 2021266,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/service-workbench.png",
+      "sha256": "96ff91a31a9ca965655f2005a68052183ca1aa68401f44a87b1bbb407b9b9afe",
+      "bytes": 1616278,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/stair-entry.png",
+      "sha256": "039d0e83d5e16cab616a3e64c32f24e2ff742703555cd88c084cf5352aa0d7ac",
+      "bytes": 1599279,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/stair-room.png",
+      "sha256": "0b2bf40a60ba1241feb02849f96815d2aae7feb2a19c7b3d704a1f9f9043c82b",
+      "bytes": 1819254,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/workstation-0.png",
+      "sha256": "92136e76819ae213c23ab080ae9506c94a69f31efdc1e7ea1439c9461a24a192",
+      "bytes": 1541115,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/workstation-1.png",
+      "sha256": "3fa75d054ac54689ac2050011a4dfe2a9da075578eca78e712905cb20fcb6ad1",
+      "bytes": 1442789,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/workstation-2.png",
+      "sha256": "9e9c6f117e50bf88630e9a4d0e55031e88336ced1c6a0a1a44dd0f1c3a3ce072",
+      "bytes": 1658796,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/after/lift-0.png",
+      "sha256": "67b434dfcab9b8b30d897cf6541de2c6f65638ab310faa84d2903b9f7ca1ebaf",
+      "bytes": 891104,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/after/lift-1.png",
+      "sha256": "8bd1ff5467e92808cbdae77ee76d93b2bdbca0e1a9735f92e4dcad18fa5403dd",
+      "bytes": 816844,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/after/lift-2.png",
+      "sha256": "30e5633d7480d84d8b89968a18955ed54f22d4e8ee9cbcf820cb0ebe0bd24479",
+      "bytes": 811373,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/after/room-1.png",
+      "sha256": "ca04a320cacb4581e9f8e68f8c0b567fa3cdda79117cf65ba8ef439ae14c7110",
+      "bytes": 757710,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/after/room-2.png",
+      "sha256": "bdb0c4f2e2e1c2afc7a41c52db9e52d3c00889fe5fd758bb4f97f114a17a6076",
+      "bytes": 731973,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/atrium-before-after.jpg",
+      "sha256": "bd09b8c26cd526449c17304266fc9a501d010b2056ec8ce74c031abe35068269",
+      "bytes": 281494,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/before/lift-0.png",
+      "sha256": "c4381f663586d03301b77eaa9cfdad65765f0319ccf65d84a43e21f373a5ef7e",
+      "bytes": 958402,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/before/lift-1.png",
+      "sha256": "62e7ce4e40ec25f4f88e56636f1d0ec0c8c916279651a448d37c412a8d2083f6",
+      "bytes": 891163,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/before/lift-2.png",
+      "sha256": "fb681169c83b85ba3c55c2e48c087a94d43eb74d2536b880c314de1f437441a9",
+      "bytes": 832853,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/before/room-1.png",
+      "sha256": "f5481038e7f3062afa8d21b768ffcdc30c585cc0244646996ff35b67a1bbdb0e",
+      "bytes": 802650,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/before/room-2.png",
+      "sha256": "27080e5d13ee30937c51e6762fa2384b3ee30aca5c75353107b8c8a0dcc66200",
+      "bytes": 760742,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/before-board.jpg",
+      "sha256": "db59920b0ae1b8f06b1b689f1b41d7487b780c1812adbf049a4f22f8c6b65830",
+      "bytes": 345777,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-review-1.jpg",
+      "sha256": "c2f68a4002d0ec22ba595100f7eb9b2d46401708683c6b266fb08b9c990f18ec",
+      "bytes": 450090,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-review-2.jpg",
+      "sha256": "2fb96accb5326fbbb2d9f47cfe992a91b1b3704c100f14467d7e59a40a85e01d",
+      "bytes": 404015,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-review-3.jpg",
+      "sha256": "539edcddde90997cffd68fca394309fc9680500958782bebc540032f9040a851",
+      "bytes": 380702,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/atrium-corner.png",
+      "sha256": "d99e2b1e5508a1d3920b28869152504337a839e079031f6d94016588c8068ba5",
+      "bytes": 1841965,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/ceiling-0.png",
+      "sha256": "19b6dd9941e55f1281ded7389a7b015cb244450d1a2c78161534067679f08cde",
+      "bytes": 1608260,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/ceiling-1.png",
+      "sha256": "f4a5241e8e6fee27e71539ec1c44160ffcc054e42d3e485f88e7a43896d4efd3",
+      "bytes": 1610939,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/ceiling-2.png",
+      "sha256": "f2837bc577cc007f6d397a6b3f5b17c434ef4ff809ceda5697bd0ecc0a0a2112",
+      "bytes": 1541350,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/department-module-0.png",
+      "sha256": "79a84698a44601de61c3f372a2814f20eb9e6e1093af8b38f6c8031b9cebaa35",
+      "bytes": 991329,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/department-module-1.png",
+      "sha256": "ae2a4d755296fe40c67310ec0b60ba6eb35c3128a48b3585d1ff43ce49607b06",
+      "bytes": 958914,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/department-module-2.png",
+      "sha256": "209cd011294478945a872a535bfd5d80e1c3fb66e7524af88c1f4b5cd5832339",
+      "bytes": 1022364,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/electronics-gallery.png",
+      "sha256": "3c99c446f3ccafcf154debc35ed9e5e7f3bcd4d694ee745ff61ba3ed49924eed",
+      "bytes": 1560773,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/gallery-cover-0.png",
+      "sha256": "30ca3d155e0443a336ff462d97e5ace6e9993283728153ae77beac358e1be0e7",
+      "bytes": 1581123,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/gallery-cover-1.png",
+      "sha256": "23a85ee17ce4626e18a2f12bbdd6906abd07df702009f2c8e68294cd31fa2c49",
+      "bytes": 1484771,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/gallery-cover-2.png",
+      "sha256": "3e7e2fcd0fbeff1812e95e7d3ec342072fc811622620e85527d6777e7e9785a1",
+      "bytes": 1366721,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/garden-detail.png",
+      "sha256": "783a1c2a4660559bba2edb31f1b4c0840b1e2166f1a4dc3bc1ccb8bb26ef7ce8",
+      "bytes": 1631693,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift--1-floor-0-back.png",
+      "sha256": "f166b4ec7d47c98430fac1f7a85491f2546ac054077682a3cd9e2ab43f5109cd",
+      "bytes": 979181,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift--1-floor-0-entry.png",
+      "sha256": "24cf701879d50c4e9be8119982f563308f1f1421745330e62ea9d3834ac9704e",
+      "bytes": 1750612,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift--1-floor-1-back.png",
+      "sha256": "2c54cc94e4fa7c7f0c7521b433205e71aee7ae2463192c45f122987c82b89dfc",
+      "bytes": 1226076,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift--1-floor-1-entry.png",
+      "sha256": "2d8719a6983428ebc236f23a8754a2bc633030099ef269cce835cbf6587fd3fc",
+      "bytes": 1821425,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift--1-floor-2-back.png",
+      "sha256": "34b51c38929a1a38f2b5e20e674db76dde00cc9eb958dd8c8e031177c036c656",
+      "bytes": 1226856,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift--1-floor-2-entry.png",
+      "sha256": "d62b5f917987292aad3f7af43c27b7f83ba7d429f145d41598df1b7ddc4a34ca",
+      "bytes": 1788141,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift-1-floor-0-back.png",
+      "sha256": "d93a694b9d8a7d789870013d6b2150ed5aeff8d12f2de7bde4625c978a97acb2",
+      "bytes": 1712721,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift-1-floor-0-entry.png",
+      "sha256": "22c812872d29400c8f5902b5f2abaad882550dac760b3f69e3012d4303fd6af4",
+      "bytes": 1844845,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift-1-floor-1-back.png",
+      "sha256": "498a936a6b782ee8f9bc601ac1e34c8166c7fe3fdb6035d43c2b13b2b52ef02c",
+      "bytes": 1305829,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift-1-floor-1-entry.png",
+      "sha256": "9f1c97e5c95bfa7350197794d7a214bd5109257a9f66c23ba05630e9d61a6e4d",
+      "bytes": 1655327,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift-1-floor-2-back.png",
+      "sha256": "253147c1967dbf514fc111849b3d54c536441b8742cb401d6f67e18fac968038",
+      "bytes": 921407,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/lift-1-floor-2-entry.png",
+      "sha256": "eef369315dc30719af130f88b6a8d2d70b5860aac8b2c02f9b9cc2315155b413",
+      "bytes": 1648539,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/physics-gallery.png",
+      "sha256": "a9adc47641f591397dbafea367b22232dbd9350f14895505fd3ae801b5849dc9",
+      "bytes": 2036769,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/service-workbench.png",
+      "sha256": "e4ad1e6baf18c97bbe41b60a4298f89f9b4d298abb449c3d20f1fd965cafc6eb",
+      "bytes": 1568346,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/stair-entry.png",
+      "sha256": "4bff348a19a5bb966fb90d26ff06247cb85406c8daf116736cbd07b3a91c158f",
+      "bytes": 1644772,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/stair-room.png",
+      "sha256": "9609aee3409aa7645641afc777614d6debf7b623e9536a53994d70918b9691db",
+      "bytes": 1793910,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/workstation-0.png",
+      "sha256": "76331280bd18c25bc67acfcce1410b2ff756b9ba3071c06e21587ecace077fd8",
+      "bytes": 1736208,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/workstation-1.png",
+      "sha256": "0fa82ce8266f07011035fce34ab289c9f9c8de028b4597f4f830201cfd21ced2",
+      "bytes": 1634824,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-refinement/full-visual/workstation-2.png",
+      "sha256": "50a72693ccbe3748712aa1ed0a34e5b23674010a49ad52f5dc4b3e504e6d097a",
+      "bytes": 1584369,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/atrium-corner.png",
+      "sha256": "8158ca17d91fa6955b11bd93021758ffc339a05516746c9d2d614a1bf8fe1e10",
+      "bytes": 1847665,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/ceiling-0.png",
+      "sha256": "ccc0dc445a1132e55f1dd31fdc8d64461de7621e2f2020dcbbe64694d36f3fcd",
+      "bytes": 1568722,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/ceiling-1.png",
+      "sha256": "c3be2d52c52cefc6c6cbed512bbd6e75aeeb3504c75335795782ecb18398ba90",
+      "bytes": 1579692,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/ceiling-2.png",
+      "sha256": "8b55b79cffdfa7ef9557b20311ea6a1c62d4a567eb760e7a839e1be908b8d45c",
+      "bytes": 1512565,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/department-module-0.png",
+      "sha256": "c0cdfc2d27855fdf71c40d48b13f0534cb725f696a27a0e77431fb9453b80f42",
+      "bytes": 998797,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/department-module-1.png",
+      "sha256": "b3e63f4fc2dc2423bb4c939a73658e0f52968eb352770356d573adf3c7aefe8a",
+      "bytes": 964210,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/department-module-2.png",
+      "sha256": "70e6107e9539dce8d7261d1dc4300cb1ca11f18db9585988b046959d32f12b77",
+      "bytes": 1034527,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/electronics-gallery.png",
+      "sha256": "fa39f162b44dd07e616d59ba2ae4b65a07cc2475036a1788676bab6d0df19499",
+      "bytes": 1568213,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/gallery-cover-0.png",
+      "sha256": "00136968a1114c1510ad7a2191820142c4e97bae1faa84c8fd53b3cccc8a6af2",
+      "bytes": 1585355,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/gallery-cover-1.png",
+      "sha256": "eb31580aca01ecf6545dedfb13b5f2daa128fbb7e084a2f3749353ee57b813ba",
+      "bytes": 1496765,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/gallery-cover-2.png",
+      "sha256": "1cb02931f8ae1fcd552804343dcd8004b997b5344bb269d9e45a3be26ceb337a",
+      "bytes": 1369518,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/garden-detail.png",
+      "sha256": "69cda4cb8de3513fc30a8abec1be795c15be2d4f321970b01d766f595aa0abcc",
+      "bytes": 1652716,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift--1-floor-0-back.png",
+      "sha256": "734a6c93b378ecde8e5e18c7c1471b74ef6a5637112a61d30f8f4b3971d9384d",
+      "bytes": 973836,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift--1-floor-0-entry.png",
+      "sha256": "5662fbcf2fb116ae3ea7dee1124427d612069120ac5c474b56202bcc31af5ece",
+      "bytes": 1770460,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift--1-floor-1-back.png",
+      "sha256": "de027f5d3dee0afe2c864fabfa36a23acfc7a5fd4df5cb2415b831d680b53e10",
+      "bytes": 1221449,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift--1-floor-1-entry.png",
+      "sha256": "0cb71db63570578973fbad0f8ced7ec996ee622811769e9d366ae80417607bba",
+      "bytes": 1841926,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift--1-floor-2-back.png",
+      "sha256": "9677a52107fda35f4aa559412fee4b03e643020dcd5c0961ae01e346e57cf9b0",
+      "bytes": 1220074,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift--1-floor-2-entry.png",
+      "sha256": "6052804b6bc1446163577fa8ecc23631adac8b706de370928009b6e88a395b8d",
+      "bytes": 1802409,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift-1-floor-0-back.png",
+      "sha256": "f8d87713fc9ced16713e0acfd954d58f5d417566bd8a63e11e43f18c340ec332",
+      "bytes": 1697136,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift-1-floor-0-entry.png",
+      "sha256": "a955317d00641be58424844b37e96ad04000492583323305d3c83c2fd97fa9df",
+      "bytes": 1852224,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift-1-floor-1-back.png",
+      "sha256": "afda4603c4e36b9ba32711fff21714de8aabde148e7a6c6ebeb361341fc9fecd",
+      "bytes": 1277812,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift-1-floor-1-entry.png",
+      "sha256": "547b8c793b14a6a4ddb3e145f57a00b89988676963ddb3001aba4950fa837bae",
+      "bytes": 1667268,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift-1-floor-2-back.png",
+      "sha256": "ea0c9b938dd2a1838dd00a051b50895e852fbaa567140f8d1bf4d8b37236bafd",
+      "bytes": 902205,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/lift-1-floor-2-entry.png",
+      "sha256": "fa494ac1d810d310c6615f88b738f40987c056eb1dbe5164b46ec7a35dd480e6",
+      "bytes": 1654311,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/physics-gallery.png",
+      "sha256": "04117530f3198a1fc4826b33414347b18f8ceda8dab84ee9d2eee97755ad5f20",
+      "bytes": 2038386,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/service-workbench.png",
+      "sha256": "31ba4922799a96d75463bb3e6ea4226d5611efddb266fe80708b0b3abf1fba8a",
+      "bytes": 1571622,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/stair-entry.png",
+      "sha256": "521af210b61405058a04f9fbae5f1f7a11ba3a3cd3b0417fb83929e4bb0bab36",
+      "bytes": 1651364,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/stair-room.png",
+      "sha256": "38336e1499155d1ab8a4744b7e800a458390387bdde137cd89051eb1f55bd872",
+      "bytes": 1794534,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/workstation-0.png",
+      "sha256": "f715d468659f639fc30124eda89a024f76efd74ea5056c4dbdc2cabd7dda4f45",
+      "bytes": 1732842,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/workstation-1.png",
+      "sha256": "de7b42aa2263e48abdbec7a213cf98aef752cc931c1b6025c16c0800b4f8f155",
+      "bytes": 1634480,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "ldr-target/full-visual/workstation-2.png",
+      "sha256": "5957a22aaba46e8f017cdfba6ccaaa0ee5320431d25df43c73ec86de0a0e02db",
+      "bytes": 1588664,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/after/lift-0.png",
+      "sha256": "2e49d80847b9c9d229539a6cb7fcd98dbe7d8dd40d370f3e97567319b3e5f9be",
+      "bytes": 874968,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/after/lift-1.png",
+      "sha256": "4b0dd2eaa7da5bee7f2ffe95692a89443c7c280c2ffa6a5998c9f4258d5e7eb5",
+      "bytes": 800963,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/after/lift-2.png",
+      "sha256": "7e53e23f6c314c8e6d052566db6e6d4e7b99a380dc8a7e49ef173687e458d15f",
+      "bytes": 795783,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/after/room-1.png",
+      "sha256": "cef1af320399c4e3ce8a7447823ff56c7dfbf5c81c514bb1321374fcf0cf2067",
+      "bytes": 759390,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/after/room-2.png",
+      "sha256": "af5e07c1b09c31b6045332d8c0b8acb451121494304242a51e359227cf03bafe",
+      "bytes": 731055,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/atrium-before-after.jpg",
+      "sha256": "d7840a1fdd38398d6a2dbc0cd1f80939f2c467107a0dc576b55e175ff3f6eadd",
+      "bytes": 281019,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/before/lift-0.png",
+      "sha256": "a73d73122d216fdafe584113184519a4c6a2b01f4fef21b657847ac92f8d8f90",
+      "bytes": 958403,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/before/lift-1.png",
+      "sha256": "660fbd2e659c15a717355b1768be0baa11119150543fa1b6f0c90fe274005773",
+      "bytes": 891046,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/before/lift-2.png",
+      "sha256": "16aacfa23f79befea985a866f6eee44565a9fd5f07a2d6070a1a401c92f5e43e",
+      "bytes": 832873,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/before/room-1.png",
+      "sha256": "f5481038e7f3062afa8d21b768ffcdc30c585cc0244646996ff35b67a1bbdb0e",
+      "bytes": 802650,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/before/room-2.png",
+      "sha256": "27080e5d13ee30937c51e6762fa2384b3ee30aca5c75353107b8c8a0dcc66200",
+      "bytes": 760742,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/before-board.jpg",
+      "sha256": "3a3b55631c463747f9748b6a761e45ec87139ad3379bf8a288a261e19da0a013",
+      "bytes": 345777,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-review-1.jpg",
+      "sha256": "c082a41cabda0a65ac573e955b64dd05e327917f602f64c4963dcd178fc05fda",
+      "bytes": 449380,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-review-2.jpg",
+      "sha256": "3ea6e4082595f3608cf9870b74d5f52d6d722e955642c05ef34aaf851c0b09ab",
+      "bytes": 402617,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-review-3.jpg",
+      "sha256": "13dd136e62d67841e1dda82b98f134348e07fdb1a2fa23b7f9a1519a9ca59572",
+      "bytes": 379074,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/atrium-corner.png",
+      "sha256": "8cad1124f705b2ca98b6bd48240c8331843677aa34b9d744b8c0ea7241f9911d",
+      "bytes": 1824617,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/ceiling-0.png",
+      "sha256": "2daf12f864bbeb9075907582dd91e76ce7363b8720ec82919ed784652be2e92f",
+      "bytes": 1562462,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/ceiling-1.png",
+      "sha256": "2afb776e559a96f717891718f243c05e4dc9bd200419d82be197c967ede1ab47",
+      "bytes": 1555520,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/ceiling-2.png",
+      "sha256": "cdffdbd559ca3014f8847acedfe227d014fa8414419c4320c72d87005846b857",
+      "bytes": 1518966,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/department-module-0.png",
+      "sha256": "3d39aa4777c215bd3622574261ed93ea5b10398f49d7c19f2d9e671c289d7d75",
+      "bytes": 1010585,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/department-module-1.png",
+      "sha256": "e0d62826bed7442ec142e85729cb6fa769a19c9279bd19640222da44107c467e",
+      "bytes": 962771,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/department-module-2.png",
+      "sha256": "9f2ca1bc6705da0ad01b1863956e414665678c9b58beb4ff29f0980c9e605606",
+      "bytes": 1045581,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/electronics-gallery.png",
+      "sha256": "02b4c1438395b29980c854a0c37fb6e11eaac79cda57b9d5a9f6732264c3dbae",
+      "bytes": 1516760,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/gallery-cover-0.png",
+      "sha256": "41ca11f67af3604b45eb3ca16d6c1a22e2e1dffcdf6968f159c40d8d480f4d46",
+      "bytes": 1557303,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/gallery-cover-1.png",
+      "sha256": "a0fff830389ce3909d1f7a08d14b69246cad9b6a2eaa63682130d9b56eec47d6",
+      "bytes": 1455921,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/gallery-cover-2.png",
+      "sha256": "492e274ed4360cc3171989b00d9af83ec603207d1830e9c7fa19329c495bde6b",
+      "bytes": 1356529,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/garden-detail.png",
+      "sha256": "0078d8eb5c96eac675cff7d70c9ffa080d7784e169e973e4aa3bfa84980150be",
+      "bytes": 1633223,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift--1-floor-0-back.png",
+      "sha256": "7dad2adaba170dcc8b412e86c5ad4a18c83b9f195d6b75a064a00c0249e15680",
+      "bytes": 959371,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift--1-floor-0-entry.png",
+      "sha256": "d53b2186342912e338124e5caafe81321f0ecfce732bafdee4da20b19f5c2482",
+      "bytes": 1729865,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift--1-floor-1-back.png",
+      "sha256": "5279e7ae7bf82715736d1ae7ce71cf1a9df88a4ad26e84989cb37e329e740d3d",
+      "bytes": 1205685,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift--1-floor-1-entry.png",
+      "sha256": "990abd2a0739da8ca59fd1cab412918496a94e2f64b008d0a7b573f746f079e7",
+      "bytes": 1799377,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift--1-floor-2-back.png",
+      "sha256": "af6325617bedfc7ec65bf401daaae7bc01ce712a5bb458acfe9989d24c0c3068",
+      "bytes": 1205079,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift--1-floor-2-entry.png",
+      "sha256": "d16ac128c2d59875794d33a647fea8429be209f750dbfcee5ef7d62a38823b94",
+      "bytes": 1751403,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift-1-floor-0-back.png",
+      "sha256": "416b5c9eb9ffbf3640109d6a4646d373d6ab7c06d1f0be8a95224e84f150216e",
+      "bytes": 1703925,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift-1-floor-0-entry.png",
+      "sha256": "3630cc9841f169ddc129065ee8ba5548643925553ecc289b79ee38fe7c1813d5",
+      "bytes": 1781188,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift-1-floor-1-back.png",
+      "sha256": "bb2e330393c8b7067fbdea6e8fd8a37d6b86586b68f5d96dcc5714afda834b5c",
+      "bytes": 1384615,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift-1-floor-1-entry.png",
+      "sha256": "8e486f2af1903a391f9579215707b0fbe1f53100d7dc8ff537180316c365df6b",
+      "bytes": 1651283,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift-1-floor-2-back.png",
+      "sha256": "454535bbdd9c125e8f2562b0065540f1f7079808bff2f802a33d7e1181d98656",
+      "bytes": 951266,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/lift-1-floor-2-entry.png",
+      "sha256": "f8925a1f45f81e6aac7fc8312311f997badf481c583444d0b33af0add855e6c2",
+      "bytes": 1603011,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/physics-gallery.png",
+      "sha256": "8274c38ac6232550a9295122df43c6b37196bac8718ddedb907353076b52d048",
+      "bytes": 1994100,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/service-workbench.png",
+      "sha256": "df9b23973bfd2b01a9c395f11c940929ee7ec87a5a20e5d067dacdd50b12b2f0",
+      "bytes": 1543444,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/stair-entry.png",
+      "sha256": "c6eeeb1638e1528b6c9a21e54db95808d4534e7e65936e0a96535f8e47b5ccf2",
+      "bytes": 1615329,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/stair-room.png",
+      "sha256": "5456068af801a71a1bb8522fc1eb5e2e3ae8f7da6d53807b1f36887d540a7213",
+      "bytes": 1745049,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/workstation-0.png",
+      "sha256": "04215e120290cb7f64f56dbc6ca50322d6c37508a78a448c111f2d45de3e5654",
+      "bytes": 1698327,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/workstation-1.png",
+      "sha256": "06582866645d035d32ed1e977916998c91414e210cdd92461efb9e7b6efe1373",
+      "bytes": 1593646,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/workstation-2.png",
+      "sha256": "9c2466e6b3ce40f0c7868c214e77eccf674815838bd1b7f1fa20464ee6d13be5",
+      "bytes": 1553439,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/after/lift-0.png",
+      "sha256": "d075185d66b7afe686ea1feee5ba7804d0f1ef1bfe4201f54f0decdd79956aca",
+      "bytes": 849117,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/after/lift-1.png",
+      "sha256": "3f498c064bc561aeb595000a0b28b40200213c5eac427ce6d29789271baf10b3",
+      "bytes": 780626,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/after/lift-2.png",
+      "sha256": "24b3d4e03c861bd30b224848e9917f17e1513fcaf534ac09a45da2c4596f254f",
+      "bytes": 726786,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/after/room-1.png",
+      "sha256": "8329ffd1f594ef04d91ff23815f5585d24f71140c16ef594774e18e8afd08a8e",
+      "bytes": 703781,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/after/room-2.png",
+      "sha256": "3b306261d50f636ee10313a84a4e52c8fa66fdd2c12f0a3df0c831ef9b57b05e",
+      "bytes": 679305,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/atrium-before-after.jpg",
+      "sha256": "c5f7f59f05a36c36e76cdebda1f7d61e3c80324d5ee32565481e1017434cccad",
+      "bytes": 276980,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/before/lift-0.png",
+      "sha256": "c4381f663586d03301b77eaa9cfdad65765f0319ccf65d84a43e21f373a5ef7e",
+      "bytes": 958402,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/before/lift-1.png",
+      "sha256": "62e7ce4e40ec25f4f88e56636f1d0ec0c8c916279651a448d37c412a8d2083f6",
+      "bytes": 891163,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/before/lift-2.png",
+      "sha256": "fb681169c83b85ba3c55c2e48c087a94d43eb74d2536b880c314de1f437441a9",
+      "bytes": 832853,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/before/room-1.png",
+      "sha256": "f5481038e7f3062afa8d21b768ffcdc30c585cc0244646996ff35b67a1bbdb0e",
+      "bytes": 802650,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/before/room-2.png",
+      "sha256": "27080e5d13ee30937c51e6762fa2384b3ee30aca5c75353107b8c8a0dcc66200",
+      "bytes": 760742,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/before-board.jpg",
+      "sha256": "db59920b0ae1b8f06b1b689f1b41d7487b780c1812adbf049a4f22f8c6b65830",
+      "bytes": 345777,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-review-1.jpg",
+      "sha256": "1ea5f5fb881162a246c8e68e55f23973f9d80558c49035f7d95b4aff26069a42",
+      "bytes": 430397,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-review-2.jpg",
+      "sha256": "5249481c7ca10496ef0b2777aa2ad203ae924608a37246d1771867a4c4f5e23c",
+      "bytes": 391703,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-review-3.jpg",
+      "sha256": "b8b626a64e85641fcbc77081cf3cdf19c413cc593f4e3bd39f809db97cf917d0",
+      "bytes": 357156,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/atrium-corner.png",
+      "sha256": "556651df89c93f3964b02e086244c33a3c722e06ee710961b358df30c85edf58",
+      "bytes": 1797149,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/ceiling-0.png",
+      "sha256": "7ad7da280afaff24c210d829aaec57d77af20125c30b8d8db733e40d235d95e2",
+      "bytes": 1544611,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/ceiling-1.png",
+      "sha256": "6db73d4c835e58782005e3038b32b0674e3b5f7ad1533e2ed1eba51534b9eb8c",
+      "bytes": 1498797,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/ceiling-2.png",
+      "sha256": "191c2757dda0147059327fe5ee58b78b637fc1cca0f8887445e238766ea628fb",
+      "bytes": 1502405,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/department-module-0.png",
+      "sha256": "6cb5f713943043b9fe19576a31c045b24a525e82e9c1cb624d44b4bba3928c81",
+      "bytes": 951833,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/department-module-1.png",
+      "sha256": "6e47441dad256a9d89a2c72e8c7a47c777608a7f9c25848db35cd2bc2bbb2997",
+      "bytes": 845698,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/department-module-2.png",
+      "sha256": "6447981a40d650a3a9ca68144433b6880ae0c63b0a15d908f63cbcd725adfe76",
+      "bytes": 1000262,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/electronics-gallery.png",
+      "sha256": "a2660895d1dd0fe451e89eec96d3a5064833e94782a1cc9fb1c7e5c28c72091b",
+      "bytes": 1492435,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/gallery-cover-0.png",
+      "sha256": "20e6ef0a693df56c109f2db253c1e56d27b5158a976698c32e2af59f288ee0cd",
+      "bytes": 1559434,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/gallery-cover-1.png",
+      "sha256": "2b46289524ee731dad5adf7dcea376708e8be50c43c00c40138bd54d8ccb83be",
+      "bytes": 1430897,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/gallery-cover-2.png",
+      "sha256": "bc751a528fbeff97c955e092cbef5b72fde8550fd07376bea89b90e553db0bfd",
+      "bytes": 1336419,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/garden-detail.png",
+      "sha256": "93bbb1b8f440359d7f842310dfc7c14990a1627ef1d20838702c7fa3d748cf2e",
+      "bytes": 1622803,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift--1-floor-0-back.png",
+      "sha256": "2676814354958f90e6e85e19fd0a9908fe9ff166725a949a2bbe102260b407b8",
+      "bytes": 930085,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift--1-floor-0-entry.png",
+      "sha256": "2d65711a961975845107a86154fea3a9152411480f84cc7c5c263bd3a8fc3439",
+      "bytes": 1688627,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift--1-floor-1-back.png",
+      "sha256": "d19aac91f0bb1da4c43f351cbdef0755d76cd2602f09232cebdd3958781febf4",
+      "bytes": 1171259,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift--1-floor-1-entry.png",
+      "sha256": "9b02e6f33fb773403e6db3cd0b61cfa3554b5e7984ff008947765805f6aba653",
+      "bytes": 1781119,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift--1-floor-2-back.png",
+      "sha256": "9aea02b77743559ab4dcdea8ebeb0ce27c6ac1807731de88a704cb35509e012e",
+      "bytes": 1179463,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift--1-floor-2-entry.png",
+      "sha256": "b1b426e86dedbff18ba35ecce650ea4b7d0d8c08b7be977e70263bac5392369c",
+      "bytes": 1708555,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift-1-floor-0-back.png",
+      "sha256": "2e73c8b332c6f916765a6c92824cba2a057a5832769b91638178df61169b669f",
+      "bytes": 1684966,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift-1-floor-0-entry.png",
+      "sha256": "9f996080168d96dcfceac323f1d74f4200dd7c2e2e8b4260b315a31cd320145d",
+      "bytes": 1757872,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift-1-floor-1-back.png",
+      "sha256": "ce516e1166d100f076e7081278f1ce912048e4967bbc45ea85374bceba840837",
+      "bytes": 1375816,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift-1-floor-1-entry.png",
+      "sha256": "45bf43517c980fccc9f78c7cd84946d754a08cd09f4c81344eb8fdef8a19b822",
+      "bytes": 1641848,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift-1-floor-2-back.png",
+      "sha256": "48fe363e5dea8053b13f8d75ac0fffd888687b361418992bb6c92ff8b0129de0",
+      "bytes": 927411,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/lift-1-floor-2-entry.png",
+      "sha256": "4bea9b42eeb005dcaf12fb027d445c2d8f5dbc6bfae8fa9c30299435f2477c30",
+      "bytes": 1552735,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/physics-gallery.png",
+      "sha256": "2c2dc5142645e7135b60abeec9e5053b9be4058a342dfe577a4dd90d9a35f92a",
+      "bytes": 1963123,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/service-workbench.png",
+      "sha256": "b868fc877e60aa69a6d9af6989edd50fe424f7dcc70dd56da1357dff7887d067",
+      "bytes": 1494586,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/stair-entry.png",
+      "sha256": "632a581f9e6a715effe76e2d645f74d638e422e740916abef7a3af041d6e2f9e",
+      "bytes": 1584182,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/stair-room.png",
+      "sha256": "1a9dca810072da9090cfd312e2cbe42a828e5107a67cf10db57d7fd1bb7ab22c",
+      "bytes": 1670336,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/workstation-0.png",
+      "sha256": "616a3a0d1f5e4efa73f8e62125998395c525855b5f42d7795d4d3b58532db935",
+      "bytes": 1642107,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/workstation-1.png",
+      "sha256": "d5170ed9e22b4c8f56fc25203063dfc1307120029f6be1406d2fc106d1a62109",
+      "bytes": 1498068,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/workstation-2.png",
+      "sha256": "989e061a9497f6c03210f2254a7ca79768b1450244d98b87751a623bfde3816f",
+      "bytes": 1427851,
+      "reason": "Superseded diagnostic image; final47 plus original corner/electronics/room/atrium witnesses and all XML/logs retained"
+    },
+    {
+      "path": "initial-runtime/full-visual/arena.json",
+      "sha256": "dd2251a58e1250c4f9363a57300e4312fa745a2690401f2b4b7b3d2a8894763b",
+      "bytes": 412005,
+      "reason": "Exact duplicate of retained final full-visual/arena.json"
+    },
+    {
+      "path": "ldr-refinement/full-visual/arena.json",
+      "sha256": "dd2251a58e1250c4f9363a57300e4312fa745a2690401f2b4b7b3d2a8894763b",
+      "bytes": 412005,
+      "reason": "Exact duplicate of retained final full-visual/arena.json"
+    },
+    {
+      "path": "ldr-target/full-visual/arena.json",
+      "sha256": "dd2251a58e1250c4f9363a57300e4312fa745a2690401f2b4b7b3d2a8894763b",
+      "bytes": 412005,
+      "reason": "Exact duplicate of retained final full-visual/arena.json"
+    },
+    {
+      "path": "hdr-hotspot/full-visual/arena.json",
+      "sha256": "dd2251a58e1250c4f9363a57300e4312fa745a2690401f2b4b7b3d2a8894763b",
+      "bytes": 412005,
+      "reason": "Exact duplicate of retained final full-visual/arena.json"
+    },
+    {
+      "path": "shadow-floor-calibration/full-visual/arena.json",
+      "sha256": "dd2251a58e1250c4f9363a57300e4312fa745a2690401f2b4b7b3d2a8894763b",
+      "bytes": 412005,
+      "reason": "Exact duplicate of retained final full-visual/arena.json"
+    }
+  ],
+  "retained": "All final47 PNG, final boards, all XML/logs, diagnostic corner/electronics, room0/atrium before-after witnesses and after boards"
+}

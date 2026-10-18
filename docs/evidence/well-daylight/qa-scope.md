@@ -1,0 +1,8 @@
+# Affected QA
+
+Baseline main 1e1536c3, selected concept a55575f1, planning 98639ad. Runtime diff: Well v5 metadata/history migration; daylight, ambient tint, existing ceiling lights and bounded shadows; Well-local tone/exposure and local light scaling in shared Bind/Apply/Reset; shared directional reset between maps. No gameplay or physics change.
+
+1. EditMode filter `WellDaylightProfileTests;WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes;WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes;WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes;WellArenaTests.PreviousWellCorridorLoadsWithoutChangingSavedHashes` (the last name is checked against source before execution). New tests cover both storage formats and custom/default migration. Existing historical exact hash assertions retained; only upgraded default expectations track new defaults.
+2. PlayMode filter `WellDaylightPresentationTests;WellLabDetailVisualTests;VisualPolishTests.SwitchingEffectsRestoresBaselineAndKeepsGeometry;VisualPolishTests.GradingAndBloomStayIndependentAndZeroDisablesGrading;VisualPolishTests.WellDaylightDoesNotLeakAcrossMapRebuilds`. Covers actual URP rendering, all 33 detail views, 14 comparable images, independent controls, shadows off/on and map transition isolation. No natural matches or full suite.
+
+All commands via tools/unity.sh shared -batchmode -noaudio -muted. EditMode additionally -nographics; PlayMode retains graphics. Direct filtered test runner, no build side effects. Player, device, FPS, audio and human acceptance remain separate. No delivery build/release/deploy.

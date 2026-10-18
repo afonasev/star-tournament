@@ -1,0 +1,16 @@
+{
+  "outcome": "Selected daylight direction 2; implement after user делай",
+  "route": "standard",
+  "rationale": "Well versioned profile, shared effects lifecycle, historical Lab compatibility",
+  "source": "01a14bb9-0977-7ff3-b5e9-c8ba37a10732 user 2 and делай on 2026-10-18",
+  "baseline": "1e1536c37201f764f06604d62b00a006ab9289a4",
+  "concept": "a55575f1",
+  "planning_revision": "98639ad",
+  "checks": [
+    "Well daylight migration + old Well migration contracts",
+    "NativeVisual controls/lifecycle + comparable render",
+    "Existing VisualPolishTests; WellLabDetailVisualTests"
+  ],
+  "build": "Not requested; no Player needed for URP Editor render contract",
+  "full": "Not requested"
+}

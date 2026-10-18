@@ -1,0 +1,169 @@
+{
+  "baseline_main": "1e1536c37201f764f06604d62b00a006ab9289a4",
+  "concept_commit": "a55575f1",
+  "planning_spec_sync": "cde06d7",
+  "checks": {
+    "migration": {
+      "xml": "editmode.xml",
+      "result": "Passed",
+      "count": 12,
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.WellDaylightProfileTests.PreserveV4HashesAndCustomLightingWhileUpdatingDefaults(False,False)",
+          "result": "Passed",
+          "duration": "9.749907"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.WellDaylightProfileTests.PreserveV4HashesAndCustomLightingWhileUpdatingDefaults(True,False)",
+          "result": "Passed",
+          "duration": "9.055810"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.WellDaylightProfileTests.PreserveV4HashesAndCustomLightingWhileUpdatingDefaults(False,True)",
+          "result": "Passed",
+          "duration": "9.550264"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.EditMode.WellDaylightProfileTests.PreserveV4HashesAndCustomLightingWhileUpdatingDefaults(True,True)",
+          "result": "Passed",
+          "duration": "8.682446"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed",
+          "duration": "9.287077"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellArtLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed",
+          "duration": "8.857900"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellCorridorLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed",
+          "duration": "9.612379"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellCorridorLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed",
+          "duration": "8.787167"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed",
+          "duration": "9.468035"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellDepthLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed",
+          "duration": "8.670026"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(False)",
+          "result": "Passed",
+          "duration": "9.628954"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellArenaTests.PreviousWellIdleProfileLoadsWithoutChangingSavedHashes(True)",
+          "result": "Passed",
+          "duration": "8.983943"
+        }
+      ],
+      "xml_duration_including_setup": "110.4218429"
+    },
+    "render_and_effect_controls": {
+      "xml": "playmode.xml",
+      "result": "Passed",
+      "count": 2,
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellDaylightPresentationTests.CaptureRuntimeAndVerifyIndependentEffects",
+          "result": "Passed",
+          "duration": "9.733624"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.WellLabDetailVisualTests.PreserveAuthoringAndSaveDetailViews",
+          "result": "Passed",
+          "duration": "7.889245"
+        }
+      ],
+      "xml_duration_including_setup": "17.6516775"
+    },
+    "shared_controls_and_map_switch": {
+      "xml": "hdr-hotspot/playmode.xml",
+      "result": "Passed",
+      "count": 3,
+      "cases": [
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests.GradingAndBloomStayIndependentAndZeroDisablesGrading",
+          "result": "Passed",
+          "duration": "15.996852"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests.SwitchingEffectsRestoresBaselineAndKeepsGeometry",
+          "result": "Passed",
+          "duration": "6.195856"
+        },
+        {
+          "name": "StarTournament.ProvingGround.Tests.PlayMode.VisualPolishTests.WellDaylightDoesNotLeakAcrossMapRebuilds",
+          "result": "Passed",
+          "duration": "11.034646"
+        }
+      ],
+      "xml_duration_including_setup": "50.7385448"
+    }
+  },
+  "shared_check_reuse": "Only authored lamp/fill defaults changed after the shared HDR controls run; Bind/Apply/Reset and map-switch source unchanged. Both render/control fixtures and all12 migrations rerun on final defaults.",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellArenaPresentation.cs": "4bf4cc9c04d12ff529a5dbaf11922d066723074b052a87364fe5e689064a4bb3",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "d1b979905e0227c11c4363c037685fe0ed1b475d36ffc39072b7dacf7777f937",
+    "unity/Assets/StarTournament/Runtime/Core/WellArenaProfile.cs": "194964172dfe4356bd5c5acbb55d070ea65ce55111ce96e20f512b966a816da4",
+    "unity/Assets/StarTournament/Runtime/NativeVisualPresentation.cs": "4e1383258e402ce3ffa9a14d062cd930f76e3e79b6d5cff5a0b86227c7f338cf",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "9b092b91028c44cb291acd6bf4783c3bcd8e5b8684175aa1a8e9b0d1188b0593",
+    "unity/Assets/StarTournament/Tests/EditMode/WellArenaTests.cs": "8df182af1057729cf664532ed08b9b9454bdff749c26d97163ec1632f291318d",
+    "unity/Assets/StarTournament/Tests/PlayMode/VisualPolishTests.cs": "7aade282be0df63d2e14f3a563ca19db7ca17e1694a0285bf0ed3ac8e7860e11",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellLabDetailVisualTests.cs": "543d8de624aa15258bcb5b33e732a74beba44acca74280d59c48937db6221821",
+    "unity/Assets/StarTournament/Tests/EditMode/WellDaylightProfileTests.cs": "60ae252d2c40d8cfb928eb9a9f0807f4f9893c1c62df0897cb1daedf847545e0",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellDaylightPresentationTests.cs": "2735b96b6c528fcbeb578a0bf91484b2bb068c0192ef21103740165cbb8805d8"
+  },
+  "unchanged_baseline_assets": {
+    "unity/Assets/StarTournament/Settings/ProvingURP.asset": true
+  },
+  "final_raw_images": 47,
+  "authored_map": "@4 exact JSON asserted by both render fixtures",
+  "furniture": 56,
+  "local_lights": 24,
+  "local_shadow_lights": 3,
+  "shadow_atlas_resize_warnings": 0,
+  "corner_crop_diagnostic_not_acceptance": {
+    "rect": [
+      0,
+      0,
+      500,
+      350
+    ],
+    "dominant_rgb": [
+      205,
+      203,
+      192
+    ],
+    "count": 2246,
+    "pixels": 175000
+  },
+  "not_run": [
+    "full game suite",
+    "Player build",
+    "installer",
+    "release/deploy",
+    "FPS/device/audio/human acceptance"
+  ],
+  "prior_attempts": [
+    "compile-notrun/README.md",
+    "migration-initial/README.md",
+    "initial-runtime/README.md",
+    "ldr-refinement/README.md",
+    "ldr-target/README.md",
+    "hdr-hotspot/README.md"
+  ],
+  "cleanup": "Intermediate duplicate images pruned with hashes in intermediate-retention.json. Owned Editor exited; final worktree cleanup recorded in shared planning delivery.json."
+}

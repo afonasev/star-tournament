@@ -9,7 +9,8 @@ namespace StarTournament.ProvingGround
         struct Surface {public Material Material;public VisualMaterialRole Role;public float Metallic,Smoothness;}
         struct LocalLight {public Light Light;public float Intensity;}
         readonly List<LocalLight> localLights=new List<LocalLight>();
-        string localLightPath;
+        string localLightPath;ProvingProfile localLightProfile,wellSettings;Tonemapping tone;
+        RenderPipelineAsset priorQualityPipeline;UniversalRenderPipelineAsset wellPipeline;
         readonly List<Surface> surfaces=new List<Surface>();
         readonly Dictionary<GameObject,int> layers=new Dictionary<GameObject,int>();
         ProvingProfile profile;Light key;float keyIntensity;Color ambient;AmbientMode ambientMode;
@@ -20,6 +21,14 @@ namespace StarTournament.ProvingGround
         public void Bind(ProvingProfile settings,Transform world,Light studio,Camera[] views)
         {
             ResetWorld();profile=settings;arena=world;key=studio;cameras=views;
+            var well=world.GetComponentInChildren<WellArenaPresentation>();wellSettings=well&&well.Settings.Version>=5?well.Settings:null;
+            // Neutral tonemapping needs an HDR grading LUT: the LDR LUT clips bright wall detail
+            // before tonemapping. Own only a transient map-local copy; never mutate the project asset.
+            if(wellSettings!=null&&GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset pipeline&&pipeline.colorGradingMode!=ColorGradingMode.HighDynamicRange)
+            {
+                priorQualityPipeline=QualitySettings.renderPipeline;wellPipeline=Instantiate(pipeline);wellPipeline.name="Well daylight HDR grading (owned)";
+                wellPipeline.colorGradingMode=ColorGradingMode.HighDynamicRange;QualitySettings.renderPipeline=wellPipeline;
+            }
             ambient=RenderSettings.ambientLight;ambientMode=RenderSettings.ambientMode;keyIntensity=key.intensity;bound=true;
             foreach(var registry in world.GetComponentsInChildren<NativeVisualMaterials>(true))
                 foreach(var pair in registry.Roles)
@@ -32,7 +41,8 @@ namespace StarTournament.ProvingGround
                 {layers[renderer.gameObject]=0;renderer.gameObject.layer=ProvingArena.WorldLayer;}
             localLightPath=world.GetComponentInChildren<IndustrialTunnelsPresentation>()?"visual.tunnelsLocalLightScale":
                 world.GetComponentInChildren<LunarLaboratoryPresentation>()?"visual.lunarLocalLightScale":
-                world.GetComponentInChildren<OrbitalLeaguePresentation>()?"visual.bowlLocalLightScale":null;
+                world.GetComponentInChildren<OrbitalLeaguePresentation>()?"visual.bowlLocalLightScale":wellSettings!=null?"well.localLightScale":null;
+            localLightProfile=wellSettings??profile;
             // Arena-owned lamps only. Camera-local equipment fill and participant materials stay outside this registry.
             if(localLightPath!=null)foreach(var lamp in world.GetComponentsInChildren<Light>(true))
                 localLights.Add(new LocalLight{Light=lamp,Intensity=lamp.intensity});
@@ -48,7 +58,7 @@ namespace StarTournament.ProvingGround
             RenderSettings.ambientLight=ambient*Mathf.Lerp(1,profile.Get("visual.fillScale"),light)+tint*(profile.Get("visual.ambientLift")*light);
             key.intensity=keyIntensity*Mathf.Lerp(1,profile.Get("visual.keyScale"),light);
             foreach(var lamp in localLights)if(lamp.Light)
-                lamp.Light.intensity=lamp.Intensity*Mathf.Lerp(1,profile.Get(localLightPath),light);
+                lamp.Light.intensity=lamp.Intensity*Mathf.Lerp(1,localLightProfile.Get(localLightPath),light);
             float materials=NativeVisualPreferences.Effective(profile,VisualEffect.Materials);
             foreach(var s in surfaces)if(s.Material)
             {
@@ -83,14 +93,16 @@ namespace StarTournament.ProvingGround
                 if(!source)throw new System.InvalidOperationException("Missing visual polish VolumeProfile");
                 volumeProfile=ScriptableObject.CreateInstance<VolumeProfile>();foreach(var component in source.components)volumeProfile.components.Add(Instantiate(component));
                 volume=gameObject.AddComponent<Volume>();volume.isGlobal=true;volume.priority=100;volume.sharedProfile=volumeProfile;volumeProfile.TryGet(out bloom);volumeProfile.TryGet(out curves);volumeProfile.TryGet(out color);
+                if(wellSettings!=null){tone=volumeProfile.Add<Tonemapping>();tone.mode.Override(TonemappingMode.Neutral);}
             }
             if(volume)
             {
                 volume.enabled=glow>0||grading>0;bloom.active=glow>0;
-                bloom.intensity.Override(glow*profile.Get("visual.bloomIntensity"));bloom.threshold.Override(profile.Get("visual.bloomThreshold"));bloom.scatter.Override(profile.Get("visual.bloomScatter"));
+                bloom.intensity.Override(glow*profile.Get("visual.bloomIntensity")*(wellSettings!=null?wellSettings.Get("well.bloomScale"):1));bloom.threshold.Override(profile.Get("visual.bloomThreshold"));bloom.scatter.Override(profile.Get("visual.bloomScatter"));
                 curves.active=color.active=grading>0;
                 curves.master.value.Release();curves.master.Override(NeutralCurve(grading,profile.Get("visual.ColorGradingShadowLift"),profile.Get("visual.ColorGradingHighlightCompression")));
-                color.postExposure.Override(grading*NativeVisualPreferences.Adjustment(profile,NativeVisualPreferences.ExposurePath));
+                if(tone)tone.active=grading>0;
+                color.postExposure.Override(grading*(NativeVisualPreferences.Adjustment(profile,NativeVisualPreferences.ExposurePath)+(wellSettings!=null?wellSettings.Get("well.gradingExposure"):0)));
                 color.saturation.Override(grading*(NativeVisualPreferences.Adjustment(profile,NativeVisualPreferences.SaturationPath)-100));
             }
             ApplyCameras();
@@ -134,7 +146,12 @@ namespace StarTournament.ProvingGround
             {
                 foreach(var curve in new[]{curves.master,curves.red,curves.green,curves.blue,curves.hueVsHue,curves.hueVsSat,curves.satVsSat,curves.lumVsSat})curve.value.Release();
             }
-            if(volumeProfile){foreach(var c in volumeProfile.components)if(c)DestroyImmediate(c);DestroyImmediate(volumeProfile);}volumeProfile=null;bloom=null;curves=null;color=null;bound=false;
+            if(volumeProfile){foreach(var c in volumeProfile.components)if(c)DestroyImmediate(c);DestroyImmediate(volumeProfile);}volumeProfile=null;bloom=null;curves=null;color=null;tone=null;wellSettings=null;localLightProfile=null;localLightPath=null;bound=false;
+            if(wellPipeline)
+            {
+                if(QualitySettings.renderPipeline==wellPipeline)QualitySettings.renderPipeline=priorQualityPipeline;
+                DestroyImmediate(wellPipeline);wellPipeline=null;priorQualityPipeline=null;
+            }
         }
         void OnDestroy()=>ResetWorld();
     }

@@ -1,0 +1,11 @@
+Color space: Gamma
+Pipeline: Well daylight HDR grading (owned)
+Lighting: True / 50
+Materials: True / 50
+AmbientOcclusion: True / 50
+Bloom: True / 50
+Reflections: True / 50
+ColorGrading: True / 50
+Daylight: 2 shadow=0.85
+Probe: (0.00, 3.20, 0.00)
+Ambient: RGBA(0.246, 0.275, 0.324, 0.324)

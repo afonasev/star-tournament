@@ -1,0 +1,2 @@
+before colorSpace=Gamma ambient=RGBA(0.500, 0.495, 0.485, 0.500) key=0.8 keyRotation=(50.00, 330.00, 0.00) lamp=7 lamps=24 geometry=exact colliders=0 furniture=56
+after colorSpace=Gamma ambient=RGBA(0.246, 0.275, 0.324, 0.324) key=2 keyRotation=(48.00, 305.00, 0.00) lamp=65.25 lamps=24 geometry=exact colliders=0 furniture=56

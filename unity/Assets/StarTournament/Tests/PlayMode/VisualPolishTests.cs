@@ -116,6 +116,32 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             NativeVisualPreferences.SetEnabled(VisualEffect.Bloom,false);visual.Apply();Assert.That(volume.enabled,Is.False);
             foreach(var camera in ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled))Assert.That(camera.GetUniversalAdditionalCameraData().renderPostProcessing,Is.False);
         }
+        [UnityTest] public IEnumerator WellDaylightDoesNotLeakAcrossMapRebuilds()
+        {
+            var originalPipeline=QualitySettings.renderPipeline;
+            B("main-action-0").onClick.Invoke();yield return Begin(WellArenaCatalog.Id);
+            var key=ground.GetComponentsInChildren<Light>().Single(l=>l.type==LightType.Directional);
+            Assert.That(key.color,Is.EqualTo(new Color(1,.94f,.82f)));
+            foreach(VisualEffect effect in Enum.GetValues(typeof(VisualEffect)))NativeVisualPreferences.SetStrength(ground.Profile,effect,50);
+            Effects(true);var visual=ground.GetComponentInChildren<NativeVisualPresentation>();
+            var lamps=ground.GetComponentInChildren<WellArenaPresentation>().GetComponentsInChildren<Light>();
+            Assert.That(lamps.Length,Is.EqualTo(24));
+            bool originalShadows=QualitySettings.shadows!=UnityEngine.ShadowQuality.Disable;
+            if(!originalShadows)ground.SendMessage("ToggleShadows");
+            Assert.That(lamps.Count(l=>l.shadows!=LightShadows.None),Is.EqualTo(3));
+            ground.SendMessage("ToggleShadows");Assert.That(lamps.All(l=>l.shadows==LightShadows.None),Is.True);
+            ground.SendMessage("ToggleShadows");Assert.That(lamps.Count(l=>l.shadows!=LightShadows.None),Is.EqualTo(3));
+            if(!originalShadows)ground.SendMessage("ToggleShadows");
+            Assert.That(visual.GetComponent<Volume>().sharedProfile.TryGet(out Tonemapping tone),Is.True);
+            Assert.That(tone.active,Is.True);
+            ground.SendMessage("Menu");B("main-action-0").onClick.Invoke();yield return Begin(CombatBowlCatalog.Id);
+            key=ground.GetComponentsInChildren<Light>().Single(l=>l.type==LightType.Directional);
+            Assert.That(key.color,Is.EqualTo(Color.white));Assert.That(Quaternion.Angle(key.transform.rotation,Quaternion.Euler(50,-30,0)),Is.LessThan(.001f));
+            Effects(true);visual=ground.GetComponentInChildren<NativeVisualPresentation>();
+            Assert.That(visual.GetComponent<Volume>().sharedProfile.TryGet(out Tonemapping otherTone),Is.False);
+            Assert.That(QualitySettings.renderPipeline,Is.SameAs(originalPipeline));
+            visual.GetComponent<Volume>().sharedProfile.TryGet(out ColorAdjustments grade);Assert.That(grade.postExposure.value,Is.Zero);
+        }
         [UnityTest] public IEnumerator RenderNeutralGradingOnAllArenas()
         {
             B("main-action-0").onClick.Invoke();

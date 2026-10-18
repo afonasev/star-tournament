@@ -1,0 +1,1 @@
+These 33 images were captured with an LDR target despite the runtime HDR colour buffer. They clip before postprocessing and do not establish final highlight quality. Kept as QA-harness diagnosis. The fixture now uses DefaultHDR; all count/geometry/material/shadow assertions remain unchanged.
