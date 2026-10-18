@@ -175,7 +175,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
                 bool legacy = !modernFamily && names.Contains(ManifestName) && names.Contains("latest-win-x64.json") && names.Contains("latest-osx-arm64.json");
                 if ((!modern && !legacy) ||
                     !names.Contains($"Star-Tournament-{version}-Windows-x64-Setup.exe") ||
-                    !names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg") ||
+                    (!names.Contains($"Star-Tournament-{version}-macOS-arm64.pkg") && !names.Contains($"Star-Tournament-{version}-macOS-arm64.dmg")) ||
                     names.Count(n => n.EndsWith("-full.nupkg", StringComparison.Ordinal)) < 2) continue;
                 // Locator data cannot assign a different repository or target URL.
                 var uri = new Uri($"https://github.com/afonasev/star-tournament/releases/download/{tag}/{(modern ? ModernManifestName : ManifestName)}");

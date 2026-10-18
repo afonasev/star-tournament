@@ -33,7 +33,7 @@ class MacPackageRoute(unittest.TestCase):
                 elif command[0]=='ditto': shutil.copytree(command[1],command[2])
                 elif command[0]=='openssl' and 'pkey' in command: Path(command[command.index('-out')+1]).write_bytes(public)
                 elif 'pack' in command:
-                    events.append('pack');self.assertIn('--noInst',command)
+                    events.append('pack');(self.assertIn if update_only else self.assertNotIn)('--noInst',command)
                     info=plistlib.loads(Path(command[command.index('--plist')+1]).read_bytes())
                     self.assertEqual(info['CFBundleVersion'],version);self.assertEqual(info['CFBundleShortVersionString'],'1.6.0')
                     self.assertEqual(info['LSMinimumSystemVersion'],minimum)
@@ -43,6 +43,7 @@ class MacPackageRoute(unittest.TestCase):
                     with zipfile.ZipFile(out/'full.nupkg','w') as archive:
                         archive.writestr('lib/osx/Contents/MacOS/release.json',json.dumps(config))
                     (out/'fixture-Portable.zip').write_bytes(b'recording portable fixture')
+                    if not update_only:(out/'fixture-Setup.pkg').write_bytes(b'recording real PKG route fixture')
                     asset=dict(PackageId=config['appId'],Version=version,Type='Full',FileName='full.nupkg')
                     import hashlib
                     asset.update(Size=(out/'full.nupkg').stat().st_size,SHA256=hashlib.sha256((out/'full.nupkg').read_bytes()).hexdigest())
@@ -68,8 +69,8 @@ class MacPackageRoute(unittest.TestCase):
             self.assertEqual(build.call_count,0 if update_only else 1)
             custody=json.loads((output/(version+'.identity.json')).read_text())
             names={p['name'] for p in custody['packages']}
-            self.assertEqual(names,{'full.nupkg'} if update_only else {'full.nupkg','Star-Tournament-'+version+'-macOS-arm64.dmg'})
-            self.assertFalse(list((output/'releases').glob('*.pkg')))
+            self.assertEqual(names,{'full.nupkg'} if update_only else {'full.nupkg','Star-Tournament-'+version+'-macOS-arm64.dmg','Star-Tournament-'+version+'-macOS-arm64.pkg'})
+            self.assertEqual(len(list((output/'releases').glob('*.pkg'))),0 if update_only else 1)
             self.assertFalse(list((output/'releases').glob('*.zip')))
             self.assertEqual(configs[0]['compatibility']['minimumOsVersion'],minimum)
 

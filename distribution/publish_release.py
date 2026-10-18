@@ -121,20 +121,23 @@ def collect(output, version, date, channel, source_ref=None, *, legacy_bridge=No
         installer_name = (f'Star-Tournament-{version}-Windows-x64-Setup.exe' if runtime == 'win-x64'
                           else f'Star-Tournament-{version}-macOS-arm64.dmg')
         installer = identity(releases/installer_name)
+        installers = [installer]
+        if runtime == 'osx-arm64':
+            installers.append(identity(releases/f'Star-Tournament-{version}-macOS-arm64.pkg'))
         custody_path = base/f'{version}.identity.json'; custody = json.loads(custody_path.read_text())
         if (custody['version'],custody['date'],custody['runtime'],custody['channel']) != (version,date,runtime,channel):
             raise ValueError('Package custody mismatch')
         if custody.get('dirty','').strip(): raise ValueError('Dirty package custody cannot be described by Git history')
         revisions.add(custody['revision'])
         by_name = {x['name']:x for x in custody['packages']}
-        for item in (full,installer):
+        for item in (full,*installers):
             signed_item = by_name[item['name']]
             if (signed_item['size'],signed_item['sha256']) != (item['size'],item['sha256']):
                 raise ValueError('Installer/package custody changed')
         # Each platform gets a unique custody filename in the shared release.
         release_identity = releases/f'identity-{runtime}.json'
         release_identity.write_bytes(custody_path.read_bytes())
-        assets.extend((full,installer,identity(manifest),identity(release_identity)))
+        assets.extend((full,*installers,identity(manifest),identity(release_identity)))
     if dates != {date} or len(revisions) != 1: raise ValueError('Paired assets must share date and source revision')
     if source_ref is not None and revisions != {source_ref}: raise ValueError('Assets do not match changelog source revision')
     if not new_install_only: assets.extend(collect_bridge(output, version, channel, legacy_bridge))

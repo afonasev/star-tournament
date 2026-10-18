@@ -256,20 +256,33 @@ class LegacyBridgePublication(unittest.TestCase):
             self.sign(releases/f'latest-v2-{runtime}.json',compatibility.manifest(config,asset,'2026-10-17T00:00:00Z'))
             name=f'Star-Tournament-{self.version}-Windows-x64-Setup.exe' if runtime=='win-x64' else f'Star-Tournament-{self.version}-macOS-arm64.dmg'
             installer=releases/name;installer.write_bytes(b'fixture not executable')
-            (self.output/runtime/f'{self.version}.identity.json').write_text(json.dumps(dict(version=self.version,date='2026-10-17',runtime=runtime,channel=self.channel,revision='a'*40,dirty='',packages=[item,publisher.identity(installer)])))
+            installers=[publisher.identity(installer)]
+            if runtime=='osx-arm64':
+                pkg=installer.with_suffix('.pkg');pkg.write_bytes(b'fixture real compatibility PKG route');installers.append(publisher.identity(pkg))
+            (self.output/runtime/f'{self.version}.identity.json').write_text(json.dumps(dict(version=self.version,date='2026-10-17',runtime=runtime,channel=self.channel,revision='a'*40,dirty='',packages=[item,*installers])))
 
     def test_actual_zip_custody_collector_uses_modern_and_frozen_legacy_aliases(self):
         self.make_current_packages()
         assets=publisher.collect(self.output,self.version,'2026-10-17',self.channel,'a'*40,legacy_bridge=self.bridge)
-        self.assertEqual(len(assets),12)
+        self.assertEqual(len(assets),13)
         names={a['name'] for a in assets}
         self.assertTrue({'latest-v2-win-x64.json','latest-v2-osx-arm64.json','latest-win-x64.json','latest-osx-arm64.json'}<=names)
         self.assertIn(f'Star-Tournament-{self.version}-macOS-arm64.dmg',names)
 
+    def test_modern_collector_requires_real_compatibility_pkg_and_its_custody(self):
+        self.make_current_packages()
+        package=self.output/'osx-arm64/releases'/f'Star-Tournament-{self.version}-macOS-arm64.pkg'
+        original=package.read_bytes();package.unlink()
+        with self.assertRaisesRegex(ValueError,'Unsafe asset input'):
+            publisher.collect(self.output,self.version,'2026-10-17','production','a'*40,new_install_only=True)
+        package.write_bytes(original+b'tampered')
+        with self.assertRaisesRegex(ValueError,'custody changed'):
+            publisher.collect(self.output,self.version,'2026-10-17','production','a'*40,new_install_only=True)
+
     def test_modern_collector_rejects_pkg_substitution_and_changed_dmg_custody(self):
         self.make_current_packages()
         image=self.output/'osx-arm64/releases'/f'Star-Tournament-{self.version}-macOS-arm64.dmg'
-        package=image.with_suffix('.pkg');image.rename(package)
+        package=image.with_suffix('.substitute');image.rename(package)
         with self.assertRaisesRegex(ValueError,'Unsafe asset input'):publisher.collect(self.output,self.version,'2026-10-17',self.channel,'a'*40,legacy_bridge=self.bridge)
         package.rename(image);image.write_bytes(b'changed after custody')
         with self.assertRaisesRegex(ValueError,'custody changed'):publisher.collect(self.output,self.version,'2026-10-17',self.channel,'a'*40,legacy_bridge=self.bridge)
@@ -278,14 +291,14 @@ class LegacyBridgePublication(unittest.TestCase):
         self.channel='test'; self.bridge_version='1.1.0-test.9'; self.version='1.1.0-test.10'; self.make_bridge(); self.make_current_packages()
         assets=publisher.collect(self.output,self.version,'2026-10-17',self.channel,'a'*40,legacy_bridge=self.bridge)
         names={a['name'] for a in assets}
-        self.assertEqual(len(assets),10)
+        self.assertEqual(len(assets),11)
         self.assertTrue({'latest-v2-win-x64.json','latest-v2-osx-arm64.json'}<=names)
         self.assertFalse({'latest-win-x64.json','latest-osx-arm64.json'}&names)
 
     def test_explicit_owner_production_keeps_signed_modern_pair_without_legacy_claim(self):
         self.make_current_packages()
         assets=publisher.collect(self.output,self.version,'2026-10-17','production','a'*40,new_install_only=True)
-        self.assertEqual(len(assets),8)
+        self.assertEqual(len(assets),9)
         self.assertFalse({'latest-win-x64.json','latest-osx-arm64.json','legacy-bootstrap-win-x64.json'} & {a['name'] for a in assets})
         full=self.output/'win-x64/releases/win-x64-full.nupkg';full.write_bytes(b'tampered')
         with self.assertRaisesRegex(ValueError,'Package changed'):

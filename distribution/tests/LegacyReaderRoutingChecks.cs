@@ -4,6 +4,7 @@ using System.Text.Json;
 using StarTournament.Distribution;
 using ProductionV1 = StarTournament.Distribution.ReleasedProductionV1;
 using TestV1 = StarTournament.Distribution.ReleasedTestV1;
+using ModernV2 = StarTournament.Distribution.ReleasedModernV2;
 
 static class LegacyReaderRoutingChecks
 {
@@ -20,6 +21,11 @@ static class LegacyReaderRoutingChecks
             var body=File.ReadAllText("distribution/tests/fixtures/legacy-reader/"+name+".cs").Replace("\r\n","\n").Replace("namespace StarTournament.Distribution."+name+";","namespace StarTournament.Distribution;");
             Check(Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(body))).ToLowerInvariant()==hash,"released source preserved except namespace: "+name);
         }
+        foreach(var (name,hash) in new[]{("ReleasedModernV2","b590a21706333c94c507b4f6fcdd14b7a5b0d9049a01a1ab8bb4818eabbf03b8"),("ReleasedModernV2Discovery","10844a31a171e2ebae7f3c8850b353a16cbde443fa565d1a8518d93d58386559")})
+        {
+            var body=File.ReadAllText("distribution/tests/fixtures/legacy-reader/"+name+".cs").Replace("\r\n","\n").Replace("namespace StarTournament.Distribution.ReleasedModernV2;","namespace StarTournament.Distribution;");
+            Check(Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(body))).ToLowerInvariant()==hash,"exact published0.1.6 reader/locator preserved: "+name);
+        }
         using var rsa = RSA.Create(3072); string key = rsa.ExportSubjectPublicKeyInfoPem();
         string Signed(string version, string channel, int schema, string architecture = "arm64")
         {
@@ -34,9 +40,9 @@ static class LegacyReaderRoutingChecks
         {
             string suffix = channel == "test" ? "-test.1" : "", bridge = "1.1.0" + suffix, future = "1.2.0" + suffix;
             string bridgeEnvelope = Signed(bridge, channel, 1), futureEnvelope = Signed(future, channel, 2);
-            object Row(string version, bool modern, bool both = false, string? extra = null) => new { tag_name = "v" + version, draft = false, prerelease = channel == "test", assets = new[] {
+            object Row(string version, bool modern, bool both = false, string? extra = null, bool dmg = false) => new { tag_name = "v" + version, draft = false, prerelease = channel == "test", assets = new[] {
                 modern ? "latest-v2-win-x64.json" : "latest-win-x64.json", modern ? "latest-v2-osx-arm64.json" : "latest-osx-arm64.json",
-                $"Star-Tournament-{version}-Windows-x64-Setup.exe", $"Star-Tournament-{version}-macOS-arm64.pkg", $"fixture-{version}-full.nupkg", "counterpart-full.nupkg" }.Concat(both?new[]{"latest-win-x64.json","latest-osx-arm64.json"}:Array.Empty<string>()).Concat(extra==null?Array.Empty<string>():new[]{extra}).Select(name => new { name }).ToArray() };
+                $"Star-Tournament-{version}-Windows-x64-Setup.exe", $"Star-Tournament-{version}-macOS-arm64.{(dmg?"dmg":"pkg")}", $"fixture-{version}-full.nupkg", "counterpart-full.nupkg" }.Concat(both?new[]{"latest-win-x64.json","latest-osx-arm64.json"}:Array.Empty<string>()).Concat(extra==null?Array.Empty<string>():new[]{extra}).Select(name => new { name }).ToArray() };
             int api = 0, legacy = 0, modernRequests = 0;
             HttpResponseMessage Route(HttpRequestMessage request)
             {
@@ -73,6 +79,27 @@ static class LegacyReaderRoutingChecks
             using var current = new AuthenticatedSource(currentConfig,key,new Transport(Route),hostProbe:(_,minimum)=>new Version(15,0)>=minimum);
             await current.GetReleaseFeed(null!,currentConfig.AppId,"");
             Check(current.Asset!.Version.ToString() == future && api == 1 && modernRequests == 1 && legacy == 0, "current source chooses signed modern endpoint from same listing: " + channel);
+            HttpResponseMessage DmgRoute(HttpRequestMessage request,bool onlyDmg)
+            {
+                if(request.RequestUri!.Host=="api.github.com")return new(HttpStatusCode.OK){Content=new StringContent(JsonSerializer.Serialize(new[]{Row(future,true,dmg:onlyDmg),Row(bridge,false)}))};
+                return new(HttpStatusCode.OK){Content=new StringContent(request.RequestUri.AbsolutePath.Contains("/v"+future+"/")?futureEnvelope:bridgeEnvelope)};
+            }
+            using(var dmgCurrent=new AuthenticatedSource(currentConfig,key,new Transport(r=>DmgRoute(r,true)),hostProbe:(_,_)=>true))
+            {
+                await dmgCurrent.GetReleaseFeed(null!,currentConfig.AppId,"");
+                Check(dmgCurrent.Asset!.Version.ToString()==future,"fixed reader discovers signed DMG-only modern release: "+channel);
+            }
+            var releasedConfig=new ModernV2.LauncherConfig("tech.test","osx","arm64","1.0.0","2026-10-17",feed,"game/Player",channel);
+            using(var releasedDmg=new ModernV2.AuthenticatedSource(releasedConfig,key,new Transport(r=>DmgRoute(r,true)),hostProbe:(_,_)=>true))
+            {
+                await releasedDmg.GetReleaseFeed(null!,releasedConfig.AppId,"");
+                Check(releasedDmg.Asset!.Version.ToString()==bridge,"published0.1.6 reader reproduces DMG omission: "+channel);
+            }
+            using(var releasedPkg=new ModernV2.AuthenticatedSource(releasedConfig,key,new Transport(r=>DmgRoute(r,false)),hostProbe:(_,_)=>true))
+            {
+                await releasedPkg.GetReleaseFeed(null!,releasedConfig.AppId,"");
+                Check(releasedPkg.Asset!.Version.ToString()==future,"real compatibility PKG makes modern target discoverable to published0.1.6 reader: "+channel);
+            }
             int legacyFallback=0;
             using(var badModern=new AuthenticatedSource(currentConfig,key,new Transport(request=>
             {

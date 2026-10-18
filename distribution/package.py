@@ -102,7 +102,7 @@ def main():
             '--mainExe', launcher, '--runtime', a.runtime, '--channel', a.runtime, '--packTitle', 'Star Tournament',
             '--delta', 'None', '--outputDir', str(output), '--icon', str(root/'branding'/('app-icon.ico' if a.runtime.startswith('win') else 'app-icon.icns'))]
     if a.runtime == 'win-x64': cmd += ['--shortcuts', 'None']
-    else: cmd += ['--noInst', '--plist', str(outer_info)]
+    else: cmd += (['--noInst'] if a.update_only else []) + ['--plist', str(outer_info)]
     subprocess.run(cmd, check=True, env=env)
     if a.update_only:
         for first_install in output.iterdir():
@@ -127,6 +127,11 @@ def main():
         subprocess.run(['python3',str(root/'windows/build_installer.py'),'--layout',str(layout),
                         '--version',a.version,'--output',str(installer)] + compiler,check=True)
     if a.runtime.startswith('osx') and not a.update_only:
+        # Released 0.1.6/0.1.7 readers require this real installer name in
+        # discovery, even though the landing and fresh readers prefer the DMG.
+        compatibility_installers = list(output.glob('*.pkg'))
+        if len(compatibility_installers) != 1: raise ValueError('Exactly one real compatibility PKG required')
+        compatibility_installers[0].rename(output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.pkg')
         portable = list(output.glob('*Portable.zip'))
         if len(portable) != 1: raise ValueError('Exactly one complete macOS portable required')
         macos_dmg.from_portable(portable[0], output/f'Star-Tournament-{a.version}-macOS-{a.runtime.split("-")[1]}.dmg', a.runtime, a.version)

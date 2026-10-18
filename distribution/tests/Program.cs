@@ -44,6 +44,17 @@ if (args.SequenceEqual(new[] { "--release-history" })) { await UpdateSessionChec
 if (args.SequenceEqual(new[] { "--update-session" })) { await UpdateSessionChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--github-discovery" })) { await GitHubDiscoveryChecks.Run(); return; }
 
+// Exact published0.1.6 source fixture; no updater SDK or installed-payload activation.
+if (args.Length == 3 && args[0] == "--live-released-modern-v2")
+{
+    var releasedConfig = JsonSerializer.Deserialize<StarTournament.Distribution.ReleasedModernV2.LauncherConfig>(File.ReadAllText(args[1]), new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+    using var trace = new TraceTransport();
+    using var released = new StarTournament.Distribution.ReleasedModernV2.AuthenticatedSource(releasedConfig, File.ReadAllText(Path.Combine(Path.GetDirectoryName(args[1])!, "update-public.pem")), trace);
+    await released.GetReleaseFeed(null!, releasedConfig.AppId, "");
+    await released.DownloadReleaseEntry(null!, released.Asset!, args[2], _ => { });
+    Console.WriteLine(JsonSerializer.Serialize(new { reader = "published0.1.6", version = released.Asset!.Version.ToString(), sha256 = released.Asset.SHA256, size = released.Asset.Size, channel = releasedConfig.UpdateChannel, requests = trace.Requests }));
+    return;
+}
 using var rsa = RSA.Create(3072);
 var config = new LauncherConfig("tech.test", "osx", "arm64", "1.0.0", "2026-10-04", "https://fixture.invalid/", "game/Player");
 var bytes = "authenticated package fixture"u8.ToArray();
