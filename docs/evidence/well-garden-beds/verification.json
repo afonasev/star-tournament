@@ -1,0 +1,47 @@
+{
+  "baseline": "4e697a85881b27f89f034f382328f1c723ca7f67",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabDetail.cs": "d9b081dd5c75695fc8d84267c1b444427e1e3ef7693ddac9b4e00ebc83919db8",
+    "unity/Assets/StarTournament/Runtime/Arena/WellLabGarden.cs": "7e55a27ba4348ec20a72b4cfa9a59746a9ae670210bc018c1398e27904878aee",
+    "unity/Assets/StarTournament/Tests/PlayMode/WellGardenPresentationTests.cs": "4bca27da8eecb213e6507f82b0af10d67f0f141fbdc08ea1d334553a4872edfe"
+  },
+  "automated": {
+    "result": "PASS",
+    "filter": "WellGardenPresentationTests",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 27.1413026,
+    "exit_code": 0,
+    "mode": "shared -batchmode -noaudio -muted, graphics enabled"
+  },
+  "visual": {
+    "result": "PASS",
+    "reviewer": "agent",
+    "images": [
+      "atrium-corner.png",
+      "west-entrance.png",
+      "east-entrance.png",
+      "garden-overview.png",
+      "garden-detail.png",
+      "landing.png"
+    ],
+    "findings": "Same grass atlas/material/tuft helper in both raised beds and lawn; no large old leaf meshes. Both beds contained in original soil footprint. Paths/lighting/landing unchanged.",
+    "human_acceptance": "pending"
+  },
+  "audit": {
+    "map": "well-laboratory-v1@4",
+    "lights": 24,
+    "furniture": 56,
+    "cosmetic_colliders": 0,
+    "vertices": 628339,
+    "renderers": 61,
+    "garden_vertices": 51322
+  },
+  "not_run": {
+    "full": "No separate authorization; unnecessary for local art correction",
+    "Player_build": "Not necessary; real Editor graphics capture covers this scope",
+    "device_human": "Separate acceptance",
+    "release_deploy": "Not authorized"
+  }
+}

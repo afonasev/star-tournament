@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
         readonly Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
         readonly Dictionary<Vector3,Mesh> doorBevels=new Dictionary<Vector3,Mesh>();
-        readonly Material trim,panel,screen,green,leaf,porcelain,alloy,blue,amber,sage;readonly Material[] displays;
+        readonly Material trim,panel,screen,green,porcelain,alloy,blue,amber,sage;readonly Material[] displays;
         // Fixed tessellation/texture resolution are bounded resource tiers, not gameplay tuning.
         const int TextureSize=256;
         public WellLabDetail(Transform parent,List<Object> owned,ProvingProfile profile,Material trim,Material panel,Material screen,Material green)
@@ -27,9 +27,7 @@ namespace StarTournament.ProvingGround
                 displays[department]=new Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Well "+new[]{"biology","physics","electronics"}[department]+" diagnostic display",color=Color.white};owned.Add(displays[department]);
                 var texture=DisplayTexture(department);owned.Add(texture);displays[department].SetTexture("_BaseMap",texture);
             }
-            leaf=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Well living foliage",color=Color.white};
-            var foliage=Texture("leaf",profile);owned.Add(foliage);leaf.SetTexture("_BaseMap",foliage);
-            leaf.SetFloat("_Smoothness",.32f);leaf.SetFloat("_Cull",0);owned.Add(leaf);
+
         }
         Material DetailMaterial(string name,Color colour,float metallic,float smoothness)
         {
@@ -355,35 +353,6 @@ namespace StarTournament.ProvingGround
                     Round(alloy,face,rotation,new Vector3(edge*(width/2+.10f),-1.65f,.055f),new Vector3(.13f,3.2f,.035f));
                 }
             }
-        }
-        public void Plants(Vector3 center)
-        {
-            var vertices=new List<Vector3>();var uv=new List<Vector2>();var indices=new List<int>();var colors=new List<Color>();
-            // Fixed botanical mesh tier. Every leaf stays inside the existing bed and plantHeight envelope.
-            for(int plant=0;plant<9;plant++)
-            {
-                var basePoint=center+new Vector3((plant%3-1)*.74f+Mathf.Sin(plant*7)*.08f,.34f,(plant/3-1)*.74f);
-                for(int blade=0;blade<11;blade++)
-                {
-                    float phase=blade*2.39996f+plant*.87f;var rot=Quaternion.Euler(0,phase*Mathf.Rad2Deg,0);int start=vertices.Count;
-                    float reach=.34f+(blade%4)*.075f,height=profile.Get("well.plantHeight")*(.67f+(blade%3)*.15f);
-                    for(int step=0;step<=12;step++)
-                    {
-                        float t=step/12f,width=Mathf.Pow(Mathf.Max(0,Mathf.Sin(t*Mathf.PI)),.85f)*(.065f+(blade%3)*.018f);
-                        float rise=Mathf.Sin(t*Mathf.PI*.82f)*height;
-                        for(int edge=-2;edge<=2;edge++)
-                        {
-                            float across=edge*.5f;
-                            vertices.Add(basePoint+rot*new Vector3(across*width,rise+(.018f-.05f*across*across)*Mathf.Sin(t*Mathf.PI),t*reach+Mathf.Sin(t*Mathf.PI)*.05f));
-                            uv.Add(new Vector2(across*.5f+.5f,t));colors.Add(Color.white);
-                        }
-                    }
-                    for(int step=0;step<12;step++)for(int side=0;side<4;side++)
-                    {int i=start+step*5+side;indices.AddRange(new[]{i,i+5,i+1,i+1,i+5,i+6});}
-                }
-            }
-            var mesh=new Mesh{name="Well curved leaves"};mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetColors(colors);mesh.SetTriangles(indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();owned.Add(mesh);
-            Render(mesh,leaf,"Well compact plants");
         }
         void Render(Mesh mesh,Material material,string name)
         {

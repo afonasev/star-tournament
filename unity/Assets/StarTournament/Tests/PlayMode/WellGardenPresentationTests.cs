@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests
     {
         [UnityTest] public IEnumerator EntranceLinkedMeadowPreservesArenaAndCapturesViews()
         {
-            var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-garden/views"));Directory.CreateDirectory(directory);
+            var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_GARDEN_OUTPUT")??Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-garden/views"));Directory.CreateDirectory(directory);
             var root=new GameObject("Well garden review");var movement=ProvingProfile.CreateDefault();var art=ProvingProfile.CreateWellDefault();
             var arenaGo=new GameObject("Arena");arenaGo.transform.SetParent(root.transform);var arena=arenaGo.AddComponent<ProvingArena>();
             var cameraGo=new GameObject("Review camera");cameraGo.transform.SetParent(root.transform);var camera=cameraGo.AddComponent<Camera>();
@@ -49,7 +49,15 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(visible.Average(p=>p.g),Is.GreaterThan(.15f),"Imported grass must retain RGB, not just its alpha silhouette");
                 }
                 finally{RenderTexture.active=previousTarget;RenderTexture.ReleaseTemporary(probeTarget);Object.Destroy(probePixels);}
+                Assert.That(filters.Any(f=>f.sharedMesh.name=="Well curved leaves"),Is.False,"No mismatched large 3D foliage remains");
                 var points=mesh.vertices;var triangles=mesh.GetTriangles(1);
+                foreach(float side in new[]{-1f,1f})
+                {
+                    var bedPoints=mesh.GetTriangles(2).Select(index=>points[index]).Where(p=>p.y>.33f&&Mathf.Abs(p.x-side*6)<1.4f&&Mathf.Abs(p.z-side*6)<1.4f).ToArray();
+                    Assert.That(bedPoints.Length,Is.EqualTo(1200),"Both beds use exactly 100 crossed meadow tufts in the same grass submesh/material");
+                    foreach(var p in bedPoints)Assert.That(p.y,Is.InRange(.345f,.56f),"Same low tuft silhouette relative to raised soil");
+                    Assert.That(mesh.GetTriangles(2).Select(index=>points[index]).Any(p=>p.y>.33f&&Mathf.Abs(p.x-side*6)<1.85f&&Mathf.Abs(p.z-side*6)<1.85f&&(Mathf.Abs(p.x-side*6)>1.4f||Mathf.Abs(p.z-side*6)>1.4f)),Is.False,"Bed grass cannot spill over its soil footprint");
+                }
                 Assert.That(triangles.Length,Is.GreaterThan(100));
                 // Geometric coverage along the complete route, and across both actual thresholds.
                 bool Paved(Vector2 p)
@@ -82,7 +90,9 @@ namespace StarTournament.ProvingGround.Tests
                 foreach(int submesh in new[]{2,3,4,5})foreach(int index in mesh.GetTriangles(submesh))
                 {
                     var p=points[index];Assert.That(Mathf.Abs(p.x),Is.LessThan(9.6f));Assert.That(Mathf.Abs(p.z),Is.LessThan(9.6f));
-                    Assert.That(p.y,Is.InRange(.008f,.43f));
+                    bool raisedBed=p.y>=.345f&&new[]{-1f,1f}.Any(side=>Mathf.Abs(p.x-side*6)<1.4f&&Mathf.Abs(p.z-side*6)<1.4f);
+                    if(raisedBed)Assert.That(p.y,Is.InRange(.345f,.56f));
+                    else Assert.That(p.y,Is.InRange(.008f,.43f));
                     Assert.That(new Vector2(p.x,p.z).magnitude,Is.GreaterThan(2.35f),"Clear central landing");
                     Assert.That(Mathf.Abs(p.z-WellLabDetail.GardenPathZ(p.x)),Is.GreaterThan(1.45f),"Clear walking route");
                 }

@@ -88,6 +88,17 @@ namespace StarTournament.ProvingGround
             }
             var texture=new Texture2D(n,n,TextureFormat.RGBA32,true){name="Well garden "+kind,wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};texture.SetPixels(pixels);texture.Apply(true,true);return texture;
         }
+        readonly List<Vector3> meadowBeds=new List<Vector3>();
+        public void Plants(Vector3 center)=>meadowBeds.Add(center);
+        static void MeadowTuft(GardenMesh blades,Vector3 origin,float height,int seed)
+        {
+            for(int j=0;j<2;j++)
+            {
+                float angle=GardenHash(seed,13)*Mathf.PI*2+j*Mathf.PI*.5f;var across=new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle));
+                float h=height*(.85f+GardenHash(seed,14)*.3f),w=.175f+GardenHash(seed,15)*.035f;
+                blades.Card(origin-across*w,origin+across*w,origin+across*w+Vector3.up*h,origin-across*w+Vector3.up*h);
+            }
+        }
         public void Garden()
         {
             var ground=GardenMaterial("Well meadow ground",GardenTexture("ground"));
@@ -137,12 +148,7 @@ namespace StarTournament.ProvingGround
                 bool border=Mathf.Abs(p.x)>8.1f||Mathf.Abs(p.y)>8.1f;
                 float height=border?.18f+patch*.12f:.065f+patch*.10f;
                 var origin=new Vector3(p.x,.012f,p.y);
-                for(int j=0;j<2;j++)
-                {
-                    float angle=GardenHash(i,13)*Mathf.PI*2+j*Mathf.PI*.5f;var across=new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle));
-                    float h=height*(.85f+GardenHash(i,14)*.3f),w=.175f+GardenHash(i,15)*.035f;
-                    blades.Card(origin-across*w,origin+across*w,origin+across*w+Vector3.up*h,origin-across*w+Vector3.up*h);
-                }
+                MeadowTuft(blades,origin,height,i);
                 if(i%14==0)
                 {
                     for(int k=0;k<3;k++)
@@ -163,6 +169,14 @@ namespace StarTournament.ProvingGround
                 }
                 centres.Quad(top+new Vector3(-.009f,.002f,-.009f),top+new Vector3(-.009f,.002f,.009f),top+new Vector3(.009f,.002f,.009f),top+new Vector3(.009f,.002f,-.009f),Vector2.zero,Vector2.up,Vector2.one,Vector2.right);
             }
+            // Same atlas, material, size and tuft construction as the surrounding meadow, lifted to the bed soil.
+            foreach(var centre in meadowBeds)for(int row=0;row<10;row++)for(int column=0;column<10;column++)
+            {
+                int seed=7000+row*10+column;float x=-1.15f+column*(2.3f/9),z=-1.15f+row*(2.3f/9);
+                var origin=centre+new Vector3(x,.345f,z);float patch=Mathf.PerlinNoise(origin.x*.43f+20,origin.z*.43f+20);
+                MeadowTuft(blades,origin,.065f+patch*.10f,seed);
+            }
+            meadowBeds.Clear();
             GardenRender(blades,grass,"Well low meadow grass");GardenRender(petals,flower,"Well sparse meadow flowers");GardenRender(centres,pollen,"Well meadow flower centres");GardenRender(leaves,clover,"Well meadow clover leaves");
             // One renderer with bounded material submeshes preserves the existing 64-renderer/650k-vertex tier.
             var combined=new Mesh{name="Well natural garden",indexFormat=IndexFormat.UInt32};combined.CombineMeshes(gardenMeshes.ToArray(),false,true);owned.Add(combined);
