@@ -5,20 +5,22 @@ using UnityEngine;
 namespace StarTournament.ProvingGround
 {
     public enum WellLiftPhase { Ready, Boarding, Moving, AwaitEmpty }
-    [Serializable] public sealed class WellLiftState { public string Id; public float Height, Target; public double Countdown; public WellLiftPhase Phase; }
+    [Serializable] public sealed class WellLiftState { public string Id; public float Height, Target; public double Countdown, IdleSeconds; public WellLiftPhase Phase; }
     /// <summary>Tick-owned state. Collider objects only project this state, never advance its clocks.</summary>
     public sealed class WellLiftSystem
     {
         readonly ArenaLiftDefinition[] definitions;readonly WellLiftState[] states;readonly Dictionary<string,Collider> colliders=new Dictionary<string,Collider>();
-        readonly float speed,tolerance;
+        readonly float speed,tolerance,idleDepartureSeconds;
         public WellLiftSystem(ArenaLiftDefinition[] definitions,ProvingProfile profile)
         {
             this.definitions=definitions;speed=profile.Get("well.liftSpeed");tolerance=profile.Get("well.boardingTolerance");
+            // Historical Lab revisions remain immutable and do not contain the new descriptor.
+            idleDepartureSeconds=(profile.Version<4?ProvingProfile.CreateWellDefault():profile).Get("well.idleDepartureSeconds");
             states=definitions.Select(d=>new WellLiftState{Id=d.Id,Height=d.InitialHeight,Target=d.InitialHeight,Phase=WellLiftPhase.Ready}).ToArray();
         }
         public ArenaLiftDefinition Definition(string id)=>definitions.Single(d=>d.Id==id);
         public WellLiftState[] Capture()=>states.Select(Copy).ToArray();
-        static WellLiftState Copy(WellLiftState s)=>new WellLiftState{Id=s.Id,Height=s.Height,Target=s.Target,Countdown=s.Countdown,Phase=s.Phase};
+        static WellLiftState Copy(WellLiftState s)=>new WellLiftState{Id=s.Id,Height=s.Height,Target=s.Target,Countdown=s.Countdown,IdleSeconds=s.IdleSeconds,Phase=s.Phase};
         public void Reset(){for(int i=0;i<states.Length;i++)states[i]=new WellLiftState{Id=definitions[i].Id,Height=definitions[i].InitialHeight,Target=definitions[i].InitialHeight,Phase=WellLiftPhase.Ready};Project();}
         public void Attach(string id,Collider collider){colliders.Add(id,collider);Project();}
         public bool OnPlatform(string id,ParticipantState pose)
@@ -36,6 +38,7 @@ namespace StarTournament.ProvingGround
                 if(s==null||!Finite(s.Height)||!Finite(s.Target)||double.IsNaN(s.Countdown)||double.IsInfinity(s.Countdown)||s.Height<d.Bottom||s.Height>d.Top||(s.Target!=d.Bottom&&s.Target!=d.Top)||s.Countdown<0||s.Countdown>1||!Enum.IsDefined(typeof(WellLiftPhase),s.Phase))throw new ArgumentException("Invalid lift state");
                 if(s.Phase!=WellLiftPhase.Moving&&s.Height!=d.Bottom&&s.Height!=d.Top)throw new ArgumentException("Stationary lift between storeys");
                 if(s.Phase!=WellLiftPhase.Boarding&&s.Countdown!=0)throw new ArgumentException("Invalid lift countdown");
+                if(double.IsNaN(s.IdleSeconds)||double.IsInfinity(s.IdleSeconds)||s.IdleSeconds<0||s.IdleSeconds>=idleDepartureSeconds||s.Phase!=WellLiftPhase.Ready&&s.IdleSeconds!=0)throw new ArgumentException("Invalid lift idle time");
                 if(s.Phase==WellLiftPhase.Boarding&&(s.Target==s.Height||s.Countdown==0)||s.Phase==WellLiftPhase.Moving&&s.Target==s.Height||(s.Phase==WellLiftPhase.AwaitEmpty||s.Phase==WellLiftPhase.Ready)&&s.Target!=s.Height)throw new ArgumentException("Invalid lift phase/target");
             }
         }
@@ -57,22 +60,37 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<states.Length;i++)
             {
                 var s=states[i];var d=definitions[i];double remaining=seconds;
-                if(s.Phase==WellLiftPhase.AwaitEmpty){if(riders[i].Length==0)s.Phase=WellLiftPhase.Ready;continue;}
-                if(s.Phase==WellLiftPhase.Ready)
+                while(remaining>0)
                 {
-                    if(riders[i].Length==0)continue;
-                    s.Target=s.Height==d.Bottom?d.Top:d.Bottom;s.Phase=WellLiftPhase.Boarding;s.Countdown=1; // Approved exact rule.
-                }
-                if(s.Phase==WellLiftPhase.Boarding)
-                {
-                    double used=Math.Min(remaining,s.Countdown);s.Countdown-=used;remaining-=used;
-                    if(s.Countdown>1e-7)continue;s.Countdown=0;s.Phase=WellLiftPhase.Moving;
-                }
-                if(s.Phase==WellLiftPhase.Moving)
-                {
-                    float before=s.Height;s.Height=Mathf.MoveTowards(s.Height,s.Target,speed*(float)remaining);
-                    carry?.Invoke(i,riders[i],s.Height-before);
-                    if(s.Height==s.Target)s.Phase=riders[i].Length==0?WellLiftPhase.Ready:WellLiftPhase.AwaitEmpty;
+                    if(s.Phase==WellLiftPhase.AwaitEmpty)
+                    {if(riders[i].Length!=0)break;s.Phase=WellLiftPhase.Ready;}
+                    if(s.Phase==WellLiftPhase.Ready)
+                    {
+                        if(riders[i].Length==0)
+                        {
+                            double used=Math.Min(remaining,idleDepartureSeconds-s.IdleSeconds);s.IdleSeconds+=used;remaining-=used;
+                            if(s.IdleSeconds<idleDepartureSeconds)break;
+                            s.Phase=WellLiftPhase.Moving;
+                        }
+                        else{s.Phase=WellLiftPhase.Boarding;s.Countdown=1;} // Approved exact boarding rule.
+                        s.IdleSeconds=0;s.Target=s.Height==d.Bottom?d.Top:d.Bottom;
+                    }
+                    if(s.Phase==WellLiftPhase.Boarding)
+                    {
+                        double used=Math.Min(remaining,s.Countdown);s.Countdown-=used;remaining-=used;
+                        if(s.Countdown>1e-7)break;s.Countdown=0;s.Phase=WellLiftPhase.Moving;
+                    }
+                    if(s.Phase==WellLiftPhase.Moving)
+                    {
+                        float before=s.Height;double travel=Math.Abs((double)s.Target-before)/speed;
+                        double used=Math.Min(remaining,travel);remaining-=used;
+                        s.Height=used>=travel?s.Target:Mathf.MoveTowards(before,s.Target,speed*(float)used);
+                        carry?.Invoke(i,riders[i],s.Height-before);
+                        if(s.Height!=s.Target)break;
+                        s.Phase=riders[i].Length==0?WellLiftPhase.Ready:WellLiftPhase.AwaitEmpty;
+                        // Only empty arrivals spend the rest of this simulation tick on another idle wait.
+                        if(s.Phase==WellLiftPhase.AwaitEmpty)break;
+                    }
                 }
             }
             Project();

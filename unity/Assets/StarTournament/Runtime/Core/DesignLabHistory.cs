@@ -384,11 +384,17 @@ namespace StarTournament.ProvingGround
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeEquipmentReadability()).ToList()};
 
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??5)<5)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDaylight()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??4)<4)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellIdleDeparture()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??3)<3)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDepth()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??2)<2)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDetail()).ToList()};
 
+            if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==3)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellCorridorCover()).ToList()};
             if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==2)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellFurniture()).ToList()};
 

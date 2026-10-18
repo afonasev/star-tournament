@@ -714,6 +714,8 @@ namespace StarTournament.ProvingGround
         IEnumerator BuildSelectedArenaSteps(bool asynchronous)
         {
             visualPresentation?.ResetWorld();
+            // The shared directional fixture must not retain the previous map's sun tint/azimuth.
+            studioLight.color=Color.white;studioLight.transform.rotation=Quaternion.Euler(50,-30,0);
             if(OrbitalLeagueProfile.Id=="orbital-league-v1")OrbitalLeagueProfile=ProvingProfile.CreateCombatBowlRingPresentationDefault();
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();
             studioLight.intensity=OrbitalLeagueProfile.Get("light.studioKey");

@@ -45,6 +45,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var old=new DesignLabHistory(path,previous);old.Create("Saved values");
             string field=well?"well.fill":"view.switchShoulderDegrees";
             Assert.That(old.Selected.Snapshot.Get(field),Is.EqualTo(well?.8f:145));
+            // Constrain the future grid explicitly: the current Well grid now accepts .8 exactly.
+            if(well)baseline.Profile(field).Descriptor(field).Step=.05f;
             Reject(baseline,old.SelectedProfileId,field,well?"шагу":"outside");
         }
         [TestCase(0)][TestCase(2)]public void UnrecognizedSchemaVersionReportsProfileIdentityAndPreservesSource(int index)

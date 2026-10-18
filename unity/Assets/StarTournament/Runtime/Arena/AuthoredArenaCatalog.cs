@@ -10,6 +10,7 @@ namespace StarTournament.ProvingGround
         public static ArenaDefinition Resolve(string id,string revision=null)
         {
             if(id==WellArenaCatalog.Id&&(revision==null||revision==WellArenaCatalog.Revision))return WellArenaCatalog.Build();
+            if(id==WellArenaCatalog.Id&&revision==WellArenaRevisionThree.Revision)return WellArenaRevisionThree.Build();
             if(id==LunarLaboratoryCatalog.Id&&(revision==null||revision==LunarLaboratoryCatalog.Revision))return LunarLaboratoryCatalog.Build();
             if(id==CombatBowlCatalog.Id)return CombatBowlCatalog.Resolve(id,revision??CombatBowlCatalog.Revision);
             if(id==IndustrialTunnelsCatalog.Id&&(revision==null||revision==IndustrialTunnelsCatalog.Revision))return IndustrialTunnelsCatalog.Build();

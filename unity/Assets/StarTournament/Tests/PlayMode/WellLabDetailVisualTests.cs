@@ -11,7 +11,8 @@ namespace StarTournament.ProvingGround.Tests
         [UnityTest] public IEnumerator PreserveAuthoringAndSaveDetailViews()
         {
             var root=new GameObject("Well visual review");var movement=ProvingProfile.CreateDefault();var arenaObject=new GameObject("Well visual arena");arenaObject.transform.SetParent(root.transform);var arena=arenaObject.AddComponent<ProvingArena>();
-            var rt=new RenderTexture(1920,1080,24);var cameraGo=new GameObject("Well review camera");cameraGo.transform.SetParent(root.transform);var camera=cameraGo.AddComponent<Camera>();camera.targetTexture=rt;camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.backgroundColor=new Color(.8f,.87f,.94f);camera.clearFlags=CameraClearFlags.SolidColor;
+            // Match the HDR colour buffer of the runtime camera; an LDR target clips before tone mapping.
+            var rt=new RenderTexture(1920,1080,24,RenderTextureFormat.DefaultHDR);var cameraGo=new GameObject("Well review camera");cameraGo.transform.SetParent(root.transform);var camera=cameraGo.AddComponent<Camera>();camera.targetTexture=rt;camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.backgroundColor=new Color(.8f,.87f,.94f);camera.clearFlags=CameraClearFlags.SolidColor;
             var lightGo=new GameObject("Review daylight");lightGo.transform.SetParent(root.transform);var light=lightGo.AddComponent<Light>();WellArenaPresentation.ConfigureDaylight(light,ProvingProfile.CreateWellDefault());
             NativeVisualPresentation visual=null;
             try
@@ -50,7 +51,7 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(mesh.subMeshCount,Is.EqualTo(3));
                     var normals=mesh.normals;foreach(var index in mesh.GetTriangles(2))Assert.That(normals[index].y,Is.LessThan(-.5f));
                 }
-                var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-surfaces/views"));Directory.CreateDirectory(directory);
+                var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_FULL_VISUAL_OUTPUT")??Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/full-visual"));Directory.CreateDirectory(directory);
                 File.WriteAllText(Path.Combine(directory,"arena.json"),JsonUtility.ToJson(arena.Definition,true));
                 var settings=new System.Text.StringBuilder();settings.AppendLine("Color space: "+QualitySettings.activeColorSpace);settings.AppendLine("Pipeline: "+UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.name);
                 foreach(VisualEffect effect in System.Enum.GetValues(typeof(VisualEffect)))settings.AppendLine(effect+": "+NativeVisualPreferences.Enabled(effect)+" / "+NativeVisualPreferences.Strength(movement,effect));

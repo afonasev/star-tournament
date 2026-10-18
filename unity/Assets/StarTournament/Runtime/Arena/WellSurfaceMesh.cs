@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround
             mesh.subMeshCount=3;
             for(int i=0;i<groups.Length;i++)mesh.SetTriangles(groups[i],i,false);
         }
-        public static Mesh Build(IReadOnlyList<Bounds> boxes,IReadOnlyList<Bounds> occluders=null)
+        public static Mesh Build(IReadOnlyList<Bounds> boxes,IReadOnlyList<Bounds> occluders=null,IReadOnlyList<Bounds> coplanarOwners=null)
         {
             var uv0=new List<Vector2>();var vertices=new List<Vector3>();var normals=new List<Vector3>();var triangles=new List<int>();
             for(int i=0;i<boxes.Count;i++)for(int axis=0;axis<3;axis++)for(int sign=-1;sign<=1;sign+=2)
@@ -47,6 +47,9 @@ namespace StarTournament.ProvingGround
                 }
                 for(int j=0;j<boxes.Count&&pieces.Count>0;j++)if(j!=i)Cut(boxes[j],j<i);
                 if(occluders!=null)foreach(var other in occluders){if(pieces.Count==0)break;Cut(other,false);}
+                // Exactly one opaque material owns a shared exposed plane. Ordinary occluders
+                // still only remove buried faces, so later batches cannot erase both copies.
+                if(coplanarOwners!=null)foreach(var other in coplanarOwners){if(pieces.Count==0)break;Cut(other,true);}
                 foreach(var r in pieces)
                 {
                     var normal=Vector3.zero;normal[axis]=sign;int start=vertices.Count;

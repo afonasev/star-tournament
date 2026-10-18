@@ -4,6 +4,95 @@ namespace StarTournament.ProvingGround
 {
     public static class WellDetailMesh
     {
+        struct ClipVertex
+        {
+            public Vector3 Position,Normal;public Vector2 Uv;
+            public static ClipVertex Lerp(ClipVertex a,ClipVertex b,float t)=>new ClipVertex{Position=Vector3.Lerp(a.Position,b.Position,t),Normal=Vector3.Lerp(a.Normal,b.Normal,t).normalized,Uv=Vector2.Lerp(a.Uv,b.Uv,t)};
+        }
+        sealed class FlatFace { public Vector3[] Points;public Rect Bounds; }
+        static float Side(ClipVertex p,Vector3 a,Vector3 b,int u,int v,float winding)
+            =>winding*((b[u]-a[u])*(p.Position[v]-a[v])-(b[v]-a[v])*(p.Position[u]-a[u]));
+        static List<ClipVertex> ClipEdge(List<ClipVertex> polygon,Vector3 a,Vector3 b,int u,int v,float winding,bool inside)
+        {
+            var result=new List<ClipVertex>();
+            for(int i=0;i<polygon.Count;i++)
+            {
+                var p=polygon[i];var q=polygon[(i+1)%polygon.Count];float dp=Side(p,a,b,u,v,winding),dq=Side(q,a,b,u,v,winding);
+                bool keep=inside?dp>=0:dp<=0,next=inside?dq>=0:dq<=0;
+                if(keep)result.Add(p);if(keep!=next)result.Add(ClipVertex.Lerp(p,q,dp/(dp-dq)));
+            }
+            return result;
+        }
+        /// <summary>Union the coplanar flat patches of combined fittings, retaining the first face's attributes.</summary>
+        public static Mesh JoinFlatFaces(Mesh source)
+        {
+            var input=source.vertices;var normals=source.normals;var uv=source.uv;var indices=source.triangles;
+            var vertices=new List<Vector3>();var outputNormals=new List<Vector3>();var outputUv=new List<Vector2>();var output=new List<int>();
+            var planes=new Dictionary<string,List<FlatFace>>();
+            var vertexIndex=new Dictionary<(Vector3,Vector3,Vector2),int>();
+            int Vertex(ClipVertex vertex)
+            {
+                var key=(vertex.Position,vertex.Normal,vertex.Uv);if(vertexIndex.TryGetValue(key,out int index))return index;
+                index=vertices.Count;vertices.Add(vertex.Position);outputNormals.Add(vertex.Normal);outputUv.Add(vertex.Uv);vertexIndex.Add(key,index);return index;
+            }
+            for(int i=0;i<indices.Length;i+=3)
+            {
+                var triangle=new List<ClipVertex>();for(int j=0;j<3;j++){int k=indices[i+j];triangle.Add(new ClipVertex{Position=input[k],Normal=normals[k],Uv=uv[k]});}
+                var a=triangle[0].Position;var b=triangle[1].Position;var c=triangle[2].Position;
+                var normal=Vector3.Cross(b-a,c-a).normalized;int axis=Mathf.Abs(normal.x)>.99999f?0:Mathf.Abs(normal.y)>.99999f?1:Mathf.Abs(normal.z)>.99999f?2:-1;
+                var pieces=new List<List<ClipVertex>>{triangle};
+                if(axis>=0&&Mathf.Abs(a[axis]-b[axis])<.00001f&&Mathf.Abs(a[axis]-c[axis])<.00001f)
+                {
+                    int u=(axis+1)%3,v=(axis+2)%3;string key=axis+":"+Mathf.Sign(normal[axis])+":"+Mathf.RoundToInt(a[axis]*10000);
+                    var bounds=Rect.MinMaxRect(Mathf.Min(a[u],b[u],c[u]),Mathf.Min(a[v],b[v],c[v]),Mathf.Max(a[u],b[u],c[u]),Mathf.Max(a[v],b[v],c[v]));
+                    if(!planes.TryGetValue(key,out var earlier))planes[key]=earlier=new List<FlatFace>();
+                    foreach(var owner in earlier)
+                    {
+                        if(!bounds.Overlaps(owner.Bounds))continue;var clip=owner.Points;
+                        float winding=Mathf.Sign((clip[1][u]-clip[0][u])*(clip[2][v]-clip[0][v])-(clip[1][v]-clip[0][v])*(clip[2][u]-clip[0][u]));var next=new List<List<ClipVertex>>();
+                        foreach(var piece in pieces)
+                        {
+                            var intersection=piece;for(int edge=0;edge<3&&intersection.Count>=3;edge++)intersection=ClipEdge(intersection,clip[edge],clip[(edge+1)%3],u,v,winding,true);
+                            bool overlaps=false;for(int j=1;j<intersection.Count-1;j++)overlaps|=Vector3.Cross(intersection[j].Position-intersection[0].Position,intersection[j+1].Position-intersection[0].Position).sqrMagnitude>1e-16f;
+                            if(!overlaps){next.Add(piece);continue;}
+                            var inside=piece;
+                            for(int edge=0;edge<3&&inside.Count>=3;edge++)
+                            {var outside=ClipEdge(inside,clip[edge],clip[(edge+1)%3],u,v,winding,false);if(outside.Count>=3)next.Add(outside);inside=ClipEdge(inside,clip[edge],clip[(edge+1)%3],u,v,winding,true);}
+                        }
+                        pieces=next;if(pieces.Count==0)break;
+                    }
+                    earlier.Add(new FlatFace{Points=new[]{a,b,c},Bounds=bounds});
+                }
+                foreach(var polygon in pieces)
+                {
+                    for(int j=1;j<polygon.Count-1;j++)if(Vector3.Cross(polygon[j].Position-polygon[0].Position,polygon[j+1].Position-polygon[0].Position).sqrMagnitude>1e-16f)output.AddRange(new[]{Vertex(polygon[0]),Vertex(polygon[j]),Vertex(polygon[j+1])});
+                }
+            }
+            var mesh=new Mesh{name="Well joined fittings",indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.SetVertices(vertices);mesh.SetNormals(outputNormals);mesh.SetUVs(0,outputUv);mesh.SetTriangles(output,0);mesh.RecalculateTangents();mesh.RecalculateBounds();return mesh;
+        }
+        /// <summary>Remove the buried back of wall-mounted fittings; the wall closes the cut, so no cap or overlay is needed.</summary>
+        public static Mesh ClipBack(Mesh source,float minimumZ)
+        {
+            var input=source.vertices;var normals=source.normals;var uv=source.uv;var indices=source.triangles;
+            var vertices=new List<Vector3>();var outputNormals=new List<Vector3>();var outputUv=new List<Vector2>();var output=new List<int>();
+            for(int i=0;i<indices.Length;i+=3)
+            {
+                var polygon=new List<ClipVertex>();
+                for(int edge=0;edge<3;edge++)
+                {
+                    int a=indices[i+edge],b=indices[i+(edge+1)%3];
+                    var p=new ClipVertex{Position=input[a],Normal=normals[a],Uv=uv[a]};var q=new ClipVertex{Position=input[b],Normal=normals[b],Uv=uv[b]};
+                    bool inside=p.Position.z>=minimumZ,nextInside=q.Position.z>=minimumZ;
+                    if(inside)polygon.Add(p);
+                    if(inside!=nextInside)
+                    {var cut=ClipVertex.Lerp(p,q,(minimumZ-p.Position.z)/(q.Position.z-p.Position.z));cut.Position.z=minimumZ;polygon.Add(cut);}
+                }
+                int start=vertices.Count;foreach(var vertex in polygon){vertices.Add(vertex.Position);outputNormals.Add(vertex.Normal);outputUv.Add(vertex.Uv);}
+                for(int j=1;j<polygon.Count-1;j++)
+                    if(Vector3.Cross(polygon[j].Position-polygon[0].Position,polygon[j+1].Position-polygon[0].Position).sqrMagnitude>1e-16f)output.AddRange(new[]{start,start+j,start+j+1});
+            }
+            var mesh=new Mesh{name="Well flush wall fitting"};mesh.SetVertices(vertices);mesh.SetNormals(outputNormals);mesh.SetUVs(0,outputUv);mesh.SetTriangles(output,0);mesh.RecalculateTangents();mesh.RecalculateBounds();return mesh;
+        }
         // Fixed four-point bevel topology. Dimensions are actual metres, so a long rail keeps a small edge radius.
         public static Mesh Bevel(Vector3 size)
         {
