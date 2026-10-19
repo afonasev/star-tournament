@@ -4,7 +4,9 @@
     "StarTournament.ProvingGround",
     "Unity.InputSystem",
     "Unity.InputSystem.TestFramework",
-    "Unity.RenderPipelines.Core.Runtime"
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Core.Editor",
+    "Unity.RenderPipelines.Universal.Runtime"
   ],
   "includePlatforms": [
     "Editor"
