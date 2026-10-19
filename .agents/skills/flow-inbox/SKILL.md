@@ -29,3 +29,5 @@ Star Tournament completion policy: after explicit acceptance, finish the authori
 Выбор этого пункта разрешает очистку проверенных ненужных ресурсов в указанном проекте по `delivery.md`; не спрашивай повторно о каждом обычном удалении. Активные ресурсы и ресурсы с неизвестным владельцем/назначением пропускай и показывай причину. Используй безопасные Git/Codex worktree-инструменты, без force удаления и массового `git clean`; внешние релизы и установленные игры вне этого scope. Запиши фактически удалённое, освобождённое место при измерении и сохранённые ресурсы в существующие delivery/cleanup records; если нет подходящей записи, заведи один change обслуживания. Это не заменяет обязательную уборку при завершении каждой задачи.
 
 References live at `.agents/references/flow/` relative to the code project root; resolve that root before reading. Helper: `python3 tools/flow.py --root <planning-root> --help`.
+
+Для другого устройства: `.agents/references/portability.md` от корня проекта; абсолютные пути выше — привязка исходного устройства, не обязательное расположение.

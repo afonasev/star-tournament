@@ -19,3 +19,5 @@ Prepare acceptance.md with the exact reviewed version/artifact, steps and expect
 Star Tournament completion policy: after explicit acceptance, finish the authorized technical gates and cleanup, remove verified obsolete worktrees/branches and local builds under delivery.md retention rules, archive the OpenSpec change, then archive completed Codex chats with set_thread_archived. Do not ask again for routine cleanup/archive approval. Preserve active/dirty resources, pending acceptance candidates and the current accepted build per platform/channel; record blockers as finalization debt. Acceptance received in another chat triggers the same procedure for the recorded original resources/chats. Archive the current chat last and only after all its work is complete.
 
 References live at `.agents/references/flow/` relative to the code project root; resolve that root before reading. Helper: `python3 tools/flow.py --root <planning-root> --help`.
+
+Для другого устройства: `.agents/references/portability.md` от корня проекта; абсолютные пути выше — привязка исходного устройства, не обязательное расположение.

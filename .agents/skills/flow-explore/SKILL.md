@@ -16,3 +16,5 @@ quick has no design artifact: keep proposal/tasks concise but preserve delivery,
 After capture, mark ready only when criteria satisfied. User saying 'делай' permits switching to flow-apply in this session, subject to project worktree and delivery authorization. Otherwise stop at agreed artifacts. Do not implement solely because a spec exists.
 
 References live at `.agents/references/flow/` relative to the code project root; resolve that root before reading. Helper: `python3 tools/flow.py --root <planning-root> --help`.
+
+Для другого устройства: `.agents/references/portability.md` от корня проекта; абсолютные пути выше — привязка исходного устройства, не обязательное расположение.

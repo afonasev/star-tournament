@@ -1,6 +1,6 @@
 # Context, models and budgets
 
-No always-running coordinator. Humans choose worker-session count. Use GPT-6 Sol at medium effort as the default implementation model. Use GPT-6 Luna for bounded, well-understood tasks with clear expected results. Use GPT-6 Astra for architecture, complex debugging, material AI/contract uncertainty, or an explicit user request. Explicit model choice wins. Validate model availability; no global model pins or credential/approval changes.
+No always-running coordinator. Humans choose worker-session count. Use gpt-6.1-sol/medium for ordinary scope and coordination; gpt-6-luna/medium for clear bounded implementation. Use GPT-6 Luna for bounded, well-understood tasks with clear expected results. Use GPT-6 Astra for architecture, complex debugging, material AI/contract uncertainty, or an explicit user request. Explicit model choice wins. Validate model availability; no global model pins or credential/approval changes.
 
 Delegate only when explicitly requested or applicable instructions authorize a concrete independent subtask. No blanket delegation requirement. Send minimum scope/spec revision/files/checks, not full discovery history. Parent owns acceptance of returned evidence. Batch only related small changes sharing context/checks, retain separate lifecycle records.
 
