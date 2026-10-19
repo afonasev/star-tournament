@@ -1,0 +1,11 @@
+{
+  "format_version": 1,
+  "skill_version": "1.0.0",
+  "source_commit": "d9a6817fefe004d7ce9e1ccbef431a51feba5f60",
+  "managed_files": {
+    "SKILL.md": "ce5a4abd8844ebd65c0116934c6ca9e4bf0f5c5623c070ecbe670fb9590e484d",
+    "agents/openai.yaml": "c4195d3d972fc301450c07e2cfbacdc321f8638865121a988d1a3a9901925d98",
+    "references/control.md": "ba9f5723b1642c59d1cc45a2d6e57578af3ef254ee77ec70c5f0946418ef047c"
+  },
+  "project_profile": "Local adapter; not overwritten by core updates"
+}
