@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
         }
         [Serializable] sealed class Report
         {
-            public string status="DIAGNOSTIC_NOT_ACCEPTANCE",gpu,unity,pipeline; public int requestedWidth,requestedHeight;
+            public string status="DIAGNOSTIC_NOT_ACCEPTANCE",gpu,unity,pipeline; public int requestedWidth,requestedHeight,humans,bots;
             public string protocol="Frozen seed20261003,8bots,onecamera;5s warmup+8s sample per variant, baseline repeated; unchanged resolution/pose/settings; temporary renderer toggles restored.";
             public List<Sample> samples=new List<Sample>();
         }
@@ -35,7 +35,11 @@ namespace StarTournament.ProvingGround
             directory=args[at+1];Directory.CreateDirectory(directory);
             ground=FindFirstObjectByType<ProvingGround>();while(!ground||!ground.IsReady||!SplashScreen.isFinished){yield return null;if(!ground)ground=FindFirstObjectByType<ProvingGround>();}
             ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(WellArenaCatalog.Id);
-            ground.StartBotReview(new NativeMatchComposition(NativeMatchRoster.Ffa(8),Enumerable.Range(0,8).Select(n=>new NativeParticipantInfo(NativeParticipantKind.Bot,"Bot "+n,NativeParticipantColors.For(n),(int)NativeBotDifficulty.Hard)).ToArray(),new[]{0}),20261003);
+            bool oneBot=args.Contains("-wellPlayerOneBot");int participants=oneBot?2:8;
+            var roster=Enumerable.Range(0,participants).Select(n=>oneBot&&n==0?
+                new NativeParticipantInfo(NativeParticipantKind.LocalHuman,"Player",NativeParticipantColors.For(n)):
+                new NativeParticipantInfo(NativeParticipantKind.Bot,"Bot "+n,NativeParticipantColors.For(n),(int)NativeBotDifficulty.Hard)).ToArray();
+            ground.StartBotReview(new NativeMatchComposition(NativeMatchRoster.Ffa(participants),roster,new[]{0}),20261003);
             bool live=args.Contains("-wellPlayerLive");
             ground.FullHealReviewManualTick=!live;Application.runInBackground=true;QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
             yield return null;yield return null;
@@ -46,8 +50,9 @@ namespace StarTournament.ProvingGround
             camera=ground.GetComponentsInChildren<Camera>().First(c=>c.enabled);cameraData=camera.GetUniversalAdditionalCameraData();postprocess=cameraData.renderPostProcessing;
             garden=ground.CameraReviewArena.GetComponentsInChildren<MeshRenderer>().Single(r=>r.name=="Well natural garden");gardenShadow=garden.shadowCastingMode;
             lamps=ground.CameraReviewArena.GetComponentsInChildren<Light>();shadows=lamps.Select(l=>l.shadows).ToArray();
-            report=new Report{requestedWidth=requestedWidth,requestedHeight=requestedHeight,gpu=SystemInfo.graphicsDeviceName,unity=Application.unityVersion,pipeline=GraphicsSettings.currentRenderPipeline.name};
+            report=new Report{humans=oneBot?1:0,bots=oneBot?1:8,requestedWidth=requestedWidth,requestedHeight=requestedHeight,gpu=SystemInfo.graphicsDeviceName,unity=Application.unityVersion,pipeline=GraphicsSettings.currentRenderPipeline.name};
             if(live)report.protocol="Live seed20261003,8bots,onecamera; ordinary AI/physics;5s warmup+8s sample, baseline repeated; diagnostic only, moving camera follows bot0.";
+            if(oneBot)report.protocol=report.protocol.Replace("8bots","1local human+1Hardbot").Replace("moving camera follows bot0","stationary human0 camera; live bot1 AI/physics");
             foreach(string view in new[]{"garden","room"})
             {
                 ground.PlaceCombatReviewSeat(0,view=="garden"?new Vector3(0,.1f,-7):new Vector3(17.5f,.02f,20.5f),view=="garden"?12:0,view=="garden"?0:75);
