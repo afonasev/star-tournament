@@ -24,6 +24,8 @@ namespace StarTournament.ProvingGround
             var well=world.GetComponentInChildren<WellArenaPresentation>();wellSettings=well&&well.Settings.Version>=5?well.Settings:null;
             // Neutral tonemapping needs an HDR grading LUT: the LDR LUT clips bright wall detail
             // before tonemapping. Own only a transient map-local copy; never mutate the project asset.
+            // WellHDRBuildVariants is included by the StarTournament.RuntimePipeline label so
+            // URP retains _HDR_GRADING when stripping Player shaders. Runtime cloning alone is insufficient.
             if(wellSettings!=null&&GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset pipeline&&pipeline.colorGradingMode!=ColorGradingMode.HighDynamicRange)
             {
                 priorQualityPipeline=QualitySettings.renderPipeline;wellPipeline=Instantiate(pipeline);wellPipeline.name="Well daylight HDR grading (owned)";
