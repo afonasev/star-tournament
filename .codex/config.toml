@@ -1,5 +1,6 @@
-model_verbosity = "low"
+approval_policy = "never"
 approvals_reviewer = "user"
+model_verbosity = "low"
 
 [features]
 memories = true
