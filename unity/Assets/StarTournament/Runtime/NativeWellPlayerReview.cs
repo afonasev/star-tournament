@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
         }
         [Serializable] sealed class Report
         {
-            public string status="DIAGNOSTIC_NOT_ACCEPTANCE",gpu,unity,pipeline;
+            public string status="DIAGNOSTIC_NOT_ACCEPTANCE",gpu,unity,pipeline; public int requestedWidth,requestedHeight;
             public string protocol="Frozen seed20261003,8bots,onecamera;5s warmup+8s sample per variant, baseline repeated; unchanged resolution/pose/settings; temporary renderer toggles restored.";
             public List<Sample> samples=new List<Sample>();
         }
@@ -39,10 +39,14 @@ namespace StarTournament.ProvingGround
             bool live=args.Contains("-wellPlayerLive");
             ground.FullHealReviewManualTick=!live;Application.runInBackground=true;QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
             yield return null;yield return null;
+            int widthAt=Array.IndexOf(args,"-screen-width"),heightAt=Array.IndexOf(args,"-screen-height");
+            int requestedWidth=widthAt>=0?int.Parse(args[widthAt+1]):Screen.width,requestedHeight=heightAt>=0?int.Parse(args[heightAt+1]):Screen.height;
+            // Startup auto-resolution can override CLI dimensions. Apply the owned QA window after startup.
+            Screen.SetResolution(requestedWidth,requestedHeight,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(1);
             camera=ground.GetComponentsInChildren<Camera>().First(c=>c.enabled);cameraData=camera.GetUniversalAdditionalCameraData();postprocess=cameraData.renderPostProcessing;
             garden=ground.CameraReviewArena.GetComponentsInChildren<MeshRenderer>().Single(r=>r.name=="Well natural garden");gardenShadow=garden.shadowCastingMode;
             lamps=ground.CameraReviewArena.GetComponentsInChildren<Light>();shadows=lamps.Select(l=>l.shadows).ToArray();
-            report=new Report{gpu=SystemInfo.graphicsDeviceName,unity=Application.unityVersion,pipeline=GraphicsSettings.currentRenderPipeline.name};
+            report=new Report{requestedWidth=requestedWidth,requestedHeight=requestedHeight,gpu=SystemInfo.graphicsDeviceName,unity=Application.unityVersion,pipeline=GraphicsSettings.currentRenderPipeline.name};
             if(live)report.protocol="Live seed20261003,8bots,onecamera; ordinary AI/physics;5s warmup+8s sample, baseline repeated; diagnostic only, moving camera follows bot0.";
             foreach(string view in new[]{"garden","room"})
             {
@@ -50,6 +54,7 @@ namespace StarTournament.ProvingGround
                 foreach(string variant in live?new[]{"baseline","baseline-repeat"}:new[]{"baseline","garden-off","garden-shadows-off","local-shadows-off","postprocess-off","baseline-repeat"})
                 {
                     Restore();
+                    if(Screen.width!=requestedWidth||Screen.height!=requestedHeight){report.status="INCOMPLETE_RESOLUTION_MISMATCH";Save();Application.Quit(2);yield break;}
                     if(variant=="garden-off")garden.enabled=false;
                     if(variant=="garden-shadows-off")garden.shadowCastingMode=ShadowCastingMode.Off;
                     if(variant=="local-shadows-off")foreach(var lamp in lamps)lamp.shadows=LightShadows.None;
