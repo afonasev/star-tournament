@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround
     {
         [Serializable] sealed class Sample
         {
-            public string view,variant; public int width,height,frames,unfocusedFrames,nonRunningFrames; public double medianMs,p95Ms,gpuMedianMs;
+            public string view,variant; public int width,height,frames,unfocusedFrames,nonRunningFrames; public double medianMs,p95Ms,gpuMedianMs,botMedianMs,botP95Ms,simulationSeconds; public int botSamples;
         }
         [Serializable] sealed class Report
         {
@@ -56,18 +56,19 @@ namespace StarTournament.ProvingGround
                     if(variant=="postprocess-off")cameraData.renderPostProcessing=false;
                     double warm=Time.realtimeSinceStartupAsDouble+5;while(Time.realtimeSinceStartupAsDouble<warm)yield return null;
                     int unfocused=0,nonRunning=0;
-                    var frame=new List<double>();var gpu=new List<double>();ulong timestamp=0;
+                    var frame=new List<double>();var gpu=new List<double>();var bot=new List<double>();ulong timestamp=0;int botTick=ground.BotDriver?.Ticks??0;double simulationStart=ground.Session.Time;
                     double previous=Time.realtimeSinceStartupAsDouble,until=previous+8;
                     while(Time.realtimeSinceStartupAsDouble<until)
                     {
                         FrameTimingManager.CaptureFrameTimings();yield return null;
+                        if(ground.BotDriver!=null&&ground.BotDriver.Ticks!=botTick){botTick=ground.BotDriver.Ticks;bot.Add(ground.BotDriver.LastMilliseconds);}
                         if(!Application.isFocused)unfocused++;if(!ground.Running)nonRunning++;
                         double now=Time.realtimeSinceStartupAsDouble;frame.Add((now-previous)*1000);previous=now;
                         if(FrameTimingManager.GetLatestTimings(1,timing)>0&&timing[0].frameStartTimestamp!=timestamp)
                         {timestamp=timing[0].frameStartTimestamp;if(timing[0].gpuFrameTime>0)gpu.Add(timing[0].gpuFrameTime);}
                     }
-                    frame.Sort();gpu.Sort();
-                    report.samples.Add(new Sample{view=view,variant=variant,width=Screen.width,height=Screen.height,frames=frame.Count,unfocusedFrames=unfocused,nonRunningFrames=nonRunning,medianMs=frame[frame.Count/2],p95Ms=frame[Math.Min(frame.Count-1,(int)(frame.Count*.95))],gpuMedianMs=gpu.Count>0?gpu[gpu.Count/2]:-1});
+                    frame.Sort();gpu.Sort();bot.Sort();
+                    report.samples.Add(new Sample{view=view,variant=variant,width=Screen.width,height=Screen.height,frames=frame.Count,unfocusedFrames=unfocused,nonRunningFrames=nonRunning,botSamples=bot.Count,simulationSeconds=ground.Session.Time-simulationStart,botMedianMs=bot.Count>0?bot[bot.Count/2]:-1,botP95Ms=bot.Count>0?bot[Math.Min(bot.Count-1,(int)(bot.Count*.95))]:-1,medianMs=frame[frame.Count/2],p95Ms=frame[Math.Min(frame.Count-1,(int)(frame.Count*.95))],gpuMedianMs=gpu.Count>0?gpu[gpu.Count/2]:-1});
                     Save();yield return new WaitForEndOfFrame();
                     ScreenCapture.CaptureScreenshot(Path.Combine(directory,view+"-"+variant+".png"));yield return new WaitForSecondsRealtime(.3f);
                 }
