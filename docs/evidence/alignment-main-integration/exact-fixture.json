@@ -1,0 +1,10 @@
+{
+  "source": "/Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/design-lab-history-v2.json",
+  "owned_copy": "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/.local/unity-evidence/exact-history.json",
+  "bytes": 160126874,
+  "sha256": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+  "known_evidence": "docs/evidence/compact-lab-history/verification.json",
+  "original_read_only": true,
+  "source_sha256_after": "7241dbd29c3d2abb7679532fa7a0478cfde7514d39b94b30e4d85f3c862b938b",
+  "owned_copy_removed_after_pass": true
+}

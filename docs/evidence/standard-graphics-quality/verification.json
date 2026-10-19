@@ -1,0 +1,47 @@
+{
+  "baseline": "codex/game-standard-alignment@753a3eaa",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "initial": "NotRun/compiler error: unsupported NUnit attribute; no test assertions weakened",
+  "final": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "xml_duration_seconds": 0.0589778,
+    "editor_exit": 0,
+    "shared": true,
+    "noaudio": true,
+    "muted": true
+  },
+  "auto_skins": 17,
+  "multi_weight_vertices": 9585,
+  "effective_urp_assets": 1,
+  "conclusion": "Real quality consumer exists; N/A excluded. Individual six-slot semantics/UI still incomplete.",
+  "player_build": false,
+  "full_suite": false,
+  "deploy": false,
+  "is_completion_certificate": false,
+  "sources": {
+    "unity/Assets/StarTournament/Tests/EditMode/GraphicsQualityApplicabilityTests.cs": "3d7678910324cc604c68d96625c922f7d77e99b42275a68c6a3dd9dea2003288",
+    "unity/Assets/StarTournament/Tests/EditMode/GraphicsQualityApplicabilityTests.cs.meta": "7ac6ac56da3ded37a0f7b5024f36026f8cbcab419a7de53bd7da581d18caaffa",
+    "unity/ProjectSettings/QualitySettings.asset": "176cdf4d902ee22449f47266de27cc856b54932d848b01a68bdde66194f71689",
+    "unity/ProjectSettings/GraphicsSettings.asset": "55743859a3fc2279132da6116b3800df429ee422fa172d35e71e27bd0123567d",
+    "unity/Assets/StarTournament/Settings/ProvingURP.asset": "c0f36ab3bf7f0b7d18c4d97b8d87a926d83be05238fff07fd52753c6bd55aa48",
+    "unity/Assets/StarTournament/Trooper/TrooperBody.prefab": "d1ff11e2b5947f307d2a58217d875850ad7944872d508b5326ed67edb7aea549",
+    "unity/Assets/StarTournament/Trooper/TrooperArms.prefab": "7c9cb609ff5d432b12a8cb2c5f1ca6374b6ce945c74ac3537699d4698d646569",
+    "unity/Assets/StarTournament/Runtime/NativeVisualPreferences.cs": "6f8c9e080f20ca392228e63453ecf9ffc05b68e3d2c95e71843ce6f143eddaa7",
+    "unity/Assets/StarTournament/Runtime/NativeVisualPresentation.cs": "829104594b323168763680fa4379ba684fbf0e7a79566c5d820e1838d78247ab",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs": "9c7699876598272b8579f3390c1de6dea3ef456443985b17f8bc69de55b6e4b0"
+  },
+  "evidence": {
+    "editmode.xml": "8185a699cfe02d1e719b5868a5cdb90b4144b2b7b3f0dec9ea369a820c8a0557",
+    "runner.log": "b273ea595d638ab383a840fed5bee5ca8c04adab1814e732e3fb9136c306c438",
+    "source-before.json": "6f26195b5595d2f8fa717ea8f1640f69720cee46acf9600a88c4fff5eee9236a",
+    "initial-compile-editor.log": "fb176b159712102c70f29e6a9de44924c6f44082591fb1f9366c601d8a2fbd58",
+    "cleanup.json": "038008a149bb99a445e0799585b00d03e20879d200c6def6ed6524c7999f5b4f",
+    "audit.md": "126c5efaab671ca0a1d84677c16c3bfe2fba7c704d3f30097bde80231c09e556",
+    "probe.json": "60c72e90a77db08ddd30ca2011e532c12b9cd233dd608d9969bc998569bab539",
+    "editor.log": "534bfd051725e41ebf358d752a9d12cb3514e268bf401c43e658e03820fb5446",
+    "plan.md": "178345487f4e0f40a0a8492e9412ee10efcc06dcea8350ac69d6c2f2df3e65b1",
+    "initial-compile-runner.log": "eb660088fbd13de33b35c4942795520d978507cbc51914d3404065583e31048b"
+  }
+}

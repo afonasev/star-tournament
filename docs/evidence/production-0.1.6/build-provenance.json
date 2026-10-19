@@ -1,0 +1,20 @@
+{
+  "privateSource": "b5bcfb4cbf355ed79dadf88e6e7281c4054287b9",
+  "publicSource": "eba44b3102eb820e9983244e77683fba82524965",
+  "buildSourceBeforeTestOnlyFixtureCommit": "7901d3d18ab65bdfbeb59431c9fd89a01341a7a8",
+  "generatedPathsRestored": [
+    "unity/Assets/StarTournament/Scenes/ProvingGround.unity",
+    "unity/Assets/StarTournament/Settings/ProvingURP.asset",
+    "unity/Assets/StarTournament/Trooper/TrooperArms.prefab",
+    "unity/Assets/StarTournament/Trooper/TrooperBody.prefab",
+    "unity/Assets/UniversalRenderPipelineGlobalSettings.asset",
+    "unity/ProjectSettings/ProjectSettings.asset",
+    "unity/ProjectSettings/ShaderGraphSettings.asset"
+  ],
+  "generatedDiffSha256": "35b42ee7d3d9564adbe47dd9a88df7dd5c9e38e4018457bcc39d2c918b7ba007",
+  "win64": "STAR_RELEASE_BUILD_PASS StandaloneWindows64 288256372",
+  "macOS": "STAR_RELEASE_BUILD_PASS StandaloneOSX 308040589",
+  "quietFromStartup": true,
+  "nullRendererSmoke": "No ready; critical material schema unavailable; retained failure, not accepted",
+  "graphicsSmoke": "passed-menu-ready;16.66s; no visual/Windows/installed acceptance inferred"
+}

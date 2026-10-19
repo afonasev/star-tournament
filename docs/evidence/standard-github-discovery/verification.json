@@ -1,0 +1,61 @@
+{
+  "baseline": "2a27584e",
+  "branch": "codex/game-standard-alignment",
+  "template_revision": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "checks": [
+    {
+      "log": "discovery.log",
+      "exit_code": 0,
+      "contract_checks_passed": 71
+    },
+    {
+      "log": "security.log",
+      "exit_code": 0,
+      "contract_checks_passed": 49
+    },
+    {
+      "log": "session.log",
+      "exit_code": 0,
+      "contract_checks_passed": 21
+    }
+  ],
+  "total_contract_checks": 141,
+  "source_sha256": {
+    "distribution/launcher/AuthenticatedSource.cs": "843ac718655b50ea7ab1629b79b2fb6da27873e99e8a409a95267e112a0af089",
+    "distribution/launcher/GitHubDiscovery.cs": "10844a31a171e2ebae7f3c8850b353a16cbde443fa565d1a8518d93d58386559",
+    "distribution/launcher/Program.cs": "14eecf55a31cfe5628a68249bf65eb398cd4b506a30482a1e88fcaf10b5cc744",
+    "distribution/tests/GitHubDiscoveryChecks.cs": "9545dba66ade88d179845cc0311c85ca54fab6864d624effdbd901d24e112aa6",
+    "distribution/tests/Program.cs": "649ddbd6d85b8f9f0fbaa1746c30a09dc593b81833cbfe684cf6321430ce7131",
+    "distribution/launcher/Launcher.csproj": "fbf9fef04bfb0cee234f5373312727e9c77ce232587610b60ee85489ab7d9784",
+    "distribution/tests/Launcher.Contracts.csproj": "745531b523fc3f23a33d5994ca43872f6259c38100b1061b4af6ec8bd3dff796"
+  },
+  "scope": "actual production C# HTTP/cache/signature/session; no external fixture network or publication",
+  "docs": {
+    "context7": "fetch failed; fallback to official docs",
+    "urls": [
+      "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api",
+      "https://docs.github.com/en/rest/releases/releases",
+      "https://docs.github.com/en/rest/about-the-rest-api/api-versions"
+    ],
+    "api_version": "2022-11-28; supported until2028-03-10; matches existing history client"
+  },
+  "not_run": [
+    "Unity",
+    "Player/native installation",
+    "full game suite",
+    "installer/release build",
+    "publication/deploy",
+    "native paired launcher/Player acceptance"
+  ],
+  "known_remaining": [
+    "minimum OS/updater/data admission",
+    "macOS DMG; preserve old PKG asset during transition for clients with hard PKG discovery",
+    "quality applicability",
+    "visual Q5-Q8 and human/device gates"
+  ],
+  "attempts": [
+    "initial-notrun.log:missing assets; offline restore succeeded",
+    "fixture-pagination.log:fixture page=1 substring matched per_page=100; guard correctly rejected cycle",
+    "compile-next-notrun.log:local variable shadowing; renamed without behavior/assertion change"
+  ]
+}

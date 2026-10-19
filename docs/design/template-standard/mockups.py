@@ -10,16 +10,17 @@ GOLD, WHITE, MUTED = '#e3bd78', '#eef2f5', '#9aaebe'
 
 
 class Screen:
-    def __init__(self, name, title, subtitle):
+    def __init__(self, name, title, subtitle, back=True):
         self.name = name
         self.parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">']
         self.rect(0, 0, 1440, 900, INK)
         self.text(56, 43, 'STAR TOURNAMENT', 16, GOLD, True)
         self.text(1384, 43, 'МАКЕТ · НЕ UNITY', 13, MUTED, anchor='end')
         self.line(56, 61, 1384, 61)
-        self.button(56, 92, 134, 48, '‹ НАЗАД')
-        self.text(226, 126, title, 32, GOLD, True)
-        self.text(226, 165, subtitle, 18, MUTED)
+        if back:
+            self.button(56, 92, 134, 48, '‹ НАЗАД')
+        self.text(226 if back else 56, 126, title, 32, GOLD, True)
+        self.text(226 if back else 56, 165, subtitle, 18, MUTED)
 
     def rect(self, x, y, w, h, fill=CARD, stroke='none', r=3):
         self.parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{fill}" stroke="{stroke}"/>')

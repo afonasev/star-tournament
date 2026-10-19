@@ -1,0 +1,36 @@
+{
+  "baseline": "01ca6df0",
+  "branch": "codex/game-standard-alignment",
+  "previous_application_source": "edd095ae",
+  "results": [
+    {
+      "platform": "editmode",
+      "result": "Passed",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 0.755326
+    },
+    {
+      "platform": "playmode",
+      "result": "Passed",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "xml_duration_seconds": 20.1607968
+    }
+  ],
+  "tested_source_sha256": {
+    "unity/Assets/StarTournament/Tests/EditMode/PlayerProfilesTests.cs": "e8333527d723204c008216402e5934e8ff26e7bf2578a38669d19591b405299e",
+    "unity/Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs": "362295c3ac77b0d6eac9b57be88f86757fb8f95d125aa8e934b595a62bc806c9"
+  },
+  "total_passed": 11,
+  "runtime_modified": false,
+  "full_suite": false,
+  "player_build": false,
+  "native_installed_rollback": "NotRun",
+  "historical_release_data_compatibility": "NotRun",
+  "UPDATES-DATA-01": "open"
+}

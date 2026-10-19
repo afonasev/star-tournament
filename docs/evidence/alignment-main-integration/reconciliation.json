@@ -1,0 +1,101 @@
+{
+  "baseline_main": "f8a54b7eb41c3afb13049d2937e3bbae3d24ed36",
+  "alignment": "d9cd23ed9db38c9e963a92b4e2432ceeac05c064",
+  "release_source": "5f1b2909fe5f95f256b090e5a4ba5c3158764bab",
+  "unique_alignment_commits": 67,
+  "newer_main_commits": 14,
+  "patch_equivalent_alignment_commits": 0,
+  "index_equals_release_assets_distribution": true,
+  "checks": {
+    "edit": [
+      "BloodProfileTests",
+      "DesignLabHistoryTests",
+      "FirstPersonWalkTests",
+      "GraphicsQualityApplicabilityTests",
+      "LabAuthoringTests",
+      "LabClientStorageTests",
+      "LabCompatibilityDiagnosticsTests",
+      "LabCompatibilityViewTests",
+      "LabParameterCatalogTests",
+      "LabParameterStorageTests",
+      "LabParameterTypeTests",
+      "LabReleaseCatalogTests",
+      "LabSnapshotCopyTests",
+      "MenuActionHintTests",
+      "MenuGamepadHintTests",
+      "MouseSensitivityPreferenceTests",
+      "PlayerProfilesTests",
+      "StandardUserPreferencesTests",
+      "VersionedUserDataTests",
+      "VisualPolishSettingsTests",
+      "WeaponSwitchPresentationTests",
+      "WellArenaTests",
+      "WellDaylightProfileTests"
+    ],
+    "play": [
+      "DesignLabWorkspaceTests",
+      "IndependentPauseMenuTests",
+      "LabAuthoringRuntimeTests",
+      "LabDiscardWarningTests",
+      "NativeAchievementsLayoutTests",
+      "NativeLabStartupTests",
+      "NativeStartupHealthTests",
+      "NativeTextEntryTests",
+      "NativeUpdateMenuTests",
+      "SettingsGamepadNavigationTests",
+      "SetupGamepadNavigationTests",
+      "WellGardenPresentationTests"
+    ]
+  },
+  "scope": "All changed fixtures plus serialization boundary; excludes unrelated AI/physics/natural matches, full suites and builds. Historical evidence whitespace retained unchanged.",
+  "post_reconciliation_changes": {
+    "distribution/tests/test_release_changelog.py": "Complete required compatibility PKG custody fixture",
+    "Runtime/MenuActionHint.cs": "Initialize hidden glyph offsetMin: otherwise its default RectTransform extends50px below row and corrupts scroll bounds",
+    "Tests/EditMode/FirstPersonWalkTests.cs": "Read compact history through real schema-aware codec, retain metadata-forgery assertions and clean owned backup",
+    "Tests/EditMode/LabAuthoringTests.cs": "Explicit future incompatible Well grid, same rejection/hash assertions",
+    "Tests/PlayMode/LabAuthoringRuntimeTests.cs": "Probe future incompatible grid; explicitly Save then rebuild disposable caches to exercise public saved selection against newer technical keys",
+    "Tests/PlayMode/SetupGamepadNavigationTests.cs": "Exact reachable map set includes approved fourth map Well"
+  },
+  "distribution_verification": {
+    "initial_python": {
+      "run": 147,
+      "failures": 2,
+      "errors": 5,
+      "skipped": 1,
+      "reason": "5 missing Pillow errors; .NET missing PATH; incomplete PKG custody fixture"
+    },
+    "rechecks": {
+      "macos_dmg": 16,
+      "release_changelog": 20,
+      "windows_dpi": 6,
+      "broker_producer_consumer": 13
+    },
+    "final_distinct_python_passed": 147,
+    "initial_skipped_broker_consumer": "Explicit producer-consumer invocation with actual built C# DLL subsequently passed; initial skip retained in log",
+    "js": 11,
+    "tooling": 11,
+    "launcher_modes": 18,
+    "native_windows": "NotRun; portable contracts only"
+  },
+  "play_command": "~/.local/bin/unity-run --shared --project WORKTREE/unity -- /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity -batchmode -noaudio -muted -projectPath WORKTREE/unity -runTests -testPlatform PlayMode -testFilter <12 fixtures from play-filter.txt> -testResults WORKTREE/.local/unity-evidence/alignment-play/playmode.xml -logFile WORKTREE/.local/unity-evidence/alignment-play/playmode.log",
+  "play_rendering": "Graphics enabled for actual Editor camera/Canvas PNG evidence; no system input, screen capture or benchmark, shared mode. Runner waits for current canonical project owner.",
+  "already_integrated_common_ancestry": {
+    "edd095ae": true,
+    "a6a030c7": true,
+    "ea6502dc": true,
+    "c999afef": true
+  },
+  "source_only_preserved_main_features": [
+    "Well rev4/corridor furniture",
+    "Well daylight v5",
+    "Well garden with unified meadow grass",
+    "Well lift passenger/idle departure",
+    "current agent rules and execution policy"
+  ],
+  "main_advance_during_qa": {
+    "revision": "68f18e85",
+    "files": "Only .agents/skills/flow-coordinate package",
+    "runtime_unchanged": true,
+    "integration": "Preserve through normal main merge after source QA"
+  }
+}

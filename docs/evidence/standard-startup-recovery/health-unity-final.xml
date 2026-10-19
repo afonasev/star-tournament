@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.863106">
+  <test-suite type="TestSuite" id="1420" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.863106" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1412" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.857580" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55975" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1413" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.855853" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1414" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.854236" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1415" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="338" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.852583" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="SetUpFixture" id="1102" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" classname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" runstate="Runnable" testcasecount="271" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.850367" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1292" name="NativeStartupHealthTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:32Z" duration="17.842613" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1295" name="CriticalInitializationFailureDoesNotConfirmHealth" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests.CriticalInitializationFailureDoesNotConfirmHealth" methodname="CriticalInitializationFailureDoesNotConfirmHealth" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests" runstate="Runnable" seed="1361135980" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:15Z" duration="0.498006" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[NullReferenceException: Object reference not set to an instance of an object
+StarTournament.ProvingGround.ProvingGround+<InitializeGame>d__216.MoveNext () (at Assets/StarTournament/Runtime/ProvingGround.cs:227)
+StarTournament.ProvingGround.ProvingGround+<RunLoadingSteps>d__499.MoveNext () (at Assets/StarTournament/Runtime/ProvingGroundLoading.cs:69)
+UnityEngine.Debug:LogException(Exception)
+StarTournament.ProvingGround.<RunLoadingSteps>d__499:MoveNext() (at Assets/StarTournament/Runtime/ProvingGroundLoading.cs:96)
+UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+]]></output>
+                </test-case>
+                <test-case id="1294" name="DisabledStartupCannotConfirmBeforeInitialization" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests.DisabledStartupCannotConfirmBeforeInitialization" methodname="DisabledStartupCannotConfirmBeforeInitialization" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests" runstate="Runnable" seed="533237353" result="Passed" start-time="2026-10-16 12:33:15Z" end-time="2026-10-16 12:33:29Z" duration="13.732679" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 11.12 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Lab startup: validating local history in background
+Game startup: menu ready at 15.16 seconds; Default 1bfe89dca8bfa0a8fe482acba37fea99c82ec1cd4feaf78e1c72c1ac923f4eb1
+]]></output>
+                </test-case>
+                <test-case id="1293" name="MenuConfirmsChallengeWhileBackgroundHistoryIsBlocked" fullname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests.MenuConfirmsChallengeWhileBackgroundHistoryIsBlocked" methodname="MenuConfirmsChallengeWhileBackgroundHistoryIsBlocked" classname="StarTournament.ProvingGround.Tests.PlayMode.NativeStartupHealthTests" runstate="Runnable" seed="1108229556" result="Passed" start-time="2026-10-16 12:33:29Z" end-time="2026-10-16 12:33:32Z" duration="3.606882" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: published Default ready in 1.55 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Lab startup: validating local history in background
+Game startup: menu ready at 19.10 seconds; Default 1bfe89dca8bfa0a8fe482acba37fea99c82ec1cd4feaf78e1c72c1ac923f4eb1
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

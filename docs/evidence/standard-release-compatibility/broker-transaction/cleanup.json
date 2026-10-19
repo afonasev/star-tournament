@@ -1,0 +1,40 @@
+{
+  "owner": "01a13fa0-7787-7662-a70b-582c5888cf1c",
+  "removed": [
+    {
+      "path": "distribution/launcher/bin",
+      "bytes": 1110415
+    },
+    {
+      "path": "distribution/launcher/obj",
+      "bytes": 1581618
+    },
+    {
+      "path": "distribution/tests/bin",
+      "bytes": 1917481
+    },
+    {
+      "path": "distribution/tests/obj",
+      "bytes": 979233
+    },
+    {
+      "path": "distribution/maintenance/bin",
+      "bytes": 84934753
+    },
+    {
+      "path": "distribution/maintenance/obj",
+      "bytes": 11564455
+    },
+    {
+      "path": ".local/windows-broker-migration-01a13fa0",
+      "bytes": 344415
+    }
+  ],
+  "totalBytes": 102432370,
+  "fixtureTreesRemovedByTeardown": true,
+  "actualCandidateWasBuilt": false,
+  "sourceEvidenceRetainedInGit": true,
+  "activeWorktreeAndSharedCachesRetained": true,
+  "playerInstallerCandidatesRemoved": false,
+  "liveQAHandles": []
+}

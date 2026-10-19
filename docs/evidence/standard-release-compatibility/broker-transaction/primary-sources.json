@@ -1,0 +1,22 @@
+[
+  {
+    "path": "src/lib-csharp/VelopackApp.cs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-csharp/VelopackApp.cs",
+    "sha256": "023081386b8dfbef3dcafaa97a014d6471587fbdaf44d15c0065d0b9d140fb34"
+  },
+  {
+    "path": "src/lib-csharp/Logging/FileVelopackLogger.cs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-csharp/Logging/FileVelopackLogger.cs",
+    "sha256": "338c431dc2b40d4db01fc2604c9505d5b80aa0c9b0e8d20130986ec9c32ad380"
+  },
+  {
+    "path": "src/lib-csharp/Locators/VelopackLocator.cs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-csharp/Locators/VelopackLocator.cs",
+    "sha256": "84df89fc41c204466e8dcc5137759d334ee8dd07433cd446c7ea7c4819d77c48"
+  },
+  {
+    "path": "src/lib-csharp/Locators/WindowsVelopackLocator.cs",
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/lib-csharp/Locators/WindowsVelopackLocator.cs",
+    "sha256": "206888ba067222cfde5ec4cb143ad41d3144136a1eb859cbbeefcf5925d996b1"
+  }
+]

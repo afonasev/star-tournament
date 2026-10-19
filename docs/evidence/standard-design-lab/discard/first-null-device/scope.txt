@@ -1,0 +1,11 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=LabDiscardWarningTests;DesignLabWorkspaceTests.DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-playmode.blttxw/qa-lab-history.json
+revision=9edd6c35e3ca5b1d1d3d4575e9c11dad6576e8bb
+ M Assets/StarTournament/Runtime/NativeDesignLabReview.cs
+ M Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs
+ M Assets/StarTournament/Tests/PlayMode/DesignLabWorkspaceTests.cs
+?? ../docs/evidence/standard-design-lab/
+?? Assets/StarTournament/Tests/PlayMode/LabDiscardWarningTests.cs
+?? Assets/StarTournament/Tests/PlayMode/LabDiscardWarningTests.cs.meta

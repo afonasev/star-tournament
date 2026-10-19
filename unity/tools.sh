@@ -25,8 +25,8 @@ isolate_test_history() {
 }
 case "${1:-}" in
   lab-stage-releases)
-    [ "$#" -eq 2 ] && [ -f "$2" ] || { echo "Usage: unity/tools.sh lab-stage-releases ABSOLUTE_HISTORY_JSON" >&2; exit 2; }
-    STAR_TOURNAMENT_LAB_RELEASE_HISTORY="$2" exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.LabReleaseBuild.PromoteMarked -logFile "$evidence_dir/lab-stage-releases.log" ;;
+    [ "$#" -le 2 ] || { echo "Usage: unity/tools.sh lab-stage-releases [ABSOLUTE_CANONICAL_PROJECT_HISTORY]" >&2; exit 2; }
+    STAR_TOURNAMENT_LAB_RELEASE_HISTORY="${2:-}" exec "$runner" "--$mode" --project "$project_dir" -- "$editor" -batchmode -noaudio -muted -quit -projectPath "$project_dir" -executeMethod StarTournament.ProvingGround.Editor.LabReleaseBuild.PromoteMarked -logFile "$evidence_dir/lab-stage-releases.log" ;;
   test-edit-filter|test-play-filter)
     [ "$#" -eq 2 ] && [ -n "$2" ] || { echo "Usage: unity/tools.sh $1 '<testFilter>'" >&2; exit 2; }
     case "$1" in test-edit-filter) platform=EditMode; stem=editmode ;; test-play-filter) platform=PlayMode; stem=playmode ;; esac

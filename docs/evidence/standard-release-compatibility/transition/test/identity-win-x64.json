@@ -1,0 +1,28 @@
+{
+  "version": "0.1.5-test.1",
+  "date": "2026-10-15",
+  "runtime": "win-x64",
+  "channel": "test",
+  "revision": "23b21e95cf7373293078dff3363053eb6359a6a7",
+  "dirty": " M ../unity/Assets/StarTournament/Scenes/ProvingGround.unity\n M ../unity/Assets/StarTournament/Settings/ProvingURP.asset\n M ../unity/Assets/StarTournament/Trooper/TrooperArms.prefab\n M ../unity/Assets/StarTournament/Trooper/TrooperBody.prefab\n M ../unity/Assets/UniversalRenderPipelineGlobalSettings.asset\n M ../unity/ProjectSettings/ProjectSettings.asset\n M ../unity/ProjectSettings/ShaderGraphSettings.asset\n",
+  "sourceDiffSha256": "21f16927c13d0f78ebc97b04c1b78426bf45972dbd81006e1ee071d136af5770",
+  "player": "/Users/eaafonasev/Projects/star-tournament/.local/release-015/players/windows",
+  "playerMarkerSha256": "b1955972786f44332aa4b43b9cd703b29cbdf385d52f3036589c6cda27472c02",
+  "packages": [
+    {
+      "name": "Star-Tournament-0.1.5-test.1-Windows-x64-Setup.exe",
+      "size": 149115864,
+      "sha256": "c0e033c5763fc71f315a1a6f609f358917d3833c255cd6012f9b3caf0ad2fc0f"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.5-test.1-win-x64-full.nupkg",
+      "size": 142133621,
+      "sha256": "736bb2ebc2ea291db3e70d95bdfc62f1f9fd4531972288def077ba7139e50375"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip",
+      "size": 141941479,
+      "sha256": "3c21fec5e66a8e4ec55fd44ea661a94983d7487ae031fd366369217deb686be1"
+    }
+  ]
+}

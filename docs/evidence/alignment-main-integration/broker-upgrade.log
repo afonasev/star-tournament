@@ -1,0 +1,74 @@
+PASS separately signed exact candidate authenticates
+PASS canonical publication date is independent of OS calendar
+PASS signed candidate mismatch rejected: schema
+PASS signed candidate mismatch rejected: appId
+PASS signed candidate mismatch rejected: platform
+PASS signed candidate mismatch rejected: architecture
+PASS signed candidate mismatch rejected: version
+PASS signed candidate mismatch rejected: publicationDate
+PASS signed candidate mismatch rejected: channel
+PASS signed candidate mismatch rejected: protocol
+PASS signed candidate mismatch rejected: metadataReader
+PASS wrong signer rejected
+PASS signature tamper rejected
+PASS candidate bytes tamper rejected: StarTournamentMaintenance.exe
+PASS candidate bytes tamper rejected: maintenance.json
+PASS candidate bytes tamper rejected: update-public.pem
+PASS trusted signer cannot silently rotate root key
+PASS signed foreign file path rejected
+PASS duplicate file identity rejected
+PASS missing declared file rejected
+PASS unknown and duplicate signed root fields rejected
+PASS extra filesystem input rejected
+PASS reparse candidate rejected
+PASS contract identity cannot differ despite valid signature
+PASS duplicate case contract fields rejected
+PASS bounded metadata rejected
+PASS transaction independently binds installed trust anchor
+PASS transaction independently binds current payload
+PASS unowned storage is never removed
+PASS file used as storage is never overwritten
+PASS unknown future installed reader is never downgraded
+PASS oversized installed component rejected before snapshot
+PASS root entry replaced last and exact backup retained
+PASS snapshot interruption recoverable: capture-started
+PASS snapshot interruption recoverable: captured-broker
+PASS snapshot interruption recoverable: prepared
+PASS replacement exception restores all exact old files: replacing
+PASS replacement exception restores all exact old files: replaced-broker
+PASS replacement exception restores all exact old files: replaced-contract
+PASS replacement exception restores all exact old files: replaced-entry
+PASS committed callback failure never undoes component
+PASS candidate disappearance mid-transaction still restores old files
+PASS damaged snapshot rejected before any replacement
+PASS changed frozen candidate rejected before replacement
+PASS foreign pending root journal rejected
+PASS recovery survives missing candidate and newer current metadata
+PASS unknown retained files prevent cleanup without deletion
+PASS unrelated next file never overwritten or deleted
+PASS retained signed actor cleans committed state after payload advances
+PASS retained signed actor retries without current candidate
+PASS pending recovery falls back to signed current actor if retained copy missing
+PASS actor selection never admits invalid current or retained signature
+PASS ordinary cleanup still rejects legitimately restored playback bytes
+PASS payload cleanup settles committed component before deleting rollback proof
+PASS payload cleanup retries after component journal already removed
+PASS rollback cleanup rejects changed installed file maintenance/StarTournamentMaintenance.exe
+PASS rollback cleanup rejects changed installed file Star Tournament.exe
+PASS rollback cleanup rejects changed installed file maintenance/maintenance.json
+PASS rollback cleanup rejects changed installed file Update.exe
+PASS rollback cleanup preserves both journals if retained snapshot changed
+PASS restored cleanup needs restored protected phase
+PASS unknown component files preserve payload rollback proof
+PASS another root cannot authorize rollback cleanup
+PASS rollback cleanup rejects changed current publication identity
+PASS invalid retained actor preserves both rollback journals
+PASS real process death between component cleanup and payload cleanup
+PASS real process death at intent-prepared
+PASS real process death at capture-started
+PASS real process death at prepared
+PASS real process death at replaced-broker
+PASS real process death at replaced-contract
+PASS real process death at replaced-entry
+PASS real process death at committed
+Broker upgrade foundation: 73 passed; portable signed files/real process crashes, not native elevated startup or a usable broker

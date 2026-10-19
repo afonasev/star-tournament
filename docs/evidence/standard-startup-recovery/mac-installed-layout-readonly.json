@@ -1,0 +1,22 @@
+{
+  "operation": "Read-only links/config/updater help; no launch/apply/installation",
+  "root": "/Applications/Star Tournament.app",
+  "links": [
+    {
+      "path": "Contents/MacOS/sq.version",
+      "target": "../Resources/sq.version",
+      "exists": true
+    }
+  ],
+  "updater_sha256": "a94763d8b1c2fa184f3af5c1f3a88e3842804ce62d67b726f77091f0fd622286",
+  "config": {
+    "appId": "tech.afonasev.star-tournament.osx-arm64",
+    "platform": "osx",
+    "architecture": "arm64",
+    "version": "0.1.0-test.10",
+    "publicationDate": "2026-10-08",
+    "feedBase": "https://api.github.com/repos/afonasev/star-tournament/releases",
+    "gameExecutable": "game/Player.app/Contents/MacOS/Star Tournament Unity Proving Ground",
+    "updateChannel": "test"
+  }
+}

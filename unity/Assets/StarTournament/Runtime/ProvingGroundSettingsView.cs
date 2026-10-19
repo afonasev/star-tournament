@@ -91,6 +91,27 @@ namespace StarTournament.ProvingGround
                 if(submit&&Selected.IsInteractable())
                 {if(Selected is Button button)button.onClick.Invoke();else if(Selected is Toggle toggle)toggle.isOn=!toggle.isOn;owner.gameAudio?.MenuConfirm();}
             }
+            bool CanHintAssignedShortcut()=>InMatch||Seat<0||owner.menuDevice==owner.input.DeviceAt(Seat);
+            bool BackIsClose()
+            {
+                var current=InMatch?Selected:EventSystem.current?EventSystem.current.currentSelectedGameObject?.GetComponent<Selectable>():null;
+                return current==settingsBackButton||Array.IndexOf(settingsSectionButtons,current)>=0;
+            }
+            Button BackActionTarget()
+            {
+                if(resetOpen)return resetCancel;
+                if(displayConfirmationActive)return settingsRevertButton;
+                if(resolutionPickerOpen)return resolutionCancelButton;
+                if(settingsHelpOpen)return settingsHelpBack;
+                if(settingsDevicesOpen)return settingsDevicesBack;
+                return BackIsClose()?settingsBackButton:null;
+            }
+            string BackContextCaption()
+            {
+                var device=InMatch?owner.input.DeviceAt(Seat):owner.menuDevice;
+                if(!CanHintAssignedShortcut()||!(device is Gamepad)||!device.added||!device.enabled||!owner.menuGamepadCursor||!owner.menuWindowFocused||owner.textEntryPanel||owner.textClosing||BackActionTarget()!=null||!string.IsNullOrEmpty(settingsWriteError.text))return "";
+                return MenuGamepadHints.Glyph(MenuGamepadHints.Family(device.layout,device.description.product),MenuPadButton.East)+" — к разделам";
+            }
             public void Back()
             {
                 owner.gameAudio?.MenuBack();
@@ -101,10 +122,7 @@ namespace StarTournament.ProvingGround
                 else if(settingsDevicesOpen)SetDevices(false);
                 else
                 {
-                    var current=InMatch?Selected:EventSystem.current?EventSystem.current.currentSelectedGameObject?.GetComponent<Selectable>():null;
-                    bool inNavigation=current==settingsBackButton;
-                    foreach(var button in settingsSectionButtons)inNavigation|=current==button;
-                    if(inNavigation)Close();else Select(settingsSectionButtons[(int)settingsSection]);
+                    if(BackIsClose())Close();else Select(settingsSectionButtons[(int)settingsSection]);
                 }
             }
             public void FinishDisplay()
@@ -116,9 +134,16 @@ namespace StarTournament.ProvingGround
             void CycleAntialiasing()=>owner.SetAntialiasingLevel((NativeVisualPreferences.AntialiasingLevel+1)%NativeVisualPreferences.AntialiasingNames.Length);
             GameObject Panel(Transform p,string n,Vector2 min,Vector2 max,Color color)=>owner.Panel(p,n,min,max,color);
             Text Label(Transform p,string n,string t,int f,Vector2 min,Vector2 max,TextAnchor a,Color color)=>owner.Label(p,n,t,f,min,max,a,color);
-            Button MenuButton(Transform p,string n,string t,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action)=>owner.MenuButton(p,n,t,min,max,action);
+            void BindSettingsHint(Selectable control)
+            {
+                var hint=control.GetComponent<MenuActionHint>();if(!hint)return;
+                hint.Initialize(control,()=>InMatch?owner.input.DeviceAt(Seat):owner.menuDevice,()=>owner.menuGamepadCursor&&owner.menuWindowFocused,()=>InMatch?Selected==control:EventSystem.current&&EventSystem.current.currentSelectedGameObject==control.gameObject);
+            }
+            Button MenuButton(Transform p,string n,string t,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action)
+            {var button=owner.MenuButton(p,n,t,min,max,action);BindSettingsHint(button);owner.BindMenuShortcut(button,MenuPadButton.East,()=>CanHintAssignedShortcut()&&BackActionTarget()==button);return button;}
             Slider NumericSetting(Transform p,string n,string t,Vector2 min,Vector2 max,NumericDescriptor d,UnityEngine.Events.UnityAction<float> action)=>owner.NumericSetting(p,n,t,min,max,d,v=>SaveStandard(()=>action(v)));
-            Toggle BooleanSetting(Transform p,string n,string t,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction<bool> action)=>owner.BooleanSetting(p,n,t,min,max,v=>SaveStandard(()=>action(v)));
+            Toggle BooleanSetting(Transform p,string n,string t,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction<bool> action)
+            {var toggle=owner.BooleanSetting(p,n,t,min,max,v=>SaveStandard(()=>action(v)));BindSettingsHint(toggle);return toggle;}
             GamepadLookSettings MenuGamepadLook()=>ProfileId!=null?GamepadLookSettings.Resolve(Profile,playerProfiles.Find(ProfileId)):Seat<0?GamepadLookSettings.General(Profile):owner.PersonalGamepadLook(Seat);
             float MenuMouseSensitivity()=>ProfileId!=null?playerProfiles.Find(ProfileId).MouseDegreesPerPixel:Seat<0?MouseSensitivityPreference.Resolve(Profile):owner.PersonalSensitivity(Seat);
             bool MenuFps()=>ProfileId!=null?playerProfiles.Find(ProfileId).ShowFps:Seat<0?owner.fps.Visible:owner.PersonalFps(Seat);
@@ -172,7 +197,7 @@ namespace StarTournament.ProvingGround
                     settingsSectionButtons[i]=MenuButton(navigation.transform,"settings-section-"+i,names[i],new Vector2(.06f,top-.10f),new Vector2(.94f,top),()=>SelectSettingsSection((SettingsSection)section));
                     settingsSectionButtons[i].gameObject.AddComponent<SettingsSectionFocus>().Focused=()=>PreviewSettingsSection((SettingsSection)section);
                 }
-                settingsBackButton=MenuButton(settingsScreen.transform,"settings-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),CloseSettings);
+                settingsBackButton=MenuButton(settingsScreen.transform,"settings-back","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),CloseSettings);
                 settingsHeading=Label(content.transform,"settings-heading","НАСТРОЙКИ ИГРЫ",35,new Vector2(.05f,.85f),new Vector2(.95f,.98f),TextAnchor.MiddleLeft,MenuGold);
                 settingsDescription=Label(content.transform,"settings-description","",21,new Vector2(.05f,.77f),new Vector2(.95f,.87f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
@@ -240,11 +265,11 @@ namespace StarTournament.ProvingGround
                 settingsHelpText=Label(settingsHelpPage.transform,"keyboard-help",KeyboardHelp,18,Vector2.zero,Vector2.zero,TextAnchor.UpperLeft,Color.white);settingsHelpText.gameObject.SetActive(false);
                 settingsHelpKeyboard=MenuButton(settingsHelpPage.transform,"settings-help-keyboard","‹",new Vector2(.40f,.02f),new Vector2(.48f,.10f),()=>SetHelpText(settingsHelpText.text==KeyboardHelp?GamepadHelp:KeyboardHelp));
                 settingsHelpGamepad=MenuButton(settingsHelpPage.transform,"settings-help-gamepad","›",new Vector2(.52f,.02f),new Vector2(.60f,.10f),()=>SetHelpText(settingsHelpText.text==KeyboardHelp?GamepadHelp:KeyboardHelp));
-                settingsHelpBack=MenuButton(settingsScreen.transform,"settings-help-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>SetHelp(false));
+                settingsHelpBack=MenuButton(settingsScreen.transform,"settings-help-back","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>SetHelp(false));
                 settingsDevicesPage=Panel(content.transform,"settings-devices-page",new Vector2(.04f,.06f),new Vector2(.96f,.84f),new Color32(20,33,48,245));
                 deviceScroll=ListViewport(settingsDevicesPage.transform,"device-list",new Vector2(.03f,.10f),new Vector2(.97f,.90f),out deviceContent);
                 settingsDevicesPageLabel=Label(settingsDevicesPage.transform,"devices-page-label","",19,new Vector2(.03f,.10f),new Vector2(.97f,.20f),TextAnchor.MiddleLeft,Color.white);
-                settingsDevicesBack=MenuButton(settingsScreen.transform,"devices-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>SetDevices(false));
+                settingsDevicesBack=MenuButton(settingsScreen.transform,"devices-back","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>SetDevices(false));
                 resolutionPicker=Panel(settingsImagePage.transform,"resolution-picker",new Vector2(.57f,.04f),new Vector2(.98f,.51f),MenuCard);
                 var pickerCard=Panel(resolutionPicker.transform,"resolution-card",Vector2.zero,Vector2.one,MenuCard);
                 Label(pickerCard.transform,"resolution-title","ВЫБЕРИТЕ РАЗРЕШЕНИЕ",30,new Vector2(.06f,.84f),new Vector2(.94f,.96f),TextAnchor.MiddleLeft,MenuGold);
@@ -256,7 +281,7 @@ namespace StarTournament.ProvingGround
                     var rect=(RectTransform)button.transform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=Vector2.one;rect.pivot=new Vector2(.5f,1);rect.anchoredPosition=new Vector2(0,-i*56);rect.sizeDelta=new Vector2(0,46);
                     button.gameObject.AddComponent<MenuScrollFocus>().Scroll=resolutionScroll;
                 }
-                resolutionCancelButton=MenuButton(pickerCard.transform,"resolution-cancel","‹ НАЗАД · B",new Vector2(.06f,.86f),new Vector2(.22f,.94f),CloseResolutionPicker);
+                resolutionCancelButton=MenuButton(pickerCard.transform,"resolution-cancel","‹ НАЗАД",new Vector2(.06f,.86f),new Vector2(.22f,.94f),CloseResolutionPicker);
                 Layout(pickerCard.transform.Find("resolution-title").GetComponent<RectTransform>(),new Vector2(.26f,.84f),new Vector2(.94f,.96f));
                 settingsConfirmation=Panel(settingsScreen.transform,"display-confirmation",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
                 var confirmCard=Panel(settingsConfirmation.transform,"confirmation-card",new Vector2(.12f,.24f),new Vector2(.88f,.76f),MenuCard);
@@ -339,7 +364,7 @@ namespace StarTournament.ProvingGround
                     selectOnLeft=left,selectOnRight=right };
             }
             Selectable FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
-                settingsSection==SettingsSection.Graphics?settingsAntialiasingButton:settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?settingsScaleSlider:settingsMasterSlider;
+                settingsSection==SettingsSection.Graphics?settingsQualityButton:settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?settingsScaleSlider:settingsMasterSlider;
             void ConfigureSettingsNavigation()
             {
                 if(resetOpen){Link(resetCancel,resetConfirm,resetConfirm,null,resetConfirm);Link(resetConfirm,resetCancel,resetCancel,resetCancel);return;}

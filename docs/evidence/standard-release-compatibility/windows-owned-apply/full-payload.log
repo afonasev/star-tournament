@@ -1,0 +1,53 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(16,28): warning CS8604: Possible null reference argument for parameter 'path' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,17): warning CS8604: Possible null reference argument for parameter 'version' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,72): warning CS8604: Possible null reference argument for parameter 'token' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,54): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,59): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,64): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(89,74): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/WindowsFullPayloadChecks.cs(116,113): warning CS8602: Dereference of a possibly null reference. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+PASS actual released manifest provenance
+PASS complete current applies without executing updater or touching root/user data
+PASS exception at current-saved restores exact old payload
+PASS exception at target-activated restores exact old payload
+PASS staged mutation rejected before current rename
+PASS unsafe Windows namespace rejected: ../escape
+PASS unsafe Windows namespace rejected: lib/app/../escape
+PASS unsafe Windows namespace rejected: lib/app/game/../../escape
+PASS unsafe Windows namespace rejected: lib/app/C:/escape
+PASS unsafe Windows namespace rejected: lib/app/game/file:ads
+PASS unsafe Windows namespace rejected: lib/app/game/CON.txt
+PASS unsafe Windows namespace rejected: lib/app/game/NUL .txt
+PASS unsafe Windows namespace rejected: lib/app/game/trailing.
+PASS unsafe Windows namespace rejected: lib/app/game/space 
+PASS unsafe Windows namespace rejected: lib/app/game/COM¹.txt
+PASS unsafe Windows namespace rejected: lib/app/game/back\slash
+PASS unsafe Windows namespace rejected: /absolute
+PASS unsafe Windows namespace rejected: lib/app/game/link.__symlink
+PASS unsafe Windows namespace rejected: lib/app/GAME/startournament.EXE
+PASS unsafe Windows namespace rejected: lib/app/game/StarTournament.exe/child
+PASS unix symbolic link rejected
+PASS manifest mismatch rejected: id
+PASS manifest mismatch rejected: version
+PASS manifest mismatch rejected: os
+PASS manifest mismatch rejected: rid
+PASS manifest mismatch rejected: channel
+PASS manifest mismatch rejected: machineArchitecture
+PASS manifest mismatch rejected: mainExe
+PASS manifest mismatch rejected: runtimeDependencies
+PASS manifest mismatch rejected: shortcutLocations
+PASS manifest mismatch rejected: osMinVersion
+PASS nested manifest identity rejected
+PASS duplicate critical manifest field rejected
+PASS unexpected root manifest element rejected
+PASS signed payload date mismatch rejected
+PASS payload sq.version is checked and preserved
+PASS foreign payload sq.version rejected
+PASS duplicate package manifests rejected
+PASS external entities never parsed
+PASS config executable traversal rejected
+PASS oversized native manifest rejected
+PASS unsupported framework rejected
+PASS process death at current-saved retains durable recovery
+PASS process death at target-activated retains durable recovery
+Windows full payload: 44 passed; portable source/real process-crash checks, not native Windows ACL acceptance

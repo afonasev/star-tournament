@@ -23,9 +23,10 @@ namespace StarTournament.ProvingGround
         {
             historyAction=MenuButton(mainMenuScreen.transform,"release-history-action","Что нового",new Vector2(.61f,.072f),new Vector2(.78f,.13f),OpenReleaseHistory);
             historyScreen=Panel(parent,"release-history-screen",Vector2.zero,Vector2.one,MenuInk);AddMenuBackdrop(historyScreen,false);
-            historyBack=MenuButton(historyScreen.transform,"release-history-back","‹ НАЗАД · B",new Vector2(.05f,.91f),new Vector2(.18f,.96f),CloseReleaseHistory);
+            historyBack=MenuButton(historyScreen.transform,"release-history-back","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.18f,.96f),CloseReleaseHistory);
             Label(historyScreen.transform,"release-history-heading","ЧТО НОВОГО",40,new Vector2(.21f,.89f),new Vector2(.94f,.96f),TextAnchor.MiddleLeft,MenuGold);
             historyStatus=Label(historyScreen.transform,"release-history-status","",18,new Vector2(.21f,.83f),new Vector2(.94f,.89f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+            BindMenuShortcut(historyBack,MenuPadButton.East,()=>phase==Phase.History);
             historyVersions=RosterScroll(historyScreen.transform,"release-history-versions",new Vector2(.05f,.15f),new Vector2(.29f,.81f),out historyVersionScroll).gameObject;
             AddHistoryScrollbar(historyVersionScroll.transform,"release-history-version-scrollbar",historyVersionScroll);
             var detail=Panel(historyScreen.transform,"release-history-detail",new Vector2(.31f,.15f),new Vector2(.95f,.81f),MenuCard);
@@ -35,7 +36,8 @@ namespace StarTournament.ProvingGround
             historyBody=Label(content,"release-history-description","",22,Vector2.zero,Vector2.one,TextAnchor.UpperLeft,Color.white);
             historyBody.supportRichText=false;historyBody.raycastTarget=false;
             historyBody.rectTransform.anchorMin=new Vector2(0,1);historyBody.rectTransform.anchorMax=Vector2.one;historyBody.rectTransform.pivot=new Vector2(.5f,1);
-            Label(historyScreen.transform,"release-history-controls","↑ ↓  Версия     A  Читать     Правый стик / PgUp PgDn: прокрутка     B / Esc: назад",18,new Vector2(.05f,.07f),new Vector2(.95f,.12f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+            var controls=Label(historyScreen.transform,"release-history-controls","Крестовина: версия · Правый стик: прокрутка",18,new Vector2(.05f,.07f),new Vector2(.95f,.12f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+            controls.gameObject.AddComponent<MenuPadOnlyHint>().Show=()=>menuGamepadCursor&&menuWindowFocused&&!textEntryPanel;
             historyScreen.SetActive(false);
         }
         void OpenReleaseHistory()
@@ -99,6 +101,7 @@ namespace StarTournament.ProvingGround
             }
             var badge=Panel(button.transform,"history-installed-badge",new Vector2(.63f,.57f),new Vector2(.97f,.93f),MenuGold);
             badge.GetComponent<Image>().raycastTarget=false;
+            button.GetComponent<MenuActionHint>().ReservedRightInset=()=>((RectTransform)button.transform).rect.xMax-RectTransformUtility.CalculateRelativeRectTransformBounds(button.transform,(RectTransform)badge.transform).min.x+4;
             Label(badge.transform,"history-installed-label","УСТАНОВЛЕНА",14,Vector2.zero,Vector2.one,TextAnchor.MiddleCenter,MenuInk);
         }
         void RevealHistoryVersion(int index)
@@ -145,12 +148,11 @@ namespace StarTournament.ProvingGround
                 if(row>=0)RevealHistoryVersion(row);
             }
             var pad=menuDevice as Gamepad;
-            bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame||pad!=null&&pad.buttonEast.wasPressedThisFrame;
-            if(back){CloseReleaseHistory();return;}
+            if(TryTakeMenuBack()){if(historyBack.IsInteractable())historyBack.onClick.Invoke();return;}
             float scroll=pad!=null?pad.rightStick.ReadValue().y:0;
             if(Keyboard.current!=null){if(Keyboard.current.pageUpKey.isPressed)scroll=1;else if(Keyboard.current.pageDownKey.isPressed)scroll=-1;}
             float distance=historyScroll.content.rect.height-historyScroll.viewport.rect.height;
-            if(distance>0&&Mathf.Abs(scroll)>.15f)historyScroll.verticalNormalizedPosition=Mathf.Clamp01(historyScroll.verticalNormalizedPosition+scroll*500*Time.unscaledDeltaTime/distance);
+            if(distance>0&&Mathf.Abs(scroll)>MenuHistoryScrollDeadzone)historyScroll.verticalNormalizedPosition=Mathf.Clamp01(historyScroll.verticalNormalizedPosition+scroll*500*Time.unscaledDeltaTime/distance);
         }
     }
     public sealed class ReleaseHistoryRowReveal : MonoBehaviour,ISelectHandler

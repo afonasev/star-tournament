@@ -1,0 +1,19 @@
+✔ modern-only test is eligible (0.6365ms)
+✔ current production with frozen legacy aliases still selects current installers (0.0875ms)
+✔ historical complete legacy release stays eligible (0.093958ms)
+✔ mixed incomplete metadata families are not a pair (0.342459ms)
+✔ metadata does not excuse missing or tampered installer (0.104208ms)
+✔ drafts and missing metadata remain ineligible (0.059792ms)
+✔ modern DMG is selected while legacy PKG remains eligible (0.100208ms)
+✔ modern-only PKG cannot substitute for required DMG (0.048583ms)
+✔ present corrupt DMG cannot fall back to historical PKG (0.088292ms)
+✔ actual landing sets DMG link and drag-to-Applications instruction (0.81825ms)
+✔ actual landing keeps historical PKG instruction for complete legacy release (0.371708ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.883042

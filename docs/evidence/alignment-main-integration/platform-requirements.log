@@ -1,0 +1,13 @@
+PASS win on win 10.0.19042: admission=False
+PASS win on win 10.0.19043: admission=True
+PASS win on win 10.0.22631: admission=True
+PASS win on win 6.3.9600: admission=False
+PASS win on osx 15.0: admission=False
+PASS osx on osx 11.7: admission=False
+PASS osx on osx 12.0: admission=True
+PASS osx on osx 15.0: admission=True
+PASS osx on win 10.0.22631: admission=False
+PASS unknown target rejected before host probe
+PASS startup feedback identifies the rejected OS floor
+PASS actual test host satisfies native OS API baseline
+12 platform requirements checks passed

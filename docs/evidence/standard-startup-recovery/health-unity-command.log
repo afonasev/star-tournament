@@ -1,0 +1,5 @@
+FOCUSED PlayMode: NativeStartupHealthTests;NativeLabStartupTests.BlockedHistoryAllowsDefaultMenuMatchAndLateCompletionKeepsOwners — affected evidence, NOT a full suite
+Evidence: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-playmode.bQTP0n
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+unity-run: started shared:1; guardian=51832 pid=51839
+unity-run: finished pid=51839 exit=0; capacity released

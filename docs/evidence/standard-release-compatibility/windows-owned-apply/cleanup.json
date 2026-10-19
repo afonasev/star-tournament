@@ -1,0 +1,45 @@
+{
+  "owner": "01a13fa0-7787-7662-a70b-582c5888cf1c",
+  "removed": [
+    {
+      "path": "distribution/launcher/bin",
+      "bytes": 1100699,
+      "reason": "owned reproducible source-QA outputs/downloads; evidence/remote signed artifacts preserved"
+    },
+    {
+      "path": "distribution/launcher/obj",
+      "bytes": 1568830,
+      "reason": "owned reproducible source-QA outputs/downloads; evidence/remote signed artifacts preserved"
+    },
+    {
+      "path": "distribution/tests/bin",
+      "bytes": 1855725,
+      "reason": "owned reproducible source-QA outputs/downloads; evidence/remote signed artifacts preserved"
+    },
+    {
+      "path": "distribution/tests/obj",
+      "bytes": 912857,
+      "reason": "owned reproducible source-QA outputs/downloads; evidence/remote signed artifacts preserved"
+    },
+    {
+      "path": "distribution/maintenance/bin",
+      "bytes": 84909169,
+      "reason": "owned reproducible source-QA outputs/downloads; evidence/remote signed artifacts preserved"
+    },
+    {
+      "path": "distribution/maintenance/obj",
+      "bytes": 11529655,
+      "reason": "owned reproducible source-QA outputs/downloads; evidence/remote signed artifacts preserved"
+    },
+    {
+      "path": ".local/windows-payload-apply-01a13fa0",
+      "bytes": 142140659,
+      "reason": "owned reproducible source-QA outputs/downloads; evidence/remote signed artifacts preserved"
+    }
+  ],
+  "totalBytes": 244017594,
+  "active_worktree_retained": true,
+  "shared_caches_retained": true,
+  "player_installer_candidates_removed": false,
+  "live_qa_handles": []
+}

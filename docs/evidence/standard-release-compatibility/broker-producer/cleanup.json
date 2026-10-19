@@ -1,0 +1,32 @@
+{
+  "removed": [
+    {
+      "path": "distribution/launcher/bin",
+      "bytes": 1130875
+    },
+    {
+      "path": "distribution/launcher/obj",
+      "bytes": 1610270
+    },
+    {
+      "path": "distribution/tests/bin",
+      "bytes": 1955973
+    },
+    {
+      "path": "distribution/tests/obj",
+      "bytes": 1000532
+    },
+    {
+      "path": "distribution/__pycache__/broker_upgrade.cpython-313.pyc",
+      "bytes": 8597
+    },
+    {
+      "path": "distribution/tests/__pycache__/test_broker_upgrade.cpython-313.pyc",
+      "bytes": 26650
+    }
+  ],
+  "totalBytes": 5732897,
+  "liveTaskRunners": false,
+  "sharedCachesAndActiveWorktreeRetained": true,
+  "fixtureTreesAndPrivateKeysRemovedByTeardown": true
+}

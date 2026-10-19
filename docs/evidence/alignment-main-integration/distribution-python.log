@@ -1,0 +1,126 @@
+.....s.........................408FE0F601000000:error:02000086:rsa routines:ossl_rsa_verify_PKCS1_PSS_mgf1:last octet invalid:crypto/rsa/rsa_pss.c:103:
+408FE0F601000000:error:1C880004:Provider routines:rsa_verify_directly:RSA lib:providers/implementations/signature/rsa_sig.c:1106:
+............................E..E.E....E..E.....usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Artifact changed since packaging; installer may belong to another version
+.usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Package differs from signed manifest
+...usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Artifact changed since packaging; installer may belong to another version
+.usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Signed manifest target/version mismatch
+........F...................408FE0F601000000:error:02000085:rsa routines:ossl_rsa_verify_PKCS1_PSS_mgf1:first octet invalid:crypto/rsa/rsa_pss.c:85:
+408FE0F601000000:error:1C880004:Provider routines:rsa_verify_directly:RSA lib:providers/implementations/signature/rsa_sig.c:1106:
+.....F.............PACKAGED win-x64 1.6.0 /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/star-broker-route-826yobmi/out/releases
+PACKAGED win-x64 1.6.0 /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/star-broker-route-b1jk958u/out/releases
+Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmp506vucd7/release/Star-Tournament-1.2.3-Windows-x64-Setup.exe
+Compiling Windows installer on gfe with Ubuntu NSIS 3.10
+usage: python3 -m unittest [-h] --layout LAYOUT --version VERSION
+                           --output OUTPUT [--makensis MAKENSIS]
+                           [--compiler-host {gfe}]
+python3 -m unittest: error: argument --compiler-host: invalid choice: 'other-host' (choose from 'gfe')
+.................
+======================================================================
+ERROR: test_build_cleanup_cannot_delete_image_or_mount_retained_after_failed_detach (test_macos_dmg.MacDmg.test_build_cleanup_cannot_delete_image_or_mount_retained_after_failed_detach)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 239, in test_build_cleanup_cannot_delete_image_or_mount_retained_after_failed_detach
+    with self.assertRaises(subprocess.CalledProcessError):dmg.build(self.app,self.output,'osx-arm64',self.config['version'],builder=builder)
+                                                          ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 229, in build
+    render_background(background, config)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 153, in render_background
+    from PIL import Image, ImageDraw, ImageFont
+ModuleNotFoundError: No module named 'PIL'
+
+======================================================================
+ERROR: test_existing_output_and_failed_builder_preserve_bytes_and_cleanup (test_macos_dmg.MacDmg.test_existing_output_and_failed_builder_preserve_bytes_and_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 121, in test_existing_output_and_failed_builder_preserve_bytes_and_cleanup
+    with self.assertRaises(RuntimeError): dmg.build(self.app, self.output, 'osx-arm64', self.config['version'], builder=fail)
+                                          ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 229, in build
+    render_background(background, config)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 153, in render_background
+    from PIL import Image, ImageDraw, ImageFont
+ModuleNotFoundError: No module named 'PIL'
+
+======================================================================
+ERROR: test_failed_image_readback_never_releases_output (test_macos_dmg.MacDmg.test_failed_image_readback_never_releases_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 215, in test_failed_image_readback_never_releases_output
+    dmg.build(self.app,self.output,'osx-arm64',self.config['version'],builder=builder,verifier=verifier)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 229, in build
+    render_background(background, config)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 153, in render_background
+    from PIL import Image, ImageDraw, ImageFont
+ModuleNotFoundError: No module named 'PIL'
+
+======================================================================
+ERROR: test_output_collision_during_build_is_not_overwritten (test_macos_dmg.MacDmg.test_output_collision_during_build_is_not_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 130, in test_output_collision_during_build_is_not_overwritten
+    dmg.build(self.app, self.output, 'osx-arm64', self.config['version'], builder=collision, verifier=lambda *a: None)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 229, in build
+    render_background(background, config)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 153, in render_background
+    from PIL import Image, ImageDraw, ImageFont
+ModuleNotFoundError: No module named 'PIL'
+
+======================================================================
+ERROR: test_recording_builder_gets_approved_layout_and_input_stays_intact (test_macos_dmg.MacDmg.test_recording_builder_gets_approved_layout_and_input_stays_intact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 108, in test_recording_builder_gets_approved_layout_and_input_stays_intact
+    dmg.build(self.app, self.output, 'osx-arm64', self.config['version'], builder=builder, verifier=lambda *a: None)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 229, in build
+    render_background(background, config)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/macos_dmg.py", line 153, in render_background
+    from PIL import Image, ImageDraw, ImageFont
+ModuleNotFoundError: No module named 'PIL'
+
+======================================================================
+FAIL: test_custody_source_must_match_notes_source (test_release_changelog.ReleaseNotes.test_custody_source_must_match_notes_source)
+----------------------------------------------------------------------
+ValueError: Unsafe asset input
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/tests/test_release_changelog.py", line 153, in test_custody_source_must_match_notes_source
+    with self.assertRaisesRegex(ValueError,'changelog source'):publisher.collect(output,'2.0.0','2026-10-16','production',self.source)
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "changelog source" does not match "Unsafe asset input"
+
+======================================================================
+FAIL: test_actual_dotnet_launcher_embeds_manifest (test_windows_dpi.WindowsDpiContract.test_actual_dotnet_launcher_embeds_manifest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/distribution/tests/test_windows_dpi.py", line 47, in test_actual_dotnet_launcher_embeds_manifest
+    self.fail('Launcher resource QA requires DOTNET or dotnet on PATH')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Launcher resource QA requires DOTNET or dotnet on PATH
+
+----------------------------------------------------------------------
+Ran 147 tests in 18.119s
+
+FAILED (failures=2, errors=5, skipped=1)
+Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmphzywyhj2/remote/Star-Tournament-1.2.3-Windows-x64-Setup.exe

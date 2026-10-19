@@ -1,0 +1,128 @@
+{
+  "baseline": "codex/game-standard-alignment@4aa5ff40",
+  "completion_proven": false,
+  "requirements": {
+    "count": 110,
+    "missing": [],
+    "extra": []
+  },
+  "options": {
+    "count": 30,
+    "missing": [],
+    "extra": []
+  },
+  "unchanged_normative_template_hashes": {
+    "menu-base/requirements.md": "db323d89da09de2beb1d5335768a9b53d46b58016790d2475d7c9c1e02ae9125",
+    "settings/requirements.md": "b645bcb48bbf9f4ab4878ad1ccfc630f30facf356b940bb18ab1980a22bfc6d1",
+    "settings/controls-help.md": "b32ac37d9bda0fe3f5b1b8a8f68a902c80bd089d0254c9d7d8d555e6dc8f0a85",
+    "design-lab/requirements.md": "184031cea05d8e258afc42a24e66a6656f641a401e60b85b87a4984d02be80ce",
+    "updates/requirements.md": "67ed5e519a816e210f3c4b5775fe0573c576e584624160f0a9e274e7a4c2d359",
+    "installer/requirements.md": "2f52a6aac7990c500096c47c1edb30005ed356af4f8081e30c4b28a5aa3952ff",
+    "settings/options.md": "de1ce1eae423a35722b5dad2b260292065ec3f8e08f31ecb5607285da179fcd5",
+    "design-lab/parameter-catalog.md": "421340469180cb897144be88fc145ae8c0967895c7e751a24a091a719d3d9383",
+    "installer/platforms.md": "997b396b184fac481b4052659bcf924dfa70b7795fffa969154898b234858cb9",
+    "updates/release-format.md": "2d0dcc50575aeca6d996a0f007ec7d20ac0e576a071299982c5e5cdf59dbe80d"
+  },
+  "template_local": "9cc4415db05976b7a67eadcbbccaad5ffa984c79",
+  "template_origin_main": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "only_local_diff": "AGENTS.md; no feature changes",
+  "ancestor_milestones": {
+    "Q5": "f4b63c3d19b4e7ca2d76bf5d64de3690f4220fdb",
+    "Q6": "21fe689db4d51a2f314477be0101b092c1ea8121",
+    "Q7": "fa13ca57c42458c64eb7861ddd45d337a8f05153",
+    "Q8-core": "c6eebc62f29974c9f46fb994ab36dd492307f24a",
+    "Q8-focus": "76b9e43dc1aa66694aa271f6b2d022b184b4b151",
+    "Q8-back": "9a4e083c0bd80d3963e87fc7ded45658d4e639bd",
+    "Q8-setup": "670e7f38ea79e67e595e6abbc35f92f902a4792a",
+    "Q9": "4aa5ff4083c1d531718ac195d86670383ba05c05",
+    "Q10": "20b2f1247f8ceee467ec96f96577350e3304924c"
+  },
+  "saved_xml_inspected": {
+    "docs/evidence/standard-menu-actions/implementation/initial/play.xml": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "c5a8dc0ac1d66e4e5cce89aa915dddf830cac2a35645e2051d8c6648710fd2cc",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-menu-actions/implementation/play.xml": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "cd0658df67e2a0c561a42e6ede497a8e55cc1b4e08ce9cd6b46935d0f672d307",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-design-lab/pause-identity/results.xml": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "dc3bc60f4aa53d14b7245a4cee7854d9fd2eefb175863f83244ce138ac68e520",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-design-lab/author-fallback/play.xml": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "4337e8654e9f700a3369a3418d6b3f8221883895f6df16db3ce4efb389b1a0db",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-graphics-quality/implementation/edit.xml": {
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "a3c6355e04fd4c99cc8de13fa89776210a9b996ab6c7c13bc9049e93b59611ae",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-graphics-quality/implementation/play.xml": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "5b6cba85ef594770e43f5acc3855466fccec6406be0d600de944ebe7dbb4a928",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-device-hints/back/edit.xml": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "e9b671e5726d9565c00f7d4c6769ba9be121681e20f32773bdcd189e2674e0c8",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-device-hints/back/final.xml": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "eb99b33ce7ca73fa558dcc2b021e836888ab0047024b24c2992405700fd4e463",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    },
+    "docs/evidence/standard-device-hints/setup/final.xml": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "61690b3834d9a51f18db3a08e7f1702da8ecf59c225f3d9902186339e540df41",
+      "scope": "reused exact saved milestone; not a new runtime execution"
+    }
+  },
+  "Q5_unique_play_cases": 9,
+  "current_source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "09237d8f4d983e89c39751373261abf2478831e501c360c8a80c3457faf0e8e8",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundPauseMenus.cs": "31ef04e5e0a54ee0a7ea28e89fc2d846576ce339f6c0542c46d5d6be719086d7",
+    "unity/Assets/StarTournament/Runtime/NativeVisualPreferences.cs": "1d046704411e9e2eb06cd84978201059ee51d3d47268a1426b7afddb6393b477",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "3df3b8fc80e934c87ad006f5d78b83e4203b7d11368c1b98e7ad3c1a5e7cbfc7",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs": "ce8750d1aaf7b381672c06c6bf0ba48d2b694098ed4de2071a1380355c3620af",
+    "unity/Assets/StarTournament/Runtime/MenuActionHint.cs": "27721dc7458a845ae4f1b08bb1d3babe2f76cd5afa40d3efb1a059b19c033f45",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundBackRouting.cs": "996a252afc8cb1b0cc1a8a9f4231a7c4d1190f2817dc2807bbe1189e216468c6",
+    "distribution/macos_dmg.py": "0b6137fe83f6daadb660af2041ad30ae2bf463fa82dc8569659209ff1db98dc3",
+    "distribution/package.py": "f82b1eb553e6a094d38f1524e074802a7bf27a9c83d6503a7d766c12658e602e",
+    "distribution/publish_release.py": "1cd28c858514c11c5d68fd21c457037e50d798aed9f810a072eb17466e74d49c"
+  },
+  "remaining": [
+    "Q5/Q6/Q7/Q8/Q9/Q10 source implementations saved; physical/native/human acceptance remains unverified, actual DMG NotRun",
+    "macOS actual DMG/Finder/Applications/minimum OS/installed acceptance NotRun (source pipeline implemented)",
+    "macOS first-install preflight and native installed pair/data rollback unverified",
+    "native installed/device/human acceptance not run",
+    "first schema1/protocol1 transition: constrained bootstrap issuer, pre-apply authority/argv/health/recovery handoff and native verification missing; later broker upgrade foundation exists",
+    "Current Windows native apply source conflict fixed by owned full-payload transaction (177 .NET checks + real signed archive staging); actual Windows installed ACL/UAC/launch acceptance and protocol1/bootstrap migration remain NotRun/open."
+  ],
+  "native_evidence": "missing/NotRun; no new Player/installer/Windows/hardware/human run",
+  "legacy_environment_question": "align-standard-release-compatibility Q2 open, automatic transition Q1 remains mandatory"
+}

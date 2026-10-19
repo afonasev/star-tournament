@@ -1,0 +1,8 @@
+test_mac_first_install_routes_to_dmg_and_records_exact_custody (test_macos_package.MacPackageRoute.test_mac_first_install_routes_to_dmg_and_records_exact_custody) ... ok
+test_outer_os_floor_comes_from_actual_player_not_a_hardcoded_caption (test_macos_package.MacPackageRoute.test_outer_os_floor_comes_from_actual_player_not_a_hardcoded_caption) ... ok
+test_update_only_never_builds_or_keeps_first_install_artifacts (test_macos_package.MacPackageRoute.test_update_only_never_builds_or_keeps_first_install_artifacts) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.016s
+
+OK

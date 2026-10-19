@@ -1,0 +1,7 @@
+{
+  "unity/Assets/StarTournament/Runtime/MouseSensitivityPreference.cs": "863a609e2a5e08a82bd701dfd7f317316bebdbd2f7aab599da4193560f5f9242",
+  "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs": "2db6508e1de45e6a50f012ea07a2ca909d90a837777f116ccad29adb82e3cfd2",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "98b57d0abfc203e73e482e62463c8978eb9b4b5a54b33e9e4820a11b1f65fb42",
+  "unity/Assets/StarTournament/Tests/EditMode/MouseSensitivityPreferenceTests.cs": "5d963c688191998d10b26d7c642e23dbc28a37c912216aae41213e9e3616b770",
+  "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "376391906d27b63abf22b4639355e3243393843ae7356c44aacfbd94d77f33ce"
+}

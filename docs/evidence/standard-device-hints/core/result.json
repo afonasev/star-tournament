@@ -1,0 +1,102 @@
+{
+  "baseline": "codex/game-standard-alignment@f4b63c3d",
+  "approval": "Q8/29 resolved",
+  "scope": "Shared formatter prerequisite + existing text/reset shortcuts ONLY; full Q8 remains open",
+  "editmode_unique_passed": 8,
+  "playmode_unique_passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "phases": {
+    "initial-edit": {
+      "id": "2",
+      "testcasecount": "8",
+      "result": "Passed",
+      "total": "8",
+      "passed": "8",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:08:04Z",
+      "end-time": "2026-10-17 08:08:04Z",
+      "duration": "0.1126675"
+    },
+    "edit": {
+      "id": "2",
+      "testcasecount": "8",
+      "result": "Passed",
+      "total": "8",
+      "passed": "8",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:08:45Z",
+      "end-time": "2026-10-17 08:08:46Z",
+      "duration": "0.0812897"
+    },
+    "initial-play": {
+      "id": "2",
+      "testcasecount": "3",
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:08:58Z",
+      "end-time": "2026-10-17 08:09:19Z",
+      "duration": "21.5058382"
+    },
+    "play": {
+      "id": "2",
+      "testcasecount": "3",
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:10:33Z",
+      "end-time": "2026-10-17 08:10:59Z",
+      "duration": "26.6148634"
+    }
+  },
+  "runner_exits": {
+    "41768": 0,
+    "26540": 0,
+    "1963": 0
+  },
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "3281d6f5d3cfd6a910ab4481a619217956409c0889a360820ebd9603ebb4dd98",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundTextEntry.cs": "9d7f478a19502f95adcbdd7dfc7dd074f6b67fc6f6d93454eedd6edc96abf5c0",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeTextEntryTests.cs": "7a3a87a9abb54804a226fed2c8ee1bed8dbae532f40b1cf480d248dd5294fdc9",
+    "unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs": "2a01a296b6146938b05211b6de1e453dfb614eacb689232065e04caff4c5470e",
+    "unity/Assets/StarTournament/Runtime/Input/MenuGamepadHints.cs": "bbb8d76eeb41be567d7f01233e04a0ce99149d66865cc68832bce2a15446e435",
+    "unity/Assets/StarTournament/Tests/EditMode/MenuGamepadHintTests.cs": "bee977f449f04707c9ff7b467c417329f010529ac855e8c11cc0a3a95da00346"
+  },
+  "proof": [
+    "family descriptors use physical South/East/West/North/Start contracts",
+    "actual added/enabled/removed/keyboard hint guard",
+    "generic text-entry shortcuts, foreign pad/opening hold/cancel intact",
+    "keyboard hides pad hints; exact existing profile persistence",
+    "reset North glyph and disabled modal ownership guard",
+    "incomplete numeric Apply disabled, no Start glyph, Start refusal, valid restore and exact target preserved"
+  ],
+  "limitations": [
+    "PS/Xbox/Switch glyphs verified by advertised descriptors, not physical devices",
+    "full focused South / explicit Back / top-context / separate seat & operator binding remains unimplemented",
+    "fixed B/legacy history footer remain; do not claim menu compliance",
+    "no full, Player, installer, build, deploy or human/physical acceptance"
+  ]
+}

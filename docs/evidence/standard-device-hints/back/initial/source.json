@@ -1,0 +1,18 @@
+{
+  "unity/Assets/StarTournament/Runtime/MenuActionHint.cs": "27721dc7458a845ae4f1b08bb1d3babe2f76cd5afa40d3efb1a059b19c033f45",
+  "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "30d7c8ed047410ebf4f3e635960cd0041333ba5c63036e32bf5102c9e70c73ed",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "09237d8f4d983e89c39751373261abf2478831e501c360c8a80c3457faf0e8e8",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundGraphicsSettings.cs": "2ffd8100c6a858921237c8ae315cea5901b04f7a87a3f4b6d21015965d9d2f3b",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs": "da8196a96312c0def03c93f9c5f472679d48bb3d8e9cb7399dccf36edcc0684f",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundPauseMenus.cs": "31ef04e5e0a54ee0a7ea28e89fc2d846576ce339f6c0542c46d5d6be719086d7",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundReleaseHistory.cs": "c72ff9a361f745545284e96d575ed5352fac2c100996b4f87db2a7c79da2fa1e",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundRosterCards.cs": "b779def2b4042694f84be983eab5b3251c148223a3b314a934841cd8a030bbbb",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs": "4d468a28267780b665b2b57770e34dedd0fba3f4d71c43d0390eb5bdba4a96fd",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "a09de0c57ebe39e4e0914b35875e61354120c11dd4bed564b284e2cad6eec243",
+  "unity/Assets/StarTournament/Tests/EditMode/MenuActionHintTests.cs": "84ee9cc43db0dca18b3e01f21ac023cce3036ac08d32752a4e5fcef2093c48af",
+  "unity/Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs": "d4097722073b6696f270cca33e355ed0ac1856cc2e034a37dba68c193597d227",
+  "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "e1c883fa967b2fea2e116522e3ba14c94c0d93aea090cc90c17c9f03c98bcd5b",
+  "unity/Assets/StarTournament/Tests/PlayMode/NativeUpdateMenuTests.cs": "d95bba5e00d16dddf010f8e7ccaef206a9ac084f015a1572d053adb6979cec29",
+  "unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs": "e3e8fccf6334b18b572084d436ebed03e5e5f0a0974a0e25126ddacb3712adaf",
+  "unity/Assets/StarTournament/Runtime/ProvingGroundBackRouting.cs": "996a252afc8cb1b0cc1a8a9f4231a7c4d1190f2817dc2807bbe1189e216468c6"
+}

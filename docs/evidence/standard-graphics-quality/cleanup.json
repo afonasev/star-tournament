@@ -1,0 +1,13 @@
+{
+  "removed": [
+    ".local/unity-evidence/direct-tests.Xut7sO",
+    ".local/unity-evidence/direct-tests.rxNk9G",
+    "docs/design/template-standard/__pycache__/mockups.cpython-313.pyc",
+    "/tmp/st-quality-instructions.json",
+    "/tmp/st-quality-scope.json",
+    "/tmp/st-quality-flow-result.json"
+  ],
+  "ownership": "Two direct-test dirs created <0.1s before own Editor logs, empty; both own Editor sessions terminal/capacity released. Only newly generated mockup pycache/temp metadata removed.",
+  "restored": "ShaderGraphSettings.asset: only Unity-added trailing whitespace; no production setting changed",
+  "retained": "Owned active Unity Library/worktree for continuing full parent; source/XML/JSON/logs preserved"
+}

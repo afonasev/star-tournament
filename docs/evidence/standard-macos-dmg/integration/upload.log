@@ -1,0 +1,27 @@
+test_changed_dmg_never_contacts_upload_destination (test_publication.PublicationContract.test_changed_dmg_never_contacts_upload_destination) ... usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Artifact changed since packaging; installer may belong to another version
+ok
+test_changed_full_package_never_contacts_vps (test_publication.PublicationContract.test_changed_full_package_never_contacts_vps) ... usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Package differs from signed manifest
+ok
+test_dmg_uses_versioned_installer_destination_after_custody_checks (test_publication.PublicationContract.test_dmg_uses_versioned_installer_destination_after_custody_checks) ... ok
+test_exact_artifacts_can_publish (test_publication.PublicationContract.test_exact_artifacts_can_publish) ... ok
+test_newer_unversioned_installer_cannot_publish_as_old_version (test_publication.PublicationContract.test_newer_unversioned_installer_cannot_publish_as_old_version) ... usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Artifact changed since packaging; installer may belong to another version
+ok
+test_wrong_platform_manifest_never_contacts_vps (test_publication.PublicationContract.test_wrong_platform_manifest_never_contacts_vps) ... usage: upload_candidate.py [-h] --runtime {win-x64,osx-arm64,osx-x64}
+                           --releases RELEASES --version VERSION
+                           [--installers]
+upload_candidate.py: error: Signed manifest target/version mismatch
+ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.010s
+
+OK

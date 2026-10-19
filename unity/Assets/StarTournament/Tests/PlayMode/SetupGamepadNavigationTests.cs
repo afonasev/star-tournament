@@ -67,10 +67,44 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(names.Any(n=>n.StartsWith("setup-step-")||n=="setup-next"||n=="setup-previous"||n=="Начать — четыре игрока"),Is.False,"Tabs and footer must not be navigable");
             return names;
         }
+        [UnityTest] public IEnumerator SetupShortcutHintsFollowDeviceAndEditorAvailability()
+        {
+            yield return Load();
+            var next=B("setup-next");var start=B("Начать — четыре игрока");
+            Assert.That(next.GetComponentInChildren<Text>().text,Is.EqualTo("ДАЛЕЕ"),"Caption must remain independent of controller legends");
+            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Start"));
+            yield return CaptureIfRequested("04-map-start-hint");
+            keyboard=InputSystem.AddDevice<Keyboard>();
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.LeftShift));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Keyboard hides pad shortcuts");
+            Assert.That(next.GetComponentInChildren<Text>().text,Is.EqualTo("ДАЛЕЕ"));
+            yield return Press(GamepadButton.Start);Assert.That(Step,Is.EqualTo(1));
+            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            yield return Press(GamepadButton.Start);Assert.That(Step,Is.EqualTo(2));
+            Assert.That(start.GetComponentInChildren<Text>().text,Is.EqualTo("НАЧАТЬ МАТЧ"));
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Start"));
+            Assert.That(B("roster-add-human").GetComponentInChildren<Text>().text,Is.EqualTo("+ ИГРОК"));
+            Assert.That(B("roster-add-bot").GetComponentInChildren<Text>().text,Is.EqualTo("+ БОТ"));
+            yield return CaptureIfRequested("05-roster-start-hint");
+            B("roster-card-0").onClick.Invoke();yield return null;yield return null;
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Participant editor owns input");
+            yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False);
+            yield return Press(GamepadButton.East);ground.RemoveBot(0);yield return null;yield return null;
+            Assert.That(start.IsInteractable(),Is.False);
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Invalid roster cannot promise Start");
+            yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False);
+            EventSystem.current.SetSelectedGameObject(B("roster-add-bot").gameObject);
+            yield return Press(GamepadButton.South);
+            Assert.That(B("roster-done").gameObject.activeInHierarchy,Is.True,"Focused add-bot action still opens its actual participant editor");
+            Assert.That(ground.Running,Is.False);
+        }
         [UnityTest] public IEnumerator ArrowsChooseMapAEditsRulesStartAdvancesAndBPreservesDraft()
         {
             yield return Load();Assert.That(Focus,Is.EqualTo("arena-choice-0"));
-            Assert.That(Reachable(),Is.EquivalentTo(new[]{"arena-choice-0","arena-choice-1","arena-choice-2"}));
+            Assert.That(Reachable(),Is.EquivalentTo(new[]{"arena-choice-0","arena-choice-1","arena-choice-2","arena-choice-3"}));
             yield return Press(GamepadButton.DpadDown);
             Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));Assert.That(Focus,Is.EqualTo("arena-choice-1"));
             Assert.That(B("arena-choice-1").GetComponent<Image>().color,Is.Not.EqualTo(B("arena-choice-0").GetComponent<Image>().color));

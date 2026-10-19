@@ -1,0 +1,6 @@
+{
+  "channel": "production",
+  "mode": "production-new-install-only",
+  "source_ref": "eba44b3102eb820e9983244e77683fba82524965",
+  "version": "0.1.6"
+}

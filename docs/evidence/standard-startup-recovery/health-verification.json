@@ -1,0 +1,57 @@
+{
+  "baseline": "39539d0f",
+  "branch": "codex/game-standard-alignment",
+  "scope": "Launcher+Unity critical menu startup handshake; recovery activation/supervisor not wired",
+  "checks": [
+    {
+      "command": "dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --startup-health",
+      "passed": 12,
+      "exit_code": 0,
+      "evidence": "health-final.log"
+    },
+    {
+      "command": "dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --feedback",
+      "passed": 33,
+      "exit_code": 0,
+      "evidence": "health-feedback.log"
+    },
+    {
+      "command": "dotnet build --no-restore distribution/maintenance/Maintenance.csproj",
+      "exit_code": 0,
+      "warnings": 0,
+      "evidence": "health-maintenance-build.log"
+    },
+    {
+      "command": "UNITY_RUN_MODE=shared unity/tools.sh test-play-filter 'NativeStartupHealthTests;NativeLabStartupTests.BlockedHistoryAllowsDefaultMenuMatchAndLateCompletionKeepsOwners'",
+      "passed": 4,
+      "exit_code": 0,
+      "evidence": "health-unity-first.xml"
+    },
+    {
+      "command": "UNITY_RUN_MODE=shared unity/tools.sh test-play-filter 'NativeStartupHealthTests'",
+      "passed": 3,
+      "exit_code": 0,
+      "evidence": "health-unity-final.xml",
+      "reason": "After test-only worker/gate cleanup improvement; unchanged native Lab neighbor reused from first run"
+    }
+  ],
+  "unique_native_cases": 4,
+  "sources": {
+    "distribution/launcher/Program.cs": "f4ac6a5a99481cddd86c7e170f3bfcd1802e30ed9f8d9ca601ddaf37396e56fc",
+    "distribution/launcher/StartupHealthMonitor.cs": "5a7b88012264e1ef3e8e1d0fb8d2625e31c751cb02f725cd6b26114037aa9ab3",
+    "distribution/maintenance/Program.cs": "4813ea3e2c6f524fdd14d9dac04df18f06f724ad05d5d2adb37bc62a137cebdd",
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "35d08abe7f2ad4f094abe2375fb991077d110f20648ee2e5c06b695203559bca",
+    "unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs": "9f2d53ed3384be906cf33091dc6402aad907a157ffb4a3e4de7b9285e4536275",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeStartupHealthTests.cs": "78f85205015f2e36de3cf7fe3446cd81e308fa1ce2a0232150115b3b5b4e01a7",
+    "distribution/tests/StartupHealthChecks.cs": "b258c8b48dba96821d74ff542e680f89650c5582bac32e7de6a8e259ce8f6486"
+  },
+  "not_run": [
+    "installed launcher/Player",
+    "stable supervisor restoration",
+    "Windows runtime/ACL",
+    "Player build",
+    "full suite",
+    "publication/deploy",
+    "human/device acceptance"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "main_before_integration": "f8a54b7eb41c3afb13049d2937e3bbae3d24ed36",
+  "status": " M unity/ProjectSettings/GraphicsSettings.asset\n M unity/ProjectSettings/QualitySettings.asset\n M unity/ProjectSettings/ShaderGraphSettings.asset\n?? tools/__pycache__/\n?? unity/ProjectSettings/PackageManagerSettings.asset\n?? unity/ProjectSettings/URPProjectSettings.asset\n",
+  "tracked_diff_sha256": "1c94f9d73fe63ebe8239c5424c186f6385d2aab400f561137b03d44bced0c1a2",
+  "untracked_project_settings": {
+    "unity/ProjectSettings/URPProjectSettings.asset": "68d75e5e1502dd7a4c18b7306430916b5ee8dadfdb0fbb588893fe38eaa2c056",
+    "unity/ProjectSettings/PackageManagerSettings.asset": "8f19147a8cca86d1b47fa1af6cd2e2d45b16747f409f55b61cde7dc2bc4c599d"
+  }
+}

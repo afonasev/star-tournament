@@ -1,0 +1,23 @@
+# Lab consumer audit
+
+Baseline `7583db12`, branch `codex/game-standard-alignment`; immutable template pin `0c2d4562683252d54736f294dc1af463050eac17`, LAB-CATALOG-02/SCOPE-02.
+
+Audit input: catalogue/actual-catalogue.json,638 visible parameters across20 profiles;14974 exclusions. C# AST invocation/context/literal extraction with ast-grep; reviewed finite prefix/difficulty/palette/weapon/bone/default-preference bindings. Plain text references, factory declarations, history migrations and Review-only tools do not by themselves prove gameplay use. The resulting source map records actual consumer entry sites and their contexts; it does not claim exhaustive runtime branch execution.
+
+Concrete defect: MouseSensitivityPreference.Resolve used descriptor.DefaultValue for missing/invalid personal preferences, ignoring selected Lab input.mouseDegreesPerPixel in actual menu/guest resolution. Fixed to read the selected profile value with validated factory fallback only if that value itself is invalid; valid personal preferences still win. A dependency-injected internal read overload tests this without touching player preferences. Existing production API remains unchanged.
+
+Computed IsPreferenceDefault metadata and the approved focus footer explain personal/general identity precedence for15 actual preference-default fields. No stored descriptor/hash format or balance values changed; no new layout. Non-preference fields keep ordinary next-game application wording.
+
+Affected checks selected before execution: EditMode MouseSensitivityPreferenceTests.MissingPersonalPreferenceUsesSelectedLabValueInsteadOfFactoryDefault;MouseSensitivityPreferenceTests.ValidPersonalValueWinsAndInvalidValueFallsBackToLab;GamepadLookSettingsTests.LegacyIdentityDefaultsAndNewSettingsPersistWithoutAffectingOtherIdentity;LabParameterCatalogTests. Covers real fallback regression, valid/invalid preferences, independent identities, computed metadata and serialization/default authority. PlayMode LabAuthoringRuntimeTests.ConsumerHintsExplainPersonalDefaultsWithoutChangingLabState covers real focus copy, raw Lab data/active/file unchanged, and rendered720p. All shared Editor runs -noaudio -muted; EditMode -nographics, UI graphics enabled. No full suite, Player build, release or deploy.
+
+## Result and limits
+
+12/12 affected EditMode and1/1 PlayMode Passed. Real720p PNG viewed: three-line footer clearly qualifies personal-setting defaults; ordinary damage field has no preference qualification. Lab draft/hash/active/file remain unchanged while browsing. No global PlayerPrefs were mutated by the added tests. Initial compile attempt was NotRun (missing internal visibility from separate test assembly); fixed test access via reflection without widening production API, compiler log retained. Final XML has nonzero executed cases and no failures/skips.
+
+`consumer-source-map.json` maps638/638 keys to source consumer entry sites. `audit-baseline-sha256.json` binds every referenced file to baseline7583db12; prefixes and finite dynamic selectors are explicitly explained in entry context. This is source coverage, not a claim of638 successfully exercised effects. Source binding chain: CacheLabIdentity detaches saved snapshot; ApplySavedLabRevision copies all registered profiles only on next setup/preparation; world presentation rebuilds, actors/cameras and match owners are frozen/rebuilt per match. Personal preference consumers use their general/identity precedence.
+
+Concrete next unresolved finding: ui.indicatorVisualHeight, ui.nameFontSize, ui.killNoticeFontSize, ui.killNoticeBottom, ui.killNoticeTop only have startup CreateInterface reads in current source map. Their effective next-match application needs targeted Editor reproduction and correction if confirmed. ui.fontSize/heading/table caches should be checked in that same dependency slice. Do not mark LAB-CATALOG-02 or the full alignment complete from this map. Remaining full Default/package/source-execution compatibility policy and parent matrix remain open.
+
+Scope exclusions: LabBundle.IsVisible/IsEditable and ResetLabDraft filter the single registry before search/group/all-changes; Save rejects any changed noneditable value.14974 excluded paths are retained in immutable history and absent from current editor inventory; no arbitrary new exclusion was added by this slice.
+
+Own temporary AST/run outputs removed after durable Git preservation; active worktree/Library retained. A foreign star-release-015 Windows build was observed and left untouched. No build/full/release/deploy or physical/human acceptance performed by this slice.

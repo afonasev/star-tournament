@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/Users/eaafonasev/.dotnet/dotnet",
+    "msbuild",
+    "distribution/maintenance/Maintenance.csproj",
+    "-target:PrepareForPublish;ComputeResolvedFilesToPublishList;_ComputeFilesToBundle",
+    "-property:Configuration=Release",
+    "-property:DebugType=None",
+    "-property:OutputType=WinExe",
+    "-getProperty:PublishSingleFile,SelfContained,RuntimeIdentifier",
+    "-getItem:ResolvedFileToPublish,_FilesToBundle",
+    "-verbosity:quiet"
+  ],
+  "sdkPlanOnly": true,
+  "publishExecuted": false,
+  "properties": {
+    "PublishSingleFile": "true",
+    "SelfContained": "true",
+    "RuntimeIdentifier": "win-x64"
+  },
+  "outsideBundle": [],
+  "bundleFileCount": 174,
+  "assetTypeNativeMetadataRows": [],
+  "completePublishLayoutProof": false,
+  "note": "Partial SDK item plan before GeneratePublishDependencyFile/GenerateSingleFileBundle; current actual candidate layout must be checked by future producer."
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<metadata>
+<id>tech.afonasev.star-tournament.win-x64</id>
+<title>Star Tournament</title>
+<description>Star Tournament</description>
+<authors>tech.afonasev.star-tournament.win-x64</authors>
+<version>0.1.5</version>
+<channel>win-x64</channel>
+<mainExe>StarTournamentLauncher.exe</mainExe>
+<os>win</os>
+<rid>win-x64</rid>
+<shortcutLocations>None</shortcutLocations>
+<shortcutAumid>velopack.tech.afonasev.star-tournament.win-x64</shortcutAumid>
+<machineArchitecture>x64</machineArchitecture>
+</metadata>
+</package>

@@ -1,0 +1,28 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=NativeStartupHealthTests
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-playmode.twJgU2/qa-lab-history.json
+revision=39539d0f6767ef29251b62fdd359218b1475cd78
+ M ../distribution/README.md
+ M ../distribution/launcher/Program.cs
+ M ../distribution/maintenance/Program.cs
+ M ../distribution/tests/Launcher.Contracts.csproj
+ M ../distribution/tests/Program.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../distribution/launcher/StartupHealthMonitor.cs
+?? ../distribution/tests/StartupHealthChecks.cs
+?? ../docs/evidence/standard-startup-recovery/health-feedback.log
+?? ../docs/evidence/standard-startup-recovery/health-final.log
+?? ../docs/evidence/standard-startup-recovery/health-first.log
+?? ../docs/evidence/standard-startup-recovery/health-maintenance-build.log
+?? ../docs/evidence/standard-startup-recovery/health-maintenance-restore.log
+?? ../docs/evidence/standard-startup-recovery/health-qa-scope.md
+?? ../docs/evidence/standard-startup-recovery/health-restore.log
+?? ../docs/evidence/standard-startup-recovery/health-unity-command.log
+?? ../docs/evidence/standard-startup-recovery/health-unity-final-command.log
+?? Assets/StarTournament/Runtime/NativeStartupHealth.cs
+?? Assets/StarTournament/Runtime/NativeStartupHealth.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/NativeStartupHealthTests.cs
+?? Assets/StarTournament/Tests/PlayMode/NativeStartupHealthTests.cs.meta

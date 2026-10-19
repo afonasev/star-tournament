@@ -1,0 +1,64 @@
+{
+  "baseline": "478417db",
+  "branch": "codex/game-standard-alignment",
+  "template_pin": "0c2d4562683252d54736f294dc1af463050eac17",
+  "decision": "Q2/user reply call_0837c76c7a3645b691acee3f5741a42e",
+  "unique_passed": 29,
+  "player_build": false,
+  "full_tests": false,
+  "deploy": false,
+  "sources": {
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "bc746f6a7cf40d76fbc1b5d8bde279a6e397cfda4de983ff739711c7208de201",
+    "unity/Assets/StarTournament/Tests/EditMode/BloodProfileTests.cs": "610a99eadd8b7def0ccf779e2b06c7ba2bbee9c4c64d9009ba682430028fa93b",
+    "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "0a1f3e3a07d3e840383b21b3e3ab9e35a1edfe9c96b5342fbc09b3eddbf31f1f",
+    "unity/Assets/StarTournament/Tests/EditMode/FirstPersonWalkTests.cs": "28963c571571e39899d7ea9666749befcd9559561ec99a12ede299df7547c260",
+    "unity/Assets/StarTournament/Tests/EditMode/LabCompatibilityDiagnosticsTests.cs": "c9d0b6e644d724459576f282d3952c6ecac6433d3f7e28a2a4c40edf2d1688e1",
+    "unity/Assets/StarTournament/Tests/EditMode/VisualPolishSettingsTests.cs": "b8aa764cad418e53f37f44acd98680ccec8cd4b5163faea7d9d99144d3be16b8",
+    "unity/Assets/StarTournament/Tests/EditMode/WeaponSwitchPresentationTests.cs": "8923a462333e940237d9b80993c722563d7e34f58f829e4a7b87b93a1d774d37",
+    "unity/Assets/StarTournament/Tests/EditMode/WellArenaTests.cs": "8bc7ca9b747e109be6e696bd4f038de11d9f4230c3c85ef5d4e7164a0dacf72d",
+    "docs/GAME_SPEC.md": "d2a38d52a2be047e88790f4654c3d083d15181df38c1b13a45a15568849d9522"
+  },
+  "runs": {
+    "initial.xml": {
+      "total": "19",
+      "passed": "14",
+      "failed": "5",
+      "skipped": "0",
+      "duration": "129.5289885"
+    },
+    "editmode.xml": {
+      "total": "20",
+      "passed": "20",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "408.3754084"
+    },
+    "neighbors-initial.xml": {
+      "total": "9",
+      "passed": "7",
+      "failed": "2",
+      "skipped": "0",
+      "duration": "81.7604452"
+    },
+    "weapons.xml": {
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "6.6347992"
+    }
+  },
+  "evidence_sha256": {
+    "editmode.xml": "49cb0b37948e34f2a9d6344c2c9cf02130b5ee641b6961e262e7c796f1b283f7",
+    "weapons.xml": "118adc8f086a710149203d9c7459d8adc2f7b09f0f26c26bc088b608f407337d",
+    "neighbors-initial.log": "84842af2ae7b4ae934d6b975c3f8a7b87a9cbff12c3fb11aff278dd23fbf2406",
+    "initial.xml": "cb121b99bdc42e12ce70addb97a7e8bd5035790eaa703cf46e657177a359b55d",
+    "neighbors-compile-notrun.log": "eb1a0846342f3cbe09fa961cbb5c9ace164eb927e048f63d08a1842894af6bab",
+    "verification.md": "f7a0a7ee54e784ee527befb0c042f015ef90f913002e9b83f0983ec743c63460",
+    "editor.log": "1fa99ebde86bbea91944e7da991d7307ecb40a20dc0ac6a9e06ffa8738be1784",
+    "initial.log": "51433b057c2c624d3e3402b36b4015d10f35d9f624e017174ec6690123734d29",
+    "weapons.log": "52697aa9575e2784cd8a4796d2fefc18c1a854539888900293218a68930c57c4",
+    "compatibility-audit.md": "859a9e5456c4877cd345c8db39353c147d67d5ead9449cc9dbb3724eff1a5bb9",
+    "neighbors-initial.xml": "b39fc6c2535b494c4d3493a504a4b2ca9ebe740cbd2d16bc593812faa859fa26"
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "baseline": "codex/game-standard-alignment@c6eebc62",
+  "approval": "Q8/29",
+  "scope": "Focused South action binding4.1b only; fullQ8 and explicit East/shortcuts remain OPEN",
+  "results": {
+    "edit": {
+      "id": "2",
+      "testcasecount": "12",
+      "result": "Passed",
+      "total": "12",
+      "passed": "12",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:23:40Z",
+      "end-time": "2026-10-17 08:23:41Z",
+      "duration": "0.3048577"
+    },
+    "play": {
+      "id": "2",
+      "testcasecount": "8",
+      "result": "Passed",
+      "total": "8",
+      "passed": "8",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:24:25Z",
+      "end-time": "2026-10-17 08:25:13Z",
+      "duration": "48.5958335"
+    }
+  },
+  "runner_exits": {
+    "40994": 0,
+    "44909": 0,
+    "99359": 0
+  },
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "b8d78f9b3643d50e31d7058616b4e8a5eceff081fbf8ea9ff9ac2d3888502c97",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundControlSettings.cs": "4723865345ca511321ca7b2e39dba1f7b3088d84b00e23ba67263074c1535e6f",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "f196a177b25b159096994fed148214b120b664a933329360cf2b81dea5ef04c7",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs": "af9c3b936dab62cc4572a77703adc39fdc1cd1ef758e974ce42ed199a59712b4",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundPauseMenus.cs": "d141a41abb7fadeffbb6e08d6e34ba84ddb04bb70431af5e4a5595ec571e9947",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundReleaseHistory.cs": "f75b6a35c7a55b36c8d98ee2e9707a5d0c0c3e21959f7fb7f516ecc1e5c1f7b2",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs": "21a6207f3e35d9250e2a9a243ea5a83eee207f45e4ef99eb5109e57abccba976",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "a44bb75d60cb449cbe3f2123a7cfb0f3d7d75e2e30342a52c697761eb9cd8786",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundTextEntry.cs": "7b03e7807b684ff9089bb42d8e441f6a57a05b4782ec0dad1904725eade7cdf7",
+    "unity/Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs": "970de37a5f40632000a63433fd250c3c8a9b2f339cf36946b8afdfbec2dd03f4",
+    "unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs": "fdbd9a6901f6f10531ce2b978657a0f177c6b2f5bb94f343b533a432a8614183",
+    "unity/Assets/StarTournament/Runtime/MenuActionHint.cs": "d90a9ce15880e466c9b19eb5319ec5f870610d01ec692e9aba38a3ac208ff186",
+    "unity/Assets/StarTournament/Tests/EditMode/MenuActionHintTests.cs": "f15d5956ac2139f553a89bdfd16b037553e89f1662e4cbe1c597a6a5417c7eb8"
+  },
+  "proof": [
+    "separate glyph never rewrites caption/value including literal suffix-like names",
+    "only focused available active semantic connected pad action displays South",
+    "narrow controls omit overlap without changing caption/layout",
+    "per-seat pause and SettingsView focus/device predicates; global/operator EventSystem",
+    "keyboard and mouse handover hide hints; actual last pad tracked",
+    "main/history footer pad-only no keyboard legends; permanent B removed",
+    "existing quality/shared gates/frozen match, modal text/profile persistence/foreign pad guards preserved"
+  ],
+  "images": "actual main pad/mouse, two-seat pause and text entry; all changed primary states inspected; diagnosticFPS is not performance acceptance",
+  "limits": [
+    "generic runtime frames and family descriptor tests do not prove physical controller devices",
+    "explicit East/extra shortcut predicates and all-family live virtual handover proof still required",
+    "source audit finds missing standalone profiles back handler; implement/test actual route before promising glyph",
+    "history currently resolves East from menuDevice before cursor remembers current non-submit pad; fix ordering with failing reproduction",
+    "Settings.Back from parameters returns to sections before Close, so unconditional Back glyph would be false",
+    "no full, Player, installer, build, deploy or physical/human acceptance"
+  ],
+  "initial_source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "b8d78f9b3643d50e31d7058616b4e8a5eceff081fbf8ea9ff9ac2d3888502c97",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundControlSettings.cs": "4723865345ca511321ca7b2e39dba1f7b3088d84b00e23ba67263074c1535e6f",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "f196a177b25b159096994fed148214b120b664a933329360cf2b81dea5ef04c7",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundMenus.cs": "af9c3b936dab62cc4572a77703adc39fdc1cd1ef758e974ce42ed199a59712b4",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundPauseMenus.cs": "d141a41abb7fadeffbb6e08d6e34ba84ddb04bb70431af5e4a5595ec571e9947",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundReleaseHistory.cs": "f75b6a35c7a55b36c8d98ee2e9707a5d0c0c3e21959f7fb7f516ecc1e5c1f7b2",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundSettingsView.cs": "21a6207f3e35d9250e2a9a243ea5a83eee207f45e4ef99eb5109e57abccba976",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundStandardSettings.cs": "a44bb75d60cb449cbe3f2123a7cfb0f3d7d75e2e30342a52c697761eb9cd8786",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundTextEntry.cs": "7b03e7807b684ff9089bb42d8e441f6a57a05b4782ec0dad1904725eade7cdf7",
+    "unity/Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs": "970de37a5f40632000a63433fd250c3c8a9b2f339cf36946b8afdfbec2dd03f4",
+    "unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs": "fdbd9a6901f6f10531ce2b978657a0f177c6b2f5bb94f343b533a432a8614183",
+    "unity/Assets/StarTournament/Runtime/MenuActionHint.cs": "4fe1bdaaebe210dc0aebfd36fd7d2943204511c66a3551bce9208bd73190a029",
+    "unity/Assets/StarTournament/Tests/EditMode/MenuActionHintTests.cs": "98b613edea57f4a33cd480a59d63e2b11a8a552d4435fd10a22a681a5a231b67"
+  },
+  "geometry_results": {
+    "edit": {
+      "id": "2",
+      "testcasecount": "5",
+      "result": "Passed",
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:28:00Z",
+      "end-time": "2026-10-17 08:28:01Z",
+      "duration": "0.2877678"
+    },
+    "play": {
+      "id": "2",
+      "testcasecount": "2",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-17 08:28:13Z",
+      "end-time": "2026-10-17 08:28:33Z",
+      "duration": "19.6156018"
+    }
+  },
+  "editmode_unique_passed": 13,
+  "playmode_unique_passed": 8,
+  "geometry_delta": "Use actual inset caption bounds/anchors. New exact engine geometry case + main/seat renders passed; no caption/layout changes.",
+  "geometry_images_byte_equal_prior": {
+    "main-mouse-720.png": false,
+    "two-seat-focused-pad-720.png": false,
+    "main-focused-pad-720.png": false
+  }
+}

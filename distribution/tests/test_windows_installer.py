@@ -133,8 +133,53 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
         self.assertIn("--check-legacy-user", self.source)
         self.assertNotIn("ReadRegStr $0 HKCU", self.source)
         self.assertIn('File /r "${INPUT_DIR}\\maintenance\\*"', self.source)
-        self.assertIn('ExecWait \'"$PLUGINSDIR\\StarTournamentMaintenance.exe" --check-idle "$INSTDIR"\'', self.source)
-        self.assertIn("Star Tournament уже установлена. Обновляйте игру из самой игры", self.source)
+        self.assertIn('ExecWait \'"${BROKER}" --check-idle "$INSTDIR"\'', self.source)
+        self.assertNotIn("Обновляйте игру из самой игры; для полной переустановки", self.source)
+        self.assertIn("--installer commit", self.source)
+
+    def test_os_floor_precedes_broker_extraction_without_blocking_uninstall(self):
+        init = self.source.split('Function .onInit', 1)[1].split('FunctionEnd', 1)[0]
+        self.assertIn('${IfNot} ${AtLeastWin10}', init)
+        self.assertIn('${OrIfNot} ${AtLeastBuild} 19043', init)
+        self.assertLess(init.index('${AtLeastBuild} 19043'), init.index('Call PrepareProtectedBroker'))
+        uninstall = self.source.split('Function un.onInit', 1)[1].split('FunctionEnd', 1)[0]
+        self.assertNotIn('AtLeastBuild', uninstall)
+        self.assertNotIn('AtLeastWin10', uninstall)
+
+    def test_repair_and_upgrade_page_matches_the_approved_flow(self):
+        self.assertIn('Page custom ExistingInstallPage', self.source)
+        page = self.source.split('Function ExistingInstallPage', 1)[1].split('FunctionEnd', 1)[0]
+        self.assertIn('$InstallMode == "fresh"', page)
+        self.assertIn('STR:Восстановить', page)
+        self.assertIn('STR:Обновить', page)
+        self.assertIn('Настройки, профили и история сохранятся.', page)
+        self.assertIn('"Установлена версия: $ExistingVersion"', page)
+        self.assertIn('Quit', page)
+
+    def test_every_candidate_file_is_staged_before_commit(self):
+        section = self.source.split('Section "Star Tournament (обязательный компонент)" MainInstall', 1)[1].split('SectionEnd', 1)[0]
+        self.assertIn('SetOutPath "$StageDir"', section)
+        self.assertNotIn('SetOutPath "$INSTDIR"', section)
+        self.assertNotIn('WriteRegStr', section)
+        self.assertLess(section.index('WriteUninstaller "$StageDir'), section.index('--installer commit'))
+        self.assertLess(section.index('--installer commit'), section.index('--installer finalize'))
+        self.assertLess(section.index('--installer finalize'), section.index('CreateShortcut'))
+        self.assertIn('SetOutPath "$BrokerDir"', section)
+        self.assertIn('Call RestoreInterruptedInstall', section)
+
+    def test_broker_custody_and_transaction_owner_survive_ui_callbacks(self):
+        self.assertIn('GetTempFileName $BrokerDir "$PROGRAMFILES64"', self.source)
+        self.assertIn('!define BROKER "$BrokerDir\\StarTournamentMaintenance.exe"', self.source)
+        self.assertIn('Call un.PrepareProtectedBroker', self.source)
+        custody = self.source.split('Function ${PREFIX}PrepareProtectedBroker', 1)[1].split('FunctionEnd', 1)[0]
+        self.assertLess(custody.index('.star-tournament-installer-temp.json'), custody.index('File /r'))
+        self.assertIn('Function .onGUIEnd', self.source)
+        self.assertIn('Function un.onGUIEnd', self.source)
+        for action in ('begin', 'commit', 'finalize', 'resume'):
+            line = next(line for line in self.source.splitlines() if '--installer '+action in line)
+            self.assertIn('$InstallerPid', line)
+        self.assertIn('!define MUI_DIRECTORYPAGE_VERIFYONLEAVE', self.source)
+        self.assertIn('GetInstDirError $0', self.source)
 
     def test_uninstaller_is_marker_gated_and_preserves_unknown_root_files(self):
         self.assertIn('.star-tournament-install.json', self.source)
@@ -159,9 +204,9 @@ class WindowsInstallerScriptContractTests(unittest.TestCase):
         # FindFirst/FindNext set the persistent NSIS flag at normal enumeration end.
         # ReadRegStr does the same for a partial install without registration.
         for operation, failure in [
-            ('CreateDirectory "$INSTDIR\\maintenance"', 'install_lock_failed'),
-            ('FileOpen $InstallFlag "$INSTDIR\\${MARKER_NAME}" w', 'install_recovery_setup_failed'),
-            ('WriteUninstaller "$INSTDIR\\Uninstall.exe"', 'install_recovery_setup_failed'),
+            ('FileOpen $InstallFlag "$StageDir\\maintenance\\installing.flag" w', 'install_transaction_failed'),
+            ('FileOpen $InstallFlag "$StageDir\\${MARKER_NAME}" w', 'install_transaction_failed'),
+            ('WriteUninstaller "$StageDir\\Uninstall.exe"', 'install_transaction_failed'),
             ('FileOpen $InstallFlag "$INSTDIR\\maintenance\\installing.flag" w', 'un_lock_failed'),
         ]:
             pattern = r'ClearErrors\s+' + re.escape(operation) + r'\s+IfErrors ' + failure

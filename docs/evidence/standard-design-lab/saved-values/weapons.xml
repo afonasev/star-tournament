@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.6347992">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="659" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.634799" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1805" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="659" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.627241" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="71092" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1806" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="659" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.623399" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1807" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="659" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.619036" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1808" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="659" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.615369" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1809" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="516" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.606922" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1788" name="WeaponSwitchPresentationTests" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.595095" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1804" name="LabUpgradePreservesPreSwitchAndOlderProfileHistory" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.LabUpgradePreservesPreSwitchAndOlderProfileHistory" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:49Z" duration="6.592340" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1802" name="LabUpgradePreservesPreSwitchAndOlderProfileHistory(False)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.LabUpgradePreservesPreSwitchAndOlderProfileHistory(False)" methodname="LabUpgradePreservesPreSwitchAndOlderProfileHistory" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="2078946473" result="Passed" start-time="2026-10-16 20:48:42Z" end-time="2026-10-16 20:48:45Z" duration="3.155352" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1803" name="LabUpgradePreservesPreSwitchAndOlderProfileHistory(True)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.LabUpgradePreservesPreSwitchAndOlderProfileHistory(True)" methodname="LabUpgradePreservesPreSwitchAndOlderProfileHistory" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="720227026" result="Passed" start-time="2026-10-16 20:48:45Z" end-time="2026-10-16 20:48:49Z" duration="3.431106" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

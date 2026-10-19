@@ -58,6 +58,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<6;i++)yield return null;
             Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo("Пилот"),"Opening/held submit must not insert a character");
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
+            Assert.That(B("text-space").GetComponentInChildren<Text>().text,Is.EqualTo("Пробел · Верхняя"));
+            Assert.That(B("text-delete").GetComponentInChildren<Text>().text,Is.EqualTo("Удалить · Левая"));
+            Assert.That(B("text-cancel").GetComponentInChildren<Text>().text,Is.EqualTo("Отмена · Правая"));
+            Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить · Start"));
             yield return Press(other,GamepadButton.South);yield return Press(other,GamepadButton.Start);yield return Press(other,GamepadButton.East);
             Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo("Пилот"));
             yield return Press(pad,GamepadButton.South);Assert.That(Draft,Is.EqualTo("Пилот1"));
@@ -65,6 +69,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(pad,GamepadButton.East);
             Assert.That(Open,Is.False);Assert.That(field.text,Is.EqualTo("Пилот"));Assert.That(changes,Is.Zero);Assert.That(ends,Is.Zero);
             Assert.That(Focus,Is.EqualTo(field.name));Assert.That(EventSystem.current.sendNavigationEvents,Is.True);
+        }
+        [UnityTest] public IEnumerator TextEntryReleasesCursorOnFocusLossWithoutDroppingDraft()
+        {
+            yield return Load();B("main-action-3").onClick.Invoke();var field=F("profile-name-input");field.text="Пилот";
+            yield return Edit(field);yield return Press(pad,GamepadButton.South);
+            Assert.That(Cursor.visible,Is.False);string draft=Draft,focus=Focus;
+            var callback=typeof(ProvingGround).GetMethod("OnApplicationFocus",BindingFlags.Instance|BindingFlags.NonPublic);
+            callback.Invoke(ground,new object[]{false});
+            Assert.That(Cursor.visible,Is.True);Assert.That(Cursor.lockState,Is.EqualTo(CursorLockMode.None));
+            for(int i=0;i<3;i++)yield return null;
+            Assert.That(Cursor.visible,Is.True,"Text-entry cursor ownership must also yield while the window is unfocused");
+            Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo(draft));Assert.That(Focus,Is.EqualTo(focus));Assert.That(field.text,Is.EqualTo("Пилот"));
+            callback.Invoke(ground,new object[]{true});yield return null;
+            Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo(draft));Assert.That(Focus,Is.EqualTo(focus));
+            yield return Press(pad,GamepadButton.East);Assert.That(Open,Is.False);Assert.That(field.text,Is.EqualTo("Пилот"));
         }
         [UnityTest] public IEnumerator KeyboardHandoverAndApplyUseExistingProfilePersistence()
         {
@@ -98,7 +117,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(search.text,Is.EqualTo("rifle"));
             var numeric=ground.GetComponentsInChildren<InputField>(true).First(x=>x.name.StartsWith("input-")&&x.gameObject.activeInHierarchy&&x.interactable);
             string before=numeric.text;yield return Edit(numeric);yield return Type("x");Assert.That(Draft,Is.EqualTo(before));
-            yield return Capture("keyboard-numeric.png");yield return Press(pad,GamepadButton.East);Assert.That(numeric.text,Is.EqualTo(before));
+            yield return Capture("keyboard-numeric.png");
+            while(Draft.Length>0)yield return Press(pad,GamepadButton.West);
+            yield return Type("-");Assert.That(Draft,Is.EqualTo("-"));yield return Press(pad,GamepadButton.Start);
+            Assert.That(Open,Is.True);Assert.That(B("text-apply").interactable,Is.False);Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить"));
+            yield return Capture("keyboard-numeric-incomplete.png");
+            yield return Press(pad,GamepadButton.West);yield return Type(before);yield return Press(pad,GamepadButton.DpadDown);
+            Assert.That(B("text-apply").interactable,Is.True);Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить · Start"));
+            yield return Press(pad,GamepadButton.East);Assert.That(numeric.text,Is.EqualTo(before));
         }
         [UnityTest] public IEnumerator GridLanguageCaseCaretAndKeyboardCancelAreFunctional()
         {

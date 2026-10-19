@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(upgraded.Selected.Snapshot.Get("visual.fillScale"),Is.EqualTo(.6f));
                 Assert.That(upgraded.Selected.Snapshot.Get("visual.metalSmoothness"),Is.EqualTo(.9f));
                 Assert.That(upgraded.Selected.Snapshot.Get("visual.LightingPercent"),Is.Zero);
-                Assert.That(upgraded.Selected.Snapshot.Get("visual.wallSmoothness"),Is.EqualTo(current.Get("visual.wallSmoothness")));
+                Assert.That(upgraded.Selected.Snapshot.Get("visual.wallSmoothness"),Is.EqualTo(old.Get("visual.wallSmoothness")));
                 Assert.That(upgraded.Selected.Snapshot.Get("visual.bowlLocalLightScale"),Is.EqualTo(.8f));
                 Assert.That(upgraded.Selected.Snapshot.Get("visual.ambientLift"),Is.EqualTo(.18f));
                 int count=upgraded.SelectedProfile.Revisions.Count;Assert.That(count,Is.GreaterThan(revisions));

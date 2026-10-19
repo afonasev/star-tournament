@@ -1,0 +1,22 @@
+PASS one startup discovery, no consent from checking
+PASS menu return without consent starts nothing
+PASS restart requires authenticated ready
+PASS download failure remains explicit
+PASS retry pins selected version, no discovery
+PASS restart only after committed ready
+PASS duplicate download has one operation
+PASS pause ack waits actual operation drain
+PASS late progress cannot stage while stopping
+PASS late success after pause cannot publish ready
+PASS match blocks download and restart
+PASS stale menu request cannot release a newer match
+PASS menu resumes consented target without checking
+PASS cancel drains even a late success
+PASS cancel withdraws consent before ready manifest
+PASS old callback cannot overwrite cancelled state
+PASS cancelled consent never auto resumes
+PASS explicit retry after cancel is allowed
+PASS exit cancels transfer instead of waiting for full download
+PASS match cancels actual AuthenticatedSource HTTP metadata before ack
+PASS interrupted check is never repeated in session
+21 focused update-session checks passed

@@ -1,0 +1,48 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(16,28): warning CS8604: Possible null reference argument for parameter 'path' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,17): warning CS8604: Possible null reference argument for parameter 'version' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,72): warning CS8604: Possible null reference argument for parameter 'token' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,54): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,59): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,64): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(89,74): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+PASS full snapshot includes files empty directories and modes
+PASS same snapshot id is immutable and bound to version
+PASS foreign install cannot consume a snapshot
+PASS foreign identity cannot restore payload
+PASS corrupted backup bytes never replace current payload
+PASS extra or missing backup entry is rejected
+PASS manifest paths cannot select outside files
+PASS invalid id and overlapping roots fail before copy
+PASS capture resumes after capture-verified
+PASS capture resumes after capture-committed
+PASS restore resumes after restore-prepared
+PASS restore resumes after candidate-renamed
+PASS restore resumes after backup-activated
+PASS restore resumes after restore-verified
+PASS missing candidate can be recovered from retained snapshot
+PASS unowned sibling is preserved
+PASS damaged intent cannot trigger deletion
+PASS pending restoration prevents snapshot deletion
+PASS root links cannot redirect a snapshot
+PASS outside and dangling payload links are rejected
+PASS linked store and journal cannot escape root
+PASS macOS framework links and extended attributes survive restore
+PASS cleanup of failed candidate never follows an outside symlink
+PASS retained descriptor must bind actual product channel and version
+PASS capture rejects files changing during copy
+PASS backup modes are part of verification
+PASS case aliases cannot nest backup inside live app
+PASS health journal and filesystem restore retain failed-target barrier
+PASS successful menu-ready permits cleanup without rolling back
+PASS dangling partial-capture link cannot redirect writes
+PASS fresh process resumes abrupt child exit at restore-prepared
+PASS fresh process resumes abrupt child exit at candidate-renamed
+PASS fresh process resumes abrupt child exit at backup-activated
+PASS fresh process resumes abrupt child exit at restore-verified
+PASS removal resumes after snapshot-delete-authorized
+PASS removal resumes after snapshot-deleted
+PASS VerifyInstalled rejects changed working payload
+PASS actual Velopack sq.version parent link survives snapshot restore
+PASS parent escapes through chained internal links are rejected
+PASS cyclic and absolute internal links remain rejected
+Payload recovery: 40 passed

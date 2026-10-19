@@ -1,0 +1,28 @@
+{
+  "baseline": "codex/game-standard-alignment@a77d8982",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "scope": "proposal30 only; no installer/packaging/runtime change",
+  "requirements": [
+    "INSTALLER-FLOW-01",
+    "INSTALLER-IDENTITY-01",
+    "INSTALLER-TRUST-01",
+    "macOS DMG Applications flow"
+  ],
+  "checks": [
+    "generator AST",
+    "SVG XML",
+    "rendered PNG inspected",
+    "generator idempotence",
+    "single gallery section"
+  ],
+  "human_approval": "pending",
+  "player_build": false,
+  "installer_build": false,
+  "hashes": {
+    "docs/design/template-standard/30-macos-dmg.svg": "21493a8588954cdb96c4120cbc4d347a65eb5476e5aedc236619be3fee6cfdd5",
+    "docs/design/template-standard/30-macos-dmg.png": "2742ea5ecb9d33cc5e249d0474b21a57af57d803ff185f95124873c9d0a4a871",
+    "docs/design/template-standard/index.html": "590f01e1ca96195432ab3f1503807c55704506f78dab99aae978627291efd09d",
+    "docs/design/template-standard/macos_install.py": "6bfb008d04c9a3cbf59ac507565f1dbce9236895c89c6f5dd5f181926f68f3b5",
+    "distribution/branding/app-icon.png": "267523c07d86b8f4e27a7d7f998ff2a7f0576693e4c2267decaf3da4d68877ee"
+  }
+}

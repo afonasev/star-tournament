@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.4539991">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="615" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.453999" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1747" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="615" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.448731" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27000" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1748" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="615" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.447332" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1749" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="615" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.445959" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1750" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="615" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.444567" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1751" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="476" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.441784" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1390" name="LabParameterStorageTests" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterStorageTests" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterStorageTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.436968" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1411" name="ExactLargeLegacyHistoryCompactsAndReloadsAllIdentities" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterStorageTests.ExactLargeLegacyHistoryCompactsAndReloadsAllIdentities" methodname="ExactLargeLegacyHistoryCompactsAndReloadsAllIdentities" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterStorageTests" runstate="Runnable" seed="274969615" result="Passed" start-time="2026-10-16 18:30:21Z" end-time="2026-10-16 18:32:40Z" duration="138.429448" asserts="0">
+                  <properties>
+                    <property name="Timeout" value="1800000" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[LAB_PARAMETER_COMPACTION_PASS {"OriginalBytes":160126874,"CompactBytes":1008146,"OriginalRevisions":16,"Revisions":28,"Schemas":5,"Reload":{"TotalSeconds":11.714706999948249,"CatalogueSeconds":0.28174060001038017,"ReadSeconds":0.0015184999210759998,"ParseSeconds":1.1219030000502244,"ExistingValidationSeconds":2.329267999972217,"MigrationSeconds":5.60123739996925,"MergeSeconds":0.000022099935449659824,"FinalValidationSeconds":2.313871299964376,"HistoricalLookupSeconds":0.0,"HashSeconds":3.09658190025948,"TrustedCopySeconds":0.8967564004706219,"SnapshotValidationSeconds":1.4963329989695922,"FileBytes":1008146,"ManagedMemoryDelta":543268864,"Revisions":28,"SnapshotHashes":84,"SnapshotValidations":84,"RegistryCacheHits":0,"RegistryCacheMisses":0,"Gen0Collections":8,"CachedRegistrySets":0,"CachedCandidateBundles":0,"CachedDistinctProfiles":0,"CachedDescriptors":0}}
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

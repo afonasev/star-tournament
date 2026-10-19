@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect x="0" y="0" width="1440" height="900" rx="3" fill="#0b1725" stroke="none"/>
+<text x="56" y="43" fill="#e3bd78" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start">STAR TOURNAMENT</text>
+<text x="1384" y="43" fill="#9aaebe" font-family="Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end">МАКЕТ · НЕ UNITY</text>
+<path d="M56 61 L1384 61" stroke="#304453"/>
+<text x="56" y="126" fill="#e3bd78" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="start">СОХРАНЁННЫЕ ВЕРСИИ</text>
+<text x="56" y="165" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Предложение · одна релизная отметка · просмотр не меняет базу, черновик и активную игру</text>
+<rect x="56" y="205" width="645" height="556" rx="3" fill="#102131" stroke="none"/>
+<rect x="725" y="205" width="659" height="556" rx="3" fill="#102131" stroke="none"/>
+<rect x="78" y="232" width="601" height="100" rx="3" fill="#142638" stroke="#385062"/>
+<text x="101" y="269" fill="#eef2f5" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">Версия 7 · 16.10.2026</text>
+<text x="101" y="304" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Выбранная база · в релизе проекта</text>
+<rect x="78" y="348" width="601" height="100" rx="3" fill="#142638" stroke="#385062"/>
+<text x="101" y="385" fill="#eef2f5" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">Версия 6 · 14.10.2026</text>
+<text x="101" y="420" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Совместима · без отметки</text>
+<rect x="78" y="464" width="601" height="100" rx="3" fill="#142638" stroke="#e3bd78"/>
+<text x="101" y="501" fill="#e3bd78" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">Версия 5 · 12.10.2026</text>
+<text x="101" y="536" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">В релизе проекта · прежняя схема</text>
+<rect x="78" y="580" width="601" height="100" rx="3" fill="#142638" stroke="#385062"/>
+<text x="101" y="617" fill="#eef2f5" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">Версия 4 · дата неизвестна</text>
+<text x="101" y="652" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Прежняя схема · без отметки</text>
+<text x="752" y="251" fill="#e3bd78" font-family="Arial, sans-serif" font-size="27" font-weight="700" text-anchor="start">Default · версия 5</text>
+<text x="752" y="300" fill="#e79585" font-family="Arial, sans-serif" font-size="22" font-weight="700" text-anchor="start">Запуск недоступен</text>
+<text x="752" y="342" fill="#eef2f5" font-family="Arial, sans-serif" font-size="20" font-weight="400" text-anchor="start">Изменились ограничения well.fill.</text>
+<text x="752" y="378" fill="#9aaebe" font-family="Arial, sans-serif" font-size="19" font-weight="400" text-anchor="start">Исходное значение и дата сохранены.</text>
+<rect x="752" y="419" width="605" height="50" rx="3" fill="#142638" stroke="#385062"/>
+<rect x="766" y="431" width="26" height="26" rx="3" fill="#e3bd78" stroke="#eef2f5"/>
+<text x="779" y="452" fill="#0b1725" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="middle">✓</text>
+<text x="807" y="451" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="start">В релиз</text>
+<text x="752" y="510" fill="#9aaebe" font-family="Arial, sans-serif" font-size="19" font-weight="400" text-anchor="start">Снять отметку можно; включить снова — нельзя.</text>
+<text x="752" y="544" fill="#9aaebe" font-family="Arial, sans-serif" font-size="19" font-weight="400" text-anchor="start">Версия несовместима с текущей игрой.</text>
+<rect x="752" y="598" width="605" height="48" rx="3" fill="#172632" stroke="#304453"/>
+<text x="1054" y="629" fill="#9aaebe" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Выбрать</text>
+<rect x="1107" y="681" width="250" height="52" rx="3" fill="#142638" stroke="#e3bd78"/>
+<text x="1232.0" y="714.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Закрыть · B</text>
+<text x="56" y="797" fill="#e3bd78" font-family="Arial, sans-serif" font-size="20" font-weight="400" text-anchor="start">Для следующей игры: Default · версия 7. Черновик остаётся без изменений.</text>
+<path d="M56 824 L1384 824" stroke="#304453"/>
+<text x="56" y="862" fill="#9aaebe" font-family="Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start">↑↓ — просмотр · A / Enter — действие · B / Esc — закрыть. Снятие отметки не удаляет версию.</text>
+</svg>

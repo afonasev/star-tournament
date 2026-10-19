@@ -1,0 +1,28 @@
+{
+  "version": "0.1.5",
+  "date": "2026-10-17",
+  "runtime": "win-x64",
+  "channel": "production",
+  "revision": "d9c985a0df995abd783ce6661174b835391c55f8",
+  "dirty": "",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "player": "/Users/eaafonasev/Projects/star-tournament/.local/production-0.1.5/players/windows",
+  "playerMarkerSha256": "f36eeab4716dde40d73545b692466497927922aa0d12b3b2e5068d8c545b999d",
+  "packages": [
+    {
+      "name": "Star-Tournament-0.1.5-Windows-x64-Setup.exe",
+      "size": 149168587,
+      "sha256": "6bb99413b9887fec653f4a6a80d024b295e5983529fddbe5725593fcf44b28e8"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.5-win-x64-full.nupkg",
+      "size": 142106989,
+      "sha256": "c40d8c8ce6fc601ba4b3c4f1248f214072c584d0cf1cdfab1bf7ef8535f5918a"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-win-x64-Portable.zip",
+      "size": 141914852,
+      "sha256": "64dac4e93d6f2a84c343f5f4079fc141f6f4663c6ea15535dfd1136e91e294ee"
+    }
+  ]
+}

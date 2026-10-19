@@ -1,0 +1,38 @@
+{
+  "baseline": "codex/game-standard-alignment@d2358a50",
+  "approvedMockups": [
+    "26",
+    "27"
+  ],
+  "checks": 4,
+  "result": "Passed",
+  "skipped": 0,
+  "runnerExit": 0,
+  "screenshots": [
+    "pause-1-1080.png",
+    "pause-1-720.png",
+    "pause-2-1080.png",
+    "pause-2-720.png",
+    "pause-4-1080.png",
+    "pause-4-720.png",
+    "pause-operator.png"
+  ],
+  "sourceHashes": {
+    "unity/Assets/StarTournament/Runtime/ProvingGround.cs": "13c82818358399e48b5ebd59da200fb25bf36e4a72a41c185d80545ff5023d37",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "1ef8332d37373f8b3c6d0fb9fbd726b158f31200d1bf6b5c612d64209b069a2c",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundPauseMenus.cs": "2c6914dfec1b07516464fb251ed26cf0ecd6e592408730247db5cdfab6c22479",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundMenuRefinement.cs": "defa56e9cbcc327b1c1d8dbb270478ce961b37ca3c976570f4b62a866e28edc8",
+    "unity/Assets/StarTournament/Tests/PlayMode/IndependentPauseMenuTests.cs": "e4b86a70fca9a7a8a4846f53f04ac75ccc68ed86e3d6f8380e472e0856b7cfa3"
+  },
+  "imagesUseDeliberateLongNameFixture": true,
+  "actualSavedIdentityTest": true,
+  "mutedFromStartup": [
+    "-noaudio",
+    "-muted"
+  ],
+  "runnerMode": "shared",
+  "physicalDevicePlayerHumanAcceptance": false,
+  "playerBuild": false,
+  "fullSuite": false,
+  "deploy": false
+}

@@ -1,0 +1,70 @@
+{
+  "edit": {
+    "runs": [
+      {
+        "path": "edit-initial.xml",
+        "result": "Failed(Child)",
+        "total": 305,
+        "passed": 301,
+        "failed": 4,
+        "skipped": 0,
+        "duration": 1483.0981764
+      },
+      {
+        "path": "edit-recheck.xml",
+        "result": "Passed",
+        "total": 11,
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0,
+        "duration": 220.8923534
+      }
+    ],
+    "distinct_cases": 305,
+    "latest_results_all_passed": true
+  },
+  "play": {
+    "runs": [
+      {
+        "path": "play-initial.xml",
+        "result": "Failed(Child)",
+        "total": 86,
+        "passed": 81,
+        "failed": 5,
+        "skipped": 0,
+        "duration": 1191.6256287
+      },
+      {
+        "path": "play-recheck.xml",
+        "result": "Passed",
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "duration": 322.0166168
+      }
+    ],
+    "distinct_cases": 86,
+    "latest_results_all_passed": true
+  },
+  "distribution_python_distinct_passed": 147,
+  "distribution_js": 11,
+  "tooling": 11,
+  "launcher_modes": 18,
+  "launcher_build": "PASS (8 preexisting/test warnings, zero errors)",
+  "maintenance_build": "PASS (zero warnings/errors)",
+  "full_suite": "NotRun; not authorized",
+  "player_installer_release_deploy": "NotRun; not requested",
+  "native_device_human": "Open; portable and Editor contracts do not prove native installation/devices/human acceptance",
+  "runtime_difference_from_fetched_release": [
+    "MenuActionHint.cs hidden glyph initial bounds fix"
+  ],
+  "source_baseline": "f8a54b7eb41c3afb13049d2937e3bbae3d24ed36",
+  "alignment_source": "d9cd23ed9db38c9e963a92b4e2432ceeac05c064",
+  "release_source": "5f1b2909",
+  "tested_source_trees": {
+    "unity/Assets": "abb6dabc1de89483c837a8f8343bccdd32032125",
+    "distribution": "08702a1cb117fc9a1fd1afee87a1cc07298d10d8",
+    "tools": "f6e0e109959b55276cb075479dc9d8d163cb20e6"
+  }
+}

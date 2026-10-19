@@ -1,0 +1,44 @@
+{
+  "baseline": "2b582de6",
+  "branch": "codex/game-standard-alignment",
+  "main_integration": false,
+  "scope": "Snapshot/restore filesystem core and durable cleanup journal; not wired to installed runtime",
+  "checks": [
+    {
+      "selector": "--payload-recovery",
+      "exit_code": 0,
+      "passed": 34,
+      "log": "payload-process-verified.log",
+      "process_exit_cases": 4
+    },
+    {
+      "selector": "--startup-recovery",
+      "exit_code": 0,
+      "passed": 29,
+      "log": "core-retention.log"
+    }
+  ],
+  "platform": "macOS actual fixture filesystem/ditto/xattr; Windows managed branch not runtime verified",
+  "sources": {
+    "distribution/launcher/StartupRecovery.cs": "1d86fd50ca88afbd1ff2381ebe80de22185060bb83138178f4deb039aa5275f8",
+    "distribution/launcher/PayloadRecovery.cs": "2d3c4e617df976d87c72a56c599838f13f4a8849a5c6f87ac8c428d8618d158a",
+    "distribution/tests/Program.cs": "f726a5e03442ad7e363396d034685905652248962bdac29fb526a44de492f03e",
+    "distribution/tests/StartupRecoveryChecks.cs": "ee1510b97ee93462524f9281542403409bdb0e1a17639838d73eeaef370794e4",
+    "distribution/tests/PayloadRecoveryChecks.cs": "cc7aab2f06755e95f677627b63b9d2a00f391e1d3b31347017e8a08db30ac9f9"
+  },
+  "remaining": [
+    "stable supervisor and Windows bootstrap files",
+    "launcher/Unity health integration",
+    "args/data/migration",
+    "affected installed platform/Unity verification",
+    "canonical sync and main integration"
+  ],
+  "not_run": [
+    "Unity/Player",
+    "full suite",
+    "Windows runtime/ACL",
+    "physical power interruption",
+    "build/release/deploy",
+    "human acceptance"
+  ]
+}

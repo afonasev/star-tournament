@@ -1,0 +1,3 @@
+baseline=4f4c4379
+mode=shared -batchmode -noaudio -muted graphics
+source_delta=unresolved project startup caption

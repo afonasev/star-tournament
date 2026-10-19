@@ -1,0 +1,22 @@
+[
+  {
+    "path": "views/pause-4-720.png",
+    "sha256": "08ede565da18e0471862326409f0b5a24078acbc5bae225485cef3ad8011c869",
+    "inspection": "Viewed actual Editor PNG: content contained in per-seat panels; no overlap found. Long test profile label and revision rendered."
+  },
+  {
+    "path": "views/quality-two-720.png",
+    "sha256": "b327408348ec3620b2259a29dfa57b331b132782a170ed4f4593a978dc0e19b3",
+    "inspection": "Viewed actual Editor PNG: content contained in per-seat panels; no overlap found. Long test profile label and revision rendered."
+  },
+  {
+    "path": "views/author-history-error-720.png",
+    "sha256": "f19075c7b33284ef49ed926882b982eaaddfe9c1e766108e43002845364d659f",
+    "inspection": "Actual Editor PNG viewed: error actions fit; last focused diff row fully contained and actions outside scrolling content."
+  },
+  {
+    "path": "views/recheck-discard-06-long-diff-720p.png",
+    "sha256": "a7ab33884e92c1515a89ff43b5ebcc85db038728257a50e3ce53bbbc7d1c8ec3",
+    "inspection": "Actual Editor PNG viewed: error actions fit; last focused diff row fully contained and actions outside scrolling content."
+  }
+]

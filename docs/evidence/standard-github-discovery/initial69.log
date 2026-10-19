@@ -1,0 +1,77 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,54): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,59): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,64): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(89,74): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(16,28): warning CS8604: Possible null reference argument for parameter 'path' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,17): warning CS8604: Possible null reference argument for parameter 'version' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,72): warning CS8604: Possible null reference argument for parameter 'token' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+PASS public versioned GitHub API headers: production
+PASS public versioned GitHub API headers: production
+PASS asset request stays version-pinned without API cache headers
+PASS channel/canonical semantic/draft/incomplete filtering follows Link even on short page: production
+PASS public versioned GitHub API headers: test
+PASS public versioned GitHub API headers: test
+PASS asset request stays version-pinned without API cache headers
+PASS channel/canonical semantic/draft/incomplete filtering follows Link even on short page: test
+PASS fresh cache has unconditional API request
+PASS fresh cache has unconditional API request
+PASS asset request stays version-pinned without API cache headers
+PASS persisted page-specific ETag supplied
+PASS persisted page-specific ETag supplied
+PASS asset request stays version-pinned without API cache headers
+PASS 304 reuses cached next-link/body but re-fetches signed manifest
+PASS asset request stays version-pinned without API cache headers
+PASS 304 response can extend cached pagination through its fresh Link header
+PASS successful last-quota response stops before another API page
+PASS remaining0 cannot produce a partial-traversal candidate
+PASS asset request stays version-pinned without API cache headers
+PASS HTTP error never falls back to stale current
+PASS failed discovery clears prior admitted target
+PASS 304 without valid cache rejects
+PASS corrupt cached body/hash cannot send its ETag
+PASS corrupt cache cannot grant304 admission
+PASS asset request stays version-pinned without API cache headers
+PASS cache IO failure does not block valid signed network candidate
+PASS rate error is explicit: delta
+PASS cooldown persists across launch: delta
+PASS no request before Retry-After/reset/fallback deadline: delta
+PASS asset request stays version-pinned without API cache headers
+PASS next launch may check at deadline: delta
+PASS rate error is explicit: date
+PASS cooldown persists across launch: date
+PASS no request before Retry-After/reset/fallback deadline: date
+PASS asset request stays version-pinned without API cache headers
+PASS next launch may check at deadline: date
+PASS rate error is explicit: primary
+PASS cooldown persists across launch: primary
+PASS no request before Retry-After/reset/fallback deadline: primary
+PASS asset request stays version-pinned without API cache headers
+PASS next launch may check at deadline: primary
+PASS rate error is explicit: both
+PASS cooldown persists across launch: both
+PASS no request before Retry-After/reset/fallback deadline: both
+PASS asset request stays version-pinned without API cache headers
+PASS next launch may check at deadline: both
+PASS rate error is explicit: default
+PASS cooldown persists across launch: default
+PASS no request before Retry-After/reset/fallback deadline: default
+PASS asset request stays version-pinned without API cache headers
+PASS next launch may check at deadline: default
+PASS foreign/repeated next link rejects
+PASS pagination cannot request foreign or repeated target
+PASS foreign/repeated next link rejects
+PASS pagination cannot request foreign or repeated target
+PASS pagination limit rejects incomplete traversal
+PASS at most ten API pages
+PASS asset request stays version-pinned without API cache headers
+PASS signed full package must be listed in selected release
+PASS incomplete API target cannot leave admission
+PASS API candidate never replaces signature verification
+PASS listing byte limit enforces declared/chunked body: False
+PASS listing byte limit enforces declared/chunked body: True
+PASS session cancellation reaches real discovery transport
+PASS cancelled discovery has no target
+PASS actual API failure stays unavailable through repeated start/check/menu routes
+PASS failed discovery cannot download or stage a stale target
+PASS atomic cache writes leave no owned temporary files
+PASS 69 GitHub discovery contracts

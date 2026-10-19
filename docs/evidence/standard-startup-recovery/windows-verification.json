@@ -1,0 +1,82 @@
+{
+  "baseline": "7b5fd153",
+  "branch": "codex/game-standard-alignment",
+  "scope": "protected Windows transaction and broker; UPDATES-RECOVERY-01 remains partial",
+  "checks": [
+    {
+      "name": "windows recovery",
+      "passed": 30,
+      "selector": "--windows-recovery",
+      "log": "windows-complete-core.log"
+    },
+    {
+      "name": "shared payload",
+      "passed": 40,
+      "selector": "--payload-recovery",
+      "log": "windows-shared-payload-final.log"
+    },
+    {
+      "name": "Mac supervisor fixtures",
+      "passed": 10,
+      "selector": "--mac-recovery",
+      "log": "windows-mac-final.log"
+    },
+    {
+      "name": "feedback",
+      "passed": 34,
+      "selector": "--feedback",
+      "log": "windows-verified-feedback.log"
+    }
+  ],
+  "installer_tooling": {
+    "command": "python3 -m unittest distribution.tests.test_windows_installer",
+    "passed": 16,
+    "log": "windows-installer-tooling.log",
+    "mode": "mock compiler/NSIS preprocessor; no installer build"
+  },
+  "maintenance_compile": {
+    "command": "/Users/eaafonasev/.dotnet/dotnet build --no-restore distribution/maintenance/Maintenance.csproj",
+    "exit_code": 0,
+    "warnings": 0,
+    "errors": 0,
+    "log": "windows-complete-build.log"
+  },
+  "not_run": [
+    "Windows ACL/UAC/CreateFileW runtime",
+    "Windows automatic startup supervisor/recovery",
+    "real installed launcher/Player",
+    "Unity",
+    "full suite",
+    "Player/installer/release build",
+    "deployment",
+    "human/device acceptance"
+  ],
+  "source_sha256": {
+    "distribution/launcher/AuthenticatedSource.cs": "6913c81de58e98fb9011d48388cdb54f6427b877c351d32f9cca6537acdc5d72",
+    "distribution/launcher/MacRecoverySupervisor.cs": "3b8dd4065fc53d8ffc31c5afdb882999922bc0829b1261ee58b8e1e2c5cac3bf",
+    "distribution/launcher/PayloadRecovery.cs": "9dc01d60398b5f07a3ca23c44130a13d9c0006a0380a27cfb0828e65d6f3488f",
+    "distribution/launcher/Program.cs": "8a9b9b710af35496c2abe7dc3ef12fbf22cb7b5e915fe788c87c76576a79ea38",
+    "distribution/launcher/ReleaseHistory.cs": "d5d95cd28b46213f5b2923dd876be33b0a890bf297936cdbd0aeaad95adf02b5",
+    "distribution/launcher/StartupHealthMonitor.cs": "5a7b88012264e1ef3e8e1d0fb8d2625e31c751cb02f725cd6b26114037aa9ab3",
+    "distribution/launcher/StartupRecovery.cs": "decbeffa2742e62e8477eb479a81d157cad1877f5dae8aab8318d9349f6f8b62",
+    "distribution/launcher/UpdateFeedback.cs": "17b32d8f0878ecb862407642dc8bc046ac331b48153d32419a049358c97f70d3",
+    "distribution/launcher/UpdateSession.cs": "188071812d563691de88b9928a20516bedec24b315fb659dc9554839a79073bb",
+    "distribution/launcher/WindowsInstallLease.cs": "31433d4b64b5169e8cfd49b27dd1931da1e3275b3fe92a48ee74402b67a309b0",
+    "distribution/launcher/WindowsInstallation.cs": "0ac6f0be6c8544ca82661aa6616b05d51122379c5d24169c73c1dba01e813266",
+    "distribution/maintenance/Maintenance.csproj": "1856b058048747baf28095d8009176e08f9588a45cad3e8171db9cfd8270179e",
+    "distribution/maintenance/Program.cs": "7311e187c5a60d842388462bcf48151a1bb414dbd273f61d112bed4b138b7bd3",
+    "distribution/maintenance/ProtectedPackage.cs": "458a6ee00a09f466af701de0a8dbe13f0210ef2298fe61508fb4c2dfcab24db4",
+    "distribution/maintenance/WindowsRecoveryStore.cs": "db5012a29fb59ec14a2bb7e515ac7c68d17c2b58c02411004fcff9fd6c3fa0f8",
+    "distribution/package.py": "392d1614a0162971f3ac622187426329e2fa2e50b40672362655fc85d1dc3ed3",
+    "distribution/tests/Launcher.Contracts.csproj": "01c6712a6ed9b131166d80e8afa29f74c90151d994328b339635c34e2a9a3064",
+    "distribution/tests/MacRecoveryChecks.cs": "9566eff238fda0d9f162568b35dc01ad2e5807b1cca062ad3f0341fd71313a95",
+    "distribution/tests/PayloadRecoveryChecks.cs": "f44c35d1143be3db328ce64674311fe9f319e57ef3fac27480c80c86f595a902",
+    "distribution/tests/Program.cs": "a8bf18196fc27e8de75199db2306a2c28a4dda32549e83d84beb85d134db4cb9",
+    "distribution/tests/ReleaseHistoryChecks.cs": "6c5f5aa7fb74143f6005a6418f6fb887188c0b3cfe1fe67f15cc17a915bcd748",
+    "distribution/tests/StartupHealthChecks.cs": "b258c8b48dba96821d74ff542e680f89650c5582bac32e7de6a8e259ce8f6486",
+    "distribution/tests/StartupRecoveryChecks.cs": "ee1510b97ee93462524f9281542403409bdb0e1a17639838d73eeaef370794e4",
+    "distribution/tests/UpdateFeedbackChecks.cs": "aa2118c2e4641f52b211102ecb23f6408ca004c1801690f810f882fdff47670d",
+    "distribution/tests/UpdateSessionChecks.cs": "b9f73a5efdc6c4593fc8fb5b3cf911e9c298dfe3bd6f6b5a4531efaefc15d4db",
+    "distribution/tests/WindowsRecoveryChecks.cs": "f339f415edf7f36a98654ce45e0f875df3d17b55760831a9480f37812ceeed2a"
+  }
+}

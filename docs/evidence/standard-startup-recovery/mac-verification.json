@@ -1,0 +1,62 @@
+{
+  "baseline": "964aa66b",
+  "branch": "codex/game-standard-alignment",
+  "main_integration": false,
+  "scope": "Mac actual launcher/supervisor route,10 isolated signed-process fixtures incl install-root separation; fake native updater and replacement app;40 filesystem+12 health+29 journal",
+  "checks": [
+    {
+      "selector": "--mac-recovery",
+      "passed": 10,
+      "exit_code": 0,
+      "log": "mac-root-final.log"
+    },
+    {
+      "selector": "--payload-recovery",
+      "passed": 40,
+      "exit_code": 0,
+      "log": "mac-payload-compatible.log"
+    },
+    {
+      "selector": "--startup-health",
+      "passed": 12,
+      "exit_code": 0,
+      "log": "mac-root-health.log"
+    },
+    {
+      "selector": "--startup-recovery",
+      "passed": 29,
+      "exit_code": 0,
+      "log": "mac-root-journal.log"
+    }
+  ],
+  "native_readonly": "UpdateMac1.2.158 --help/apply --help, config/link inventory, no game launch or install",
+  "sources": {
+    "distribution/launcher/Program.cs": "1a0ea3fb0600874cda789f1da2d03dc1151ca451194b77fc4eeab73fe7d26b59",
+    "distribution/launcher/MacRecoverySupervisor.cs": "3b8dd4065fc53d8ffc31c5afdb882999922bc0829b1261ee58b8e1e2c5cac3bf",
+    "distribution/launcher/PayloadRecovery.cs": "c551aace985ed77545910ea7d3512907ac10ccd8a1fff6f4cb2715498131b4c1",
+    "distribution/tests/Program.cs": "f561cd963c991743024694dc6e6094c9cd4c23fc34192d2ed06e11c2f1b9cca3",
+    "distribution/tests/MacRecoveryChecks.cs": "9566eff238fda0d9f162568b35dc01ad2e5807b1cca062ad3f0341fd71313a95",
+    "distribution/tests/PayloadRecoveryChecks.cs": "f44c35d1143be3db328ce64674311fe9f319e57ef3fac27480c80c86f595a902",
+    "distribution/launcher/StartupRecovery.cs": "decbeffa2742e62e8477eb479a81d157cad1877f5dae8aab8318d9349f6f8b62"
+  },
+  "reused": {
+    "native_editor_cases": 4,
+    "from_commit": "964aa66b",
+    "reason": "Unity source unchanged"
+  },
+  "remaining": [
+    "Windows protected broker/bootstrap",
+    "user data/migration/rollback compatibility",
+    "real installed native Velopack/Player/platform acceptance",
+    "canonical sync/main integration/full matrix"
+  ],
+  "not_run": [
+    "full suite",
+    "Unity/Player this slice",
+    "Player/release builds",
+    "real native updater apply",
+    "installer",
+    "publication/deploy",
+    "human acceptance"
+  ]
+}

@@ -2,6 +2,16 @@
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../launcher/Launcher.csproj" />
+    <Compile Include="../../unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs" Link="NativeStartupHealth.cs" />
+    <Compile Include="../maintenance/WindowsInstallerRegistration.cs" Link="WindowsInstallerRegistration.cs" />
+    <Compile Include="../maintenance/WindowsInstallerPlan.cs" Link="WindowsInstallerPlan.cs" />
+    <Compile Include="../maintenance/WindowsInstallerTransaction.cs" Link="WindowsInstallerTransaction.cs" />
+    <Compile Include="../maintenance/WindowsStartupWatch.cs" Link="WindowsStartupWatch.cs" />
+    <Compile Include="../maintenance/WindowsDetachedProcess.cs" Link="WindowsDetachedProcess.cs" />
+    <Compile Include="../maintenance/WindowsRecoveryTransfer.cs" Link="WindowsRecoveryTransfer.cs" />
+    <Compile Include="../maintenance/WindowsRecoveryStore.cs" Link="WindowsRecoveryStore.cs" />
+    <Compile Include="../maintenance/WindowsBrokerUpgradeTransaction.cs" Link="WindowsBrokerUpgradeTransaction.cs" />
+    <Compile Include="../maintenance/WindowsFullPayload.cs" Link="WindowsFullPayload.cs" />
     <Compile Include="../maintenance/ProtectedPackage.cs" Link="ProtectedPackage.cs" />
   </ItemGroup>
 </Project>

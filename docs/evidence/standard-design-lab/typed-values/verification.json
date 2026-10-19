@@ -1,0 +1,61 @@
+{
+  "baseline": "06fd5de9",
+  "branch": "codex/game-standard-alignment",
+  "runs": [
+    {
+      "run": "contracts",
+      "result": "Passed",
+      "total": "17",
+      "passed": "17",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.8606921"
+    },
+    {
+      "run": "spoof-initial",
+      "result": "Failed(Child)",
+      "total": "2",
+      "passed": "0",
+      "failed": "2",
+      "skipped": "0",
+      "duration": "0.0962288",
+      "failure": "Fixture changed Unit only; existing LabBundle step1 already rejected0.5. Corrected test changes caller Unit and Step to exercise trusted storage validation; production rules unchanged."
+    },
+    {
+      "run": "spoof-final",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.1390463"
+    },
+    {
+      "run": "runtime",
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "30.493542"
+    }
+  ],
+  "final_coverage": "19 unique affected EditMode +1 PlayMode passed",
+  "audit_correction": "LabBundle already rejected fractional boolean via step1. Added explicit ProvingProfile boolean contract and metadata constraints with typed error; no claim of prior normal Lab Save bypass.",
+  "consumers": [
+    "BloodPresentation: enabled!=0",
+    "HitFeedbackPresentation: blood.enabled!=0",
+    "TrooperVisual: hit.enabled==0 disables reaction"
+  ],
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/ProvingProfile.cs": "92cb48e35f760032fb8585c4095a007c7f620c62296669f1c4b5ddae6eedb5ef",
+    "unity/Assets/StarTournament/Tests/EditMode/LabParameterTypeTests.cs": "5cfe1550aa84a8807633c078a3b7d2dcc96028755fefce26fb3d2bae6f0c4b49",
+    "unity/Assets/StarTournament/Tests/PlayMode/DesignLabWorkspaceTests.cs": "e3adcf6edeafc814af55b91ff951480d3a064813d600824a5b7b0ca0301e5c76"
+  },
+  "ui_approval": "Proposals18–19 saved in06fd5de9, planning Q1 open; no new layout/toggle implementation",
+  "not_run": [
+    "Full suite",
+    "Player/build/release/deploy",
+    "Rendered/device/human acceptance"
+  ]
+}

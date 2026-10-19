@@ -36,6 +36,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             return new NativeMatchSnapshot{Achievements=Enumerable.Range(first, count).Select(i=>new NativeAchievement
             {RulesVersion=NativeAchievementCatalog.Version,Participant=(i-first)%4,Id=CatalogIds[i],Name=CatalogNames[i],Fact=CatalogFacts[i],Tier=(NativeAchievementTier)(i<14?0:i<24?1:2)}).ToArray()};
         }
+        [UnityTest] public IEnumerator ExistingAwardViewCanRetuneItsFontWithoutChangingFrozenAwards()
+        {
+            var parent=new GameObject("retuned-awards",typeof(RectTransform),typeof(Canvas));parent.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;
+            ((RectTransform)parent.transform).sizeDelta=new Vector2(1920,1080);
+            var view=new NativeAchievementsView(parent.transform,Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"),20);var snapshot=Snapshot(1);string frozen=JsonUtility.ToJson(snapshot);
+            try
+            {
+                view.Show(true,snapshot,Composition(false));Canvas.ForceUpdateCanvases();yield return null;view.Show(true,snapshot,Composition(false));
+                var title=view.Root.transform.Find("achievement-tile-0/title").GetComponent<Text>();int before=title.fontSize;
+                view.ApplyFontSize(28);view.Show(true,snapshot,Composition(false));Canvas.ForceUpdateCanvases();
+                Assert.That(title.fontSize,Is.GreaterThan(before));Assert.That(JsonUtility.ToJson(snapshot),Is.EqualTo(frozen));
+                Assert.That(view.Root.transform.Find("achievement-tile-0/title").GetComponent<Text>(),Is.SameAs(title));
+                view.ApplyFontSize(20);view.Show(true,snapshot,Composition(false));Assert.That(title.fontSize,Is.EqualTo(before));
+            }
+            finally{UnityEngine.Object.DestroyImmediate(parent);}
+        }
         [UnityTest] public IEnumerator CatalogCopyFitsAtResponsiveSizesAndKeepsResultsBoundsAndFrozenIdentity()
         {
             var parent=new GameObject("achievement-layout",typeof(RectTransform),typeof(Canvas));

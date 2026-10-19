@@ -73,7 +73,7 @@ namespace StarTournament.ProvingGround.Tests
             var current=WellArenaCatalog.Build();var old=WellArenaRevisionThree.Build();
             var added=current.Solids.Where(s=>s.Id.Contains("-corridor-")).ToArray();Assert.That(added.Length,Is.EqualTo(12));
             Assert.That(current.Solids.Where(s=>!s.Id.Contains("-corridor-")).Select(JsonUtility.ToJson),Is.EqualTo(old.Solids.Select(JsonUtility.ToJson)));
-            var saved=JsonUtility.FromJson<ArenaDefinition>(System.IO.File.ReadAllText(System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"../../docs/evidence/well-furniture/views/arena.json"))));
+            var saved=JsonUtility.FromJson<ArenaDefinition>(System.IO.File.ReadAllText(System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"StarTournament/Tests/EditMode/Fixtures/well-furniture-arena.json"))));
             Assert.That(JsonUtility.ToJson(old),Is.EqualTo(JsonUtility.ToJson(saved)),"Frozen v3 must match the original saved authoring, not a reconstruction with current changes");
             Assert.That(JsonUtility.ToJson(AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"3")),Is.EqualTo(JsonUtility.ToJson(old)));
             float margin=ProvingProfile.CreateDefault().Get("player.capsule.radius")*2;
@@ -205,7 +205,7 @@ namespace StarTournament.ProvingGround.Tests
                 if(System.IO.File.Exists(path+".schema1-backup.json"))System.IO.File.Delete(path+".schema1-backup.json");
             }
         }
-        [TestCase(false)][TestCase(true)] public void PreviousWellArtLoadsWithoutChangingSavedHashes(bool compact)
+        [TestCase(false)][TestCase(true)] public void PreviousWellArtKeepsSavedValuesOnExpandedGrid(bool compact)
         {
             var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"well-revision-"+Guid.NewGuid()+".json");
             try
@@ -220,17 +220,20 @@ namespace StarTournament.ProvingGround.Tests
                     var file=typeof(DesignLabHistory).GetField("data",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(history);
                     System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
                 }
-                var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
-                var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
+                var bytes=System.IO.File.ReadAllBytes(path);
+                var migrated=new DesignLabHistory(path,current,persistMigration:false);
+                Assert.That(migrated.StorageError,Is.Null);Assert.That(migrated.Writable,Is.True);
+                Assert.That(migrated.SelectedProfileId,Is.EqualTo(history.SelectedProfileId));
+                var preserved=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.ReadFixture(path,old).Profiles.Single(p=>p.Id==history.SelectedProfileId).Revisions.Single(r=>r.Number==priorNumber);
                 Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
                 Assert.That(preserved.Snapshot.Get("well.fill"),Is.EqualTo(.8f));
-                Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
-                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.fill")));
-                Assert.That(migrated.Selected.Snapshot.Get("well.lamp"),Is.EqualTo(9));
-                Assert.That(migrated.Selected.Snapshot.Get("well.plantHeight"),Is.EqualTo(.5f));
-                var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);
+                Assert.That(preserved.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));Assert.That(preserved.Snapshot.Get("well.lamp"),Is.EqualTo(9));
+                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(.8f));
+                Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));Assert.That(migrated.Selected.Snapshot.Get("well.lamp"),Is.EqualTo(9));
+                CollectionAssert.AreEqual(bytes,System.IO.File.ReadAllBytes(path));
+                var restarted=new DesignLabHistory(path,current,persistMigration:false);Assert.That(restarted.StorageError,Is.Null);
                 Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
-                Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber).Hash,Is.EqualTo(priorHash));
+                CollectionAssert.AreEqual(bytes,System.IO.File.ReadAllBytes(path));
             }
             finally
             {
@@ -259,11 +262,11 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(preserved.Snapshot.Get("well.fill"),Is.EqualTo(.42f));
                 Assert.That(preserved.Snapshot.Get("well.daylight"),Is.EqualTo(.5f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
-                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.fill")));
+                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(.42f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.lamp"),Is.EqualTo(9));
                 Assert.That(migrated.Selected.Snapshot.Get("well.plantHeight"),Is.EqualTo(.5f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.glassOpacity"),Is.EqualTo(.4f));
-                Assert.That(migrated.Selected.Snapshot.Get("well.daylight"),Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.daylight")));
+                Assert.That(migrated.Selected.Snapshot.Get("well.daylight"),Is.EqualTo(.5f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.glassSmoothness"),Is.EqualTo(.85f));
                 var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);
                 Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
@@ -297,11 +300,11 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(preserved.Snapshot.Get("well.daylight"),Is.EqualTo(.8f));
                 Assert.That(preserved.Snapshot.Descriptors.Any(d=>d.Path=="well.idleDepartureSeconds"),Is.False);
                 Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
-                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.fill")));
+                Assert.That(migrated.Selected.Snapshot.Get("well.fill"),Is.EqualTo(.42f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.lamp"),Is.EqualTo(9));
                 Assert.That(migrated.Selected.Snapshot.Get("well.plantHeight"),Is.EqualTo(.5f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.glassOpacity"),Is.EqualTo(.4f));
-                Assert.That(migrated.Selected.Snapshot.Get("well.daylight"),Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.daylight")));
+                Assert.That(migrated.Selected.Snapshot.Get("well.daylight"),Is.EqualTo(.8f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.glassSmoothness"),Is.EqualTo(.85f));
                 Assert.That(migrated.Selected.Snapshot.Get("well.idleDepartureSeconds"),Is.EqualTo(15));
                 var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);

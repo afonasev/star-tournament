@@ -1,0 +1,5 @@
+# Installer transfer neighbor for retained reader correction
+
+The previous affected set for3ffa434d/cc63b6d0 omitted the existing installer transfer fixture. Source dependency review found its remaining contradictory reader1 expectation. Executed unmodified fixture:37 cases passed then exit134 at line160, while the protected contract itself already declared metadataReader2 and retained the new broker. Corrected expected effective capability to2 per existing explicit spec, preserving assertions for previous protocol/version, new broker bytes and old root/current files. Added actual post-Restore Cleanup→reader2/new broker/old files assertions. No runtime policy changed and no assertion removed/weakened.
+
+Rerun completed all39 existing installer transfer cases, exit0. Actual C# file/transaction/process fixture execution, not native Windows sharing/ACL/UAC or installed acceptance. No Unity/game/Player/installer/release build/full/deploy. Prior161 rollback-component source contracts remain evidence for unchanged runtime; not rerun just for a test-only correction. Legacy support-policy Q1 and parent visual Q5–Q10 still pending.

@@ -1,0 +1,90 @@
+# Actual v0.1.2 source excerpts
+Revision e497ca6f326db6c418a67654827dcd2945fae936
+
+
+unity/Assets/StarTournament/Runtime/PlayerProfiles.cs SHA256 5ecd7dbb0ec670a257cf537be0edd27fc87f89304be3f2579b018f01fcfecf8e
+10:     public sealed class PlayerProfileRecord
+11:     {
+12:         public string Id;
+13:         public string Name;
+14:         public float MouseDegreesPerPixel;
+15:         public bool ShowFps;
+16:         public int GamepadLookVersion;
+17:         public float GamepadHorizontal, GamepadVertical;
+18:         public bool GamepadAutoLevel;
+19:     }
+20: 
+21:     [Serializable]
+22:     sealed class PlayerProfileDocument
+23:     {
+24:         public int Version = 1;
+25:         public List<PlayerProfileRecord> Profiles = new List<PlayerProfileRecord>();
+26:     }
+27: 
+28:     // Shell identity data only. No profile ID or InputDevice enters a match snapshot.
+33:         public IReadOnlyList<PlayerProfileRecord> Profiles => document.Profiles;
+34:         public PlayerProfileCatalog(string path)
+35:         {
+36:             this.path = path ?? throw new ArgumentNullException(nameof(path));
+37:             document = File.Exists(path) ? JsonUtility.FromJson<PlayerProfileDocument>(File.ReadAllText(path)) : new PlayerProfileDocument();
+38:             if(document == null || document.Version != 1 || document.Profiles == null ||
+39:                 document.Profiles.Any(p => p == null || string.IsNullOrEmpty(p.Id) || string.IsNullOrWhiteSpace(p.Name)) ||
+40:                 document.Profiles.Select(p => p.Id).Distinct().Count() != document.Profiles.Count)
+41:                 throw new InvalidDataException("Invalid player profiles document");
+42:         }
+43:         public PlayerProfileRecord Find(string id) => document.Profiles.FirstOrDefault(p => p.Id == id);
+66:         public void SetGamepad(string id, GamepadLookSettings settings)
+67:         {
+68:             var record=Find(id) ?? throw new ArgumentException("Unknown profile", nameof(id));
+69:             record.GamepadLookVersion=1;record.GamepadHorizontal=settings.Horizontal;
+70:             record.GamepadVertical=settings.Vertical;record.GamepadAutoLevel=settings.AutoLevel;Save();
+71:         }
+72:         static string CleanName(string name)
+73:         {
+
+unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs SHA256 8c69c2326033f3452ad1677ce781894a2b1251ca58a07e5418f3f1be3c5e5d57
+165:         public LabRevision Selected=>data.Profiles.Single(p=>p.Id==data.SelectedId).Revisions.Single(r=>r.Number==data.SelectedRevision).Clone();
+166:         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true)
+167:         {
+168:             this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;this.releases=releases?.Clone();
+169:             data=NewFile();
+170:             if(this.releases!=null)ValidateReleases();
+171:             if(File.Exists(path))
+172:             try
+173:             {
+174:                 var loaded=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));ValidateFile(loaded);data=loaded;
+175:                 if(loaded.Profiles.Any(p=>p.Revisions.All(r=>!Current(r.Snapshot)))||!Current(loaded.Profiles.Single(p=>p.Id==loaded.SelectedId).Revisions.Single(r=>r.Number==loaded.SelectedRevision).Snapshot))
+176:                 {
+177:                     if(persistMigration)Commit(MigrateCompatibility);
+178:                     else{var next=data.Clone();MigrateCompatibility(next);ValidateFile(next);data=next;}
+179:                 }
+180:             }
+181:             catch(Exception e) { StorageError="История не загружена; исходный файл сохранён: "+e.Message; }
+182:             if(this.releases!=null)
+183:             {
+184:                 MergeReleases(data);
+185:                 bool migrated=data.Profiles.Any(p=>p.Revisions.Any(r=>IsShipped(r)&&!Current(r.Snapshot)));
+186:                 if(migrated)MigrateCompatibility(data);
+187:                 if(resetToLatestDefault)SelectLatestDefault(data);
+188:                 // Existing local snapshots were validated on read; catalogue snapshots were
+189:                 // validated below. Only newly derived compatibility snapshots need that work again.
+190:                 ValidateFile(data,migrated);
+191:             }
+
+unity/Assets/StarTournament/Runtime/GamepadLookSettings.cs SHA256 4e86cecf182331962955c359105f0f629ab3a25c3c5a2d64f7e18ce22a743fea
+20:         }
+21:         public static GamepadLookSettings Resolve(ProvingProfile profile,PlayerProfileRecord record)
+22:         {
+23:             if(record==null||record.GamepadLookVersion==0)return Default(profile);
+24:             return new GamepadLookSettings { Horizontal=Valid(profile,HorizontalPath,record.GamepadHorizontal),
+25:                 Vertical=Valid(profile,VerticalPath,record.GamepadVertical),AutoLevel=record.GamepadAutoLevel };
+26:         }
+27:         static float Valid(ProvingProfile p,string path,float v)=>p.Descriptor(path).Contains(v)?v:p.Get(path);
+28:         public static GamepadLookSettings General(ProvingProfile p)
+29:         {
+
+Schema validation in actual previous reader:
+429:         {
+430:             if(file==null||file.Schema!=1||file.Profiles==null||file.Profiles.Count==0)throw new InvalidDataException("Неподдерживаемая схема");
+431: 
+432:             if(file.Profiles.Select(p=>p.Id).Distinct().Count()!=file.Profiles.Count)throw new InvalidDataException("Повтор ID");

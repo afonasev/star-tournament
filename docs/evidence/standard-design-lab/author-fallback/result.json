@@ -1,0 +1,47 @@
+{
+  "baseline": "codex/game-standard-alignment@20b2f124",
+  "approval": "Q7 / mockup28",
+  "result": {
+    "id": "2",
+    "testcasecount": "4",
+    "result": "Passed",
+    "total": "4",
+    "passed": "4",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-17 07:35:40Z",
+    "end-time": "2026-10-17 07:38:26Z",
+    "duration": "165.5545539"
+  },
+  "runner_exit": 0,
+  "runner_sessions": {
+    "initial": 18414,
+    "final": 9953
+  },
+  "mode": "shared Editor, graphics, -noaudio -muted from start",
+  "proof": [
+    "explicit choice gates ordinary setup",
+    "Back retains gate",
+    "session-only trusted packaged identity",
+    "original and package exact bytes",
+    "Save/Create guards retained",
+    "scene restart clears choice",
+    "plain error and long diagnostic Up/Down scrolling",
+    "neighbor healthy author / missing marked Default / production error"
+  ],
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "09c6a4bce45f4e56ed5a67c9101ad549ee51ab0a720b0986cd2208772998bab0",
+    "unity/Assets/StarTournament/Tests/PlayMode/LabAuthoringRuntimeTests.cs": "ad0a5c7affc4af8829d510ee6f9c191135f3c2d6502ae3702a41a6cff6832985"
+  },
+  "initial": "4/4 passed before typography/scroll correction; final4/4 after correction. Not8 unique tests.",
+  "screenshots": "3 new states plus2 affected neighbors; actual Editor; long diagnostic extends actual load error as a controlled overflow fixture. All new PNGs visually inspected.",
+  "limitations": [
+    "scene restart proves session field lifetime, not standalone process/device acceptance",
+    "no Player/installer/build/full/deploy",
+    "no physical/human acceptance"
+  ]
+}

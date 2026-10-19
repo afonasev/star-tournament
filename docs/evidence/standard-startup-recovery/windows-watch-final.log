@@ -1,0 +1,18 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,54): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,59): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,64): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(89,74): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(16,28): warning CS8604: Possible null reference argument for parameter 'path' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,17): warning CS8604: Possible null reference argument for parameter 'version' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,72): warning CS8604: Possible null reference argument for parameter 'token' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+PASS healthy live launcher returns without waiting for or replacing Player
+PASS early exit waits for Player before protected restore and relaunch
+PASS late confirmation while orphan exits forbids restore
+PASS durable menu health conservatively forbids rollback after latch IO failure
+PASS declined UAC never retries or relaunches
+PASS unknown process liveness cannot grant rollback
+PASS corrupt orphan identity preserves every payload
+PASS transaction/latch read failure never authorizes downgrade
+PASS real orphan process blocks replacement until actual exit
+PASS Windows argv encodes empty quoted unicode and terminal slashes
+Windows startup watch: 10 passed; native Windows process/handle-list runtime NotRun on non-Windows

@@ -1,0 +1,14 @@
+PASS capture and reopen preserve exact fixed values and types
+PASS no replay mutation occurs before durable applying intent
+PASS applying survives reopening before registry changes
+PASS replay restores owned values and preserves unknown ones
+PASS interrupted registry callback keeps replayable snapshot
+PASS fresh rollback records absence without inventing previous keys
+PASS snapshot cannot replace another pending capture
+PASS foreign root and unknown value names fail closed
+PASS huge snapshots fail before replacing a durable file
+PASS protected creator is used for capture and applying writes
+PASS trailing root resolves to the same protected sibling snapshot
+PASS directory and redirected state are never treated as empty
+PASS interrupted atomic-write sidecar is removed with settled snapshot
+Windows installer registration: 13 passed (actual snapshot/replay logic; Windows Registry API NotRun)

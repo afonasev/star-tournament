@@ -1,0 +1,8 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=PlayerProfilesTests;LabParameterStorageTests.UnsupportedStorageSchemaPreservesSourceAndDisablesWrites;LabParameterStorageTests.CompactSavesHaveOnlyParametersAndExactRestartIdentity;LabParameterStorageTests.LegacyCompactionKeepsCustomHiddenParametersAndBackup;LabParameterStorageTests.FailedCompactionPreservesLegacyAndSelection
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.DyZgVo/qa-lab-history.json
+revision=01ca6df071adc4ea52ac1e0dcc18511809fdc8cd
+ M Assets/StarTournament/Tests/EditMode/LabParameterStorageTests.cs
+ M Assets/StarTournament/Tests/EditMode/PlayerProfilesTests.cs
+?? ../docs/evidence/standard-user-data/

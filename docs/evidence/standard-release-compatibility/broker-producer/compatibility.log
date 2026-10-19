@@ -1,0 +1,17 @@
+test_cross_language_fixture_is_actual_producer_output (test_release_compatibility.ReleaseCompatibility.test_cross_language_fixture_is_actual_producer_output) ... ok
+test_data_contract_matches_current_namespace_generation (test_release_compatibility.ReleaseCompatibility.test_data_contract_matches_current_namespace_generation) ... ok
+test_invalid_or_missing_mac_floor_is_not_silently_defaulted (test_release_compatibility.ReleaseCompatibility.test_invalid_or_missing_mac_floor_is_not_silently_defaulted) ... ok
+test_missing_or_extra_requirements_are_rejected (test_release_compatibility.ReleaseCompatibility.test_missing_or_extra_requirements_are_rejected) ... ok
+test_payload_config_must_be_unique_and_bounded (test_release_compatibility.ReleaseCompatibility.test_payload_config_must_be_unique_and_bounded) ... ok
+test_payload_mismatch_is_rejected_even_with_signed_contract (test_release_compatibility.ReleaseCompatibility.test_payload_mismatch_is_rejected_even_with_signed_contract) ... ok
+test_producer_uses_actual_mac_floor_and_emits_schema2 (test_release_compatibility.ReleaseCompatibility.test_producer_uses_actual_mac_floor_and_emits_schema2) ... ok
+test_publisher_verifies_real_pss_before_schema_and_requirements (test_release_compatibility.ReleaseCompatibility.test_publisher_verifies_real_pss_before_schema_and_requirements) ... 408FE0F601000000:error:02000086:rsa routines:ossl_rsa_verify_PKCS1_PSS_mgf1:last octet invalid:crypto/rsa/rsa_pss.c:103:
+408FE0F601000000:error:1C880004:Provider routines:rsa_verify_directly:RSA lib:providers/implementations/signature/rsa_sig.c:1106:
+ok
+test_unsupported_contract_never_emitted (test_release_compatibility.ReleaseCompatibility.test_unsupported_contract_never_emitted) ... ok
+test_windows_floor_and_reader_are_explicit (test_release_compatibility.ReleaseCompatibility.test_windows_floor_and_reader_are_explicit) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.149s
+
+OK

@@ -1,0 +1,36 @@
+{
+  "baseline": "9edd6c35",
+  "branch": "codex/game-standard-alignment",
+  "scope": "Approved06 discard warning; remaining Lab contract not complete",
+  "final_warning_cases": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "xml_duration_seconds": 43.8717117
+  },
+  "existing_workspace_case": "Passed in first run; final delta only removes key labels/increases fonts, no further behavioral changes",
+  "first_run": {
+    "passed": 3,
+    "failed": 1,
+    "cause": "Null graphics backend; blank screenshots are not visual evidence"
+  },
+  "initial_graphics_run": {
+    "passed": 2,
+    "failed": 0
+  },
+  "final_reviewed_pngs": {
+    "06-draft-warning.png": "50e9c7df045ea6f79ebf97edd991d4e974c1e4cc2ccb172848cd8109f29e78ea",
+    "06-long-diff-720p.png": "4a38c96c5b006cb1da0df19f55236747fb5acb53a0bf944c8fe94991f754aada"
+  },
+  "visual_review": "Both final saved PNGs viewed:1600x900 warning and1280x720 focused long-list bottom; no text/button overlap, actions outside scroll, safe initial focus",
+  "tested_source_sha256": {
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "f2f5a90f3b9e37ebe44ef2f125a7a96c3e97d2df92aef723978cae98ce7af03d",
+    "unity/Assets/StarTournament/Runtime/NativeDesignLabReview.cs": "e9f134ab2a597b2b371695ff5a19b3f27d92eb8e5670b85ac3ae861ff5a8cf2a",
+    "unity/Assets/StarTournament/Tests/PlayMode/LabDiscardWarningTests.cs": "a95a800d65ca25f4f2b65b7862d2a07bf55cad2eb3fd9e915a4e6b5cdb9939f4",
+    "unity/Assets/StarTournament/Tests/PlayMode/DesignLabWorkspaceTests.cs": "d12b1f32f6f915ca04c28f4ee73d8c6242959a262d65a3da3ff0713c71db2e1d"
+  },
+  "player_build": false,
+  "full_suite": false,
+  "mode": "shared -noaudio -muted; graphics enabled only for render checks",
+  "human_device_player_acceptance": "NotRun"
+}

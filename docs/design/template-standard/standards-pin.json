@@ -879,8 +879,11 @@
       "id": "UPDATES-RECOVERY-01",
       "title": "Возврат к рабочей версии",
       "source": "features/updates/requirements.md",
-      "status": "pending",
-      "evidence": null
+      "status": "partial",
+      "evidence": {
+        "path": "docs/evidence/standard-startup-recovery/mac-verification.json",
+        "implementation": "Durable installation-bound journal/snapshot, native menu health and Mac stable supervisor wired;40 filesystem+12 health+29 journal+10 isolated supervisor/root checks passed. Windows/data/native installed acceptance and canonical integration pending; not whole requirement acceptance."
+      }
     },
     {
       "id": "UPDATES-ARGS-01",

@@ -1,0 +1,7 @@
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+unity-run: started shared:1; guardian=29236 pid=29237
+
+Aborting batchmode due to failure:
+Scripts have compiler errors.
+
+unity-run: finished pid=29237 exit=1; capacity released

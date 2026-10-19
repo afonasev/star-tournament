@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
+    public enum LabParameterKind { Integer, Decimal, Boolean }
+    public enum LabParameterApplication { NextGame }
+
     [Serializable]
     public sealed class NumericDescriptor
     {
@@ -16,6 +19,19 @@ namespace StarTournament.ProvingGround
         public float Maximum;
         public float Step;
         public float DefaultValue;
+
+        // The declared value lattice is anchored at DefaultValue (see LabBundle.Validate).
+        // Derived metadata must not change serialized historical descriptor definitions.
+        public LabParameterKind Kind => Unit=="boolean"?LabParameterKind.Boolean:
+            Step==Math.Truncate(Step)&&DefaultValue==Math.Truncate(DefaultValue)?LabParameterKind.Integer:LabParameterKind.Decimal;
+        public LabParameterApplication Application => LabParameterApplication.NextGame;
+        // These settings supply defaults only; a general or identity preference can override them.
+        public bool IsPreferenceDefault => PreferenceDefaults.Contains(Path??"");
+        static readonly HashSet<string> PreferenceDefaults=new HashSet<string>{
+            "input.mouseDegreesPerPixel","input.gamepadHorizontalDegreesPerSecond","input.gamepadVerticalDegreesPerSecond",
+            "input.gamepadReturnDelay","input.deadzone","audio.musicDefaultPercent","audio.effectsDefaultPercent",
+            "visual.LightingPercent","visual.MaterialsPercent","visual.AmbientOcclusionPercent","visual.BloomPercent",
+            "visual.ReflectionsPercent","visual.ColorGradingPercent","visual.ColorGradingExposure","visual.ColorGradingSaturation"};
 
         internal NumericDescriptor DetachedCopy()
         {
@@ -34,6 +50,8 @@ namespace StarTournament.ProvingGround
             if (!IsFinite(Minimum) || !IsFinite(Maximum) || Minimum > Maximum) { reason = "Minimum must be finite and no greater than Maximum."; return false; }
             if (!IsFinite(Step) || Step <= 0f) { reason = "Step must be finite and positive."; return false; }
             if (!IsFinite(DefaultValue) || DefaultValue < Minimum || DefaultValue > Maximum) { reason = "DefaultValue is outside the descriptor range."; return false; }
+            if(Unit=="boolean"&&(Minimum!=0||Maximum!=1||Step!=1||(DefaultValue!=0&&DefaultValue!=1)))
+            {reason="Логический параметр: границы 0/1, шаг 1, значение по умолчанию 0 или 1.";return false;}
             reason = string.Empty;
             return true;
         }
@@ -406,6 +424,8 @@ namespace StarTournament.ProvingGround
                 else descriptorIndex.TryGetValue(value.Path,out descriptor);
                 if (descriptor == null)
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Value has no descriptor." });
+                else if(descriptor.Unit=="boolean"&&value.Value!=0&&value.Value!=1)
+                    issues.Add(new ProfileValidationIssue{Path=value.Path,Message="Логическое значение должно быть 0 или 1."});
                 else if ((descriptor.Unit == "ammo" || descriptor.Unit == "count") && value.Value != Mathf.Round(value.Value))
                     issues.Add(new ProfileValidationIssue { Path = value.Path, Message = "Count must be integral." });
                 else if ((value.Path=="rifle.damage"||value.Path=="shot.damage"||value.Path.StartsWith("damage.",StringComparison.Ordinal)) &&

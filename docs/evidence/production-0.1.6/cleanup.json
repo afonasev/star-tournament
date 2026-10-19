@@ -1,0 +1,10 @@
+{
+  "removed": "Owned .local/production-0.1.6 public mirror checkout, raw Players, package layout/portable duplicates, isolated packaging venv and scratch",
+  "bytesBeforeCleanup": 3301154056,
+  "publicSourceRetained": "GitHub main/tag v0.1.6@eba44b3102eb820e9983244e77683fba82524965",
+  "candidateRetained": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.6",
+  "activePrivateWorktreeRetained": "Full standard alignment and owner acceptance still open",
+  "foreignResourcesTouched": false,
+  "nsisOwnedStaging": "Confirmed removed",
+  "ownedBuildPlayerPublisherProcesses": "Terminal; no active matching Player or publisher before cleanup"
+}

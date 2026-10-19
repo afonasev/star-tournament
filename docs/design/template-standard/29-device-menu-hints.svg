@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect x="0" y="0" width="1440" height="900" rx="3" fill="#0b1725" stroke="none"/>
+<text x="56" y="43" fill="#e3bd78" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start">STAR TOURNAMENT</text>
+<text x="1384" y="43" fill="#9aaebe" font-family="Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end">МАКЕТ · НЕ UNITY</text>
+<path d="M56 61 L1384 61" stroke="#304453"/>
+<text x="56" y="126" fill="#e3bd78" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="start">ПОДСКАЗКИ ПО УСТРОЙСТВУ</text>
+<text x="56" y="165" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Предложение · фрагменты существующих меню, без изменения их маршрутов и компоновки</text>
+<rect x="56" y="210" width="650" height="345" rx="8" fill="#102131" stroke="#385062"/>
+<text x="84" y="253" fill="#e3bd78" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">МЫШЬ И КЛАВИАТУРА</text>
+<text x="84" y="291" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Главное меню · выбранное действие «Битва»</text>
+<rect x="84" y="315" width="594" height="54" rx="3" fill="#e3bd78" stroke="#385062"/>
+<text x="381.0" y="349.0" fill="#0b1725" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Битва</text>
+<rect x="84" y="383" width="594" height="54" rx="3" fill="#142638" stroke="#385062"/>
+<text x="381.0" y="417.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Настройки игры</text>
+<rect x="84" y="451" width="594" height="54" rx="3" fill="#142638" stroke="#385062"/>
+<text x="381.0" y="485.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Выход</text>
+<rect x="56" y="580" width="650" height="196" rx="8" fill="#102131" stroke="#385062"/>
+<text x="84" y="619" fill="#e3bd78" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">История версий</text>
+<rect x="84" y="639" width="250" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="209.0" y="670.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Назад</text>
+<text x="84" y="737" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Обычные названия действий без легенды клавиш</text>
+<rect x="734" y="210" width="650" height="345" rx="8" fill="#102131" stroke="#385062"/>
+<text x="762" y="253" fill="#e3bd78" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">ГЕЙМПАД XBOX</text>
+<text x="762" y="291" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Главное меню · выбранное действие «Битва»</text>
+<rect x="762" y="315" width="594" height="54" rx="3" fill="#e3bd78" stroke="#e3bd78"/>
+<text x="1059.0" y="349.0" fill="#0b1725" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Битва · A</text>
+<rect x="762" y="383" width="594" height="54" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1059.0" y="417.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Настройки игры</text>
+<rect x="762" y="451" width="594" height="54" rx="3" fill="#142638" stroke="#385062"/>
+<text x="1059.0" y="485.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Выход</text>
+<rect x="734" y="580" width="650" height="196" rx="8" fill="#102131" stroke="#385062"/>
+<text x="762" y="619" fill="#e3bd78" font-family="Arial, sans-serif" font-size="23" font-weight="700" text-anchor="start">История версий</text>
+<rect x="762" y="639" width="250" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="887.0" y="670.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Назад · B</text>
+<text x="762" y="737" fill="#9aaebe" font-family="Arial, sans-serif" font-size="19" font-weight="400" text-anchor="start">Правый стик — прокрутка описания</text>
+<path d="M56 824 L1384 824" stroke="#304453"/>
+<text x="56" y="862" fill="#9aaebe" font-family="Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start">Подсказки геймпада только при его вводе. Нижняя кнопка — на текущем фокусе; семейство меняет обозначения.</text>
+</svg>

@@ -1,0 +1,30 @@
+PASS empty installation does not assert health
+PASS only exact menu-ready marks baseline healthy
+PASS successful target keeps backup through startup and confirmation
+PASS exit zero before ready also requires recovery
+PASS interrupted launch persists failed release
+PASS interrupted apply while old installed never silently retries
+PASS failed apply retains authenticated snapshot identity
+PASS restore matches previous version and exact snapshot
+PASS deadline boundary rejects late ready durably
+PASS timeout cannot be undone by late ready
+PASS stale observer cannot fail newer launch
+PASS unknown installed transaction identity fails closed
+PASS prepare cannot overwrite pending or unconfirmed state
+PASS foreign product platform architecture channel rejected
+PASS corrupt empty oversize unknown-schema journals fail closed
+PASS invalid phase and relational invariants fail closed
+PASS orphan temporary write cannot replace durable journal
+PASS link cannot redirect recovery writes
+PASS numeric prerelease ordering permits test.10 after test.9
+PASS wrong-channel versions fail before any mutation
+PASS directory or dangling link cannot be treated as absent journal
+PASS empty or noncanonical versions cannot enter journal
+PASS confirmed release mismatch retains backup
+PASS stale object rereads durable state before mutating
+PASS failed target set is retained across subsequent upgrades
+PASS invalid failure or state cannot overwrite valid bytes
+PASS directory link cannot redirect absent journal
+PASS invalid startup ticket and blocked health fail closed
+PASS restored backup stays recorded until cleanup acknowledgement
+Startup recovery: 29 passed

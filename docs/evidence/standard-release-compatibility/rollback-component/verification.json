@@ -1,0 +1,34 @@
+{
+  "baseline": "codex/game-standard-alignment@3ffa434d",
+  "brokerChecks": 73,
+  "windowsRecoveryChecks": 36,
+  "compatibilityChecks": 52,
+  "total": 161,
+  "runnerExits": 0,
+  "realProcessDeathCheckpoints": 8,
+  "maintenanceCompile": {
+    "warnings": 0,
+    "errors": 0,
+    "publish": false
+  },
+  "nativeWindowsExecuted": false,
+  "legacyHandoffResolved": false,
+  "legacyActivationResolved": false,
+  "playerInstallerReleaseBuild": false,
+  "fullSuite": false,
+  "deploy": false,
+  "sources": {
+    "distribution/maintenance/WindowsBrokerUpgradeTransaction.cs": "4c65d728ac4c3be56b58a20c365cd23c20a003db196395a689d77b946d2c0fa3",
+    "distribution/maintenance/WindowsRecoveryStore.cs": "6acfd025585356c79050cd7a66bfa59ea92f688e625200cd2c6048206409a741",
+    "distribution/tests/BrokerUpgradeChecks.cs": "ddf9de23663a4187d123524d91eb6858a165d45b5e015d3414015ac32259ad1d",
+    "distribution/tests/Program.cs": "85f2302b5e697f0a73d437a2cbe003574b3449760cd1c9dedb63f2d99bc179a5"
+  },
+  "logs": {
+    "windows-recovery.log": "75722eff863d4460a6dfb43ac40a5992350e61de3cc48449a39303917e37fc2f",
+    "restore.log": "ae280d75f97c7957f1f086548f4d3b4892a239286c57ce9cbac6674945e07854",
+    "maintenance-restore.log": "375d8cc3dceabc2168985fa220770235b6ddbec3605b23b3aa83729cfd9b2ada",
+    "broker.log": "a29be0f3bf36d38a0ad23d944e3c1b12b8406e7b680a69cc830dff04a506633f",
+    "maintenance.log": "cdecc528ce0c8183086613ceec0281ce5d0c7fcbe0a213b79ee6e9b23ad56da9",
+    "release-compatibility.log": "fa7977946de41dc73a9f364f904a78f89144de065c832bc98ef4de9e896a2bd9"
+  }
+}

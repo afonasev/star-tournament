@@ -1,0 +1,46 @@
+{
+  "path": "/Users/eaafonasev/.local/share/star-tournament-distribution/retained/production-0.1.6",
+  "reason": "Exact production0.1.6 installers/full updates/metadata retained for owner installed/native acceptance",
+  "assets": [
+    {
+      "name": "tech.afonasev.star-tournament.win-x64-0.1.6-win-x64-full.nupkg",
+      "size": 172359273,
+      "sha256": "2f4cd296923e1639b4a674569ef6dd7021fa84032f656191b4d9eadb085f766d"
+    },
+    {
+      "name": "Star-Tournament-0.1.6-Windows-x64-Setup.exe",
+      "size": 149250524,
+      "sha256": "88abff1bf309d5b4f83389ed11fb003f1d587ebca581c05e9e2e526b2d2985da"
+    },
+    {
+      "name": "latest-v2-win-x64.json",
+      "size": 1609,
+      "sha256": "746b81c769aa394df598cbafe4d0476a3b5ab9a26c0b76e8826f3b9f8bd49892"
+    },
+    {
+      "name": "identity-win-x64.json",
+      "size": 1085,
+      "sha256": "a48d06c8128b2533b87e8b6e638220f58a4d7666fb4386f239ae577d698dae21"
+    },
+    {
+      "name": "tech.afonasev.star-tournament.osx-arm64-0.1.6-osx-arm64-full.nupkg",
+      "size": 150953858,
+      "sha256": "9e48cb02be63418fccc90a0bc20081982594bbb6be3e47276dbcadb24ee6ba87"
+    },
+    {
+      "name": "Star-Tournament-0.1.6-macOS-arm64.dmg",
+      "size": 163694244,
+      "sha256": "ff255552c0a1658f55432450f829e972783cbcae5aca04a62d3e0ecd5fa4af9a"
+    },
+    {
+      "name": "latest-v2-osx-arm64.json",
+      "size": 1617,
+      "sha256": "521e603dded1b515f7de0c288afe45673d0bfed7c893bfc6df73f07bfe95b810"
+    },
+    {
+      "name": "identity-osx-arm64.json",
+      "size": 899,
+      "sha256": "ee8e7d74eaab0ec9e38c0e512c41a82247874dff64bf917163bed1580709d8e7"
+    }
+  ]
+}

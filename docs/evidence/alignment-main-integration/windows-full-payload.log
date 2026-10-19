@@ -1,0 +1,45 @@
+PASS actual released manifest provenance
+PASS complete current applies without executing updater or touching root/user data
+PASS exception at current-saved restores exact old payload
+PASS exception at target-activated restores exact old payload
+PASS staged mutation rejected before current rename
+PASS unsafe Windows namespace rejected: ../escape
+PASS unsafe Windows namespace rejected: lib/app/../escape
+PASS unsafe Windows namespace rejected: lib/app/game/../../escape
+PASS unsafe Windows namespace rejected: lib/app/C:/escape
+PASS unsafe Windows namespace rejected: lib/app/game/file:ads
+PASS unsafe Windows namespace rejected: lib/app/game/CON.txt
+PASS unsafe Windows namespace rejected: lib/app/game/NUL .txt
+PASS unsafe Windows namespace rejected: lib/app/game/trailing.
+PASS unsafe Windows namespace rejected: lib/app/game/space 
+PASS unsafe Windows namespace rejected: lib/app/game/COM¹.txt
+PASS unsafe Windows namespace rejected: lib/app/game/back\slash
+PASS unsafe Windows namespace rejected: /absolute
+PASS unsafe Windows namespace rejected: lib/app/game/link.__symlink
+PASS unsafe Windows namespace rejected: lib/app/GAME/startournament.EXE
+PASS unsafe Windows namespace rejected: lib/app/game/StarTournament.exe/child
+PASS unix symbolic link rejected
+PASS manifest mismatch rejected: id
+PASS manifest mismatch rejected: version
+PASS manifest mismatch rejected: os
+PASS manifest mismatch rejected: rid
+PASS manifest mismatch rejected: channel
+PASS manifest mismatch rejected: machineArchitecture
+PASS manifest mismatch rejected: mainExe
+PASS manifest mismatch rejected: runtimeDependencies
+PASS manifest mismatch rejected: shortcutLocations
+PASS manifest mismatch rejected: osMinVersion
+PASS nested manifest identity rejected
+PASS duplicate critical manifest field rejected
+PASS unexpected root manifest element rejected
+PASS signed payload date mismatch rejected
+PASS payload sq.version is checked and preserved
+PASS foreign payload sq.version rejected
+PASS duplicate package manifests rejected
+PASS external entities never parsed
+PASS config executable traversal rejected
+PASS oversized native manifest rejected
+PASS unsupported framework rejected
+PASS process death at current-saved retains durable recovery
+PASS process death at target-activated retains durable recovery
+Windows full payload: 44 passed; portable source/real process-crash checks, not native Windows ACL acceptance

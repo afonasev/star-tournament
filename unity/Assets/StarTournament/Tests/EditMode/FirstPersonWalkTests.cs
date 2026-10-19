@@ -91,7 +91,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(old.Version,Is.EqualTo(8));Assert.That(old.Get("view.fillIntensity"),Is.EqualTo(.25f));
             Assert.That(old.Validate(),Is.Empty);
         }
-        [TestCase(.05f,.35f)][TestCase(.25f,.25f)][TestCase(0f,0f)]
+        [TestCase(.05f,.05f)][TestCase(.25f,.25f)][TestCase(0f,0f)]
         public void EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(float previous,float expected)
         {
             var current=DesignLabHistoryTests.Shipped();
@@ -147,13 +147,13 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==number).Hash,Is.EqualTo(hash));
                 int count=upgraded.SelectedProfile.Revisions.Count;var reopened=new DesignLabHistory(path,current);
                 Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.SelectedProfile.Revisions.Count,Is.EqualTo(count));
-                var file=JsonUtility.FromJson<LabHistoryFile>(File.ReadAllText(path));var legacy=file.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);
+                var file=DesignLabHistoryTests.ReadFixture(path,current);var legacy=file.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Number==number);
                 legacy.Snapshot.Profiles.Single(p=>p.Id=="unity-trooper-presentation-v1").Descriptors.Single(d=>d.Path=="animation.blendSeconds").Maximum=99;
                 File.WriteAllText(path,JsonUtility.ToJson(file));
                 var sanitized=new DesignLabHistory(path,current);Assert.That(sanitized.StorageError,Is.Null);
                 Assert.That(sanitized.SelectedProfile.Revisions.Single(r=>r.Number==number).Snapshot.Descriptors.Single(d=>d.Path=="animation.blendSeconds").Maximum,Is.EqualTo(.5f),"File metadata cannot override the trusted registry");
             }
-            finally{if(File.Exists(path))File.Delete(path);}
+            finally{if(File.Exists(path))File.Delete(path);if(File.Exists(path+".schema1-backup.json"))File.Delete(path+".schema1-backup.json");}
         }
     }
 }

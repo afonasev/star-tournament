@@ -1,0 +1,458 @@
+Unity Editor version:    6000.3.23f1 (09d2ecc7fb28)
+Branch:                  6000.3/staging
+Build type:              Release
+Batch mode:              YES
+macOS version:           Version 14.6.1 (Build 23G93)
+Darwin version:          23.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        32768 MB
+Date:                    2026-10-16T17:22:14Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Channel LicenseClient-eaafonasev doesn't exist
+Launching external process: /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Helpers/UnityLicensingClient.app/Contents/MacOS/Unity.Licensing.Client
+[Licensing::Module] Successfully launched the LicensingClient (PId: 25408)
+Launching external process: /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+-batchmode
+-noaudio
+-muted
+-nographics
+-executeMethod
+StarTournament.ProvingGround.Editor.LabReleaseBuild.BootstrapAuthoring
+-quit
+-logFile
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/.local/unity-evidence/lab-bootstrap.d18WNe/bootstrap.log
+Successfully changed project path to: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [8436879168]  Target information:
+
+Player connection [8436879168]  * "[IP] 192.168.0.162 [Port] 55504 [Flags] 2 [Guid] 146478059 [EditorId] 146478059 [Version] 1048832 [Id] OSXEditor(0,MSK-V4NW2LD6KL.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8436879168]  * "[IP] 10.9.252.2 [Port] 55504 [Flags] 2 [Guid] 146478059 [EditorId] 146478059 [Version] 1048832 [Id] OSXEditor(0,MSK-V4NW2LD6KL.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8436879168] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8436879168] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-eaafonasev" at "2026-10-16T17:22:15.092566Z"
+[Package Manager] Connected to IPC stream "Upm-25407" after 0.1 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              565b931e46ef4789a873fa559499425f
+  Correlation Id:          6c5d2cea3968abec84c8b0dc32973b2e
+  External correlation Id: 4110850327587623853
+  Machine Id:              6zloMnoTQuFwQ13kbWokeIvxKQg=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-eaafonasev" (connect: 0.17s, validation: 0.02s, handshake: 0.22s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-eaafonasev-notifications" at "2026-10-16T17:22:15.326631Z"
+[Licensing::Module] Connected to LicensingClient (PId: 25408, launch time: 0.00, total connection time: 0.40s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 9072439579317-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.41s
+[Licensing::Module] Licensing is initialized (took 0.20s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 0.01 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.3.23f1 (09d2ecc7fb28)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets
+Forcing GfxDevice: Null
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+NullGfxDevice:
+    Version:  NULL 1.0 [1.0]
+    Renderer: Null Device
+    Vendor:   Unity Technologies
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56407
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001252 seconds.
+- Loaded All Assemblies, in  0.289 seconds
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.364 seconds
+Domain Reload Profiling: 654ms
+	BeginReloadAssembly (115ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (22ms)
+	RebuildCommonClasses (23ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (27ms)
+	LoadAllAssembliesAndSetupDomain (115ms)
+		LoadAssemblies (94ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (113ms)
+			TypeCache.Refresh (112ms)
+				TypeCache.ScanAssembly (102ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (365ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (321ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (28ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (57ms)
+			ProcessInitializeOnLoadAttributes (102ms)
+			ProcessInitializeOnLoadMethodAttributes (131ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 52 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.inputsystem@1.20.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.inputsystem@7a4e1a2a8194)
+    com.unity.ai.navigation@2.0.14 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.ai.navigation@134dd6a3b97b)
+    com.unity.cloud.gltfast@6.20.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97)
+    com.unity.burst@1.8.30 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.burst@2f3d916873ea)
+    com.unity.collections@2.6.8 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.collections@84e8eb3fc12e)
+    com.unity.mathematics@1.3.3 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.mathematics@19a9377c4ffa)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.test-framework.performance@3.5.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.searcher@4.9.5 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.searcher@a463122f2c00)
+  Built-in packages:
+    com.unity.modules.accessibility@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.xr)
+    com.unity.render-pipelines.universal@17.3.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.render-pipelines.universal@7865b6b91f8a)
+    com.unity.test-framework@1.6.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.test-framework@bd7f943e9647)
+    com.unity.ugui@2.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.ugui@27635d171b1a)
+    com.unity.ext.nunit@2.0.5 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.ext.nunit@d8c07649098d)
+    com.unity.render-pipelines.core@17.3.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.render-pipelines.core@0bb36005e9ba)
+    com.unity.shadergraph@17.3.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.shadergraph@b4b75cc00891)
+    com.unity.render-pipelines.universal-config@17.0.3 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.render-pipelines.universal-config@8dc1aab4af1d)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/PackageCache/com.unity.modules.hierarchycore)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+[ScriptCompilation] Requested script compilation because: Assetdatabase observed changes in script compilation related files
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-1c20a3838c761619a171305c786b3294
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc -
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc - - 200 - application/grpc 24.5486ms
+Starting: /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/200b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity
+DisplayProgressbar: Compiling Scripts
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc -
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+[40m[1m[33mwarn[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll"
+[40m[1m[33mwarn[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll"
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@2f3d916873ea/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc - - 200 - application/grpc 15.0223ms
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly application/grpc -
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/StarTournament.ProvingGround.Editor.dll, with 132 defines and 276 references
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Jobs.CodeGen.JobsILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly application/grpc - - 200 - application/grpc 11.0247ms
+ExitCode: 0 Duration: 1s229ms
+[535/699    0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[695/699    1s] Csc Library/Bee/artifacts/200b0aE.dag/StarTournament.ProvingGround.Editor.dll (+2 others)
+[696/699    0s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/StarTournament.ProvingGround.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/StarTournament.ProvingGround.Editor.dll, with 132 defines and 276 references
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[697/699    0s] CopyFiles Library/ScriptAssemblies/StarTournament.ProvingGround.Editor.dll
+[698/699    0s] CopyFiles Library/ScriptAssemblies/StarTournament.ProvingGround.Editor.pdb
+*** Tundra build success (1.21 seconds), 5 items updated, 699 evaluated
+AssetDatabase: script compilation time: 1.691351s
+Begin MonoManager ReloadAssembly
+Total cache size 265832012
+Total cache size after purge 265832012, took 00:00:00.1214807
+- Loaded All Assemblies, in  0.396 seconds
+Refreshing native plugins compatible for Editor in 0.13 ms, found 0 plugins.
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  2.021 seconds
+Domain Reload Profiling: 2417ms
+	BeginReloadAssembly (119ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (10ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (41ms)
+	RebuildCommonClasses (25ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (14ms)
+	LoadAllAssembliesAndSetupDomain (229ms)
+		LoadAssemblies (168ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (100ms)
+			TypeCache.Refresh (67ms)
+				TypeCache.ScanAssembly (60ms)
+			BuildScriptInfoCaches (25ms)
+			ResolveRequiredComponents (6ms)
+	FinalizeReload (2021ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (1861ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (10ms)
+			SetLoadedEditorAssemblies (2ms)
+			BeforeProcessingInitializeOnLoad (89ms)
+			ProcessInitializeOnLoadAttributes (1715ms)
+			ProcessInitializeOnLoadMethodAttributes (44ms)
+			AfterProcessingInitializeOnLoad (1ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (9ms)
+Start importing Packages/com.unity.render-pipelines.core/Tests/Editor/UnifiedRayTracing/TraceRays.urtshader using Guid(1142bbad8b9e8c44c83a9775ff120d37) (ScriptedImporter)Launching external process: /Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.03 seconds
+ -> (artifact id: 'e2c20b031221760cfccaea201f3e8ec6') in 0.044141 seconds
+Start importing Packages/com.unity.render-pipelines.universal/Runtime/RendererFeatures/SurfaceCacheGI/SurfaceCacheCore/RisEstimation.urtshader using Guid(713f6141bd66a134383b787f2eaa7c11) (ScriptedImporter) -> (artifact id: '2c05f3acb68ddb2e8bef502f207153bd') in 0.006164541 seconds
+Start importing Packages/com.unity.render-pipelines.core/Editor/Lighting/ProbeVolume/RenderingLayerMask/TraceRenderingLayerMask.urtshader using Guid(94a070d33e408384bafc1dea4a565df9) (ScriptedImporter) -> (artifact id: 'bf40ba974becff09ff8c3f91ee9dfbf2') in 0.005787042 seconds
+Start importing Packages/com.unity.render-pipelines.universal/Runtime/RendererFeatures/SurfaceCacheGI/SurfaceCacheCore/UniformEstimation.urtshader using Guid(94a39d12848d8d64ca962a72b74e7c50) (ScriptedImporter) -> (artifact id: 'cdaa4d9f216f730b10d2451630dd10dc') in 0.003349209 seconds
+Start importing Packages/com.unity.render-pipelines.core/Tests/Editor/UnifiedRayTracing/TraceTransparentRays.urtshader using Guid(6513c3b892e933c4f8d00c19d5c47532) (ScriptedImporter) -> (artifact id: '1332e5c32e0a2c27d0d3e4516facc387') in 0.002262208 seconds
+Start importing Packages/com.unity.render-pipelines.core/Editor/Lighting/ProbeVolume/DynamicGI/DynamicGISkyOcclusion.urtshader using Guid(5a2a534753fbdb44e96c3c78b5a6999d) (ScriptedImporter) -> (artifact id: '5705bd53237e118119b8223a4d7ca4af') in 0.002412584 seconds
+Start importing Packages/com.unity.render-pipelines.core/Tests/Editor/UnifiedRayTracing/TraceRaysAndFetchAttributes.urtshader using Guid(fbc59f55df2416344b008dc23753cae2) (ScriptedImporter) -> (artifact id: 'fb603cf8ac72cc1d220f963723bee0c7') in 0.002177709 seconds
+Start importing Packages/com.unity.render-pipelines.universal/Runtime/RendererFeatures/SurfaceCacheGI/SurfaceCacheCore/RestirCandidateTemporal.urtshader using Guid(ad3a9f9982f8c4f4a839a78955e78458) (ScriptedImporter) -> (artifact id: 'f09c516bdfabbd7f4d915a2c9503e0ce') in 0.003052166 seconds
+Start importing Packages/com.unity.render-pipelines.core/Editor/Lighting/ProbeVolume/VirtualOffset/TraceVirtualOffset.urtshader using Guid(ff2cbab5da58bf04d82c5f34037ed123) (ScriptedImporter) -> (artifact id: '0c10d0f89cf8e9fa83724f5eaf00f6ae') in 0.004047125 seconds
+Refreshing native plugins compatible for Editor in 0.20 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=884aa382532c147d3b3528244862a471): Total: 4.943 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=9 (actual=9, local cache=0, cache server=0)
+		Asset DB Process Time: managed=1 ms, native=2655 ms
+		Asset DB Callback time: managed=147 ms, native=25 ms
+		Scripting: domain reloads=1, domain reload time=396 ms, compile time=1692 ms, other=24 ms
+		Project Asset Count: scripts=915, non-scripts=1904
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokeCustomDependenciesCallbacks: 0.001ms
+	InvokePackagesCallback: 16.093ms
+	ApplyChangesToAssetFolders: 0.277ms
+	Scan: 397.197ms
+	OnSourceAssetsModified: 0.542ms
+	CategorizeAssetsWithTransientArtifact: 18.287ms
+	ProcessAssetsWithTransientArtifactChanges: 25.544ms
+	CategorizeAssets: 34.875ms
+	ImportOutOfDateAssets: 2101.545ms (330.056ms without children)
+		ImportManagerImport: 77.097ms (2.054ms without children)
+			ImportInProcess: 74.648ms
+			UpdateCategorizedAssets: 0.395ms
+		CompileScripts: 1692.236ms
+		ReloadNativeAssets: 0.022ms
+		UnloadImportedAssets: 0.615ms
+		ReloadImportedAssets: 0.817ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.327ms
+		InitializingProgressBar: 0.004ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.000ms
+		OnDemandSchedulerStart: 0.371ms
+	PostProcessAllAssets: 158.381ms
+	Hotreload: 0.937ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.000ms
+	UnloadStreamsBegin: 1.838ms
+	PersistCurrentRevisions: 0.112ms
+	UnloadStreamsEnd: 0.000ms
+	GenerateScriptTypeHashes: 1.588ms
+	Untracked: 2187.428ms
+
+Application.AssetDatabase Initial Refresh End
+Scanning for USB devices : 0.292ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Star Tournament Unity Proving Ground
+Unloading 26 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 4325 unused Assets / (2.3 MB). Loaded Objects now: 5202.
+Memory consumption went from 203.1 MB to 200.7 MB.
+Total: 6.036000 ms (FindLiveObjects: 0.243875 ms CreateObjectMapping: 0.166125 ms MarkObjects: 4.730875 ms  DeleteObjects: 0.894625 ms)
+
+Opening scene 'Assets/StarTournament/Scenes/ProvingGround.unity additively'
+Loaded scene 'Assets/StarTournament/Scenes/ProvingGround.unity'
+	Deserialize:            357.652 ms
+	Integration:            0.317 ms
+	Integration of assets:  17.057 ms
+	Thread Wait Time:       -0.056 ms
+	Total Operation Time:   374.971 ms
+STAR_LAB_AUTHORING_BOOTSTRAPPED /Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/DesignLab/authoring-history-v1.json profiles=1 default=4 hash=1bfe89dca8bfa0a8fe482acba37fea99c82ec1cd4feaf78e1c72c1ac923f4eb1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+StarTournament.ProvingGround.Editor.LabReleaseBuild:BootstrapAuthoring () (at Assets/StarTournament/Editor/LabReleaseBuild.cs:38)
+
+(Filename: Assets/StarTournament/Editor/LabReleaseBuild.cs Line: 38)
+
+Thread 0x16ef57000 may have been prematurely finalized
+Batchmode quit successfully invoked - shutting down!
+Thread 0x16efe3000 may have been prematurely finalized
+The command could not be loaded, possibly because:
+  * You intended to execute a .NET application:
+      The application 'build-server' does not exist.
+  * You intended to execute a .NET SDK command:
+      No .NET SDKs were found.
+
+Download a .NET SDK:
+https://aka.ms/dotnet-download
+
+Learn about SDK resolution:
+https://aka.ms/dotnet/sdk-not-found
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-eaafonasev-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-eaafonasev channel disconnected successfully.
+Thread 0x16f92f000 may have been prematurely finalized
+Thread 0x16f9bb000 may have been prematurely finalized
+Thread 0x16fb5f000 may have been prematurely finalized
+Thread 0x16fd03000 may have been prematurely finalized
+Thread 0x16fad3000 may have been prematurely finalized
+Thread 0x16fa47000 may have been prematurely finalized
+Thread 0x16fc77000 may have been prematurely finalized
+Thread 0x16fbeb000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+Cleanup mono
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+debugger-agent: Unable to listen on 44
+Exiting batchmode successfully now!
+[Package Manager] Server process was shutdown

@@ -1,0 +1,53 @@
+PASS Windows target may raise baseline build requirement
+PASS exact raised Windows target floor accepted
+PASS target cannot underdeclare Windows baseline
+PASS actual Python producer wire fixture admitted by C# signature/compatibility reader
+PASS schema2 signature/capabilities/actual payload config agree
+PASS historical schema1 retains fixed baseline
+PASS schema1 cannot smuggle compatibility override
+PASS invalid admission clears prior target
+PASS schema2 requires explicit requirements
+PASS invalid descriptor ReleaseRequirements { MinimumOsVersion = 11.0, MinimumUpdaterProtocol = 2, PayloadFormat = velopack-full-v1, UserDataPolicy = profiles2-lab3-prefs1 }
+PASS invalid descriptor ReleaseRequirements { MinimumOsVersion = 012.0, MinimumUpdaterProtocol = 2, PayloadFormat = velopack-full-v1, UserDataPolicy = profiles2-lab3-prefs1 }
+PASS invalid descriptor ReleaseRequirements { MinimumOsVersion = 12.0, MinimumUpdaterProtocol = 1, PayloadFormat = velopack-full-v1, UserDataPolicy = profiles2-lab3-prefs1 }
+PASS invalid descriptor ReleaseRequirements { MinimumOsVersion = 12.0, MinimumUpdaterProtocol = 2, PayloadFormat = velopack-full-v1, UserDataPolicy = legacy-preserved-v1 }
+PASS signed incompatible target ReleaseRequirements { MinimumOsVersion = 16.0, MinimumUpdaterProtocol = 2, PayloadFormat = velopack-full-v1, UserDataPolicy = profiles2-lab3-prefs1 }
+PASS signed incompatible target ReleaseRequirements { MinimumOsVersion = 12.0, MinimumUpdaterProtocol = 3, PayloadFormat = velopack-full-v1, UserDataPolicy = profiles2-lab3-prefs1 }
+PASS signed incompatible target ReleaseRequirements { MinimumOsVersion = 12.0, MinimumUpdaterProtocol = 2, PayloadFormat = future, UserDataPolicy = profiles2-lab3-prefs1 }
+PASS signed incompatible target ReleaseRequirements { MinimumOsVersion = 12.0, MinimumUpdaterProtocol = 2, PayloadFormat = velopack-full-v1, UserDataPolicy = destructive-v2 }
+PASS actual reader capability1 cannot admit schema2 activation
+PASS exact minimum OS accepted
+PASS signed bytes must contain matching unique atomic payload config
+PASS signed bytes must contain matching unique atomic payload config
+PASS signed bytes must contain matching unique atomic payload config
+PASS signed bytes must contain matching unique atomic payload config
+PASS newest compatible signed target selected: os
+PASS one frozen discovery API snapshot: os
+PASS newest compatible signed target selected: reader
+PASS one frozen discovery API snapshot: reader
+PASS newest compatible signed target selected: policy
+PASS one frozen discovery API snapshot: policy
+PASS newest compatible signed target selected: schema
+PASS one frozen discovery API snapshot: schema
+PASS all signed targets incompatible gives explicit error
+PASS no stale incompatible target retained
+PASS one frozen discovery API snapshot: all
+PASS signature failure cannot masquerade as compatible fallback
+PASS trust failure stops before lower target
+PASS one frozen discovery API snapshot: signature
+PASS identical duplicate locator is coalesced
+PASS one frozen discovery API snapshot: duplicate
+PASS conflicting duplicate locator cannot choose a target
+PASS conflicting locator fails before manifest request
+PASS one frozen discovery API snapshot: conflict
+PASS protected broker protocol1/reader0 => effective1
+PASS protected broker protocol1/reader1 => effective1
+PASS protected broker protocol1/reader2 => effective2
+PASS protected broker protocol2/reader0 => effective1
+PASS protected broker protocol2/reader1 => effective1
+PASS protected broker protocol2/reader2 => effective2
+PASS protected broker protocol2/reader99 => effective2
+PASS invalid capability cannot become supported reader
+PASS unknown playback protocol cannot advertise a supported reader
+PASS unknown playback protocol cannot advertise a supported reader
+Release compatibility: 52 passed

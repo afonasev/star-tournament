@@ -1,0 +1,26 @@
+test_complete_launcher_bundle_and_internal_link (test_macos_dmg.MacDmg.test_complete_launcher_bundle_and_internal_link) ... ok
+test_escaping_symlink_and_missing_update_trust_are_rejected (test_macos_dmg.MacDmg.test_escaping_symlink_and_missing_update_trust_are_rejected) ... ok
+test_existing_output_and_failed_builder_preserve_bytes_and_cleanup (test_macos_dmg.MacDmg.test_existing_output_and_failed_builder_preserve_bytes_and_cleanup) ... ok
+test_minimum_os_and_finder_version_must_match_payload (test_macos_dmg.MacDmg.test_minimum_os_and_finder_version_must_match_payload) ... ok
+test_non_runnable_or_missing_components_are_rejected (test_macos_dmg.MacDmg.test_non_runnable_or_missing_components_are_rejected) ... ok
+test_outer_plist_preserves_pinned_identifier_and_real_version_contract (test_macos_dmg.MacDmg.test_outer_plist_preserves_pinned_identifier_and_real_version_contract) ... ok
+test_output_collision_during_build_is_not_overwritten (test_macos_dmg.MacDmg.test_output_collision_during_build_is_not_overwritten) ... ok
+test_player_path_cannot_traverse_to_a_different_bundle_component (test_macos_dmg.MacDmg.test_player_path_cannot_traverse_to_a_different_bundle_component) ... ok
+test_real_ditto_zip_preserves_bundle_links_modes_and_metadata (test_macos_dmg.MacDmg.test_real_ditto_zip_preserves_bundle_links_modes_and_metadata) ... ERROR
+test_recording_builder_gets_approved_layout_and_input_stays_intact (test_macos_dmg.MacDmg.test_recording_builder_gets_approved_layout_and_input_stays_intact) ... ok
+test_rejects_nested_player_or_wrong_version_architecture (test_macos_dmg.MacDmg.test_rejects_nested_player_or_wrong_version_architecture) ... ok
+test_zip_admission_rejects_traversal_collisions_escaping_links_and_link_children (test_macos_dmg.MacDmg.test_zip_admission_rejects_traversal_collisions_escaping_links_and_link_children) ... ok
+
+======================================================================
+ERROR: test_real_ditto_zip_preserves_bundle_links_modes_and_metadata (test_macos_dmg.MacDmg.test_real_ditto_zip_preserves_bundle_links_modes_and_metadata)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/test_macos_dmg.py", line 150, in test_real_ditto_zip_preserves_bundle_links_modes_and_metadata
+    os.setxattr(app, 'com.afonasev.fixture', b'bundle metadata')
+    ^^^^^^^^^^^
+AttributeError: module 'os' has no attribute 'setxattr'
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.087s
+
+FAILED (errors=1)

@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "name": "downloads.js",
+      "before": "61016aeed864fe62a2784b16a60167dabcf669d43cf07ebb280d24da361fe882",
+      "after": "e595da2ac108a1f6d639b60501fc3b465acfed59c61d01e3effd5f9554204bdb"
+    },
+    {
+      "name": "index.html",
+      "before": "b8bf15260d24ef04cb159153041f13d7ab759663c8928adec1d27d6f4e61bd07",
+      "after": "c9e6a8a67b8fd5b82b2ce2374b0c32dc93b740c1dee3845fb4f2ed2644ec7ea3"
+    }
+  ],
+  "remoteRoot": "/opt/robowar/desktop/test",
+  "scope": "Approved modern metadata/DMG format instructions; layouts unchanged"
+}

@@ -38,16 +38,18 @@ namespace StarTournament.ProvingGround
             var group=oldMenuColumn.GetComponent<VerticalLayoutGroup>();
             var background=oldMenuColumn.GetComponent<Image>();
             var previousIdentity=oldMenuColumn.transform.Find("operator-identity");if(previousIdentity)previousIdentity.gameObject.SetActive(phase==Phase.Paused&&!UseSeatPauseMenus);
+            var previousBalance=oldMenuColumn.transform.Find("operator-balance");if(previousBalance)previousBalance.gameObject.SetActive(phase==Phase.Paused&&!UseSeatPauseMenus);
             if(phase!=Phase.Paused||UseSeatPauseMenus){if(background)background.enabled=false;group.enabled=true;return;}
             group.enabled=false;if(!background)background=oldMenuColumn.AddComponent<Image>();background.enabled=true;background.color=new Color32(20,33,48,248);RoundRosterPanel(oldMenuColumn);
             var pauseRect=(RectTransform)oldMenuColumn.transform;var viewport=(RectTransform)pauseRect.parent;
             pauseRect.anchorMin=pauseRect.anchorMax=new Vector2(.5f,.5f);pauseRect.sizeDelta=new Vector2(Mathf.Min(viewport.rect.width*.78f,760),Mathf.Min(viewport.rect.height*.82f,650));pauseRect.anchoredPosition=Vector2.zero;
             status.text="Пауза";status.fontSize=40;status.color=MenuGold;Layout(status.rectTransform,new Vector2(.08f,.83f),new Vector2(.92f,.96f));
             var identity=oldMenuColumn.transform.Find("operator-identity");
-            if(!identity)identity=Label(oldMenuColumn.transform,"operator-identity","",30,new Vector2(.08f,.72f),new Vector2(.92f,.83f),TextAnchor.MiddleCenter,Color.white).transform;
+            if(!identity)identity=Label(oldMenuColumn.transform,"operator-identity","",30,new Vector2(.08f,.74f),new Vector2(.92f,.83f),TextAnchor.MiddleCenter,Color.white).transform;
             int seat=Enumerable.Range(0,LocalSeatCount).Where(input.IsHumanSeat).DefaultIfEmpty(-1).First();identity.GetComponent<Text>().text=seat>=0?IdentityLabel(seat):"";
+            var balance=previousBalance?previousBalance.GetComponent<Text>():CreatePauseBalanceLabel(oldMenuColumn.transform,"operator-balance");balance.text=FrozenLabPresentation??"";
             var buttons=new[]{resume,fallbackSettings,repeat,menu};
-            for(int i=0;i<buttons.Length;i++){float top=.70f-i*.155f;Layout((RectTransform)buttons[i].transform,new Vector2(.08f,top-.11f),new Vector2(.92f,top));}
+            for(int i=0;i<buttons.Length;i++){float top=.55f-i*.132f;Layout((RectTransform)buttons[i].transform,new Vector2(.08f,top-.095f),new Vector2(.92f,top));}
         }
         void CreateF2Setup()
         {
@@ -101,7 +103,7 @@ namespace StarTournament.ProvingGround
                 "Выберите арену для матча.":setupStep==1?
                 "Настройте режим и условия победы.":
                 "Соберите участников матча.";
-            setupNext.GetComponentInChildren<Text>().text=setupStep==0?"ДАЛЕЕ · A / Start":"ДАЛЕЕ · Start";
+            setupNext.GetComponentInChildren<Text>().text="ДАЛЕЕ";
         }
     }
 }

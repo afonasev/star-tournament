@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene;
         ProvingGround ground;
-        readonly Gamepad[] pads=new Gamepad[2];
+        readonly Gamepad[] pads=new Gamepad[4];
         bool hadLastMap;string priorLastMap;
         [SetUp] public void PreserveLastMap()
         {
@@ -54,6 +54,87 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
             if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.Save();
+        }
+        [UnityTest] public IEnumerator PauseShowsTheFrozenSavedBalanceWithoutChangingMatch()
+        {
+            yield return Load();
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var history=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",flags).GetValue(ground);
+            var saved=history.SavedIdentity(history.SelectedProfileId,history.Selected.Number);
+            string frozen=ground.FrozenLabPresentation,identity=ground.FrozenLabIdentity;
+            Assert.That(frozen,Does.Contain("Баланс матча: "+history.SelectedProfileName));Assert.That(frozen,Does.Contain("Версия "+saved.Number));
+            Assert.That(frozen,Does.Not.Contain("SHA256"));
+            typeof(ProvingGround).GetField("labSavedPresentation",flags).SetValue(ground,"Следующая выбранная конфигурация");
+            yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            for(int seat=0;seat<2;seat++)Assert.That(Object("pause-balance-"+seat).GetComponent<Text>().text,Is.EqualTo(frozen));
+            Assert.That(ground.FrozenLabPresentation,Is.EqualTo(frozen));Assert.That(ground.FrozenLabIdentity,Is.EqualTo(identity));
+            var clock=ground.Session.Time;yield return null;Assert.That(ground.Session.Time,Is.EqualTo(clock));
+            Button("pause-action-0-0").onClick.Invoke();Assert.That(ground.Running,Is.False);
+            Button("pause-action-1-0").onClick.Invoke();yield return new WaitForFixedUpdate();Assert.That(ground.Running,Is.True);
+        }
+        [UnityTest] public IEnumerator BalanceIdentityFitsOneTwoAndFourViewportsAndOperatorPause()
+        {
+            yield return Load();
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            string longIdentity="Баланс матча: Проверка очень длинного имени авторского профиля баланса\nВерсия 128 · 17.10.2026";
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BALANCE_QA_IMAGES");
+            foreach(int count in new[]{1,2,4})
+            {
+                typeof(ProvingGround).GetMethod("ToMainMenu",flags).Invoke(ground,null);Button("main-action-0").onClick.Invoke();
+                while(ground.LocalSeatCount<count)Button("seats-plus").onClick.Invoke();while(ground.LocalSeatCount>count)Button("seats-minus").onClick.Invoke();
+                for(int seat=0;seat<count;seat++){ground.SetSeatAi(seat,false);if(pads[seat]==null)pads[seat]=InputSystem.AddDevice<Gamepad>();}
+                ground.StartCombatReview(pads.Take(count).ToArray(),false,true);yield return NativeLoadingTestScene.Wait(ground);ground.EnableNativeInputReview();
+                typeof(ProvingGround).GetField("<FrozenLabPresentation>k__BackingField",flags).SetValue(ground,longIdentity);
+                for(int seat=0;seat<count;seat++)ground.OpenPauseReviewSeat(seat);yield return null;
+                foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1280,720)})
+                using(EditorUiCapture.FixedViewport(ground,size.x,size.y))
+                {
+                    Canvas.ForceUpdateCanvases();yield return null;
+                    for(int seat=0;seat<count;seat++)
+                    {
+                        var label=Object("pause-balance-"+seat).GetComponent<Text>();Assert.That(label.gameObject.activeInHierarchy,Is.True);
+                        Assert.That(label.text,Is.EqualTo(longIdentity));Assert.That(label.cachedTextGenerator.characterCountVisible,Is.GreaterThanOrEqualTo(label.text.Count(c=>!char.IsControl(c))),"Full profile/version/date visible");
+                        var corners=new Vector3[4];label.rectTransform.GetWorldCorners(corners);float bottom=corners[0].y;
+                        ((RectTransform)Button("pause-action-"+seat+"-0").transform).GetWorldCorners(corners);Assert.That(bottom,Is.GreaterThan(corners[1].y),"Identity does not overlap Continue");
+                    }
+                    if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"pause-"+count+"-"+size.y+".png"),size.x,size.y);
+                }
+            }
+            typeof(ProvingGround).GetField("combatReview",flags).SetValue(ground,true);typeof(ProvingGround).GetMethod("RefreshInterface",flags).Invoke(ground,null);yield return null;
+            var shared=Object("operator-balance").GetComponent<Text>();Assert.That(shared.gameObject.activeInHierarchy,Is.True);Assert.That(shared.text,Is.EqualTo(longIdentity));
+            if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"pause-operator.png"));
+        }
+        [UnityTest] public IEnumerator QualityChangesAcrossSeatsPreserveIndependentPreferencesAndFrozenBalance()
+        {
+            var keys=new[]{NativeVisualPreferences.QualityKey,NativeVisualPreferences.AntialiasingKey,"StarTournament.Graphics.VSync","StarTournament.Graphics.Shadows",NativeUserPreferences.FrameCapKey,NativeVisualPreferences.Key(VisualEffect.Bloom)+".Enabled"};
+            var saved=keys.ToDictionary(k=>k,k=>(PlayerPrefs.HasKey(k),PlayerPrefs.GetInt(k)));
+            try
+            {
+                NativeVisualPreferences.SetQuality(2);NativeVisualPreferences.SetAntialiasingLevel(3);
+                PlayerPrefs.SetInt(keys[2],0);PlayerPrefs.SetInt(keys[3],0);PlayerPrefs.SetInt(keys[4],60);NativeVisualPreferences.SetEnabled(VisualEffect.Bloom,false);PlayerPrefs.Save();
+                yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+                string frozen=ground.FrozenLabIdentity;double clock=ground.Session.Time;bool probes=QualitySettings.realtimeReflectionProbes;int aa=QualitySettings.antiAliasing;
+                Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+                Button("seat-settings-0-settings-section-4").onClick.Invoke();Button("seat-settings-1-settings-section-4").onClick.Invoke();yield return null;
+                for(int value=0;value<3;value++)
+                {
+                    Button("seat-settings-0-settings-quality").onClick.Invoke();yield return null;
+                    Assert.That(NativeVisualPreferences.Quality,Is.EqualTo(value));Assert.That(QualitySettings.GetQualityLevel(),Is.EqualTo(new[]{0,2,5}[value]));
+                    foreach(int seat in new[]{0,1})Assert.That(Button("seat-settings-"+seat+"-settings-quality").GetComponentInChildren<Text>().text,Is.EqualTo(NativeVisualPreferences.QualityNames[value]));
+                    Assert.That(QualitySettings.vSyncCount,Is.Zero);Assert.That(QualitySettings.shadows,Is.EqualTo(ShadowQuality.Disable));Assert.That(Application.targetFrameRate,Is.EqualTo(60));
+                    Assert.That(QualitySettings.antiAliasing,Is.EqualTo(aa));Assert.That(QualitySettings.realtimeReflectionProbes,Is.EqualTo(probes));
+                    Assert.That(NativeVisualPreferences.AntialiasingLevel,Is.EqualTo(3));Assert.That(NativeVisualPreferences.Enabled(VisualEffect.Bloom),Is.False);
+                    Assert.That(ground.FrozenLabIdentity,Is.EqualTo(frozen));Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                }
+                var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QUALITY_QA_IMAGES");
+                if(!string.IsNullOrEmpty(output))
+                {yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"quality-two-720.png"),1280,720);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"quality-two-1080.png"));}
+                typeof(ProvingGround).GetMethod("ToMainMenu",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(ground,null);
+                Button("main-action-4").onClick.Invoke();Button("settings-section-4").onClick.Invoke();yield return null;
+                Assert.That(Button("settings-quality").GetComponentInChildren<Text>().text,Is.EqualTo("Высокое"));
+                if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"quality-main.png"));
+            }
+            finally{foreach(var entry in saved){if(entry.Value.Item1)PlayerPrefs.SetInt(entry.Key,entry.Value.Item2);else PlayerPrefs.DeleteKey(entry.Key);}PlayerPrefs.Save();}
         }
         [UnityTest] public IEnumerator SplitScreenDrawsOneGlobalFpsCounter()
         {
@@ -106,6 +187,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
                 Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
                 Button("seat-settings-0-settings-section-4").onClick.Invoke();Button("seat-settings-1-settings-section-4").onClick.Invoke();
+                yield return Press(0,GamepadButton.DpadDown);yield return Press(1,GamepadButton.DpadDown);
                 var first=Button("seat-settings-0-settings-antialiasing");var second=Button("seat-settings-1-settings-antialiasing");
                 var scroll=Object("seat-settings-0-settings-graphics").GetComponent<ScrollRect>();
                 for(int i=0;i<NativeVisualPreferences.Names.Length+1;i++)yield return Press(0,GamepadButton.DpadDown);
@@ -214,12 +296,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator GamepadNavigationSubmitsOnlyItsOwnViewport()
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
-            yield return Press(0,GamepadButton.DpadDown);yield return Press(0,GamepadButton.South);
+            Assert.That(Button("pause-action-0-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);Assert.That(Button("pause-action-1-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            string hintImages=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_FOCUS_HINT_QA_IMAGES");
+            if(!string.IsNullOrEmpty(hintImages)){System.IO.Directory.CreateDirectory(hintImages);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(hintImages,"two-seat-focused-pad-720.png"),1280,720);}
+            yield return Press(0,GamepadButton.DpadDown);Assert.That(Button("pause-action-0-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);Assert.That(Button("pause-action-0-0").GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Правая"),"Unfocused Resume may advertise its actual Back shortcut, never South");Assert.That(Button("pause-action-0-1").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);Assert.That(Button("pause-action-1-0").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            yield return Press(0,GamepadButton.South);
             Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
             Assert.That(Object("pause-action-1-0").activeInHierarchy,Is.True);
             yield return Press(1,GamepadButton.DpadDown);yield return Press(1,GamepadButton.DpadDown);
             yield return Press(1,GamepadButton.South);
             Assert.That(Object("pause-repeat-yes-1").activeInHierarchy,Is.True);
+            Assert.That(Button("pause-repeat-no-1").GetComponent<MenuActionHint>().GlyphLabel.text,Does.Contain("Правая"));
+            Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
+            yield return Press(1,GamepadButton.East);Assert.That(Button("pause-action-1-2").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True,"Cancel returns to its initiating action");
+            yield return Press(1,GamepadButton.DpadDown);yield return Press(1,GamepadButton.South);Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
+            yield return Press(1,GamepadButton.East);Assert.That(Button("pause-action-1-3").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
             Assert.That(Object("seat-settings-0-settings-image").activeInHierarchy,Is.True);
             Assert.That(ground.Running,Is.False);
         }

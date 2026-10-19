@@ -1,0 +1,12 @@
+........Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmpfpamv95a/release/Star-Tournament-1.2.3-Windows-x64-Setup.exe
+Compiling Windows installer on gfe with Ubuntu NSIS 3.10
+usage: python3 -m unittest [-h] --layout LAYOUT --version VERSION
+                           --output OUTPUT [--makensis MAKENSIS]
+                           [--compiler-host {gfe}]
+python3 -m unittest: error: argument --compiler-host: invalid choice: 'other-host' (choose from 'gfe')
+...........
+----------------------------------------------------------------------
+Ran 19 tests in 0.546s
+
+OK
+Built /private/var/folders/qn/x21djjbx077gql9yn0kbyg2m0000gn/T/tmp1rpyvblu/remote/Star-Tournament-1.2.3-Windows-x64-Setup.exe

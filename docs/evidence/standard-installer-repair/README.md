@@ -1,0 +1,25 @@
+Latest source: [transfer/README.md](transfer/README.md). Earlier core/integration descriptions below are historical snapshots.
+
+Historical core slice at `c3a521db`; latest source routing and its remaining limits: [integration/README.md](integration/README.md).
+
+# Windows repair/upgrade — transaction core, not yet wired
+
+Baseline `a8cc926b`, branch `codex/game-standard-alignment`. Approved design07: native system wizard offers **Восстановить** for the same version and **Обновить** for a newer version, retaining user data and ordinary shortcuts. Installer template0.1.0 at pinned game-spec-templates `0c2d4562683252d54736f294dc1af463050eac17`, INSTALLER-REINSTALL-01/02 and INSTALLER-RECOVERY-01 require interruption to preserve the previous working installation. Existing NSIS still writes directly into the old root and rejects an existing complete release; it is intentionally not enabled for overlay until the transaction is integrated.
+
+## Implemented actual source
+
+`WindowsInstallerPlan` reads bounded protected installation metadata. Same version is repair, greater version upgrade, downgrade/cross-channel/foreign identities are rejected. A valid native sq.version can recover the identity when release.json is damaged; conflicting version records fail closed. XML cannot resolve DTD/entities. If no reliable version remains, files are preserved and replacement is rejected. This is a documented limitation, not a successful repair of completely destroyed metadata.
+
+`WindowsInstallerTransaction` uses fixed sibling `<root>.installer/{stage,previous,abandoned,state.json}`. No executable/path comes from journal metadata. Before extraction, Begin records a root-bound app/target/previous journal. The original root remains untouched while candidate files are extracted into stage. A complete candidate requires matching release/native/maintenance identities, stable root entry equal to the maintenance binary, nonempty required files, Player inside current and no reparse paths.
+
+Commit records prepared, renames the whole old root to previous, records saved, renames stage into root, verifies readback and records installed. Until Finalize, rollback retains failed files in abandoned, restores the previous root and only then removes candidate/partial files. A restoring intent permits reopening after interruption between either rollback rename and its final write. A fresh failed install loses its partial public entry. Unknown roots/slots, damaged journals and lost backup are not permission to delete files.
+
+Finalize validates the new tree, writes committed, removes installing.flag, then cleans the old tree. Once committed, a partially interrupted cleanup never downgrades the new installation. A missing or corrupt new installation retains previous backup instead of deleting it. Later installers can resume cleanup for the prior target version. All source paths remain fixed and per-install serialization is an explicit elevated-adapter responsibility; the portable class does not claim to validate Windows ACLs itself.
+
+## Verification
+
+`core-verified.log`:36 passed, actual production C# files. Six cases terminate a separate actual .NET fixture process with exit53 at old-root-moved/saved/new-root-moved/installed/failed-root-retained/previous-restored, then reopen the actual journal and restore exact prior bytes. Other cases cover cancellation, same-version repair, fresh install, metadata/channel/downgrade/path/tamper guards and committed cleanup. Earlier logs preserve the20/27/30-case intermediate snapshots. `maintenance-verified-build.log`: Debug win-x640 warnings/errors. No Unity, Player, installer/release build, full suite or publication.
+
+Not yet implemented: privileged CLI adapter and its full-transaction install lease/owner/ACL/idle checks; NSIS protected staging, confirmation page07, commit/finalize/abort routing, registry consistency on rollback, protected temporary broker custody and cleanup, source-to-runtime integration. Actual Windows NSIS/UAC/ACL/rename/shortcut/device acceptance is NotRun on macOS. This source slice does not close INSTALLER-REINSTALL/RECOVERY or startup recovery; data compatibility and channel UI integration also remain open.
+
+Next integration must extract outside the original root, keep `$INSTDIR` as the final root when creating Uninstall.exe, move registration/shortcut completion before Finalize, preserve previous registry version on rollback, and never introduce elevated game launch. The current install flag and lease protect the actual final swap. Finish options retain the existing defaults and normal desktop Explorer launch path. The approved page content must be rendered before claiming visual acceptance; `makensis -PPO` alone is only macro/source validation.

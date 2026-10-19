@@ -1,0 +1,65 @@
+{
+  "baseline": "54c74872",
+  "branch": "codex/game-standard-alignment",
+  "runs": [
+    {
+      "run": "initial",
+      "result": "Failed(Child)",
+      "total": "19",
+      "passed": "15",
+      "failed": "4",
+      "skipped": "0",
+      "duration": "2.5960192",
+      "failures": "Three new cases expected IOException from protected Default Save; actual InvalidOperationException correctly refuses it. Unknown-field fixture retained stale indices after synthetic append; reset by JSON roundtrip. Production code unchanged by fixes."
+    },
+    {
+      "run": "diagnostics",
+      "result": "Passed",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "1.0288506"
+    },
+    {
+      "run": "runtime",
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "37.338411"
+    },
+    {
+      "run": "schema-context",
+      "result": "Passed",
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "1.42525"
+    }
+  ],
+  "final_coverage": "20 unique affected EditMode:15 unchanged neighboring refusal cases +5 final diagnostic cases (unknown epoch first/third profile);2 PlayMode passed",
+  "source_sha256": {
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "e7932236ebc1902b043455d9a14b032cee60699d8343245ddb9b90f3710dcbc9",
+    "unity/Assets/StarTournament/Runtime/Core/LabParameterStorage.cs": "644e0638250df1827bd9c05884f1bb1b1c1949eb7e933877cac65992eff0d59a",
+    "unity/Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs": "d240b73221e49e2cfc62d03c3c05d469a7bd843c46412134c56acd13c0729b8b",
+    "unity/Assets/StarTournament/Tests/EditMode/LabCompatibilityDiagnosticsTests.cs": "994f9fecf465fb8884b08c1bdbff6f9221e53995aa2961d50dd798a91cf59733",
+    "unity/Assets/StarTournament/Tests/PlayMode/NativeLabStartupTests.cs": "68cd3ee0b26b3326ec30d10834c4376ba2e76421438834b815759dd0e4f28489"
+  },
+  "preserved": "Owned source bytes, published Default game state, blocked writes, Back to menu",
+  "geometry": "Reason fits fixed1280x720; no rendered screenshot claim",
+  "pending": [
+    "Full Default/package interpretation/type/range/resource rule audit",
+    "Historical unmark UX",
+    "Typed editors/catalog and full05"
+  ],
+  "not_run": [
+    "Full suite",
+    "Player build",
+    "Release/deploy",
+    "Human/device/visual acceptance"
+  ],
+  "reuse": "Final SchemaIdentity change prioritizes changed ID/version/path set;5 diagnostic cases repeated. Runtime range refusal/copy route unchanged and its earlier2 PlayMode results reused."
+}

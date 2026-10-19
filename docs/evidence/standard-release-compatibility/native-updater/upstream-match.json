@@ -1,0 +1,184 @@
+{
+  "version": "1.2.158",
+  "sourceCommit": "3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b",
+  "upstreamArchive": {
+    "name": "vpk.1.2.158.nupkg",
+    "size": 146886036,
+    "sha256": "3602f9d0d8f07e92481ebe85aaad24f19d0bbcf0a1f5f4ee30f38fff4ddbb298"
+  },
+  "upstreamEntry": "vendor/update_x64.exe",
+  "upstreamSha256": "4b2bfeed811543e2d37be8743f2b1ea46dd947bc09c8ada9eb0383c0d7886cdb",
+  "actualSha256": "0fd1737eb74ce5e408f5c1320eea82ef8a694d2848f696ca5df2f5322e49d304",
+  "productionAndTestExactByteMatch": true,
+  "upstreamWholeFileExactMatch": false,
+  "allNonResourceSectionsExactMatch": true,
+  "outsideResourceDifferences": [
+    {
+      "offset": 420,
+      "actual": 27,
+      "upstream": 184
+    },
+    {
+      "offset": 421,
+      "actual": 11,
+      "upstream": 10
+    },
+    {
+      "offset": 736,
+      "actual": 27,
+      "upstream": 184
+    },
+    {
+      "offset": 737,
+      "actual": 11,
+      "upstream": 10
+    }
+  ],
+  "actual": {
+    "sections": [
+      {
+        "name": ".text",
+        "size": 2862592,
+        "offset": 1024,
+        "header": 528,
+        "characteristics": 1610612768,
+        "sha256": "f7306923454e10c1032ab9859c26c280528a5e10b1bbaff86126f32574bd5369"
+      },
+      {
+        "name": ".rdata",
+        "size": 2159616,
+        "offset": 2863616,
+        "header": 568,
+        "characteristics": 1073741888,
+        "sha256": "b894be3cf0a2587b09e4e0c5f09cdfff3db6a2f07a9a65dc14f745839b6cf3a7"
+      },
+      {
+        "name": ".data",
+        "size": 5120,
+        "offset": 5023232,
+        "header": 608,
+        "characteristics": 3221225536,
+        "sha256": "b8614754d2c11c4eb3edae7ebae16cbd856ecfe7492be18ca53e926aafa049b5"
+      },
+      {
+        "name": ".pdata",
+        "size": 147456,
+        "offset": 5028352,
+        "header": 648,
+        "characteristics": 1073741888,
+        "sha256": "9448a568fe81bf5e88ffcf66bcbea97a36f5a2bbd253eace30945fa3e96055f4"
+      },
+      {
+        "name": ".fptable",
+        "size": 512,
+        "offset": 5175808,
+        "header": 688,
+        "characteristics": 3221225536,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      {
+        "name": ".rsrc",
+        "size": 3072,
+        "offset": 5176320,
+        "header": 728,
+        "characteristics": 1073741888,
+        "sha256": "c5947a41333049e52db0841628b4236fdeb9d6c60b33a614169fd8f2f022751c"
+      },
+      {
+        "name": ".reloc",
+        "size": 29184,
+        "offset": 5179392,
+        "header": 768,
+        "characteristics": 1107296320,
+        "sha256": "ae1844b30070b5fac4613c8f609931788c10f7ad94a2bb7575f718496841d45c"
+      }
+    ],
+    "resource": {
+      "name": ".rsrc",
+      "size": 3072,
+      "offset": 5176320,
+      "header": 728,
+      "characteristics": 1073741888,
+      "sha256": "c5947a41333049e52db0841628b4236fdeb9d6c60b33a614169fd8f2f022751c"
+    },
+    "resourceDirectorySizeOffset": 420,
+    "fixedVersion": {
+      "file": "1.2.158.0",
+      "product": "1.2.158.0"
+    }
+  },
+  "upstream": {
+    "sections": [
+      {
+        "name": ".text",
+        "size": 2862592,
+        "offset": 1024,
+        "header": 528,
+        "characteristics": 1610612768,
+        "sha256": "f7306923454e10c1032ab9859c26c280528a5e10b1bbaff86126f32574bd5369"
+      },
+      {
+        "name": ".rdata",
+        "size": 2159616,
+        "offset": 2863616,
+        "header": 568,
+        "characteristics": 1073741888,
+        "sha256": "b894be3cf0a2587b09e4e0c5f09cdfff3db6a2f07a9a65dc14f745839b6cf3a7"
+      },
+      {
+        "name": ".data",
+        "size": 5120,
+        "offset": 5023232,
+        "header": 608,
+        "characteristics": 3221225536,
+        "sha256": "b8614754d2c11c4eb3edae7ebae16cbd856ecfe7492be18ca53e926aafa049b5"
+      },
+      {
+        "name": ".pdata",
+        "size": 147456,
+        "offset": 5028352,
+        "header": 648,
+        "characteristics": 1073741888,
+        "sha256": "9448a568fe81bf5e88ffcf66bcbea97a36f5a2bbd253eace30945fa3e96055f4"
+      },
+      {
+        "name": ".fptable",
+        "size": 512,
+        "offset": 5175808,
+        "header": 688,
+        "characteristics": 3221225536,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      {
+        "name": ".rsrc",
+        "size": 3072,
+        "offset": 5176320,
+        "header": 728,
+        "characteristics": 1073741888,
+        "sha256": "f47ef9ffe00a7f9d853c17ff5d47c156172b23a66a92b58814cf6ff9bd00bc7d"
+      },
+      {
+        "name": ".reloc",
+        "size": 29184,
+        "offset": 5179392,
+        "header": 768,
+        "characteristics": 1107296320,
+        "sha256": "ae1844b30070b5fac4613c8f609931788c10f7ad94a2bb7575f718496841d45c"
+      }
+    ],
+    "resource": {
+      "name": ".rsrc",
+      "size": 3072,
+      "offset": 5176320,
+      "header": 728,
+      "characteristics": 1073741888,
+      "sha256": "f47ef9ffe00a7f9d853c17ff5d47c156172b23a66a92b58814cf6ff9bd00bc7d"
+    },
+    "resourceDirectorySizeOffset": 420,
+    "fixedVersion": {
+      "file": "1.2.158.0",
+      "product": "1.2.158.0"
+    }
+  },
+  "executed": false
+}

@@ -1,0 +1,41 @@
+{
+  "baseline": "codex/game-standard-alignment@f2228e30",
+  "producerChecks": 13,
+  "compatibilityChecks": 10,
+  "publicationChecks": 23,
+  "total": 46,
+  "allRunnerExits": 0,
+  "csharpCompile": {
+    "errors": 0,
+    "warnings": 8,
+    "warningsScope": "preexisting NativeStartupHealth/StartupHealthChecks/WindowsFullPayloadChecks"
+  },
+  "realRsaFixtureSigning": true,
+  "actualCsharpConsumer": true,
+  "fixtureExecutableEverExecuted": false,
+  "recordingPackageRoutes": [
+    "update-only",
+    "first-install"
+  ],
+  "productionCandidateBuilt": false,
+  "nativeWindowsExecuted": false,
+  "legacyHandoffResolved": false,
+  "bootstrapProducerImplemented": false,
+  "playerInstallerReleaseBuild": false,
+  "fullSuite": false,
+  "deploy": false,
+  "sources": {
+    "distribution/broker_upgrade.py": "668e78a6ebb050354bf3de25ea7d6bce8b29f5a8ecafb8fee8c55bd19cf1c7d7",
+    "distribution/package.py": "18dae1293afe179a1f836988fb9b3f305194e91a5402552422c747797c8c1444",
+    "distribution/tests/test_broker_upgrade.py": "92e40188c1b825e5b834df49cdb9005622743f3318eba59c675002760bb412e7",
+    "distribution/tests/Program.cs": "804bf2d2a0996b917029e6b3d62c5268f2b5494ce602d08cf5c26eac448db513"
+  },
+  "logs": {
+    "producer-initial.log": "eb2268d96660333e9ef62a2a27f6c0aebefc55edb8bce31c773e7df8a058d9a0",
+    "compatibility.log": "dc874594582b91491e76dfd4b40404da47b5e985ad0ae92da3ab1cd3308c9d95",
+    "restore.log": "9fbf41a5c81c430862d471211de1e5f137224b7574dedfa222bde07475467dc6",
+    "compile.log": "b379ed9c73c732232f03dc19fae7004201d2502be78d4cc1de1bc310c7c821f5",
+    "producer.log": "561b3fe1c2f187be334dc3296592355ae929579229e3d2b8d52b1b3604c9888b",
+    "publication.log": "a984ef9daa05c4583a559862cc8a587aff58571cf60773c244ddd37f548c3c6b"
+  }
+}

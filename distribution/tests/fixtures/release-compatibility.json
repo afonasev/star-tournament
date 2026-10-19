@@ -1,0 +1,28 @@
+{
+  "schema": 2,
+  "channel": "production",
+  "platform": "win",
+  "architecture": "x64",
+  "version": "1.1.0",
+  "publicationDate": "2026-10-17",
+  "compatibility": {
+    "minimumOsVersion": "10.0.19043",
+    "minimumUpdaterProtocol": 2,
+    "payloadFormat": "velopack-full-v1",
+    "userDataPolicy": "profiles2-lab3-prefs1"
+  },
+  "downloadUrl": "https://github.com/afonasev/star-tournament/releases/download/v1.1.0/fixture-1.1.0-full.nupkg",
+  "publishedAt": "2026-10-17T00:00:00Z",
+  "feed": {
+    "Assets": [
+      {
+        "PackageId": "tech.test",
+        "Version": "1.1.0",
+        "Type": "Full",
+        "FileName": "fixture-1.1.0-full.nupkg",
+        "SHA256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "Size": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+EDITOR_OFFSCREEN_SYNTHETIC_NOT_PLAYER_ACCEPTANCE
+seed=20261008
+size=1920x1080
+step=2
+focus=roster-card-0
+map=combat-bowl-v1
+revision=9a4e083c+setup-hints-final
+muted=true

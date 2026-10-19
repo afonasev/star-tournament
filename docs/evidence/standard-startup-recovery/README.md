@@ -1,0 +1,26 @@
+# Startup recovery — этап 1, журнал
+Baseline: edd095aedbd5bb695d93088a8ea184f25ce253b8. Реализован actual C# durable journal. Он пока не подключён к launcher/Unity и не восстанавливает payload: UPDATES-RECOVERY-01 остаётся открытым до platform integration.
+
+Команды:
+```
+/Users/eaafonasev/.dotnet/dotnet restore distribution/tests/Launcher.Contracts.csproj --source /Users/eaafonasev/.nuget/packages --ignore-failed-sources
+/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --startup-recovery
+```
+`core-first.log`: NotRun, отсутствовал project.assets.json. После offline restore: `core-second.log`22 passed. `core-final.log`28 passed после дополнительных invariants/negative cases. Никаких Unity/Player/full/build/release/deploy. Это проверки настоящего исходника .NET; не доказательство platform/Unity/human acceptance.
+
+Журнал требует внешнего install lease. Snapshot id — ссылка на уже проверенный platform snapshot, не доказательство его существования. Не вызывай Prepare до физического сохранения backup, MarkRestored до проверки файлов и ConfirmBackupRemoved до ready. Marker готовности обязан создаваться Player после меню; токен не заменяет Unity lifecycle verification.
+
+## Следующий срез: payload retention
+Реализован и проверен snapshot/restore core,34 filesystem checks и29 обновлённых journal checks. См. [payload-recovery.md](payload-recovery.md). Runtime пока не подключён; исходные28 checks относятся к предыдущему snapshot2b582de6.
+
+## Подключён startup health
+Launcher+Unity health handshake подключён (startup-contract.md):12 .NET+33 feedback+4 unique native Editor cases; final3 native tests повторены после cleanup fix. Snapshot/restore activation и stable supervisor всё ещё НЕ подключены. Текущий authoritative протокол описан в startup-contract.md и health-verification.json, не в историческом core-only срезе.
+
+## Подключён macOS supervisor
+Теперь Mac Apply/watch/manual restore подключены к retained runtime и health journal,9 process fixtures +40 filesystem +12 health +29 journal passed. См. mac-supervisor.md и mac-verification.json. Windows/data/actual native installed acceptance всё ещё открыты; прежние описания not-wired относятся к историческим срезам.
+
+## Windows protected transaction (частично)
+Сохранение/restore current+bootstrap и protected UAC broker подключены; 30 Windows filesystem +40 payload +10 Mac fixtures +34 feedback и16 installer-tooling checks passed. Debug broker compile0 warnings/errors. Автоматический Windows first-start watchdog, реальный UAC/ACL и data compatibility остаются открыты. См. [windows-protected-recovery.md](windows-protected-recovery.md), [windows-verification.json](windows-verification.json).
+
+## Windows first-start observer and stable root entry
+Immediate and deferred first launch are now guarded in source, including an unusable replacement launcher. Protected latch precedes per-user startup confirmation. See [windows-watch.md](windows-watch.md) and [windows-watch-verification.json](windows-watch-verification.json). Native Windows APIs/UAC/runtime, repair07/data/channels and installed acceptance remain open. Earlier pending-watch descriptions above refer to historical source slices.

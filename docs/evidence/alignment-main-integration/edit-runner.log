@@ -1,0 +1,5 @@
+FOCUSED EditMode: BloodProfileTests;DesignLabHistoryTests;FirstPersonWalkTests;GraphicsQualityApplicabilityTests;LabAuthoringTests;LabClientStorageTests;LabCompatibilityDiagnosticsTests;LabCompatibilityViewTests;LabParameterCatalogTests;LabParameterStorageTests;LabParameterTypeTests;LabReleaseCatalogTests;LabSnapshotCopyTests;MenuActionHintTests;MenuGamepadHintTests;MouseSensitivityPreferenceTests;PlayerProfilesTests;StandardUserPreferencesTests;VersionedUserDataTests;VisualPolishSettingsTests;WeaponSwitchPresentationTests;WellArenaTests;WellDaylightProfileTests — affected evidence, NOT a full suite
+Evidence: /Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.m9Hxb3
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/unity
+unity-run: started shared:1; guardian=94004 pid=94005
+unity-run: finished pid=94005 exit=2; capacity released

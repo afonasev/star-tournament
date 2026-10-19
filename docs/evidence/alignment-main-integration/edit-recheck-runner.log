@@ -1,0 +1,5 @@
+FOCUSED EditMode: FirstPersonWalkTests.LabUpgradePreservesOldRevisionsAndCustomValues;LabAuthoringTests.RegistryUpgradePreservesOldMarksAndAllowsExplicitUnmarkWithoutActivatingInvalidVersion;LabParameterStorageTests.ExactLargeLegacyHistoryCompactsAndReloadsAllIdentities;MenuActionHintTests — affected evidence, NOT a full suite
+Evidence: /Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.7TDGqC
+unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/integrate-standard-alignment/star-tournament/unity
+unity-run: started shared:2; guardian=69278 pid=72108
+unity-run: finished pid=72108 exit=0; capacity released

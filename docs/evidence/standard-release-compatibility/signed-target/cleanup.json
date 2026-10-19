@@ -1,0 +1,42 @@
+{
+  "removed": [
+    {
+      "path": "distribution/launcher/bin",
+      "files": 8,
+      "bytes": 1100623,
+      "tree_sha256": "f78df378cb5cbca0019e1308dbab6353d6c9fc04a4525ce092fc29f82a701998"
+    },
+    {
+      "path": "distribution/launcher/obj",
+      "files": 22,
+      "bytes": 1568754,
+      "tree_sha256": "327c356060403a4e1bce083929d745017f38964c9a3c687d0ffc32c65b2958f9"
+    },
+    {
+      "path": "distribution/maintenance/bin",
+      "files": 190,
+      "bytes": 84921990,
+      "tree_sha256": "8fcf0d9c78a82e2c8c44c96955181709eb06bb348b447d7e467b67f9dd873906"
+    },
+    {
+      "path": "distribution/maintenance/obj",
+      "files": 22,
+      "bytes": 11534973,
+      "tree_sha256": "1459383bcf1782e7ebf07cabff25f835cffdf9b5af74d2e5abf4a3a6f9972a8a"
+    },
+    {
+      "path": "distribution/tests/bin",
+      "files": 13,
+      "bytes": 1706881,
+      "tree_sha256": "b927dba5d51ec10a0ac32a1eabc885773d1f33b58a609cd62c93e66a89186154"
+    },
+    {
+      "path": "distribution/tests/obj",
+      "files": 22,
+      "bytes": 729273,
+      "tree_sha256": "0c30b272af5ee21d35fcd20b34ee3bc8ccab28bddc53ca36f43bd950f2034983"
+    }
+  ],
+  "removed_bytes": 101562494,
+  "scope": "Only six owned .NET build/test output directories; all recorded QA handles terminal. Active worktree and source/evidence retained for full parent goal; foreign caches and processes untouched."
+}

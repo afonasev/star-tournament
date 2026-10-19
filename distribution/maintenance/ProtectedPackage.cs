@@ -8,6 +8,13 @@ namespace StarTournament.Distribution;
 /// <summary>Platform-neutral copy-and-reverify contract used before any updater execution.</summary>
 public static class ProtectedPackage
 {
+    public static void RequireEnvelopeHash(string envelope, string expectedHash)
+    {
+        if (envelope == null || System.Text.Encoding.UTF8.GetByteCount(envelope) > 65536 ||
+            !Regex.IsMatch(expectedHash ?? "", "\\A[0-9A-F]{64}\\z") ||
+            Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(envelope))) != expectedHash)
+            throw new CryptographicException("Frozen consent target changed during elevation");
+    }
     public static async Task<(string EnvelopePath, string PackagePath)> CopyAndVerifyAsync(
         AuthenticatedSource verifier, string signedEnvelope, VelopackAsset asset,
         string sourcePackage, string protectedDirectory, CancellationToken cancellationToken = default)

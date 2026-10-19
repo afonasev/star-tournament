@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect x="0" y="0" width="1440" height="900" rx="3" fill="#0b1725" stroke="none"/>
+<text x="56" y="43" fill="#e3bd78" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start">STAR TOURNAMENT</text>
+<text x="1384" y="43" fill="#9aaebe" font-family="Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end">МАКЕТ · НЕ UNITY</text>
+<path d="M56 61 L1384 61" stroke="#304453"/>
+<text x="56" y="126" fill="#e3bd78" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="start">ВЕРСИЯ БАЛАНСА В ПАУЗЕ</text>
+<text x="56" y="165" fill="#9aaebe" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="start">Предложение LAB-TEST-01 · сведения о зафиксированной конфигурации текущего матча</text>
+<rect x="350" y="210" width="740" height="540" rx="10" fill="#102131" stroke="#385062"/>
+<text x="720.0" y="258" fill="#e3bd78" font-family="Arial, sans-serif" font-size="34" font-weight="700" text-anchor="middle">ПАУЗА</text>
+<text x="720.0" y="293" fill="#eef2f5" font-family="Arial, sans-serif" font-size="25" font-weight="700" text-anchor="middle">Игрок 1</text>
+<text x="720.0" y="327" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="400" text-anchor="middle">Баланс матча: Мой эксперимент</text>
+<text x="720.0" y="353" fill="#9aaebe" font-family="Arial, sans-serif" font-size="19" font-weight="400" text-anchor="middle">Версия 8 · 17.10.2026</text>
+<rect x="374" y="376" width="692" height="48" rx="3" fill="#142638" stroke="#e3bd78"/>
+<text x="720.0" y="407.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Продолжить</text>
+<rect x="374" y="446" width="692" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="720.0" y="477.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Настройки</text>
+<rect x="374" y="516" width="692" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="720.0" y="547.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">Начать заново</text>
+<rect x="374" y="586" width="692" height="48" rx="3" fill="#142638" stroke="#385062"/>
+<text x="720.0" y="617.0" fill="#eef2f5" font-family="Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">В главное меню</text>
+<path d="M56 824 L1384 824" stroke="#304453"/>
+<text x="56" y="862" fill="#9aaebe" font-family="Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start">Видны профиль, версия и известная дата. Подпись не меняет баланс и не открывает Lab во время матча.</text>
+</svg>

@@ -1,0 +1,20 @@
+{
+  "docs/design/template-standard/18-lab-typed-fields.png": {
+    "sha256": "74d1fb6ea5f6a2a8b82d13cfb895a7efe3dbf917db18a3414fbada449784d2fd",
+    "size": [
+      1440,
+      900
+    ],
+    "status": "proposed; Q1 open",
+    "source_commit": "06fd5de9"
+  },
+  "docs/design/template-standard/19-lab-historical-release.png": {
+    "sha256": "c0c75b07e092e4afb837c4d22ddad46f84195b407835a5b9acbc35d8767ad9b1",
+    "size": [
+      1440,
+      900
+    ],
+    "status": "proposed; Q1 open",
+    "source_commit": "06fd5de9"
+  }
+}

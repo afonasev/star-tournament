@@ -1,0 +1,33 @@
+diff --git a/unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs b/unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs
+index 3ee28077..fb0a598d 100644
+--- a/unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs
++++ b/unity/Assets/StarTournament/Tests/PlayMode/SettingsGamepadNavigationTests.cs
+@@ -128,6 +128,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
+             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
+         }
+ 
++        [UnityTest] public IEnumerator ProfilesBackReturnsToMainOnOneEastPress()
++        {
++            yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("main-action-3").onClick.Invoke();yield return null;
++            Assert.That(Button("profiles-back").gameObject.activeInHierarchy,Is.True);yield return Press(GamepadButton.East);
++            Assert.That(Button("main-action-3").gameObject.activeInHierarchy,Is.True,"East must perform the visible profiles Back action");
++            Assert.That(Focus,Is.EqualTo("main-action-0"));
++        }
++        [UnityTest] public IEnumerator HistoryBackAcceptsANewPadsFirstNonSubmitPress()
++        {
++            yield return Load();Button("settings-back").onClick.Invoke();yield return null;
++            typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,pad);
++            Button("release-history-action").onClick.Invoke();yield return null;Assert.That(Button("release-history-back").gameObject.activeInHierarchy,Is.True);
++            var second=InputSystem.AddDevice<Gamepad>();try
++            {
++                InputSystem.QueueStateEvent(second,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;
++                InputSystem.QueueStateEvent(second,new GamepadState());yield return null;yield return null;
++                Assert.That(Button("release-history-action").gameObject.activeInHierarchy,Is.True,"The first East press must use the actual current pad before routing");
++                Assert.That(Focus,Is.EqualTo("release-history-action"));
++                Assert.That(typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground),Is.SameAs(second));
++            }
++            finally{if(second.added)InputSystem.RemoveDevice(second);}
++        }
+         [UnityTest] public IEnumerator FocusHintsFollowPadKeyboardMouseAndDisabledActionsWithoutChangingCaptions()
+         {
+             yield return Load();priorCursorInput=InputSystem.settings.editorInputBehaviorInPlayMode;priorCursorBackground=InputSystem.settings.backgroundBehavior;cursorInputCaptured=true;

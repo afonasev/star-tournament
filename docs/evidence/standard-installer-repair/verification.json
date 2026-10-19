@@ -1,0 +1,38 @@
+{
+  "baseline": "a8cc926b",
+  "branch": "codex/game-standard-alignment",
+  "main_integration": false,
+  "scope": "installer transaction and identity core only; NSIS remains fresh-only",
+  "checks": [
+    {
+      "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --windows-installer-transaction",
+      "exit_code": 0,
+      "passed": 36,
+      "actual_process_exit_cases": 6,
+      "log": "core-verified.log"
+    },
+    {
+      "command": "/Users/eaafonasev/.dotnet/dotnet build --no-restore distribution/maintenance/Maintenance.csproj",
+      "exit_code": 0,
+      "warnings": 0,
+      "errors": 0,
+      "log": "maintenance-verified-build.log"
+    }
+  ],
+  "not_run": [
+    "NSIS integrated repair/upgrade (not yet implemented)",
+    "actual Windows ACL/UAC/rename/process/shortcuts",
+    "visual/human/device acceptance",
+    "Unity",
+    "full suite",
+    "Player/installer/release build",
+    "publication"
+  ],
+  "source_sha256": {
+    "distribution/maintenance/WindowsInstallerPlan.cs": "ab522ba797057fbcea10a51ef891935070c180ec1d244cdb5da2d75d7acf647f",
+    "distribution/maintenance/WindowsInstallerTransaction.cs": "3f0b2ea9239c7f2fbbc489800818b5f22a65517b5bb70f458607323307b80d1a",
+    "distribution/tests/WindowsInstallerTransactionChecks.cs": "22a3e9710471e6a0e2233b57636b82b39cf15763e1fe0d3e08ec19d962bd91c9",
+    "distribution/tests/Program.cs": "4843cd2b7317407a4a8133deb69312f1527ca8f0d60598e896dec22f84649ecc",
+    "distribution/tests/Launcher.Contracts.csproj": "03b7573772b9b6454b602721bfbedb720b3b2e2a5369ef68cc40ac15c11db1ec"
+  }
+}

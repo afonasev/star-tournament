@@ -1,0 +1,18 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=PlayMode
+filter=NativeLabStartupTests.InvalidHistoryKeepsDefaultAndLabCannotWriteSource;NativeLabStartupTests.UnloadCancelsBlockedHistoryWithoutCreatingFile
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-playmode.1tfvNI/qa-lab-history.json
+revision=613034bf1a9ae290b4f3542ad53897a3188baf3b
+ M ../docs/GAME_SPEC.md
+ M ../docs/evidence/standard-user-data/README.md
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/PlayerProfiles.cs
+ M Assets/StarTournament/Runtime/ProvingGround.cs
+ M Assets/StarTournament/Runtime/ProvingGroundDesignLab.cs
+ M Assets/StarTournament/Tests/PlayMode/NativeLabStartupTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/standard-user-data/migration/
+?? Assets/StarTournament/Runtime/Core/VersionedUserData.cs
+?? Assets/StarTournament/Runtime/Core/VersionedUserData.cs.meta
+?? Assets/StarTournament/Tests/EditMode/VersionedUserDataTests.cs
+?? Assets/StarTournament/Tests/EditMode/VersionedUserDataTests.cs.meta

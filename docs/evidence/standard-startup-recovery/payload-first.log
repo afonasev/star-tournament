@@ -1,0 +1,24 @@
+PASS full snapshot includes files empty directories and modes
+PASS same snapshot id is immutable and bound to version
+PASS foreign install cannot consume a snapshot
+PASS foreign identity cannot restore payload
+PASS corrupted backup bytes never replace current payload
+PASS extra or missing backup entry is rejected
+PASS manifest paths cannot select outside files
+PASS invalid id and overlapping roots fail before copy
+PASS capture resumes after capture-verified
+PASS capture resumes after capture-committed
+PASS restore resumes after restore-prepared
+PASS restore resumes after candidate-renamed
+PASS restore resumes after backup-activated
+PASS restore resumes after restore-verified
+PASS missing candidate can be recovered from retained snapshot
+PASS unowned sibling is preserved
+PASS damaged intent cannot trigger deletion
+PASS pending restoration prevents snapshot deletion
+PASS root links cannot redirect a snapshot
+PASS outside and dangling payload links are rejected
+PASS linked store and journal cannot escape root
+PASS macOS framework links and extended attributes survive restore
+PASS cleanup of failed candidate never follows an outside symlink
+Payload recovery: 23 passed

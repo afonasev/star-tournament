@@ -1,0 +1,22 @@
+{
+  "PackCommand.cs": {
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/vpk/Velopack.Vpk/Commands/Packaging/PackCommand.cs",
+    "sha256": "2f406502ae8fbad85e81acc98086437a1aa81c34dd36d2950d2192326aa72737"
+  },
+  "OsxBundleCommandRunner.cs": {
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/vpk/Velopack.Packaging.Unix/Commands/OsxBundleCommandRunner.cs",
+    "sha256": "7ff225b3f771ea1184305a44bfa96374d16aa187a63ad27b534fc57a2f72a77b"
+  },
+  "OsxPackCommandRunner.cs": {
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/vpk/Velopack.Packaging.Unix/Commands/OsxPackCommandRunner.cs",
+    "sha256": "bfee4dbbc2d4a6904cdf3c0b95564bb1eb4abfcfe65b93885703a86655557588"
+  },
+  "OsxBuildTools.cs": {
+    "url": "https://github.com/velopack/velopack/blob/3c7f52c1bf17d10ad21b794b006d5ebd1a879a3b/src/vpk/Velopack.Packaging.Unix/OsxBuildTools.cs",
+    "sha256": "73e525d218aca4b1bd16920a86961e2ef780d6c1730ae1338ce4969a40aca4f8"
+  },
+  "dmgbuild1.6.7": {
+    "wheel_sha256": "37ee5771c377beb3203d9164aae8046ffed8531c06edf9227f5788b3c599b1bf",
+    "finding": "core.py:688-689 uses subprocess.call(ditto) without checking return code; wrapper now requires read-only image tree readback before immutable release"
+  }
+}

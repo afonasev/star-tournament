@@ -8,8 +8,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class WellDaylightProfileTests
     {
+        [Test] public void PackagedDefaultUsesApprovedLightingWithoutChangingCatalog()
+        {
+            var owner=new GameObject("Packaged Default baseline");
+            try
+            {
+                var catalog=LabReleaseCatalog.Load();var before=JsonUtility.ToJson(catalog);
+                // Use runtime profile ordering and its dynamic evaluation profile exactly.
+                var baseline=owner.AddComponent<ProvingGround>().CaptureLabBundle();
+                var history=DesignLabHistory.ResolvePublishedDefault(baseline,catalog);
+                Assert.That(history.StorageError,Is.Null);Assert.That(history.ReleaseError,Is.Null);
+                var defaults=ProvingProfile.CreateWellDefault();
+                foreach(var d in defaults.Descriptors)
+                    Assert.That(history.Selected.Snapshot.Get(d.Path),Is.EqualTo(defaults.Get(d.Path)),d.Path);
+                Assert.That(history.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(4));
+                Assert.That(JsonUtility.ToJson(catalog),Is.EqualTo(before));
+            }
+            finally{UnityEngine.Object.DestroyImmediate(owner);}
+        }
         [TestCase(false,false)][TestCase(true,false)][TestCase(false,true)][TestCase(true,true)]
-        public void PreserveV4HashesAndCustomLightingWhileUpdatingDefaults(bool compact,bool custom)
+        public void PreserveV4HashesAndEverySavedLightingValue(bool compact,bool custom)
         {
             string directory=Path.Combine(Path.GetTempPath(),"well-daylight-"+Guid.NewGuid());Directory.CreateDirectory(directory);string path=Path.Combine(directory,"history.json");
             try
@@ -29,7 +47,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-gameplay-presentation-v1").Version,Is.EqualTo(5));
                 var defaults=ProvingProfile.CreateWellDefault();
                 foreach(var pair in new[]{("well.daylight",1.2f),("well.lamp",9f),("well.fill",.37f),("well.innerAngle",85f),("well.daylightShadow",.6f),("well.lampRange",16f)})
-                    Assert.That(upgraded.Selected.Snapshot.Get(pair.Item1),Is.EqualTo(custom?pair.Item2:defaults.Get(pair.Item1)),pair.Item1);
+                    Assert.That(upgraded.Selected.Snapshot.Get(pair.Item1),Is.EqualTo(custom?pair.Item2:preserved.Snapshot.Get(pair.Item1)),pair.Item1);
                 Assert.That(upgraded.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
                 Assert.That(upgraded.Selected.Snapshot.Get("well.localLightScale"),Is.EqualTo(2));
                 Assert.That(upgraded.Selected.Snapshot.Get("well.sunYaw"),Is.EqualTo(-55));

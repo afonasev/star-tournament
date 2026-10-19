@@ -1,0 +1,23 @@
+{
+  "privateSource": "b5bcfb4cbf355ed79dadf88e6e7281c4054287b9",
+  "publicSource": "eba44b3102eb820e9983244e77683fba82524965",
+  "publicBase": "d9c985a0df995abd783ce6661174b835391c55f8",
+  "exportedPaths": [
+    "unity/Assets",
+    "unity/Packages",
+    "unity/ProjectSettings",
+    "unity/tools.sh",
+    "distribution",
+    "docs/GAME_SPEC.md"
+  ],
+  "authoringHistoryExported": false,
+  "files": 1249,
+  "exportedGitObjectsEqual": {
+    "unity/Assets": "cbed4931d3f348e29a8d8dce6ae01cee06bfc917",
+    "unity/Packages": "2fe677c6542877cb583f1a9539e7e7a3ebfbe388",
+    "unity/ProjectSettings": "97acf1a0deea2b5d9a07ece0debe2691a5166589",
+    "unity/tools.sh": "e974961e787847d5ccbec726397d14a966108769",
+    "distribution": "4f9977afca0ab79ef5eeb8291b4ff9acae26c01d",
+    "docs/GAME_SPEC.md": "632a929ce49beb28941b92675ce9e3bcc3a6de40"
+  }
+}

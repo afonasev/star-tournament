@@ -1,0 +1,3 @@
+baseline=4f4c4379
+mode=shared -batchmode -noaudio -muted graphics
+qa_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/.local/unity-evidence/lab-runtime.PXbtnq/qa-history.json

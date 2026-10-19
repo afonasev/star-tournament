@@ -1,0 +1,48 @@
+{
+  "baseline": "codex/game-standard-alignment@f68bdb63",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "is_completion_certificate": false,
+  "policy_checks": 12,
+  "security_checks": 49,
+  "feedback_checks": 34,
+  "mac_recovery_checks": 10,
+  "nsis_tests": 20,
+  "maintenance_compile": {
+    "errors": 0,
+    "warnings": 0,
+    "publish": false
+  },
+  "native_windows": "NotRun: macOS host; injected policy and NSIS preprocessor are not native Windows acceptance",
+  "player_build": false,
+  "installer_build": false,
+  "full_tests": false,
+  "deploy": false,
+  "remaining": [
+    "signed target-specific minimumOS/updater/payload/data requirements with producer/reader/publisher/activation wiring",
+    "native installed platform acceptance",
+    "parent Q5-Q8 design approvals and full other-package audit"
+  ],
+  "sources": {
+    "distribution/launcher/PlatformRequirements.cs": "cae8d2083f0fe7927af3d71045ecf988f371217d0bca0991d70ff7d1ce445253",
+    "distribution/launcher/Program.cs": "c5573fd28fce73e41371dba0483d867904593d2dbcf571968705dc96cee4c257",
+    "distribution/launcher/MacRecoverySupervisor.cs": "ef3e5c020a3df73f9f364d12c6e3ccc2a38853a26d1a1e46741c3e0763b8e8b2",
+    "distribution/launcher/UpdateFeedback.cs": "1bc2673bbd17d6693da8c6c0d1800eb72ec3c37e74c5e0c4727e3c959107ec88",
+    "distribution/maintenance/Maintenance.csproj": "3c3fe1efd6fd7fe487e3b02a73ab64ce8f2f17b756cfc7bd3fd6cd31d3538d58",
+    "distribution/maintenance/Program.cs": "2177c63252c02e10ef5cbe35b4c101a8eac8249048ac31df7a832db1182bdc85",
+    "distribution/maintenance/InstallerOperations.cs": "ec6765cf9d512d56b766e80f5e305eb6c7d412a5ec028aeffc0334879f7285c4",
+    "distribution/windows/installer.nsi": "d33eacb518239977c31bd85af832144cb9e5faf025b69c66c27627b1b8826840",
+    "distribution/tests/PlatformRequirementsChecks.cs": "298412c17e7c3ea2a2f4d92be0f0db486a1bee3ea0b381bc2e264bbe6bb71a8d",
+    "distribution/tests/Program.cs": "1ed6c43c8701140a8c805dc6af68b1ac18a11b2dd8f114579fa67913e1040ac9",
+    "distribution/tests/test_windows_installer.py": "9909db783bd6977ffe91d7c8c9734274a1b687602b1bc7255ecbc565a1001ea8"
+  },
+  "evidence": {
+    "nsis.log": "0dbe4c29cde4ec2f65b8955e19133aa0b95090eb7a42587d0e701bb71f094cb2",
+    "mac-recovery.log": "a528224f3d24ba66875d982ca1b34a658d4a2f16ef49f764c753372e074bc8ec",
+    "security.log": "6f992c1b2710aea81d086587385a1679f9458327d4132729ad3a4c484cb97e37",
+    "feedback.log": "b1bcf3ec6814c3a5d313252a1ef989e94d44852f2963788e7c576a4212e4f3ef",
+    "platform.log": "bd520a690c31567a489f490b8b8098b5a54c084486992d4c1d60bae23ba89f53",
+    "plan.md": "5f68e10a37a65fcebbc300e9bb66d600946f8e7bf43e1d0ce2c2dedf0910f1df",
+    "maintenance.log": "6a42d020d8365098a5371cbcdbb76673c9f80267605e6a745739115e0b55b232",
+    "verification.md": "8df26213897a2e96c1c76b9464f24f9c4e188cdc94b0c9726e045c38cd736515"
+  }
+}

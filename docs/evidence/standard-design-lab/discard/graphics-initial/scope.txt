@@ -1,0 +1,3 @@
+baseline=9edd6c35
+mode=shared -batchmode -noaudio -muted with graphics
+qa_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/.local/unity-evidence/discard-render.JctYtX/qa-history.json

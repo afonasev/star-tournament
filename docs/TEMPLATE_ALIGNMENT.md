@@ -1,0 +1,191 @@
+# Сверка с game-spec-templates
+
+Target: `60fe3d2787dfb860722372791ee67dc8453f6f66`, catalogue0.6.0: menu-base0.2.0/settings0.1.4/design-lab0.2.0/updates0.2.1/installer0.1.0. Local/origin HEAD повторно проверены17.10.2026. Рабочая ветка `codex/game-standard-alignment`, baseline аудита `f6a7d3df`; последующий cursor patch связан source manifest в evidence/standard-menu-contracts. Это текущая полная матрица, **не заявление о завершении**.
+
+Обозначения: **Код/QA** — inspected implementation и сохранённые affected проверки; **Разрыв** — подтверждённое невыполненное требование; **Проверить** — доказательств недостаточно; **Платформа** — source/portable fixtures есть, native installed/device acceptance не выполнена; **Макет** — ждёт решения до visual implementation. Наличие реализации/green fixture не выдаётся за установленную игру. Все pending пункты сохраняют исходный scope.
+
+Пути evidence ниже относительно `docs/evidence/`. Исторические отчёты могут содержать уже исправленные pending пункты: используются самые поздние integration/transfer/refinement записи, а не их старые README-вступления. Макеты20–31 прямо согласованы пользователем17.10.2026; это разрешение реализации, не native acceptance.Source реализации20–31 сохранены; affected QA и точные остающиеся native/release gates перечислены ниже. Согласование макета не является приёмкой реализации.
+
+## Menu-base — 25 требований
+
+| ID | Состояние и конкретное основание / незакрытая граница |
+| --- | --- |
+| MENU-STRUCTURE-01 | Код/QA: ProvingGroundMenus main six actions/brand/settings; NativeMenuPresentationTests, отдельный setup. |
+| MENU-STRUCTURE-02 | Код/QA: Lab/profiles/history отдельными routes; network «скоро» недоступна, browser runtime не поставляется. |
+| MENU-STRUCTURE-03 | Код/QA: network «скоро» disabled/no-op и исключена из focus; остальные guards в Settings/Lab/Update states. |
+| MENU-ACTIONS-01 | Код/QA Q5/20–25: короткие действия Lab/reset/copy/Auto реализованы; f4b63c3d,9 unique affected PlayMode. Точные названия/основания/PNG — standard-menu-actions/implementation/. Native/human приёмка отдельно. |
+| MENU-ACTIONS-02 | Код/QA Q5: release/check state и совместимые mark/unmark; несовместимая историческая версия допускает только снятие отметки. Копия создаётся из сохранённой версии с отдельной историей, не из черновика; greatest-marked Default сохраняет отдельную роль. Exact-source/hash/date/draft guards проверены. |
+| MENU-ACTIONS-03 | Код/QA Q5: boolean — одна checkbox-кнопка и текущее Выкл/Вкл; reset — отдельное действие выбранной базы. Release flag отражает просматриваемую версию, не активирует её и не создаёт ревизию.9 unique affected PlayMode, narrow/readonly/persistence guards. |
+| MENU-INPUT-01 | Код/QA: InputSystem/UI navigation, SettingsGamepadNavigationTests, NativeMenuPresentation keyboard/NativeTextEntry grid; physical devices pending. |
+| MENU-INPUT-02 | Код/QA Q8/29: общий physical-position formatter для South/East/West/North/Start; Xbox/PlayStation/Switch и безопасный generic. Реальные action/Back/top-context predicates, Settings assigned-seat и operator/seat ownership. core/focus/back/setup evidence; physical/native gate открыт. |
+| MENU-INPUT-03 | Код/QA: top modal/field/seat ownership, input clear/frozen pause; NativeTextEntry/LabDiscard/IndependentPause tests. |
+| MENU-INPUT-04 | Код/QA: opening frames/wasPressed/async Busy/UpdateSession operation guards; held submit and match drain проверены. |
+| MENU-INPUT-05 | Код/QA: NativeTextEntry draft/grid/keyboard handover/reconnect/cancel, поля защищены от outer navigation; approved15. |
+| MENU-FOCUS-01 | Код/QA: MenuPresentation distinct gold frame/initial safe focus; disabled rows excluded, modal cancel focus. |
+| MENU-FOCUS-02 | Код/QA: Settings/Lab/history return targets/scroll and text modal; current cursor patch keeps focus. |
+| MENU-FOCUS-03 | Код/QA: MenuScrollFocus reveal + history resize/long descriptions + settings split-view fixtures. |
+| MENU-DEVICE-01 | Код/QA: real input/drift gating, shared focus, NativeTextEntry handover; standard-menu-contracts5 focused cases. |
+| MENU-DEVICE-02 | Код/QA: новый window focus guard в menu и text-entry cursor owners;5 actual PlayMode cases, visible/unlocked background. Native focus event still device gate. |
+| MENU-HINTS-01 | Код/QA Q8/29: pad-only focused actions и main/history footer; keyboard/mouse handover скрывает glyphs. Удалены permanent legends в Setup/roster. Evidence standard-device-hints/{core,focus,back,setup}; native/human acceptance отдельно. |
+| MENU-HINTS-02 | Код/QA Q8/29: отдельный MenuActionHint у реального focused Button/Toggle/text action и доступного shortcut; caption/value не изменяются, узкие/inset/badge/dropdown bounds не перекрываются. Settings Back parameter→section имеет отдельный context hint. |
+| MENU-HINTS-03 | Код/QA Q8/29: East вызывает фактический Back/Cancel текущего контекста один раз за кадр; Start Setup делит predicate с AdvanceSetupInput. Неверные roster Y/X удалены (shortcut и экранное действие различаются); submit сохраняется. Virtual family/device/editor/invalid-roster checks; physical proof остаётся открыт. |
+| MENU-LAYOUT-01 | Код/QA: A/03–19 и согласованные20–31 реализованы в соответствующих source milestones; Q5/Q6/Q7/Q8/Q10 имеют affected Editor/PNG proof, Q9 — DMG layout/source/recording proof. Реальный Finder/Player/TV/physical/human acceptance не выполнен. |
+| MENU-LAYOUT-02 | Код/QA: fixed screens + internal scrolls for fields/history/settings; headers/actions outside scroll. |
+| MENU-LAYOUT-03 | Код/QA частично: saved actual1080p/720p/short/split captures; physicalTV/все устройства и новые20–28 pending. |
+| MENU-STATE-01 | Код/QA Q7/28: author load-error имеет безопасный Back и явный session-only Default из поставки; исходник сохранён, запись/Save/Create блокируются, reload требует нового выбора. fa13ca57,4 PlayMode; East/Back сосед повторён в Q8. Native process/storage gate открыт. |
+| MENU-STATE-02 | Код/QA: background Lab/discovery/history/download with Busy/drain/cancel; late completion does not steal focus. |
+| MENU-PAUSE-01 | Код/QA: IndependentPauseMenuTests freeze one local match until last menu closes, per-seat settings ownership; online game unavailable. |
+
+## Settings — 22 требования, включая controls-help.md
+
+| ID | Состояние и основание / граница |
+| --- | --- |
+| SETTINGS-BASE-01 | Код/QA: текущие MenuActionHint/Back/context guards реализованы по Q5/Q8; сохраняются focus/cursor/scroll и settings ownership. Наследуемые native/device/human gates меню открыты. |
+| SETTINGS-ENTRY-01 | Код/QA: main/seat/operator SettingsView, same options/current values, closing returns to pause; standard-settings/ и IndependentPause tests. |
+| SETTINGS-CATALOG-01 | Код/QA: все30 option IDs разобраны ниже; quality применима и selector31 реализован (tiers0/2/5). Причины N/A остальных опций сохранены; hardware/runtime native applicability не выдаётся за проверку всех устройств. |
+| SETTINGS-GROUPS-01 | Код/QA: A screen/graphics/audio/input/interface; empty language/privacy groups не добавлены. |
+| SETTINGS-SCOPE-01 | Код/QA: NativeUser/Audio/Visual/Gamepad prefs отдельно от Lab/match settings; artistic strength stays Lab. |
+| SETTINGS-CONTROL-01 | Код/QA: sliders с числом, Toggle/discrete list, единое состояние/короткие названия Q5 реализованы; общий graphic quality selector Q10. Подсказки не меняют caption/value, scoped input сохраняется. |
+| SETTINGS-CONTROL-02 | Код/QA: descriptors/keys/units/steps, release-default preference metadata; SaveStandard wrapper covers NumericSetting/BooleanSetting. |
+| SETTINGS-CONTROL-03 | Код/QA: common display/audio/graphics; per-profile/seat look/FPS, shared views reread current values; scope hints inspected. |
+| SETTINGS-PERSIST-01 | Код/QA: setters+PlayerPrefs.Save / atomic PlayerProfileCatalog; last values/reopen tests. Native registry/plist pending. |
+| SETTINGS-PERSIST-02 | Код/QA: visual ordinary preferences immediate; risky display temporary, match/Lab separate. Не добавлены фиктивные restart-only options. |
+| SETTINGS-PERSIST-03 | Код/QA: SaveStandard error area (active but not saved wording), validated legacy fallback/zero/false; actual storage failure native gate remains. |
+| SETTINGS-DISPLAY-01 | Код/QA: temporary mode/resolution/Auto confirmation, timeout/cancel/focus-loss rollback; no immediate submit. Native fullscreen/monitor pending. |
+| SETTINGS-AUDIO-01 | Код/QA: master×music/effects/voice, exact0 persistence; standard-audio-settings7 core+6 UI. Audible device test NotRun under -muted. |
+| SETTINGS-AUDIO-02 | Код/QA: session -muted before audio creation, Unity -noaudio, launcher argv; docs commands. Installed native argv/no-output pending. |
+| SETTINGS-RESET-01 | Код/QA: explicit allowlist+personal reset, identities/progress/history/Lab/consent retained; display confirmation separate, reset not section-local. |
+| SETTINGS-RESET-02 | Код/QA: north shortcut scoped to settings/no modal/text/list/held-open bypass; family labels in same action. |
+| SETTINGS-HELP-01 | Код/QA: approved13–14 separate gameplay-only art/aspect/device equivalents, real InputSystem mappings reviewed; physical legibility acceptance pending. |
+| SETTINGS-HELP-02 | Код/QA: keyboard+mouse одна страница, gamepad отдельно, переключение/Back/внутренний scroll; NativeTextEntry help-page fixture. |
+| SETTINGS-HELP-03 | Код/QA: saved generated PNG assets13–14, UI overlays provide exact captions; source assets retained. |
+| SETTINGS-HELP-04 | Код/QA: gameplay actions only, corrected leader Q/E and device equivalents; no menu navigation inside art. |
+| SETTINGS-HELP-05 | Код/QA: labels reviewed against SeatInputCoordinator, short/hold/combination semantics; no gameplay remapping feature. Physical controls pending. |
+| SETTINGS-HELP-06 | Частично: actual ratio/NPOT/captions/split-view checked, generated art visually inspected; small viewport/TV/human legibility still pending. |
+
+## Полный каталог Settings — 30 опций
+
+Обычные глобальные предпочтения хранятся в PlayerPrefs; личные — в player-profiles-v2.json/guest/general settings по объявленной области SettingsView. Метаданные/границы — реальные descriptors в NativeUserPreferences/NativeAudioPreferences/NativeVisualPreferences/GamepadLookSettings/ProvingProfile, не произвольные числа из макетов.
+
+| ID | Применимость и текущая реализация / причина |
+| --- | --- |
+| OPT-SCREEN-MODE | Применима: ProvingGroundGraphicsSettings temporary mode/confirm. |
+| OPT-SCREEN-RESOLUTION | Применима: unique resolutions + Auto с короткой подписью/пояснением Q5; подтверждение и откат сохранены. Native monitor fallback ещё не проверен. |
+| OPT-SCREEN-VSYNC | Применима: VSyncKey/ApplyVSyncPreference, one shared runtime value. |
+| OPT-SCREEN-FPS-LIMIT | Применима: NativeUserPreferences.FrameCaps/targetFrameRate; VSync priority explained. |
+| OPT-GRAPHICS-QUALITY | Применима: selector31 реализован в20b2f124; Low/Medium/High→native tiers0/2/5, default/reset High, отдельные AA/reflections/Lab overrides сохранены.6 EditMode+4 PlayMode passed, source consumers подтверждают влияющий skin-weight tier. Все tiers используют один URP, sampled textures ignoreMipmapLimit=true: VRAM/FPS эффект не обещается. Native/hardware acceptance открыт; standard-graphics-quality/implementation/. |
+| OPT-GRAPHICS-AA | Применима: NativeVisualPreferences AntialiasingLevel, per-camera/runtime resolve. |
+| OPT-GRAPHICS-SHADOWS | Применима: global toggle, owned Light originals retained, quality state restores. |
+| OPT-GRAPHICS-EFFECTS | Применима: каждый используемый VisualEffect имеет Enabled; strength stays Lab, no fake channels. |
+| OPT-AUDIO-MASTER | Применима: MasterKey,0–100%, master multiplier. |
+| OPT-AUDIO-MUSIC | Применима: MusicPercent/master mix/menu+match music. |
+| OPT-AUDIO-EFFECTS | Применима: EffectsPercent/master mix actual effects. |
+| OPT-AUDIO-VOICE | Применима: VoiceKey/bot voice; legacy effects fallback only before explicit voice choice. |
+| OPT-AUDIO-EXTRA | Неприменима: самостоятельного доп. пользовательского канала сверх music/effects/voice нет; spatial submix не объявлен новым каналом. |
+| OPT-INPUT-MOUSE | Применима: MouseSensitivityPreference + per identity, selected Lab default when personal missing. |
+| OPT-INPUT-STICK | Применима: horizontal/vertical GamepadLookSettings per identity/seat/general. |
+| OPT-INPUT-INVERT | Применима: look X/Y, movement unaffected. |
+| OPT-INPUT-DEADZONE | Применима: declared descriptor and personal look resolver. |
+| OPT-INPUT-VIBRATION | Неприменима: runtime не реализует haptic feedback/rumble; добавление механики шаблон не требует. |
+| OPT-INPUT-CURSOR | Неприменима: gamepad menu focus is discrete; gameplay uses camera look, отдельного аналогового игрового cursor нет. |
+| OPT-INPUT-CAMERA | Частично применима: analog look covered mouse/stick; edge/keyboard independent camera pan отсутствует. |
+| OPT-INPUT-ASSIST | Применима: существующее auto-level + return delay, без придуманного aim assist. |
+| OPT-UI-SCALE | Применима: ScaleDescriptor75–150/5, NativeInterfacePreferences scaler. |
+| OPT-UI-CONTRAST | Применима: HighContrast/outline preserving team colors. |
+| OPT-UI-SUBTITLES | Применима к существующей речи: TextEnabled bot reaction lines display exact utterance; нет сюжетных диалогов. |
+| OPT-UI-FPS | Применима: personal/general FPS display, shared global counter semantics. |
+| OPT-UI-HEALTH | Неприменима как выбор режима: health HUD — обязательная combat readability, варианты скрытия/режима проектом не предусмотрены; не добавляем новую gameplay visibility policy. |
+| OPT-UI-PING | Неприменима: сетевой режим недоступен/не реализован, измеряемого сетевого RTT нет. |
+| OPT-LANGUAGE | Неприменима: UI локализован только по-русски; bilingual release body не означает две локализации меню. |
+| OPT-DATA-STATISTICS | Неприменима: необязательной отправки игровой статистики нет; ProvingTelemetry только локальный explicit QA-file, GitHub update HTTP не telemetry. |
+| OPT-DATA-CLEAR | Неприменима: user-facing очистки истории/данных нет; удаление отдельного профиля принадлежит profile workflow с подтверждением, reset не удаляет данные. |
+
+## Updates — 18 требований
+
+| ID | Состояние и основание / граница |
+| --- | --- |
+| UPDATES-SOURCE-01 | Код/QA: оба pinned канала используют public GitHub Releases API, bounded Link pagination и canonical semantic/channel selection; standard-github-discovery71 actual HTTP/file/RSA checks. Legacy config отдельно сохранён. |
+| UPDATES-SELECT-01 | Частично: API draft/channel/semantic/completeness фильтры исправлены; signed full asset обязан быть в selected release. Existing UpdateManager.CheckForUpdatesAsync сравнивает установленную версию; Baseline OS guard добавлен (Windows10/19043+, macOS12+) до launcher discovery/Player и новой native activation; signed schema2 target OS/reader/payload/data admission и actual ZIP config binding реализованы; source QA signed-target/. Native installed acceptance остаётся отдельной. |
+| UPDATES-CHECK-01 | Код/QA: UpdateSession.Start once/started guard, shared IPC result, no manual check/retry. |
+| UPDATES-CHECK-02 | Код/QA: per-page ETag/body/hash/Link cache,304 свежий next-link, Retry-After/reset across launches, successful remaining0 guard, no stale-current on error; actual API→UpdateSession integration once. Cache parsing вне launch path; native installed gate отдельно. |
+| UPDATES-CONSENT-01 | Код/QA: download only after update action, no forced timer/settings/channel control, stage waits normal exit/restart. |
+| UPDATES-FLOW-01 | Код/QA: UpdateSession.Command match drains download/history before ack; NativeUpdateMenu QueueMatch/return/resume, ordinary quit/discard protection. |
+| UPDATES-UI-01 | Код/QA: actual available/downloading/verifying/ready/error/current panels; active version separate from candidate/ready, history17 highlight. Q8 glyph/Back/family binding реализован; physical/native proof отдельно. |
+| UPDATES-DOWNLOAD-01 | Код/QA: temp package, signed size/hash/free-space/admitted target, retry same candidate/cancel/no duplicate operation; source tests standard-update-download-flow. |
+| UPDATES-HISTORY-01 | Код/QA: ReleaseHistory ten recent+exact installed tag, RU/EN bodies/current RU, separate cached HTTP/drain; installed permanent marker/scroll/resize verified. |
+| UPDATES-CHANGELOG-01 | Код/QA: Git-derived paired reviewed notes/generator before packaging; standard-release-changelog20+16 targeted Python tests. Actual next release notes not generated without publication command. |
+| UPDATES-TRUST-01 | Код/QA: RSA-PSS admission, pinned identity/channel/asset/version/size/hash, HTTPS bounded redirects, activation reverification; native chain pending. |
+| UPDATES-INSTALL-01 | Платформа: payload snapshots/durable journal/root transaction/restore portable fixtures, Windows registry callbacks compiled; installed crash/UAC/ACL not executed. |
+| UPDATES-INSTALL-02 | **Разрыв legacy перехода**: modern/legacy endpoint routing, подписанный Windows component producer/startup adapter и recoverable full-payload apply source реализованы; это не ретроактивное исправление установленной0.1.5/test.1. First bootstrap issuer/publication, старые native handoff/argv/6arg activation/old Player health и native acceptance OPEN. Child compatibility Q1 решён17.10: пользователь подтвердил обязательный automatic transition и ожидание проверки перед выпуском; manual installer exception не принят. |
+| UPDATES-DATA-01 | Платформа: versioned user data preserves actual v0.1.2 namespaces and failed-write paths; installed previous→candidate→failed startup→previous not executed. |
+| UPDATES-RECOVERY-01 | Платформа + source: owned WindowsFullPayload apply не вызывает kill-root native updater; protected rollback сохраняет новый broker/reader2. Cleanup двух транзакций проверена161 affected contracts/8 child exits (rollback-component/). First legacy transition и actual installed menu-ready/restore не доказаны. |
+| UPDATES-ARGS-01 | Платформа + legacy разрыв: текущие normal launcher/supervisor сохраняют argv/-muted/-noaudio; native installed restart acceptance pending. Старый0.1.5 передаёт argv normal supervisor, native apply запускает --norestart и может завершить supervisor. Optional rotating native-stub log не является гарантией восстановления (legacy-handoff/). |
+| UPDATES-RELEASE-01 | Код/QA + публикация отдельно: complete signed release metadata/assets/immutable source custody and exact body readback; no release generated/published in this work. |
+| UPDATES-QA-01 | Политика соблюдена: affected/reused/native NotRun separate; no full/Player/build/deploy inferred from standard. |
+
+## Installer — 17 требований
+
+Опубликованная историческая поставка: macOS Apple Silicon `.pkg/.app`, Windows x64 system installation/NSIS. Текущая source-поставка macOS: `.dmg/.app`. **Q9 source pipeline реализован:** package.py/modern collector используют DMG с переносом в Applications по согласованному30; historical PKG/bridge сохраняются. Actual DMG/Finder/installed acceptance ещё NotRun, build/publication отдельно. Intel Mac/universal compilation не является заявлением acceptance для Intel. Browser installer не поставляется. Test unsigned delivery explicitly documented; signed update trust remains mandatory.
+
+| ID | Состояние и основание / граница |
+| --- | --- |
+| INSTALLER-PACKAGE-01 | Платформа: packaging scripts/release filenames/dependency inclusion exist; current modified Player+installer not built, earlier releases not proof this source. |
+| INSTALLER-IDENTITY-01 | Код/QA + платформа: shared icon inputs/app+installer+shortcut routing, windows-installer-icon evidence; current actual installed shell icon pending. |
+| INSTALLER-FLOW-01 | Код/QA Q9: complete portable→DMG, approved30 Finder layout/Applications link и immutable/readback guards;53 Python+11 JS affected checks, native DMG ещё NotRun. Windows approved07 normal NSIS wizard/standard locations/repair source; native rendering pending. |
+| INSTALLER-FLOW-02 | Baseline OS guard: NSIS WinVer preflight до broker extraction; maintenance plan/begin/commit и обе update activation boundaries защищены. Windows10/19043+, macOS12+ сверены с Unity Player6000.3. 12 policy +20 NSIS checks; signed schema2 target constraints реализованы; macOS first-install preflight/DMG и native QA остаются открытыми. Evidence standard-release-compatibility/baseline/. |
+| INSTALLER-RIGHTS-01 | Платформа: ordinary root supervisor/Explorer finish launch, only protected broker elevated; source guards/compiled tests, real tokens/ACL pending. |
+| INSTALLER-TRUST-01 | Explicit dev/test unsigned exception documented; no signing/notarization acceptance claimed. Update envelopes remain authenticated. |
+| INSTALLER-CONTENT-01 | Платформа: wrapper/stable entry→launcher→Player and shared runtime packaged; current content completeness requires separately authorized build/readback. |
+| INSTALLER-CONTENT-02 | Код/QA: LauncherConfig/version/channel/platform/architecture/protocol+product registration/owned markers; current installed readback pending. |
+| INSTALLER-LAUNCH-01 | Платформа: default shell shortcuts/wrapper/offline code/optional finish launch; physical fresh/repeat launch not executed for current source. |
+| INSTALLER-DATA-01 | Код/QA + платформа: VersionedUserData paths/import/write failure preserve old namespaces, app payload separate; actual native data persistence pending. |
+| INSTALLER-REINSTALL-01 | Платформа: fresh/repair/upgrade exact version inspection+staged whole root+registration snapshots; portable transaction/transfer passes, actual NSIS pending. |
+| INSTALLER-REINSTALL-02 | Платформа: leases/busy processes/channel identity/downgrade refusal and interrupted custody; cross-user/legacy binary concurrency native pending. |
+| INSTALLER-RECOVERY-01 | Платформа: stage rollback/durable states/retained fallback/bootstrap transfer, exact owned cleanup; native power-loss/cancel/registration not executed. |
+| INSTALLER-REMOVE-01 | Платформа: fixed product uninstall root/paths/records, user data retained; actual Windows Settings/uninstall/UAC pending. |
+| INSTALLER-ARGS-01 | Платформа: wrapper/stable argv and mute contract documented; actual newly installed chain not executed. |
+| INSTALLER-QA-01 | Политика соблюдена: transfer173 targeted checks, latest unchanged source hashes reused; native gate explicitly NotRun. |
+| INSTALLER-RELEASE-01 | Политика соблюдена: no full regression imposed, no Player/installer/release build or publication without separate command. |
+
+## Lab — 28 требований
+
+Все IDs отдельно разобраны в [матрице Lab](evidence/standard-design-lab/requirement-matrix.md). Структурный baseline Lab: f38103cc; source-preserving migrations/flags/package ordering/structural mappings проверены в своих срезах; актуальные UI milestones перечислены далее. Q5 UI20–25 реализованы вf4b63c3d (9 unique PlayMode), Q7 fallback28 вfa13ca57 (4 PlayMode); Q6/26–27 реализованы в21fe689d (4 PlayMode checks/7 PNGs); native Development -labProject отдельный gate. Никакие old snapshots/user balance/real author JSON не переписаны этой сверкой.
+
+## Дополняющие нормативные документы
+
+- `settings/controls-help.md`: ещё5 SETTINGS-HELP IDs включены выше, не потеряны за root requirements.
+- `settings/options.md`: все30 option IDs перечислены. Quality применима; selector31 реализован в20b2f124,6 EditMode+4 PlayMode; native/hardware proof OPEN.
+- `design-lab/parameter-catalog.md`:9 metadata columns, grouping/search/diff/consumer boundary сопоставлены с actual638 registry/inventory и Lab matrix; примеры новых полей не являются требованиями их добавить.
+- `installer/platforms.md`: Q9 DMG source producer/collector/landing реализованы; actual installed/native proof остаётся открытым; source OS/target policy реализована, macOS first-install/native checks не закрыты.
+- `updates/release-format.md`: signature/identity/version/channel/asset/size/hash/body code есть. Новый schema2 задаёт minimumOS/reader/payload/data policy; producer/consumer/publisher/activation и ZIP config binding согласованы, отрицательные fixtures выполнены. Schema1 immutable historical baseline; безопасный автоматический переход старых readers ещё не завершён, installer exception не принят. Native installed acceptance и macOS first-install preflight/DMG остаются OPEN; контракт в distribution/COMPATIBILITY.md.
+
+## Следующее действие
+
+1. GitHub API discovery/cache source исправлен и прошёл71+49+21 targeted .NET checks; installed pair acceptance остаётся отдельной. Baseline OS guard/maintenance compile исправлены; signed target compatibility source этап выполнен; выявлен дополнительный обязательный seamless legacy transition: old reader/broker1 bootstrap и protected migration, затем platform packaging/native acceptance.
+2. Выполнить actual DMG/Finder/Applications/Spotlight/minOS/update/data gates после отдельной команды на installer build; source Q9 уже подключён. Q10 selector реализован, native/hardware gate открыт.
+3. Не запрашивать заново согласование20–31: source milestones сохранены. Продолжить обязательный Windows0.1.5/test.1 automatic transition и полную native/integration/human сверку. Новые визуальные направления вне согласованных макетов сначала показать.
+4. После source fixes — affected integration, canonical spec sync и итоговый отчёт. Native build/platform/device/human gates остаются отдельными и не выдаются за успешные.
+
+
+2026-10-17 publication-routing source continuation: package/collector/landing understand modern metadata; production frozen legacy aliases and published signed bootstrap preflight/readback/snapshot are wired. No compatible bootstrap is produced yet. UPDATES-INSTALL-02 stays OPEN until constrained bootstrap producer, automatic protected broker1→2/startup/retry and actual legacy recovery are implemented and verified. Evidence: `docs/evidence/standard-release-compatibility/publication-routing/`.
+
+
+2026-10-17 actual native updater audit: signed production/test Windows full packages contain the same updater1.2.158; all non-resource PE sections match official vpk1.2.158/tag3c7f52c1. Whole-file hashes differ only in resources and resource-size header fields. Upstream native apply kills accessible root processes (except itself), including our resident maintenance/supervisor source paths, and removes old temp payload before menu-ready. This is an unresolved source conflict in the current native apply route, not a passed native update. Before bootstrap migration, fix apply orchestration/recovery and verify it; see `docs/evidence/standard-release-compatibility/native-updater/findings.md`. Installed Windows/runtime execution remains NotRun.
+
+
+2026-10-17 correction task2.7: current source native kill-root conflict устранён собственным WindowsFullPayload Stage/Activate внутри WindowsRecoveryStore, без вызова Update.exe apply.177 affected .NET checks passed, including2 real process-crash points; actual signed0.1.5 archive staged363 files without activation/game launch, maintenance compilation0/0. Native installed ACL/UAC/platform acceptance и protocol1/bootstrap migration остаются OPEN; docs/evidence/standard-release-compatibility/windows-owned-apply/. Более ранний native-updater audit описывает прежний source baseline9b27f727 и по-прежнему важен для старых установок.
+
+2026-10-17 broker migration foundation: signed exact-file candidate + independent recoverable3-file component transaction source готовы (138 checks,7 process deaths; maintenance0/0). Не подключены startup/elevated adapter и actual signed candidate producer; old native handoff/restart/argv и native installed acceptance остаются OPEN. Task2.5 целиком не закрыт. Evidence `docs/evidence/standard-release-compatibility/broker-transaction/`.
+
+2026-10-17 broker startup source continuation: normal launcher/elevated authority adapters connected;154 affected contracts and maintenance0/0. Candidate producer, legacy native handoff/activation/rollback integration and installed Windows acceptance remain OPEN. Source evidence `docs/evidence/standard-release-compatibility/broker-startup/`; task2.5 not complete.
+
+2026-10-17 embedded broker producer source: Windows update-only and first-install now embed an independently signed component before vpk pack; installer reuses exact frozen bytes instead of compiling twice.46 targeted checks include real RSA→C# consumer and recording routes. Evidence `docs/evidence/standard-release-compatibility/broker-producer/`. Earlier producer-absent notes are superseded for component packaging only; constrained first-bootstrap mode, legacy handoff/activation/rollback and actual runnable/native acceptance remain OPEN. No Player/installer/release build/full/deploy.
+
+2026-10-17 retained reader correction: playback protocol1 after authorized payload rollback no longer downgrades the retained metadataReader2; absent declaration stays1 and parser ceiling is enforced.100 affected source contracts + maintenance compile0/0. Evidence `docs/evidence/standard-release-compatibility/retained-reader/`. Legacy startup/activation/first handoff/native acceptance remain OPEN. Additional pinned source audit found optional native-stub argv diagnostic logging; see `legacy-handoff/findings.md`, not a guaranteed recovery contract.
+
+2026-10-17 rollback/component cleanup integration: protected restored payload proof now authorizes cleanup of a committed signed component while retaining the new broker and restored old bootstrap/playback contract. Ordinary exact-file verification unchanged; payload proof is deleted only after component cleanup.161 affected contracts,8 real child exits, maintenance0/0. Evidence `docs/evidence/standard-release-compatibility/rollback-component/`. Earlier notes that this cleanup interaction is missing are superseded for the verified restored path. Legacy first handoff/argv/6arg activation/old Player health/bootstrap publication/native acceptance remain OPEN. No Player/installer/release/full/deploy.
+
+### Уточнение Q8 после source/virtual/render проверки17.10
+Срезы c6eebc62/76b9e43d/9a4e083c и Setup4.1d относятся к реализации согласованного29; старые pending формулировки в исторических evidence не описывают их текущее состояние. Latest local game-spec-templates9cc4415 и origin/main60fe3d2 проверены17.10: после60fe3d2 добавлен только AGENTS.md с визуальными правилами пользователя; normative features/110 IDs/30 options неизменны. Requirements pin60fe3d2 сохраняет те же требования. Последующая сверка refresh/verification.json учла сохранённые Q5–Q10 source milestones в основных строках; это не сертификат завершения.
+
+Q9 evidence: `standard-macos-dmg/integration/README.md` — latest source pipeline,53 Python+11 JS passed; historical foundation report описывает прежний ещё не подключённый этап. Native DMG/first-install и mandatory legacy Windows auto-transition этим не закрыты.

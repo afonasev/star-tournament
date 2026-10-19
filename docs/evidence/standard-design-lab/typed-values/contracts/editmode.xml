@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="17" result="Passed" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.8606921">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="635" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.860692" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1774" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="635" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.855906" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="79290" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1775" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="635" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.854396" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1776" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="635" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.852935" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1777" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="635" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.851394" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1778" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="496" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.845170" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1191" name="BloodProfileTests" fullname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" classname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.016307" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1192" name="BloodFieldsAreEditablePresentationWithValidMetadataAndSteps" fullname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests.BloodFieldsAreEditablePresentationWithValidMetadataAndSteps" methodname="BloodFieldsAreEditablePresentationWithValidMetadataAndSteps" classname="StarTournament.ProvingGround.Tests.EditMode.BloodProfileTests" runstate="Runnable" seed="164682929" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.010695" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1335" name="HitFeedbackProfileTests" fullname="StarTournament.ProvingGround.Tests.EditMode.HitFeedbackProfileTests" classname="StarTournament.ProvingGround.Tests.EditMode.HitFeedbackProfileTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.000947" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1336" name="ContactControlsAreEditablePresentationAndHaveValidMetadata" fullname="StarTournament.ProvingGround.Tests.EditMode.HitFeedbackProfileTests.ContactControlsAreEditablePresentationAndHaveValidMetadata" methodname="ContactControlsAreEditablePresentationAndHaveValidMetadata" classname="StarTournament.ProvingGround.Tests.EditMode.HitFeedbackProfileTests" runstate="Runnable" seed="1642358134" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.000440" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1419" name="LabParameterTypeTests" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.813393" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1420" name="ActualBooleanDeclarationsHaveExactDomainAndValidDefaults" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.ActualBooleanDeclarationsHaveExactDomainAndValidDefaults" methodname="ActualBooleanDeclarationsHaveExactDomainAndValidDefaults" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1274669103" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.005754" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1435" name="BooleanMetadataCannotDeclareFractionalOrWiderDomain" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BooleanMetadataCannotDeclareFractionalOrWiderDomain" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.002966" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1431" name="BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;minimum&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;minimum&quot;)" methodname="BooleanMetadataCannotDeclareFractionalOrWiderDomain" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1238077927" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.001341" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1432" name="BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;maximum&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;maximum&quot;)" methodname="BooleanMetadataCannotDeclareFractionalOrWiderDomain" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="776252722" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.000425" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1433" name="BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;step&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;step&quot;)" methodname="BooleanMetadataCannotDeclareFractionalOrWiderDomain" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1279630842" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.000398" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1434" name="BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;default&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BooleanMetadataCannotDeclareFractionalOrWiderDomain(&quot;default&quot;)" methodname="BooleanMetadataCannotDeclareFractionalOrWiderDomain" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="2084369418" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.000416" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-suite type="ParameterizedMethod" id="1430" name="BothBooleanStatesSaveReloadAndRetainOriginalHistory" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BothBooleanStatesSaveReloadAndRetainOriginalHistory" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.252921" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1428" name="BothBooleanStatesSaveReloadAndRetainOriginalHistory(&quot;blood.enabled&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BothBooleanStatesSaveReloadAndRetainOriginalHistory(&quot;blood.enabled&quot;)" methodname="BothBooleanStatesSaveReloadAndRetainOriginalHistory" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1063395090" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.134815" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1429" name="BothBooleanStatesSaveReloadAndRetainOriginalHistory(&quot;hit.enabled&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.BothBooleanStatesSaveReloadAndRetainOriginalHistory(&quot;hit.enabled&quot;)" methodname="BothBooleanStatesSaveReloadAndRetainOriginalHistory" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="542142041" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:07Z" duration="0.117824" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-suite type="ParameterizedMethod" id="1438" name="HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.307148" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1436" name="HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem(&quot;blood.enabled&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem(&quot;blood.enabled&quot;)" methodname="HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="994638651" result="Passed" start-time="2026-10-16 19:07:07Z" end-time="2026-10-16 19:07:08Z" duration="0.170057" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1437" name="HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem(&quot;hit.enabled&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem(&quot;hit.enabled&quot;)" methodname="HistoricalFractionRemainsUntouchedAndReportsTheTypedProblem" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="703979342" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.136510" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-suite type="ParameterizedMethod" id="1427" name="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.243680" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1421" name="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;blood.enabled&quot;,0.5f)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;blood.enabled&quot;,0.5f)" methodname="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1262792646" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.040884" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1422" name="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;hit.enabled&quot;,0.25f)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;hit.enabled&quot;,0.25f)" methodname="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1762171561" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.040167" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1423" name="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;blood.enabled&quot;,-1.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;blood.enabled&quot;,-1.0f)" methodname="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1840408642" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.039694" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1424" name="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;hit.enabled&quot;,2.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;hit.enabled&quot;,2.0f)" methodname="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="2084906431" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.039796" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1425" name="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;blood.enabled&quot;,float.NaN)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;blood.enabled&quot;,float.NaN)" methodname="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="1960490877" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.039788" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1426" name="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;hit.enabled&quot;,float.PositiveInfinity)" fullname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests.InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite(&quot;hit.enabled&quot;,float.PositiveInfinity)" methodname="InvalidBooleanDraftIsRejectedWithoutCoercionOrSourceWrite" classname="StarTournament.ProvingGround.Tests.EditMode.LabParameterTypeTests" runstate="Runnable" seed="498192037" result="Passed" start-time="2026-10-16 19:07:08Z" end-time="2026-10-16 19:07:08Z" duration="0.042592" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -27,7 +27,7 @@ namespace StarTournament.ProvingGround.Tests
                 var skin=arena.GetComponentInChildren<WellArenaPresentation>();var filters=skin.GetComponentsInChildren<MeshFilter>();
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())));
                 // Compare to durable pre-garden bytes, rather than just rebuilding the new authoring twice.
-                var baseline=JsonUtility.FromJson<ArenaDefinition>(File.ReadAllText(Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-daylight/full-visual/arena.json"))));
+                var baseline=JsonUtility.FromJson<ArenaDefinition>(File.ReadAllText(Path.GetFullPath(Path.Combine(Application.dataPath,"StarTournament/Tests/EditMode/Fixtures/well-daylight-arena.json"))));
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(baseline)));
                 Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24));Assert.That(skin.GetComponentsInChildren<Light>().Count(l=>l.shadows!=LightShadows.None),Is.EqualTo(3));

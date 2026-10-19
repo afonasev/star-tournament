@@ -1,0 +1,59 @@
+{
+  "baseline": "codex/game-standard-alignment@e2fdab6c",
+  "template": "60fe3d2787dfb860722372791ee67dc8453f6f66",
+  "is_completion_certificate": false,
+  "foundation_checks": 55,
+  "compatibility_checks": 48,
+  "recovery_checks": 35,
+  "total": 138,
+  "process_death_checkpoints": 7,
+  "contracts_exit": 0,
+  "adjacent_exits": {
+    "compatibility": 0,
+    "windows-recovery": 0
+  },
+  "maintenance_compile": {
+    "errors": 0,
+    "warnings": 0,
+    "publish": false
+  },
+  "sdk_item_plan_only": true,
+  "actual_candidate_built": false,
+  "native_executed": false,
+  "startup_adapter_implemented": false,
+  "elevated_authority_adapter_implemented": false,
+  "producer_implemented": false,
+  "legacy_native_handoff_resolved": false,
+  "player_build": false,
+  "installer_build": false,
+  "full_suite": false,
+  "deploy": false,
+  "sources": {
+    "distribution/launcher/BrokerUpgradeCandidate.cs": "eaa0d68ad0be119e4965f0b29d8aa26d611079d3c5a37a02fb9f165c130b4ddd",
+    "distribution/maintenance/WindowsBrokerUpgradeTransaction.cs": "2e36668923022437fc77bac562b1b20733a284b9f3d3c7d94fd0c34fb84c5b1a",
+    "distribution/maintenance/Maintenance.csproj": "824ba69c56843ee79c9a77a12623e8375a16b58be51b555dac0a9578badd66d2",
+    "distribution/tests/BrokerUpgradeChecks.cs": "2a9a08f5e0829c2ec9bd7704c2887d00ff1f7088c4d4b16c40d938166a106b6e",
+    "distribution/tests/Launcher.Contracts.csproj": "fe656da1fe8bb69227b36032e4e4af731567cae34da4aad07f612b5024043cf3",
+    "distribution/tests/Program.cs": "0f74ee86cd18124a3f43ea4497336b9bdc59e31db5022370ee1b6c3e50e848c4",
+    "distribution/launcher/ReleaseCompatibility.cs": "fb8186392c1bdd58a517f8bea8023b077d4e0564301fbc6c4c397ff549f2df79",
+    "distribution/maintenance/WindowsRecoveryStore.cs": "4c0a78ed48464f151cf7afe1b814bbd6a381b3ad57fbab7478faa5e8cb14c928",
+    "distribution/COMPATIBILITY.md": "da187ebc4882fa5b8abb58860851878ebcdb782f3123ea732b9f6f8b59783a08",
+    "docs/TEMPLATE_ALIGNMENT.md": "6709caf125339290894d68e75bf712e08dc0ee8124579936d059d0bbca642bec"
+  },
+  "evidence": {
+    "checks.json": "1803a992310611bbe840d309ee09d06db909bdc45ec421463bf02499d8c32abf",
+    "compatibility.log": "223934b8ee30e17febe4ad0e3fa33972e1ce66dd7ee7b068f24897e78762a392",
+    "contracts-first.log": "05b6e19f438bacf230b48dd976554adf2842238c6a1a92520e7e44a6381988c6",
+    "contracts.log": "2123022f2fe31a3f95d5e2afbc0850abd819bbd3e62620fe98ed481a5562c3fd",
+    "maintenance-restore.log": "0305fec556fde58040511f7ba17730e78fc01bba14214a0deb44b6cb28dcfdf9",
+    "maintenance.log": "3b42c9bb911e2596e7ca30c294575573bdf9c5adc9141c16799dc4c9592f5a45",
+    "plan.md": "5e2015e71381a3d6a1824ca9d95ce104a834ce67c344f8ef676eebed1f727fa1",
+    "primary-sources.json": "488d68d9c5d85b27fc75c5addd1015a748848c4266c6754ead30e455f05e3e54",
+    "publish-layout-analysis.json": "cd438f39ef29f9b2b247678c3afb548c6de1164c077b94b4e2abd18d3c6c18f3",
+    "publish-plan.json": "4d5751e44055f32cc6484da69a71d43aaef8a7857f22b58d7997852e8a0654bd",
+    "publish-plan.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "restore.log": "fe75a6fdf88a106c71d659a9882ea997e21ae71552012ab6124e35111ebaa6f2",
+    "verification.md": "760532f73321ddc152de201f76c4ee1f3f52b1ca19132ae9d5b40fa9c6196209",
+    "windows-recovery.log": "7a67b76ce5e1339ef4a63ea48d77b18e23d464202bb97c0a9a83dcf95f6fd017"
+  }
+}

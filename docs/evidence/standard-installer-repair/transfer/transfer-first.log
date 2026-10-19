@@ -1,0 +1,31 @@
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,54): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,59): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(87,64): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/StartupHealthChecks.cs(89,74): warning CS8625: Cannot convert null literal to non-nullable reference type. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(16,28): warning CS8604: Possible null reference argument for parameter 'path' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,17): warning CS8604: Possible null reference argument for parameter 'version' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/Assets/StarTournament/Runtime/NativeStartupHealth.cs(17,72): warning CS8604: Possible null reference argument for parameter 'token' in 'bool NativeStartupHealth.Publish(string path, string version, string token)'. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+PASS unconfirmed newer installer keeps original known-good payload and bootstrap
+PASS unconfirmed same-version repair retains exact fallback
+PASS confirmed same-version repair never reopens older rollback
+PASS missing latch same-version repair keeps conservative floor playable
+PASS confirmed upgrade captures current floor and retains older backup until attestation
+PASS missing latch upgrade does not fall below conservative current floor
+PASS new target health authorizes resumable removal of every archive
+PASS restored partial deletion is carried while fresh fallback captures actual previous
+PASS restored same-version repair preserves partial cleanup intent
+PASS corrupt original fallback refuses replacement before root move
+PASS insufficient transfer space leaves source byte-exact
+PASS repeated unconfirmed installers never promote an unconfirmed fallback
+PASS outer rollback after transfer-space-checked restores exact original recovery
+PASS outer rollback after transfer-copied restores exact original recovery
+PASS outer rollback after transfer-new-floor-captured restores exact original recovery
+PASS outer rollback after transfer-prepared restores exact original recovery
+PASS outer rollback after old-root-moved restores exact original recovery
+PASS outer rollback after new-root-moved restores exact original recovery
+PASS outer rollback after installed restores exact original recovery
+PASS abrupt transfer process exit at transfer-copied preserves original store
+PASS abrupt transfer process exit at transfer-new-floor-captured preserves original store
+PASS abrupt transfer process exit at old-root-moved preserves original store
+PASS abrupt transfer process exit at new-root-moved preserves original store
+Windows installer transfer: 23 passed (actual portable source/files/processes; Windows sharing/ACL/UAC NotRun)

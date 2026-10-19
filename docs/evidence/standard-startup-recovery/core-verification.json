@@ -1,0 +1,13 @@
+{
+  "baseline": "edd095aedbd5bb695d93088a8ea184f25ce253b8",
+  "command": "/Users/eaafonasev/.dotnet/dotnet run --no-restore --project distribution/tests/Launcher.Contracts.csproj -- --startup-recovery",
+  "exit_code": 0,
+  "passed": 28,
+  "scope": "Independent C# decision journal only; not wired; payload restoration and Unity lifecycle pending",
+  "sources": {
+    "distribution/launcher/StartupRecovery.cs": "08cd6cedcd93f6c1636375e57642e0e3ee8ce0f02cfceff98e7a90c8c546a36a",
+    "distribution/tests/StartupRecoveryChecks.cs": "4959bea539efc1ac2a8b9e4c2c88e1c1e2bc488f0724ffbb97b6ddd37a86847d",
+    "distribution/tests/Program.cs": "6663742cacfbef6f0ff42e2084250d4ae38e5c547d1dd71d61620c94817441e3"
+  },
+  "evidence": "core-final.log"
+}

@@ -1,0 +1,7 @@
+Baseline54c74872, branch codex/game-standard-alignment.
+
+Scope: precise compatibility refusal reasons (saved identity/path, unavailable trusted schema/version or authored resource), plain runtime hint. Preserve all existing transforms; no new clamp, alternate revision, file mutation or game-balance/layout change.
+
+Affected: unity/tools.sh test-edit-filter 'LabCompatibilityDiagnosticsTests;LabParameterStorageTests.SelfConsistentCompactTamperingIsRejectedWithoutWriting;LabCompatibilityViewTests.InvalidDerivedSourceMetadataPreservesFileAndDisablesWrites'. New cases cover genuine changed runtime constraint vs saved value, unsupported schema epoch/resource and unknown field; adjacent tamper/provenance refusals share these paths. Runtime: unity/tools.sh test-play-filter 'NativeLabStartupTests.IncompatibleRangeShowsPlainReasonKeepsDefaultAndAllowsBack;NativeLabStartupTests.InvalidHistoryKeepsDefaultAndLabCannotWriteSource'. Actual source-loader refusal, main Default retained, Back and no writes; fixed720p text geometry only, not rendered visual acceptance. All shared/noaudio/muted from startup; no full/Player/build/deploy.
+
+Additional final diagnostic assertion: unsupported schema epoch in third profile must name that changed profile (not just truncate first two catalogue rows). SchemaIdentity prioritizes mismatching ID/version/path sets. Repeat LabCompatibilityDiagnosticsTests after this diagnostic-only change; existing runtime range/copy route unchanged.

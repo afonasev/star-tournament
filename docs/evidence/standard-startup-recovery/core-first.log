@@ -1,0 +1,3 @@
+/Users/eaafonasev/.dotnet/sdk/8.0.425/Sdks/Microsoft.NET.Sdk/targets/Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1004: Assets file '/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/obj/project.assets.json' not found. Run a NuGet package restore to generate this file. [/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/distribution/tests/Launcher.Contracts.csproj]
+
+The build failed. Fix the build errors and run again.

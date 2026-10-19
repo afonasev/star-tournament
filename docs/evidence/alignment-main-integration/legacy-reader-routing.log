@@ -1,0 +1,29 @@
+PASS released source preserved except namespace: ReleasedProductionV1
+PASS released source preserved except namespace: ReleasedTestV1
+PASS exact published0.1.6 reader/locator preserved: ReleasedModernV2
+PASS exact published0.1.6 reader/locator preserved: ReleasedModernV2Discovery
+PASS released production source reads frozen bridge alias through current production latest redirect
+PASS released production source really rejects unbridged schema2
+PASS current source chooses signed modern endpoint from same listing: production
+PASS fixed reader discovers signed DMG-only modern release: production
+PASS published0.1.6 reader reproduces DMG omission: production
+PASS real compatibility PKG makes modern target discoverable to published0.1.6 reader: production
+PASS published0.1.6 Windows reader discovers compatibility PKG pair: production
+PASS fixed Windows reader discovers DMG-only pair: production
+PASS bad modern signature cannot downgrade to legacy endpoint: production
+PASS modern trust failure stops without stale/legacy admission: production
+PASS modern family without own target skips historical cross-architecture alias: production
+PASS historical schema1 remains readable for routing/bootstrap investigation: production
+PASS released test source skips newer modern-only assets and selects legacy bridge
+PASS released test source really rejects schema2
+PASS current source chooses signed modern endpoint from same listing: test
+PASS fixed reader discovers signed DMG-only modern release: test
+PASS published0.1.6 reader reproduces DMG omission: test
+PASS real compatibility PKG makes modern target discoverable to published0.1.6 reader: test
+PASS published0.1.6 Windows reader discovers compatibility PKG pair: test
+PASS fixed Windows reader discovers DMG-only pair: test
+PASS bad modern signature cannot downgrade to legacy endpoint: test
+PASS modern trust failure stops without stale/legacy admission: test
+PASS modern family without own target skips historical cross-architecture alias: test
+PASS historical schema1 remains readable for routing/bootstrap investigation: test
+Legacy reader routing: 28 passed (released source logic, not installed binary/bootstrap acceptance)

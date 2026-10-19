@@ -1,0 +1,78 @@
+{
+  "planning_revision": "622ffac9f8df2695d842ad732d3c1da19655d6ab",
+  "files": [
+    {
+      "change": "align-standard-design-lab",
+      "path": "openspec/specs/standard-design-lab/spec.md",
+      "sha256_now": "4e70046573d23f20e6036400167dd41fd84eef7a45dfb9d5e00ef6cc37485211",
+      "recorded_sha256": "4e70046573d23f20e6036400167dd41fd84eef7a45dfb9d5e00ef6cc37485211"
+    },
+    {
+      "change": "align-standard-design-lab",
+      "path": "openspec/changes/align-standard-design-lab/specs/standard-design-lab/spec.md",
+      "sha256_now": "d844e31f960504e785987ac0260f65c7d41d0ad506fbd04f491451664b7f971b",
+      "recorded_sha256": "d844e31f960504e785987ac0260f65c7d41d0ad506fbd04f491451664b7f971b"
+    },
+    {
+      "change": "align-standard-startup-recovery",
+      "path": "openspec/specs/standard-startup-recovery/spec.md",
+      "sha256_now": "722044b7b71d02f25d9b8e80e7167ab1c2429fb7791d22b2eb711309b62816b2",
+      "recorded_sha256": "722044b7b71d02f25d9b8e80e7167ab1c2429fb7791d22b2eb711309b62816b2"
+    },
+    {
+      "change": "align-standard-startup-recovery",
+      "path": "openspec/changes/align-standard-startup-recovery/specs/standard-startup-recovery/spec.md",
+      "sha256_now": "90ce045d3c9afb80c10f975c9b993bfce7c1a4f3a11c34d08c92715ca74f910e",
+      "recorded_sha256": "90ce045d3c9afb80c10f975c9b993bfce7c1a4f3a11c34d08c92715ca74f910e"
+    },
+    {
+      "change": "align-standard-menu-contracts",
+      "path": "openspec/specs/menu-contracts/spec.md",
+      "sha256_now": "2b7b03f5604011bf512c4aaa36db88bf8e459371d6782f256b72f207c4a30133",
+      "recorded_sha256": "2b7b03f5604011bf512c4aaa36db88bf8e459371d6782f256b72f207c4a30133"
+    },
+    {
+      "change": "align-standard-menu-contracts",
+      "path": "openspec/changes/align-standard-menu-contracts/specs/menu-contracts/spec.md",
+      "sha256_now": "2db40e05a07cc355b4dc6fb373fa5591e15a4d50f585027219f1ea983bee5830",
+      "recorded_sha256": "2db40e05a07cc355b4dc6fb373fa5591e15a4d50f585027219f1ea983bee5830"
+    },
+    {
+      "change": "align-standard-release-compatibility",
+      "path": "openspec/specs/release-compatibility/spec.md",
+      "sha256_now": "1f6546f40a47b5995247a5784402062153c374a0db4c3518d9928ba738b84a7d",
+      "recorded_sha256": "48e44e65bffd6f23c3dc24b0d4d4f4f14d7495dd0e5796842daec59cb09aaf32"
+    },
+    {
+      "change": "align-standard-release-compatibility",
+      "path": "openspec/changes/align-standard-release-compatibility/specs/release-compatibility/spec.md",
+      "sha256_now": "f4842febb8b82acaa54abbbac85daf951b4e2a662a6cbbdc34696cc1473f6eb4",
+      "recorded_sha256": "720e46c62d2dab7347038702838d79779a1320dbb467b1aadf005264c1111101"
+    },
+    {
+      "change": "align-standard-github-discovery",
+      "path": "openspec/specs/github-discovery/spec.md",
+      "sha256_now": "b790ee45455f4a93746570aa79545bbc6020d6df5957f6244b4411f604d24e07",
+      "recorded_sha256": "b790ee45455f4a93746570aa79545bbc6020d6df5957f6244b4411f604d24e07"
+    },
+    {
+      "change": "align-standard-github-discovery",
+      "path": "openspec/changes/align-standard-github-discovery/specs/github-discovery/spec.md",
+      "sha256_now": "cdcc815be7004dea37cc45b7ec58e24e4f0720ba9f907cf5641bc58eb9647be9",
+      "recorded_sha256": "cdcc815be7004dea37cc45b7ec58e24e4f0720ba9f907cf5641bc58eb9647be9"
+    },
+    {
+      "change": "align-standard-graphics-quality",
+      "path": "openspec/specs/graphics-quality/spec.md",
+      "sha256_now": "b0df1563c71f34dba76c43940ac37b44379a6d509760aa208db1c265e3221a87",
+      "recorded_sha256": "b0df1563c71f34dba76c43940ac37b44379a6d509760aa208db1c265e3221a87"
+    },
+    {
+      "change": "align-standard-graphics-quality",
+      "path": "openspec/changes/align-standard-graphics-quality/specs/graphics-quality/spec.md",
+      "sha256_now": "a6616b3bbf740bcd6af6ef429b4500585abd95f6def17d60e205a61148ba57fd",
+      "recorded_sha256": "a6616b3bbf740bcd6af6ef429b4500585abd95f6def17d60e205a61148ba57fd"
+    }
+  ],
+  "drift_explanation": "Only release-compatibility differs: planning commit1654305 added explicit owner-validation0.1.6 publication exception. This decision is already reflected in integrated7901d3d and is preserved. No new spec delta in source integration."
+}

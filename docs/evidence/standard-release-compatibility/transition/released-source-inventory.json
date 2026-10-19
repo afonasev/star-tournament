@@ -1,0 +1,78 @@
+[
+  {
+    "channel": "production",
+    "tag": "v0.1.5",
+    "source_custody_revision": "d9c985a0df995abd783ce6661174b835391c55f8",
+    "tag_commit": "d9c985a0df995abd783ce6661174b835391c55f8",
+    "reader_source_sha256": "6913c81de58e98fb9011d48388cdb54f6427b877c351d32f9cca6537acdc5d72",
+    "tag_reader_source_sha256": "6913c81de58e98fb9011d48388cdb54f6427b877c351d32f9cca6537acdc5d72",
+    "reader_source_equal": true,
+    "signed_manifests_verified_with_pinned_key": true,
+    "note": "source logic evidence, not execution of installed binary",
+    "velopack_dotnet_reference": "1.2.158",
+    "native_update_binary_version": "Not established; do not infer from NuGet library reference",
+    "unity_project_version": "m_EditorVersion: 6000.3.23f1\nm_EditorVersionWithRevision: 6000.3.23f1 (09d2ecc7fb28)",
+    "descriptors": [
+      {
+        "file": "latest-osx-arm64.json",
+        "schema": 1,
+        "version": "0.1.5",
+        "platform": "osx",
+        "architecture": "arm64",
+        "full_sha256": "23363053F86DFB998F4EE7E861D965F41CE0FA3A5C93F5BFEF2B349BABFE1BE2",
+        "full_size": 150887990,
+        "source_custody_package_matches_signed_metadata": true,
+        "envelope_sha256": "27d05f2bd9a3fcf62768b8155ba2e9f34f43a999000e2b6e3fbc35b7d1233295"
+      },
+      {
+        "file": "latest-win-x64.json",
+        "schema": 1,
+        "version": "0.1.5",
+        "platform": "win",
+        "architecture": "x64",
+        "full_sha256": "C40D8C8CE6FC601BA4B3C4F1248F214072C584D0CF1CDFAB1BF7EF8535F5918A",
+        "full_size": 142106989,
+        "source_custody_package_matches_signed_metadata": true,
+        "envelope_sha256": "856df98caf27b908807a71f782ffa751cffb4b07dc979543e25e62f1d313738d"
+      }
+    ]
+  },
+  {
+    "channel": "test",
+    "tag": "v0.1.5-test.1",
+    "source_custody_revision": "23b21e95cf7373293078dff3363053eb6359a6a7",
+    "tag_commit": "eab6bdd310b1e24be7e24ef499bc9c261617b5da",
+    "reader_source_sha256": "94acf706c416a9671752a2221a8d94bef9297a9905d4fb17bd6d19e8a30869f0",
+    "tag_reader_source_sha256": "94acf706c416a9671752a2221a8d94bef9297a9905d4fb17bd6d19e8a30869f0",
+    "reader_source_equal": true,
+    "signed_manifests_verified_with_pinned_key": true,
+    "note": "source logic evidence, not execution of installed binary",
+    "velopack_dotnet_reference": "1.2.158",
+    "native_update_binary_version": "Not established; do not infer from NuGet library reference",
+    "unity_project_version": "m_EditorVersion: 6000.3.23f1\nm_EditorVersionWithRevision: 6000.3.23f1 (09d2ecc7fb28)",
+    "descriptors": [
+      {
+        "file": "latest-osx-arm64.json",
+        "schema": 1,
+        "version": "0.1.5-test.1",
+        "platform": "osx",
+        "architecture": "arm64",
+        "full_sha256": "C10AB566CF0402D83128622626ABB5315B6D28FD8689FE8A6B93D63253681FAF",
+        "full_size": 150871068,
+        "source_custody_package_matches_signed_metadata": true,
+        "envelope_sha256": "e6324f2c7ef19ed5136c95c6dbdaeeac544f8739f7a2280db3358927f320eefb"
+      },
+      {
+        "file": "latest-win-x64.json",
+        "schema": 1,
+        "version": "0.1.5-test.1",
+        "platform": "win",
+        "architecture": "x64",
+        "full_sha256": "736BB2EBC2EA291DB3E70D95BDFC62F1F9FD4531972288DEF077BA7139E50375",
+        "full_size": 142133621,
+        "source_custody_package_matches_signed_metadata": true,
+        "envelope_sha256": "210ef4fd4c91c0f937657d83ffe8f58831446ea7e56d1c9bbe01604f4dbb08f1"
+      }
+    ]
+  }
+]

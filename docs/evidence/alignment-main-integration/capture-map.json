@@ -1,0 +1,87 @@
+[
+  {
+    "historical_path": "docs/evidence/fix-large-lab-startup/editor-views/default-menu.png",
+    "current_capture": "views/initial-editor-views-default-menu.png"
+  },
+  {
+    "historical_path": "docs/evidence/fix-large-lab-startup/editor-views/lab-waiting.png",
+    "current_capture": "views/initial-editor-views-lab-waiting.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/approved-ui/18-switches-1280x720.png",
+    "current_capture": "views/initial-approved-ui-18-switches-1280x720.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/approved-ui/18-switches-1920x1080.png",
+    "current_capture": "views/initial-approved-ui-18-switches-1920x1080.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/approved-ui/18-switches-1920x650.png",
+    "current_capture": "views/initial-approved-ui-18-switches-1920x650.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/approved-ui/19-historical-720p.png",
+    "current_capture": "views/initial-approved-ui-19-historical-720p.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/catalogue/catalogue-hint-720p.png",
+    "current_capture": "views/initial-catalogue-catalogue-hint-720p.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/consumers/preference-default-hint-720p.png",
+    "current_capture": "views/initial-consumers-preference-default-hint-720p.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/default-source/author-default-source-720p.png",
+    "current_capture": "views/initial-default-source-author-default-source-720p.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/discard/06-draft-warning.png",
+    "current_capture": "views/initial-discard-06-draft-warning.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/hud-lifecycle/saved-hud-tuning-1080p.png",
+    "current_capture": "views/initial-hud-lifecycle-saved-hud-tuning-1080p.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/mixed-history/saved-source-720p.png",
+    "current_capture": "views/initial-mixed-history-saved-source-720p.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/runtime/05-author-save.png",
+    "current_capture": "views/initial-runtime-05-author-save.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/runtime/05-missing-default-720p.png",
+    "current_capture": "views/initial-runtime-05-missing-default-720p.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/runtime/05-project-startup-saved-identity.png",
+    "current_capture": "views/initial-runtime-05-project-startup-saved-identity.png"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/discard/06-draft-warning.png",
+    "current_capture": "views/recheck-discard-06-draft-warning.png",
+    "phase": "recheck"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/discard/06-long-diff-720p.png",
+    "current_capture": "views/recheck-discard-06-long-diff-720p.png",
+    "phase": "recheck"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/mixed-history/incompatible-row-720p.png",
+    "current_capture": "views/recheck-mixed-history-incompatible-row-720p.png",
+    "phase": "recheck"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/mixed-history/old-only-profile-720p.png",
+    "current_capture": "views/recheck-mixed-history-old-only-profile-720p.png",
+    "phase": "recheck"
+  },
+  {
+    "historical_path": "docs/evidence/standard-design-lab/mixed-history/saved-source-720p.png",
+    "current_capture": "views/recheck-mixed-history-saved-source-720p.png",
+    "phase": "recheck"
+  }
+]

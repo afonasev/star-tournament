@@ -38,8 +38,8 @@ class PublicationContract(unittest.TestCase):
         (self.releases/'0.1.0-test.3.signed.json').write_text(json.dumps({
             'payload':base64.b64encode(json.dumps(self.payload).encode()).decode(),'signature':'fixture'}))
 
-    def run_upload(self, reject=False):
-        args=['upload_candidate.py','--runtime','win-x64','--version','0.1.0-test.3',
+    def run_upload(self, reject=False, runtime='win-x64'):
+        args=['upload_candidate.py','--runtime',runtime,'--version','0.1.0-test.3',
               '--releases',str(self.releases),'--installers']
         with patch.object(sys,'argv',args), patch.object(uploader.subprocess,'run') as remote, patch('builtins.print'):
             if reject:
@@ -48,6 +48,22 @@ class PublicationContract(unittest.TestCase):
             else:
                 uploader.main()
                 self.assertTrue(remote.called)
+            return remote.call_args_list
+
+    def prepare_mac(self):
+        self.payload.update(platform='osx',architecture='arm64')
+        renamed=self.releases/'Star-Tournament-0.1.0-test.3-macOS-arm64.dmg'
+        self.installer.rename(renamed);self.installer=renamed
+        self.write_manifest()
+        identity=dict(version='0.1.0-test.3',runtime='osx-arm64',packages=[dict(name=p.name,size=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in [self.full,self.installer]])
+        (self.root/'0.1.0-test.3.identity.json').write_text(json.dumps(identity))
+
+    def test_dmg_uses_versioned_installer_destination_after_custody_checks(self):
+        self.prepare_mac();calls=self.run_upload(runtime='osx-arm64')
+        self.assertTrue(any(self.installer.name in str(c) and '/installers/0.1.0-test.3' in str(c) for c in calls))
+
+    def test_changed_dmg_never_contacts_upload_destination(self):
+        self.prepare_mac();self.installer.write_bytes(b'changed');self.run_upload(reject=True,runtime='osx-arm64')
 
     def test_exact_artifacts_can_publish(self): self.run_upload()
     def test_changed_full_package_never_contacts_vps(self):

@@ -1,0 +1,13 @@
+{
+  "distribution/macos_dmg.py": "0b6137fe83f6daadb660af2041ad30ae2bf463fa82dc8569659209ff1db98dc3",
+  "distribution/package.py": "f82b1eb553e6a094d38f1524e074802a7bf27a9c83d6503a7d766c12658e602e",
+  "distribution/publish_release.py": "1cd28c858514c11c5d68fd21c457037e50d798aed9f810a072eb17466e74d49c",
+  "distribution/upload_candidate.py": "c80cc1b83ef4efd073907d64274e735de32c81c603007ea86abf273ae6d7392f",
+  "distribution/review-page/downloads.js": "e595da2ac108a1f6d639b60501fc3b465acfed59c61d01e3effd5f9554204bdb",
+  "distribution/review-page/index.html": "c9e6a8a67b8fd5b82b2ce2374b0c32dc93b740c1dee3845fb4f2ed2644ec7ea3",
+  "distribution/tests/test_macos_dmg.py": "a1d0ca9865c9621672a979adeb6dad280e12ae51aed649cca6e33050dccd7bd5",
+  "distribution/tests/test_macos_package.py": "1de3ce8423d286c7abe54191861d39d635ee24fbb73cf32ea425491d3e540290",
+  "distribution/tests/test_legacy_bridge_publication.py": "d78b56b37fa30281ac37ed7870b51934f343fa8f07f720549e72ca7dac3cc44a",
+  "distribution/tests/test_publication.py": "75b1276dc9b8727aed88ab935e61a77ca66411bff26d58b6994eb70540ec4ef2",
+  "distribution/tests/downloads.test.cjs": "23b87ff448a5e0c52895674866ef143bbe40fc821c9f0c517602c1ac96ac9389"
+}

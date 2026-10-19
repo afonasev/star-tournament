@@ -1,0 +1,8 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LabAuthoringTests;LabReleaseCatalogTests;DesignLabHistoryTests.AudioUpgrade;DesignLabHistoryTests.FootstepMixUpgrade;DesignLabHistoryTests.GamepadUpgrade;DesignLabHistoryTests.DeathProfileUpgrade;DesignLabHistoryTests.DeathImpulseUpgrade;DesignLabHistoryTests.ShotOriginDescriptorMigrates;DesignLabHistoryTests.ScoreboardUpgrade;DesignLabHistoryTests.HistoricalWarmCache
+lab_history=/Users/eaafonasev/.codex/worktrees/game-standard-alignment/star-tournament/unity/../.local/unity-evidence/focused-editmode.ALh7lB/qa-lab-history.json
+revision=630f82447708b5be2ce3a1b71d7f9be7f4c26c3c
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Tests/EditMode/LabAuthoringTests.cs
+?? ../docs/evidence/standard-design-lab/upgrade-defaults/

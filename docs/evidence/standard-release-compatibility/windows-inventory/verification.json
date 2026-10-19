@@ -1,0 +1,40 @@
+{
+  "baseline": "cdf0b41b",
+  "branch": "codex/game-standard-alignment",
+  "host": "macOS arm64",
+  "tool": {
+    "tag": "v7.6.7",
+    "url": "https://github.com/PowerShell/PowerShell/releases/download/v7.6.7/powershell-7.6.7-osx-arm64.tar.gz",
+    "sha256": "50dde99bb066adacbb9a748182d09eb9beff25119dc3b12e85c84b6b6b1c5da9"
+  },
+  "sourceSha256": {
+    "distribution/windows/LegacyInventory.Common.ps1": "6e50555aa3f3fbf83c4c3b3290318568def0990174ee646adaea0640c1f8ddd8",
+    "distribution/windows/Collect-LegacyInventory.ps1": "639c18918fea1aaec7be8574d4cab965017404f89ec0d47559da0ea251a3317f",
+    "distribution/tests/Test-LegacyInventory.ps1": "7f1e5df06b3a9ce3b4e9e5b5114f016d1920a668f493d32dc4bac60bfe6cd0b6"
+  },
+  "checks": [
+    {
+      "name": "parse",
+      "exitCode": 0,
+      "stdout": "PASS: 3 scripts parsed\n",
+      "stderr": ""
+    },
+    {
+      "name": "helpers",
+      "exitCode": 0,
+      "stdout": "PASS: 23 assertions; helper functions executed; no game/updater executed.\n",
+      "stderr": ""
+    },
+    {
+      "name": "non-Windows refusal",
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "NotRun: Windows installation/CIM observation requires Windows. No report was written.\n"
+    }
+  ],
+  "WindowsPowerShell51": "NotRun",
+  "WindowsCimAclUac": "NotRun",
+  "automaticUpdate": "NotRun",
+  "playerBuildExecuted": false,
+  "releaseExecuted": false
+}
