@@ -1,0 +1,43 @@
+{
+  "baseline": "3de9f437c9e908b69733a0a4aae8e26a5c31de6b",
+  "scope": "Python lifecycle helper, instructions, planning profile; no gameplay/runtime changes",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest tools.test_flow tools.test_local_workflow -v",
+      "result": "PASS",
+      "tests": 32,
+      "duration_seconds": 1.387,
+      "reason": "Affected lifecycle module plus Makefile routing; guarded full targets refuse before launching Unity"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest tools.test_flow -q",
+      "result": "PASS",
+      "tests": 25,
+      "reason": "Rerun after hardening source-marker removal and preserving legacy finalization behavior"
+    },
+    {
+      "command": "openspec validate improve-agent-workflow-efficiency --strict --store star-tournament-planning",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "not_run": [
+    "Unity",
+    "Player",
+    "full repository suite",
+    "build",
+    "release",
+    "deploy"
+  ],
+  "source_sha256": {
+    "tools/flow.py": "fba35a1908e043e8a08dec0458ebecb2bfc62285251d4ffea6f074f73f18463b",
+    "tools/test_flow.py": "21a83dcf2c91df805feb3648389d28bfbb8295e1bd2aa55cdb5cc101c2132325",
+    "tools/test_local_workflow.py": "2fb5eb37c71c4a82f815f88c65f4a8b71c8b74fe9177585197c5fdcee8572ab8",
+    "Makefile": "51832eaab450fb1807203bd6226280dd42dd37d74cd5e3ab476e2fd6639adbd6"
+  },
+  "acceptance": "Pending exact-result human review; implementation authorization is not acceptance",
+  "planning_profile_sha256": "39224cb8ea89472a03245f9a43e1f989d3e554cee4e452f056696fe352681d6b"
+}

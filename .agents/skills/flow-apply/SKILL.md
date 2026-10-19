@@ -5,9 +5,10 @@ description: Select and deliver an OpenSpec change or related small batch throug
 
 Read `/Users/eaafonasev/Projects/star-tournament/planning/workflow/project.json`,
 lifecycle.md and delivery.md. Call helper inbox; reconcile unfinished owned
-finalization. If change not explicitly selected, show ready
-candidates/dependencies and ask which to take, even if only one. Offer related
-quick batches; preserve individual IDs. Do not begin blocked, paused or
+finalization. If exactly one change unambiguously matches the authorized request, announce
+its ID and scope and proceed. Ask when multiple candidates match or a scope
+conflict remains; do not select an unrelated change merely because it is the
+only ready one. Offer related quick batches; preserve individual IDs. Do not begin blocked, paused or
 initiative-only work as application implementation.
 
 Claim selected change with actual session ID. Read installed OpenSpec status/instructions apply and relevant artifacts at the recorded revision. Use own code worktree, preserve unrelated work. Record owner/resources before editing. Work until delivered/finalized or genuinely blocked; do not stop at a plan. Persist questions before asking, incorporate answers and mark resolved. Never silently reduce scope. Expand quick to standard on new risks, retaining identity; ask only new product questions.

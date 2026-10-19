@@ -35,3 +35,7 @@ Record worktree/branch/build removals and retained resources in `cleanup` eviden
 ## Unity process capacity
 
 Use `~/.local/bin/unity-run --shared|--exclusive -- COMMAND`, not a project-local runtime lease or manual coordinator ACK. The wrapper admits up to four shared commands or one exclusive command across repositories. Shared is the default for autonomous Editor/Player checks, including UI fixtures. Exclusive is required only for performance measurements or shared desktop/focus/system input/audio-device QA; document the resource or metric before choosing it. Follow ../project-policy/unity.md. Do not hold planning/integration leases while waiting for Unity. Existing product coordination and Git leases remain independent.
+
+## Source-only completion
+
+Merged source/Editor work can finalize without a Player build or deployment using the structured delivery_scope contract in lifecycle.md. Keep deferred build/player/release/deploy gates explicit. A source-only accepted task is not a deployed release and does not unlock deployed dependencies. Copy retained evidence, preserve human decisions and perform the same ownership/cleanup checks. Historical profile channel flags describe capabilities or earlier operations; every new release/deploy needs its own explicit human command.
