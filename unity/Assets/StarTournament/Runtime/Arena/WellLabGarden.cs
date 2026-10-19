@@ -103,7 +103,10 @@ namespace StarTournament.ProvingGround
         {
             var ground=GardenMaterial("Well meadow ground",GardenTexture("ground"));
             var stone=GardenMaterial("Well garden flagstone",GardenTexture("stone"));
-            var grass=DetailMaterial("Well meadow grass cards",Color.white,0,.1f);
+            // This authored Resources material keeps the runtime alpha-cutout shader variant in Player builds.
+            var grassTemplate=Resources.Load<Material>("WellMeadowGrassCutout");
+            if(!grassTemplate)throw new System.InvalidOperationException("Well meadow cutout material is missing from the build");
+            var grass=new Material(grassTemplate){name="Well meadow grass cards"};owned.Add(grass);
             // Imported cutout is shared by Resources; only the per-arena material/meshes are owned here.
             grass.SetTexture("_BaseMap",Resources.Load<Texture2D>("WellMeadowGrass"));
             grass.SetFloat("_Cull",0);grass.SetFloat("_AlphaClip",1);grass.SetFloat("_Cutoff",.38f);grass.EnableKeyword("_ALPHATEST_ON");grass.SetOverrideTag("RenderType","TransparentCutout");grass.renderQueue=2450;
