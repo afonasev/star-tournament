@@ -33,3 +33,11 @@ These studio renders do not validate Unity rendering or gameplay.
 The new runtime airborne and landing poses are presentation-only additions; the
 existing physics-driven death remains authoritative for corpses. Focused Unity
 checks and their results are recorded in the evidence directory.
+
+F1 (2026-10-21) uses slimmer authored arm dimensions, thinner ceramic shells,
+a contoured breastplate, revised jaw/shoulder/knee/back panels and packed coating grain.
+The cloth is nonmetallic, fully rough, with a reduced normal-map amplitude.
+Unity Trooper profile @10 places its existing per-seat equipment fill behind the
+camera (`view.fillBackMeters`) to avoid near-field sleeve overexposure. This does
+not scale or move the camera, weapon grips or skeleton. The earlier @9 profile
+can still be reconstructed by the history registry.

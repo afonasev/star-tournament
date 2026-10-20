@@ -2,10 +2,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeDiffuseEquipmentFill()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<10)return this;
+            var p=DetachedCopy();p.version=9;
+            p.descriptors.RemoveAll(d=>d.Path=="view.fillBackMeters");
+            p.values.RemoveAll(v=>v.Path=="view.fillBackMeters");
+            return p;
+        }
         internal ProvingProfile BeforeVectorFighter()
         {
             if(id!="unity-trooper-presentation-v1"||version<9)return this;
-            var p=DetachedCopy();p.version=8;
+            var p=BeforeDiffuseEquipmentFill().DetachedCopy();p.version=8;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.air")||d.Path.StartsWith("animation.land")||d.Path=="view.airMeters");
             p.values.RemoveAll(v=>v.Path.StartsWith("animation.air")||v.Path.StartsWith("animation.land")||v.Path=="view.airMeters");
             return p;
@@ -84,7 +92,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=9};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=10};
             p.Add("animation.airResponseSeconds","trooper-animation","Переход в прыжок","Плавность визуальной позы при отрыве и возвращении на опору.","seconds",.03f,.5f,.01f,.12f);
             p.Add("animation.airHipDegrees","trooper-animation","Подъём бедра в воздухе","Насколько боец поднимает бедро в прыжке.","degrees",0,65,1,30);
             p.Add("animation.airKneeDegrees","trooper-animation","Сгиб колена в воздухе","Насколько боец поджимает ноги в прыжке.","degrees",0,100,1,55);
@@ -112,6 +120,7 @@ namespace StarTournament.ProvingGround
             p.Add("grip.primaryDistalCurl","trooper-grip","Кончики пальцев правой руки","Добавочный сгиб кончиков пальцев вокруг рукояти.","degrees",-20,40,1,18);
             p.Add("grip.primaryThumbFactor","trooper-grip","Сгиб большого пальца правой руки","Доля сгиба остальных пальцев для оппозиции большого пальца.","ratio",0,1,.05f,.5f);
             p.Add("view.fillIntensity","trooper-view","Подсветка оборудования","Мягкий свет только на руки своего viewport для читаемости тёмной перчатки.","intensity",0,4,.05f,.35f);
+            p.Add("view.fillBackMeters","trooper-view","Удаление подсветки","Расстояние света за камерой: убирает резкий пересвет ближнего рукава, сохраняя подсветку оборудования.","meters",0,1.5f,.05f,.25f);
             p.Add("view.fillRange","trooper-view","Дальность подсветки","Радиус локального света оборудования; мир исключён маской слоя.","meters",.5f,3,.1f,2);
             return p;
         }

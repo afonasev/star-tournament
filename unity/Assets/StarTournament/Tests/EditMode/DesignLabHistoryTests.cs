@@ -349,6 +349,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TestCase("BeforeFootstepMix")]
         [TestCase("BeforeEquipmentReadability")]
         [TestCase("BeforeVectorFighter")]
+        [TestCase("BeforeDiffuseEquipmentFill")]
         [TestCase("BeforeMediumWeaponSwitch")]
         public void OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(string legacyMethod)
         {

@@ -1,56 +1,42 @@
-# VECTOR checkpoint — implementation remains open
+# VECTOR checkpoint — F1 visual revision
 
-Change: `replace-player-with-vector-fighter`.
-Owner: `01a15a85-0aa3-74c3-a647-a4a7e1d1d6bc`.
-Branch: `codex/vector-fighter`, baseline `00fbd33209eb755dd5f86499aa8ea12867a2efd0`.
+Change: `replace-player-with-vector-fighter`; owner `01a15a85-0aa3-74c3-a647-a4a7e1d1d6bc`.
+Branch `codex/vector-fighter`; F1 baseline `d71baf3d37d7b5e54b9a35b762637ac592fa13e1`.
 The exact saved revision is recorded in the shared planning delivery record.
-Not integrated. Keep this owned worktree for the remaining art work.
+Not integrated. Preserve this owned worktree for ongoing visual review.
 
-The user selected concept 01 VECTOR, authorized implementation and all existing
-actions/FPS arms, and excluded paid services. Blender is the local authoring route.
-No external generator produced a model or received a paid job.
+User feedback F1 (2026-10-21): thinner first-person arm, smaller armor,
+no cloth overexposure, and a fighter closer to the selected VECTOR concept.
+No paid services. Blender remains the editable authoring source.
 
-Editable source: `scripts/vector_fighter/vector-fighter.blend`, with separate
-armor objects, rig, weights and clips. The builder is reproducible from pinned
-Git source blobs and generates the Unity body/FPS GLBs and manifest hashes.
-Retained rig, clips and gloves remain attributed.
+Changes:
+- Authored forearm width/depth .102/.112 → .077/.085 m; shared body/FPS geometry.
+- Front forearm armor width .124 → .087 m, with thinner shells and smaller shoulders.
+- Contoured chest, jaw surround, collar, knee insets, flank and scapula details;
+  repaired back/lumbar/helmet surface intersections; packed neutral coating grain.
+- Nonmetallic fully rough cloth and reduced weave normals.
+- Trooper @10 `view.fillBackMeters` moves only the per-seat fill behind the camera;
+  preserves light intensity/layers, camera, skeleton, grips and gameplay.
+- Separate ground WalkOffset from combined ViewOffset; original airborne-zero-step
+  assertion retained. Historical @9 and older profile values/hashes remain supported.
 
-Technical implementation:
+Assets and evidence:
+- `scripts/vector_fighter/vector-fighter.blend`: separate meshes, rig, weights, clips.
+- `model-front.png`, `model-back.png`, `helmet.png`: actual final asset studio renders.
+- `f1-fps/`: final real Unity FPS frames for four weapons, plus motion.csv.
+- `f1-world/`: final actual skeletal fixture poses, not an ordinary jump trajectory.
+- `glb-readback.json`, `render-source.json`, `f1-source.json`: asset/source provenance.
+- `verification-plan.md`: check selection, results, failures and limitations.
+- `fps-walk.mp4` and `unity-fps/` are the earlier d71baf3 iteration, not F1.
 
-- Compatible 57-bone skeleton, seven persisted clips and existing weapon mounts.
-- New body/FPS geometry; verified identical shared meshes and material ownership.
-- Session-clock symmetric airborne tuck, landing compression and FPS offset.
-- Existing passive ragdoll, motor, damage and input remain in control.
-- Closed sleeve geometry and upper-arm fabric continuation in FPS.
+Checks: final EditMode 25/25; final graphical PlayMode 5/5; seven history cases
+passed in the earlier 31/32 run (its one ground-step failure fixed and rerun).
+The final .25 m fill is covered by the graphical profile-binding test.
 
-Evidence:
+Visual status: revised model ready for review; fidelity to the selected concept is
+not accepted. It still has simpler surface detail, cloth tailoring and limb plate
+shapes than the illustration. Full ordinary world action sequences and human,
+physical-device and performance acceptance remain open. No Player build or release.
 
-- `editmode-final-pass.xml`: 15/15 import and weapon-switch checks.
-- `editmode-21-pass.xml`: earlier 21/21 including six unchanged history migration
-  cases; final asset checks were rerun separately after geometry changes.
-- `airborne-ragdoll-final-pass.xml`: 2/2, with real symmetric airborne pose enabled.
-- `playmode-final-pass.xml`: 5/5, color coverage/ownership, FPS walking, shared
-  assets and airborne/reset. No full suite was run.
-- `fps-walk.mp4`: 264 actual Unity frames, 1600×900, 50 fps, silent, 5.28 seconds.
-  Rifle → Shotgun → RocketLauncher → Cutter; walking, two-seat presentation.
-- `unity-poses/`: actual rendered skeletal fixture poses, not an ordinary
-  player-controlled jump trajectory.
-- `render-source.json` and `glb-readback.json`: exact studio-render and asset hashes.
-- Earlier FAIL and disk-full incomplete evidence are retained. Diagnostic
-  zero-amplitude ablation was restored; the final source uses the real pose.
-
-**Visual gate: FAIL / unfinished art.** The real model remains substantially
-simpler than `approved-vector-concept.png`. Visible gaps: helmet surface detail
-and cheek/crown shapes; simple chest and limb plates; bulky shoulder transitions;
-overbright cloth near the FPS camera. Do not present concept/reference images
-as implementation or call the model maximally close to the selected design.
-
-Next step: refine these shapes and materials in Blender while preserving the
-validated rig and material roles; inspect real renders and then affected Unity
-states. Full world action sequences and human visual acceptance remain open.
-Player, release/deploy, physical-device and performance acceptance were not run.
-
-Foreign main-checkout files were not edited. Unrelated Unity-generated settings
-and scene changes were removed from this worktree's diff.
-The shared planning change remains `implementing`; no merge, acceptance or
-archive is claimed.
+Next step: review the new actual FPS/model images; continue targeted art refinement
+if needed, then finish the full world action visual check before integration.

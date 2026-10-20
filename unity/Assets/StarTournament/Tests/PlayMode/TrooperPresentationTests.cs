@@ -202,6 +202,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(fills[i].intensity,Is.EqualTo(ProvingProfile.CreateTrooperDefault().Get("view.fillIntensity")));
                     Assert.That(fills[i].shadows,Is.EqualTo(LightShadows.None));
                     Assert.That(fills[i].type,Is.EqualTo(LightType.Point));
+                    Assert.That(fills[i].transform.localPosition,Is.EqualTo(Vector3.back*ProvingProfile.CreateTrooperDefault().Get("view.fillBackMeters")));
                 }
                 for(int i=0;i<count;i++)for(int j=0;j<count;j++)
                 {

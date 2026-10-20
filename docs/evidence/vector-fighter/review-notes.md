@@ -1,22 +1,21 @@
-# VECTOR review package
+# VECTOR review package — F1
 
-This is a working Blender/Unity prototype. **The visual target is not achieved.**
+Open `scripts/vector_fighter/vector-fighter.blend` for editable source.
+Compare `model-front.png`, `model-back.png` and `helmet.png` with the selected
+`approved-vector-concept.png`. The concept and modeling reference are not 3D evidence.
+Studio armor has a display-only teal tint; the exported material is neutral for
+player-color assignment. `render-source.json` binds the render to the shipping mesh.
 
-Open the editable source at `scripts/vector_fighter/vector-fighter.blend`.
-Compare `model-front.png`, `model-back.png` and `helmet.png` against
-`approved-vector-concept.png`. The modeling reference is guidance, not a 3D render.
-Studio armor is shown in teal; source albedo is neutral for player-color assignment.
+Current first-person evidence is `f1-fps/`: four weapons, walking left seat and
+stationary right seat, with slimmer shared forearms and relocated equipment fill.
+`f1-world/` contains the current skeletal pose fixture, with a stationary actor.
+The earlier `fps-walk.mp4`, `unity-fps/` and `unity-poses/` belong to the d71baf3
+iteration and deliberately remain labeled historical.
 
-`fps-walk.mp4` contains actual Unity rendering for all four weapons. The left seat
-moves and the right seat remains stationary. The sleeve is closed, the hands keep
-their grip, and each seat retains its assigned color. The near-camera cloth is
-still too bright and needs material refinement. This short clip does not cover
-shooting, switching, full world locomotion, ordinary jumping or ragdoll video.
+Focused checks are documented in `verification-plan.md`. The intermediate F1
+31/32 EditMode failure is retained: the airborne offset had contaminated the
+WalkOffset API. The code now separates ViewOffset; the existing zero-step test
+was not relaxed. Automated checks do not imply visual or human acceptance.
 
-`unity-poses/` shows the actual skeletal fixture's grounded/rising/falling/landing
-samples with the same skin. Its actor position is intentionally unchanged to test
-that presentation cannot move the motor. Do not read it as a jump trajectory.
-
-Focused checks and limitations are summarized in `checkpoint.md`.
-`verification-plan.md` retains the investigation and failures rather than replacing
-them with a green-only history. Automated checks do not constitute human acceptance.
+The latest model is a further art iteration, still simpler than the illustration.
+See `checkpoint.md` for ownership, remaining gates and the continuation point.

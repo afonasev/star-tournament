@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "5ff03b9ed15540b238d8878353f7cd81c19d8c915fb5ee34d15c546cd9f5c5fe",
+      "sha256": "16372dda0d44e69e8a529f349435467baf149e4612423c731738ffe7c8b4c3ad",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR original suit v1; scripts/vector_fighter/build.py; compatible attributed Trooper skeleton and articulated glove derivative"
+      "source": "VECTOR original suit v2; scripts/vector_fighter/build.py; compatible attributed Trooper skeleton and articulated glove derivative"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "9a190959a2073aab97af06a63ad0a9ae4b4f3918196e0749fdf1ebc3ffefb734",
+      "sha256": "47ccf17e7e6649f06930e91829dcbcf13a73708ba354c141ffced4d1d7ef2414",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR original suit v1; scripts/vector_fighter/build.py; compatible attributed Trooper skeleton and articulated glove derivative"
+      "source": "VECTOR original suit v2; scripts/vector_fighter/build.py; compatible attributed Trooper skeleton and articulated glove derivative"
     },
     {
       "key": "speed-pickup",

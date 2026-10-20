@@ -1,0 +1,42 @@
+{
+  "baseline": "d71baf3d37d7b5e54b9a35b762637ac592fa13e1",
+  "branch": "codex/vector-fighter",
+  "capture": "Actual muted Unity Editor PlayMode; two seats, walking left and stationary right; no image edits",
+  "fill_back_meters": 0.25,
+  "sha256": {
+    "scripts/vector_fighter/vector-fighter.blend": "75f38a62bd1652493ffc98d9cb7325b78eb7c0544ef7d98d9be695da5ab74bac",
+    "scripts/vector_fighter/build.py": "dfe2b6b87f1a63a70271ae591df5f97b107ed65ac552bdb4cbfbfa728f93b2b4",
+    "unity/Assets/StarTournament/Art/trooper-body-animated.glb": "16372dda0d44e69e8a529f349435467baf149e4612423c731738ffe7c8b4c3ad",
+    "unity/Assets/StarTournament/Art/trooper-arms-animated.glb": "47ccf17e7e6649f06930e91829dcbcf13a73708ba354c141ffced4d1d7ef2414",
+    "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "e2b2865472045a80c8243bb14d00f18688d6985d7bc080181ef9de17bbedd35c",
+    "unity/Assets/StarTournament/Runtime/TrooperVisual.cs": "d414a85ea864f7b906ce165464a17daec4dff02a7cf511be2e593f4ab4c799dc",
+    "unity/Assets/StarTournament/Runtime/FirstPersonWeaponSwitch.cs": "09bf248ee20aefe9690787f97557049e85312545fc3a4417cd1cf384237ad1f3",
+    "unity/Assets/StarTournament/Scenes/ProvingGround.unity": "526d5db5413b71751454af58859679082419dae60c1efe62914135f3a863e21f"
+  },
+  "images": {
+    "f1-fps/Cutter-00.png": "fbc0de649c7d48666dbca1201a168e6b638eccd964884a130c729ad5a57b0c87",
+    "f1-fps/Cutter-16.png": "25da34659007bc017e56e8575e94573d37fbd3138946d8c288ab20012bc9c210",
+    "f1-fps/Cutter-32.png": "1f5a39d649d4988e009de4f15171985c545c4b4079703cba2fb8af404551cfa1",
+    "f1-fps/Cutter-49.png": "df187908b31cf879f2278e9d097c81bc58aef4ce3ee44e99949e605a96dd7415",
+    "f1-fps/Cutter-65.png": "1a4992bd666ae56abcaae6f7feb9d7717afc0c5de8adbbf02aa9594c1f52a8a4",
+    "f1-fps/Rifle-00.png": "16612d3edd8b7ec902cde791c56d1e973b3b258b85e262a8893a5f5f689c6a7e",
+    "f1-fps/Rifle-16.png": "bbe02ad66a083d1f6f5d90df58b4561a277ccd05e14a0f12b8ba8ddf349d834a",
+    "f1-fps/Rifle-32.png": "8fdf0174e3a031938a8db94d8c7892a781e8c1ef7cbd5fbf1fba0ce943803f7d",
+    "f1-fps/Rifle-49.png": "702a5ce48e45e74553545e1fe9fbb55af421ee06d6e319920ed16b418d246987",
+    "f1-fps/Rifle-65.png": "bddbfb87ca2d1d330c12f04e107526fa0ee3207a1168d5cee412f7edebaea9b5",
+    "f1-fps/RocketLauncher-00.png": "88b0504190f28f27235b8d387b6d8c7288dd6dc7bb2871ff733408fd990e9863",
+    "f1-fps/RocketLauncher-16.png": "d5abb2716ef33586ae07aa908cf3e040dc209f3ab1f88f6cfdead2b745e25739",
+    "f1-fps/RocketLauncher-32.png": "22645cf8330b440f53b1d40ded3d75b9f241ea95646e2d3d52780760df5082b0",
+    "f1-fps/RocketLauncher-49.png": "23334ddea167e2cd5472f9ebd8b229c254f495919883700c812034bda88ef81f",
+    "f1-fps/RocketLauncher-65.png": "db3488a52da834e6bf5823aa754f18ddd5e44b22cf062820f353707ff562bbd0",
+    "f1-fps/Shotgun-00.png": "86d07aac567e41782bb46b3ab5c19c725642bb573dfea4ebacca8b4db36989ad",
+    "f1-fps/Shotgun-16.png": "f40fc684d8eb4aff6c51199470e31bf59a25722b66e5493fa75ea01af5963709",
+    "f1-fps/Shotgun-32.png": "6500ac4ba06eac77bf4b075d5fd1eec6755d79a36cc3443f2b9d2989b363d66b",
+    "f1-fps/Shotgun-49.png": "03e5c61fc3814eaba6ba09e77418329748c5bef00d4d9499c605b8ca90d4317f",
+    "f1-fps/Shotgun-65.png": "3e083f0975336d862cd027831f62364d9452d6e4df8a5406c60ac6855101d9f4",
+    "f1-world/falling.png": "e4a566b3197d205974ee869a6dbf620cbe4757d9d88727aee3d3278294d454f7",
+    "f1-world/grounded.png": "408380d7cd67abcfced39614a3cf900cf2c3481f82a8fd93f53f465dfdb70278",
+    "f1-world/landing.png": "f4b1ef5b4241ab1a1a7708ae56af17cfbf84289aadb9913b5b573069957f4ce1",
+    "f1-world/rising.png": "c0663c88ca7187b971cc42faa30590d4779b5b46eedf9da1b6942d28c48ea54d"
+  }
+}

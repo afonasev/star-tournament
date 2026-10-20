@@ -36,3 +36,53 @@ Final graphical pose/FPS run: 2/4 passed; both failures are legacy layout assert
 Regional VECTOR coverage assertions passed; the remaining color fixture failure counted both retained glove ceramic and the new forearm paint as one old slot. Retained the original exact glove count and added a separate exact count for the single shared VECTOR paint slot.
 
 Visual FPS inspection found an open elbow cuff after removing the oversized hinge. Added closed limb ends and the upper-arm fabric continuation to the FPS mesh. Rerun import/weapon checks, color ownership, shared assets, airborne and walk capture. The final walk fixture records every existing 20ms simulation sample for a short real Unity FPS video; assertions, simulation duration and speed are unchanged.
+
+## F1 visual refinement — 2026-10-21
+
+Baseline `d71baf3d37d7b5e54b9a35b762637ac592fa13e1`, branch `codex/vector-fighter`.
+User requests slimmer FPS arms, smaller armor, matte dark cloth, and closer concept fidelity.
+Scope: Blender-authored geometry/materials, regenerated two GLBs and persisted prefabs;
+rig/actions/camera/grips/motor unchanged. Readability dimensions are authored asset content.
+Checks: candidate GLB renders first; then `unity/tools.sh prepare`, focused
+`unity/tools.sh test-edit-filter 'TrooperImportTests;WeaponSwitchPresentationTests'`;
+graphical shared/muted PlayMode filter `ParticipantColorIdentityTests;TrooperPresentationTests.FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene;TrooperPresentationTests.SeatsShareAssetsButNeverRenderAnotherFirstPersonView;VectorAirbornePresentationTests`.
+Use existing walk capture for all four weapons, 20 representative frames; no full suite,
+Player build or benchmark. This is sufficient for mesh/material/color ownership and
+unchanged attachment/animation contracts; visual comparison remains separate.
+
+F1 first geometry/material run: 5/5 focused PlayMode passed. Actual FPS still shows a
+white sleeve patch beside the camera. The point equipment fill is at camera origin;
+inverse-square attenuation overexposes the nearest surface. Move that light behind
+the camera via named `view.fillBackMeters` (Trooper @10), preserving intensity,
+layer and weapon/camera transforms. Historical @9 reconstructed with
+BeforeDiffuseEquipmentFill; test prior saved values/hashes and fill attachment.
+Extend EditMode selection to FirstPersonWalkTests and
+DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes.
+Existing version assertions in FirstPersonWalkTests advance from stale @8 to current
+@10; exact old @7 and fill strengths/ranges are retained.
+
+F1 expanded EditMode: 31/32 passed; all seven history cases passed. The existing
+FirstPersonWalkTests.ResponseIsCadenceIndependentAndFadesAfterStoppingOrLeavingGround
+failed: WalkOffset contained the new 0.025 m airborne offset. Preserve its original
+zero-ground-step assertion; expose combined ViewOffset separately and consume that
+in the weapon-switch root. Airborne fixture checks ViewOffset and independently
+asserts no ground steps. Rerun FirstPersonWalkTests, asset/weapon checks and the
+focused graphical set. No history source changed after its seven passing cases.
+Rear armor/helmet intersections found visually were corrected in the final candidate;
+a queued graphical command was cancelled before admission so it would not capture
+an intermediate model. No executed test was interrupted.
+
+Final geometry and ViewOffset split: EditMode 25/25 passed; graphical PlayMode 5/5
+passed. The .45 m light retreat removes the white sleeve patch but makes equipment
+too dark visually. Tune only its new @10 default to .25 m; preserve intensity and
+all existing test thresholds. Repeat the same graphical set to inspect all weapons
+and verify per-seat fill profile binding; no asset or history migration code changed.
+
+F1 final .25 m fill: graphical PlayMode 5/5 passed. Inspected actual Rifle,
+Shotgun, RocketLauncher and Cutter frames: no white cloth patch, smaller forearm
+armor, glove/weapon detail visible, no visible sleeve holes in these samples.
+Final source differs from the passing 25/25 EditMode only in the new fill distance
+(default/scene .45 → .25 m); final graphical seat test verifies that exact binding.
+Seven historical registry cases passed in the retained initial 31/32 run; no
+history migration code changed afterward. Full suite, Player build, ordinary full
+world action video, performance/device/human acceptance remain NotRun.

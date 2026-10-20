@@ -21,6 +21,8 @@ namespace StarTournament.ProvingGround
         double transitionAt,walkClock,walkPhase;
         float walkWeight;
         public Vector3 WalkOffset {get;private set;}
+        // Keep the existing ground-step contract independent from the additive airborne pose.
+        public Vector3 ViewOffset => WalkOffset+(airborne?.ViewOffset??Vector3.zero);
 
         int active=-1, life=-1;
         float health;
@@ -115,7 +117,7 @@ namespace StarTournament.ProvingGround
             health=currentHealth;
             float speed=new Vector2(velocity.x,velocity.z).magnitude;
             airborne.Update(clock,velocity,grounded);
-            if(firstPerson){UpdateWalk(clock,speed,grounded);WalkOffset+=airborne.ViewOffset;}
+            if(firstPerson)UpdateWalk(clock,speed,grounded);
             int next=firstPerson?3:speed<profile.Get("animation.walkThreshold")?0:speed<profile.Get("animation.runThreshold")?1:2;
             if(clock-firedAt<profile.Get("animation.aimHoldSeconds")) next=3;
             if(clock-firedAt<Clips[4].length) next=4;

@@ -32,17 +32,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var v in new[]{body,view})v.Render(.25,new Vector3(2,5,0),100,1,false);
             Assert.That(body.AirborneState,Is.EqualTo("rising"));
             Assert.That(Quaternion.Angle(grounded,knee.localRotation),Is.GreaterThan(5));
-            Assert.That(view.WalkOffset.y,Is.LessThan(0));
+            Assert.That(view.ViewOffset.y,Is.LessThan(0));
+            Assert.That(view.WalkOffset.magnitude,Is.LessThan(.00001f),"Air pose must not be reported as ground steps");
             Capture(body,"rising");
-            var frozen=knee.localRotation;var frozenView=view.WalkOffset;
+            var frozen=knee.localRotation;var frozenView=view.ViewOffset;
             foreach(var v in new[]{body,view})v.Render(.25,new Vector3(2,5,0),100,1,false);
-            Assert.That(Quaternion.Angle(frozen,knee.localRotation),Is.LessThan(.001));Assert.That(view.WalkOffset,Is.EqualTo(frozenView));
+            Assert.That(Quaternion.Angle(frozen,knee.localRotation),Is.LessThan(.001));Assert.That(view.ViewOffset,Is.EqualTo(frozenView));
             body.Render(.55,new Vector3(2,-3,0),100,1,false);Assert.That(body.AirborneState,Is.EqualTo("falling"));
             Capture(body,"falling");
             body.Render(.7,Vector3.zero,100,1,true);body.Render(.8,Vector3.zero,100,1,true);Assert.That(body.AirborneState,Is.EqualTo("landing"));
             Capture(body,"landing");
             foreach(var v in new[]{body,view}){v.BeginDeath(.9);v.Render(1,Vector3.zero,0,1,false);Assert.That(v.State,Is.EqualTo("death"));v.ResetPose(2);}
-            Assert.That(view.WalkOffset,Is.EqualTo(Vector3.zero));Assert.That(body.AirborneState,Is.EqualTo("grounded"));
+            Assert.That(view.ViewOffset,Is.EqualTo(Vector3.zero));Assert.That(body.AirborneState,Is.EqualTo("grounded"));
             Assert.That(actor.position,Is.EqualTo(position));
         }
         static void Capture(TrooperVisual body,string state)

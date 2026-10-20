@@ -1,7 +1,7 @@
 {
   "body": {
-    "sha256": "5ff03b9ed15540b238d8878353f7cd81c19d8c915fb5ee34d15c546cd9f5c5fe",
-    "bytes": 14167268,
+    "sha256": "16372dda0d44e69e8a529f349435467baf149e4612423c731738ffe7c8b4c3ad",
+    "bytes": 14603936,
     "meshes": 3,
     "materials": 20,
     "skins": [
@@ -16,11 +16,11 @@
       "run",
       "walk"
     ],
-    "vertices": 139723
+    "vertices": 146030
   },
   "arms": {
-    "sha256": "9a190959a2073aab97af06a63ad0a9ae4b4f3918196e0749fdf1ebc3ffefb734",
-    "bytes": 10166780,
+    "sha256": "47ccf17e7e6649f06930e91829dcbcf13a73708ba354c141ffced4d1d7ef2414",
+    "bytes": 10263404,
     "meshes": 2,
     "materials": 19,
     "skins": [
@@ -35,6 +35,6 @@
       "run",
       "walk"
     ],
-    "vertices": 74014
+    "vertices": 74664
   }
 }

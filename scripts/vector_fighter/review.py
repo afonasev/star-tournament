@@ -17,7 +17,12 @@ for side,sign in [('Left',1),('Right',-1)]:
 for o in bpy.context.scene.objects:
  if o.name=='weapon:joined':o.hide_render=True
 for m in bpy.data.materials:
- if m.name.startswith('vector-fighter-identity'):m.node_tree.nodes.get('Principled BSDF').inputs['Base Color'].default_value=(.009,.23,.26,1)
+ if m.name.startswith('vector-fighter-identity'):
+  base=m.node_tree.nodes.get('Principled BSDF').inputs['Base Color'];tint=(.009,.18,.21,1)
+  if base.is_linked:
+   source_socket=base.links[0].from_socket;mix=m.node_tree.nodes.new('ShaderNodeMixRGB');mix.blend_type='MULTIPLY';mix.inputs[0].default_value=1;mix.inputs[2].default_value=tuple(c/.41 for c in tint[:3])+(1,)
+   m.node_tree.links.new(source_socket,mix.inputs[1]);m.node_tree.links.new(mix.outputs[0],base)
+  else:base.default_value=tint
 s=bpy.context.scene;s.render.engine='CYCLES';s.cycles.samples=24;s.cycles.use_denoising=True;s.render.resolution_x=1200;s.render.resolution_y=1200;s.render.resolution_percentage=100
 s.world=bpy.data.worlds.new('Studio');s.world.use_nodes=True;s.world.node_tree.nodes['Background'].inputs[0].default_value=(.40,.40,.40,1);s.world.node_tree.nodes['Background'].inputs[1].default_value=.5
 s.view_settings.view_transform='AgX';s.view_settings.look='AgX - Medium High Contrast';s.view_settings.exposure=-.65

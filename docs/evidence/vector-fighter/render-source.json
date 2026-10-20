@@ -1,6 +1,8 @@
 {
   "source": "unity/Assets/StarTournament/Art/trooper-body-animated.glb",
-  "sha256": "5ff03b9ed15540b238d8878353f7cd81c19d8c915fb5ee34d15c546cd9f5c5fe",
+  "sha256": "16372dda0d44e69e8a529f349435467baf149e4612423c731738ffe7c8b4c3ad",
   "blender": "5.2.1 LTS",
-  "view": "studio; display teal override; imported actual mesh; no gameplay evidence"
+  "view": "studio; display teal override; imported actual mesh; no gameplay evidence",
+  "rendered_source": ".local/vector-fighter/candidate-body.glb",
+  "promotion": "byte-identical verified copy of rendered candidate"
 }
