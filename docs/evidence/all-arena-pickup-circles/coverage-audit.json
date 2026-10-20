@@ -1,0 +1,29 @@
+{
+  "baseline": "25d1c9b92bb142771c44f497c82cd514f4b6c0e1",
+  "maps": [
+    {
+      "map": "Combat Bowl",
+      "anchors": 12,
+      "before": "white permanent circles from all definition.Pickups",
+      "action": "preserve source"
+    },
+    {
+      "map": "Технические тоннели",
+      "anchors": 6,
+      "before": "only central coloured sector paint; no white circles",
+      "action": "one new white mesh across six anchors; preserve sector paint"
+    },
+    {
+      "map": "Лунная лаборатория",
+      "anchors": 11,
+      "before": "thin 48-segment pipes; ochre for Cutter, ivory for others",
+      "action": "one white 64-segment flat paint mesh; preserve labels/radius/paving clearance"
+    },
+    {
+      "map": "Колодец",
+      "anchors": 11,
+      "before": "accepted v6 white permanent circles",
+      "action": "preserve source"
+    }
+  ]
+}

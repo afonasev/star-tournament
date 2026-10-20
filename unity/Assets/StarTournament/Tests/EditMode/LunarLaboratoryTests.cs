@@ -68,7 +68,10 @@ namespace StarTournament.ProvingGround.Tests
                 var method=typeof(ProvingProfile).GetMethod("BeforeLunarBypass",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 var old=new LabBundle{Profiles=current.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
                 var history=new DesignLabHistory(path,old);history.Create("Old lunar geometry");
-                var file=JsonUtility.FromJson<LabHistoryFile>(System.IO.File.ReadAllText(path));
+                // The persisted format is compact. Materialize the exact in-memory expanded snapshots
+                // before tampering; direct JsonUtility parsing cannot resolve compact registry references.
+                var data=typeof(DesignLabHistory).GetField("data",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(history);
+                var file=JsonUtility.FromJson<LabHistoryFile>(JsonUtility.ToJson(data));
                 var revision=file.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Single(r=>r.Number==1);
                 revision.Snapshot.Set("lunar.map.cargo-f2-south-west-wall.position.z",-3.9f);revision.Hash=revision.Snapshot.Hash();
                 string tampered=JsonUtility.ToJson(file,true);System.IO.File.WriteAllText(path,tampered);

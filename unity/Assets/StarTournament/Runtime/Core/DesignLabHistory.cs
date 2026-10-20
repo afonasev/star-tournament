@@ -384,6 +384,10 @@ namespace StarTournament.ProvingGround
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeEquipmentReadability()).ToList()};
 
+            if((sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.TunnelsArtId)?.Version??3)<3)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id==ProvingProfile.TunnelsArtId?p.BeforeArenaPickupMarkings():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="lunar-laboratory-presentation-v1")?.Version??5)<5)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id=="lunar-laboratory-presentation-v1"?p.BeforeArenaPickupMarkings():p).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??6)<6)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellPickupMarkings()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??5)<5)

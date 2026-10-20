@@ -1,0 +1,9 @@
+{
+  "test": "LunarLaboratoryTests.HistoricalLunarGeometryTamperingIsRejectedWithoutOverwritingFile",
+  "original_run": "focused-editmode.im49gz:24 PASS/1 FAIL",
+  "baseline_probe": "focused-editmode.Fr84Uo:1 FAIL same KeyNotFoundException",
+  "baseline": "25d1c9b92bb142771c44f497c82cd514f4b6c0e1",
+  "probe_scope": "Five affected existing runtime files restored from baseline for exact single-test probe; new unused helper files remain compiled. Original fixture unchanged.",
+  "cause": "Existing fixture decodes compact disk storage with JsonUtility as expanded LabHistoryFile; Snapshot.Profiles is empty, so tampering cannot reach target key.",
+  "repair": "Serialize actual expanded in-memory data before modifying geometry. Same target path, -3.9 value, recalculated hash, rejection and byte-for-byte no-overwrite assertions retained."
+}

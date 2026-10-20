@@ -1,0 +1,7 @@
+{
+  "fixture_result": "5/5 PASS; XML saved before crash",
+  "process_exit": 138,
+  "runner_exit": -10,
+  "cause_observed": "Failed to write temp shader cache entry during DeleteBootstrapSceneTask; native segv after completed tests; low disk observed 485MiB before exit, 3.3GiB afterwards. Disk/memory pressure suspected, not proven.",
+  "next": "Rerun same fixtures split into two independent groups to lower process lifetime memory; no test contracts/timeouts reduced. Fix two obstructed QA camera poses only."
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.607943">
+  <test-suite type="TestSuite" id="1482" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.607943" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1474" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/all-arena-pickup-circles/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.602438" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55169" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1475" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.600969" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1476" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.600040" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1477" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.599052" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="SetUpFixture" id="1121" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" classname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" runstate="Runnable" testcasecount="314" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.595598" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1116" name="ArenaPickupCircleCoverageTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:16Z" duration="22.576440" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1118" name="LunarAllElevenAnchors" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests.LunarAllElevenAnchors" methodname="LunarAllElevenAnchors" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" seed="1070332170" result="Passed" start-time="2026-10-20 12:30:54Z" end-time="2026-10-20 12:31:11Z" duration="17.673771" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: initial configuration resolved in 12.63 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Lab startup: validating local history in background
+Game startup: menu ready at 18.56 seconds; Default 3f68b45a09851eaac487973ab9e5678b8f5bb954a5c0ece6c8ea58470e1550b8
+]]></output>
+                </test-case>
+                <test-case id="1117" name="TunnelsAllSixAnchors" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests.TunnelsAllSixAnchors" methodname="TunnelsAllSixAnchors" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" seed="389747745" result="Passed" start-time="2026-10-20 12:31:11Z" end-time="2026-10-20 12:31:16Z" duration="4.895860" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: initial configuration resolved in 1.86 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Reduced additional punctual light shadows resolution by 2 to make 6 shadow maps fit in the 1024x1024 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+Lab startup: validating local history in background
+Game startup: menu ready at 23.77 seconds; Default 3f68b45a09851eaac487973ab9e5678b8f5bb954a5c0ece6c8ea58470e1550b8
+Reduced additional punctual light shadows resolution by 2 to make 6 shadow maps fit in the 1024x1024 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

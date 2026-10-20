@@ -1,0 +1,21 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=ArenaPickupCircleProfileTests;WellPickupCircleProfileTests;IndustrialTunnelsTests;LunarLaboratoryTests
+lab_history=/Users/eaafonasev/.codex/worktrees/all-arena-pickup-circles/star-tournament/.local/all-arena-circles/final-edit-history.json
+revision=25d1c9b92bb142771c44f497c82cd514f4b6c0e1
+ M ../docs/GAME_SPEC.md
+ M Assets/StarTournament/Runtime/Arena/IndustrialTunnelsPresentation.cs
+ M Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/IndustrialTunnelsProfile.cs
+ M Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs
+ M Assets/StarTournament/Tests/EditMode/LunarLaboratoryTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
+?? Assets/StarTournament/Runtime/Arena/ArenaPickupMarkings.cs
+?? Assets/StarTournament/Runtime/Arena/ArenaPickupMarkings.cs.meta
+?? Assets/StarTournament/Runtime/Core/ArenaPickupMarkingProfiles.cs
+?? Assets/StarTournament/Runtime/Core/ArenaPickupMarkingProfiles.cs.meta
+?? Assets/StarTournament/Tests/EditMode/ArenaPickupCircleProfileTests.cs
+?? Assets/StarTournament/Tests/EditMode/ArenaPickupCircleProfileTests.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/ArenaPickupCircleCoverageTests.cs
+?? Assets/StarTournament/Tests/PlayMode/ArenaPickupCircleCoverageTests.cs.meta

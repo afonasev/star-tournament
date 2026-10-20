@@ -1,0 +1,15 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=LunarLaboratoryTests.HistoricalLunarGeometryTamperingIsRejectedWithoutOverwritingFile
+lab_history=/Users/eaafonasev/.codex/worktrees/all-arena-pickup-circles/star-tournament/.local/all-arena-circles/baseline-history.json
+revision=25d1c9b92bb142771c44f497c82cd514f4b6c0e1
+ M ../docs/GAME_SPEC.md
+ M ProjectSettings/ShaderGraphSettings.asset
+?? Assets/StarTournament/Runtime/Arena/ArenaPickupMarkings.cs
+?? Assets/StarTournament/Runtime/Arena/ArenaPickupMarkings.cs.meta
+?? Assets/StarTournament/Runtime/Core/ArenaPickupMarkingProfiles.cs
+?? Assets/StarTournament/Runtime/Core/ArenaPickupMarkingProfiles.cs.meta
+?? Assets/StarTournament/Tests/EditMode/ArenaPickupCircleProfileTests.cs
+?? Assets/StarTournament/Tests/EditMode/ArenaPickupCircleProfileTests.cs.meta
+?? Assets/StarTournament/Tests/PlayMode/ArenaPickupCircleCoverageTests.cs
+?? Assets/StarTournament/Tests/PlayMode/ArenaPickupCircleCoverageTests.cs.meta

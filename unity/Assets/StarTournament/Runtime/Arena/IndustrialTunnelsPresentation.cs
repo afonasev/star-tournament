@@ -52,6 +52,10 @@ namespace StarTournament.ProvingGround
             foreach(float z in new[]{-6f,0,6f})foreach(int side in new[]{-1,1})Fixture(new Vector3(side*23,3.8f,z),false,false);
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1}){Fixture(new Vector3(sx*10,3.8f,sz*13),false,false);Fixture(new Vector3(sx*5,3.8f,sz*8),false,false);}
             yield return null;Wayfinding();yield return null;
+            var paint=new UnityEngine.Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Tunnel white pickup paint",color=Color.white};owned.Add(paint);
+            var markingSettings=p.Version>=3?p:ProvingProfile.CreateIndustrialTunnelsPresentation();
+            owned.Add(ArenaPickupMarkings.Build(transform,definition,paint,markingSettings.Get("tunnels.pickupRingRadius"),markingSettings.Get("tunnels.pickupRingWidth"),item=>markingSettings.Get("tunnels.pickupRingHeight")));
+
             foreach(var entry in batches)
             {
                 var go=new GameObject(entry.Key.name);go.transform.SetParent(transform,false);var mesh=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(entry.Value.ToArray());owned.Add(mesh);

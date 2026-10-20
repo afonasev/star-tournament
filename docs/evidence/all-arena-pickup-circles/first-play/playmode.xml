@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:12Z" duration="80.0389168">
+  <test-suite type="TestSuite" id="1482" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:12Z" duration="80.038917" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1474" name="StarTournament.ProvingGround.PlayMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/all-arena-pickup-circles/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.PlayMode.dll" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:12Z" duration="80.032887" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50977" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1475" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:12Z" duration="80.031770" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1476" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:12Z" duration="80.030850" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1477" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="388" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:12Z" duration="80.030041" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="SetUpFixture" id="1121" name="PlayMode" fullname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" classname="StarTournament.ProvingGround.Tests.PlayMode.AudioChannelPreferenceIsolation" runstate="Runnable" testcasecount="314" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:12Z" duration="80.027070" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1116" name="ArenaPickupCircleCoverageTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:29:03Z" duration="70.897745" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1119" name="CombatBowlAllTwelveAnchors" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests.CombatBowlAllTwelveAnchors" methodname="CombatBowlAllTwelveAnchors" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" seed="1239601737" result="Passed" start-time="2026-10-20 12:27:52Z" end-time="2026-10-20 12:28:32Z" duration="40.160941" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: initial configuration resolved in 11.61 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Lab startup: validating local history in background
+Game startup: menu ready at 27.42 seconds; Default 3f68b45a09851eaac487973ab9e5678b8f5bb954a5c0ece6c8ea58470e1550b8
+Lab startup: local history complete in 13.84 seconds; {"TotalSeconds":1.346356499940157,"CatalogueSeconds":0.30929769994691017,"ReadSeconds":0.0,"ParseSeconds":0.0,"ExistingValidationSeconds":0.0,"MigrationSeconds":0.29375219997018578,"MergeSeconds":0.08239039988256991,"FinalValidationSeconds":0.5848828998859972,"HistoricalLookupSeconds":0.1613821000792086,"HashSeconds":0.15750059974379838,"TrustedCopySeconds":0.04751099995337427,"SnapshotValidationSeconds":0.07592660025693476,"FileBytes":0,"ManagedMemoryDelta":-23031808,"Revisions":0,"SnapshotHashes":4,"SnapshotValidations":4,"RegistryCacheHits":2,"RegistryCacheMisses":0,"Gen0Collections":2,"CachedRegistrySets":2,"CachedCandidateBundles":424,"CachedDistinctProfiles":552,"CachedDescriptors":294163}
+]]></output>
+                </test-case>
+                <test-case id="1118" name="LunarAllElevenAnchors" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests.LunarAllElevenAnchors" methodname="LunarAllElevenAnchors" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" seed="1508319070" result="Passed" start-time="2026-10-20 12:28:32Z" end-time="2026-10-20 12:28:39Z" duration="7.087907" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: initial configuration resolved in 1.71 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Lab startup: validating local history in background
+Game startup: menu ready at 48.25 seconds; Default 3f68b45a09851eaac487973ab9e5678b8f5bb954a5c0ece6c8ea58470e1550b8
+]]></output>
+                </test-case>
+                <test-case id="1117" name="TunnelsAllSixAnchors" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests.TunnelsAllSixAnchors" methodname="TunnelsAllSixAnchors" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" seed="1962970994" result="Passed" start-time="2026-10-20 12:28:39Z" end-time="2026-10-20 12:28:44Z" duration="5.115459" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: initial configuration resolved in 1.61 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Reduced additional punctual light shadows resolution by 2 to make 6 shadow maps fit in the 1024x1024 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+Lab startup: validating local history in background
+Game startup: menu ready at 53.13 seconds; Default 3f68b45a09851eaac487973ab9e5678b8f5bb954a5c0ece6c8ea58470e1550b8
+Reduced additional punctual light shadows resolution by 2 to make 6 shadow maps fit in the 1024x1024 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+]]></output>
+                </test-case>
+                <test-case id="1120" name="WellAllElevenAnchors" fullname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests.WellAllElevenAnchors" methodname="WellAllElevenAnchors" classname="StarTournament.ProvingGround.Tests.PlayMode.ArenaPickupCircleCoverageTests" runstate="Runnable" seed="1911172953" result="Passed" start-time="2026-10-20 12:28:44Z" end-time="2026-10-20 12:29:03Z" duration="18.525846" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: initial configuration resolved in 1.76 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Lab startup: validating local history in background
+Game startup: menu ready at 71.82 seconds; Default 3f68b45a09851eaac487973ab9e5678b8f5bb954a5c0ece6c8ea58470e1550b8
+]]></output>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1468" name="WellPickupCirclePresentationTests" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellPickupCirclePresentationTests" classname="StarTournament.ProvingGround.Tests.PlayMode.WellPickupCirclePresentationTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-20 12:29:03Z" end-time="2026-10-20 12:29:12Z" duration="9.114843" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1469" name="EveryPickupHasPermanentWhitePaintAndRealMatchViews" fullname="StarTournament.ProvingGround.Tests.PlayMode.WellPickupCirclePresentationTests.EveryPickupHasPermanentWhitePaintAndRealMatchViews" methodname="EveryPickupHasPermanentWhitePaintAndRealMatchViews" classname="StarTournament.ProvingGround.Tests.PlayMode.WellPickupCirclePresentationTests" runstate="Runnable" seed="225083303" result="Passed" start-time="2026-10-20 12:29:03Z" end-time="2026-10-20 12:29:12Z" duration="9.110343" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Lab startup: initial configuration resolved in 1.52 seconds
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+STAR_TOURNAMENT_MAIN_MENU_READY
+Lab startup: validating local history in background
+Game startup: menu ready at 81.11 seconds; Default 3f68b45a09851eaac487973ab9e5678b8f5bb954a5c0ece6c8ea58470e1550b8
+Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
