@@ -393,6 +393,8 @@ namespace StarTournament.ProvingGround
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??2)<2)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDetail()).ToList()};
 
+            if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==4)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellSecondFloorWeapons()).ToList()};
             if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==3)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellCorridorCover()).ToList()};
             if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==2)

@@ -81,6 +81,7 @@ namespace StarTournament.ProvingGround
             IEnumerable<ProvingProfile> Candidates()
             {
                 yield return current;
+                if(shape.Id=="well-authoring-v1"&&shape.Version==4)yield return current.BeforeWellSecondFloorWeapons();
                 if(shape.Id=="well-authoring-v1"&&shape.Version==3)yield return current.BeforeWellCorridorCover();
                 if(shape.Id=="well-authoring-v1"&&shape.Version==2)yield return current.BeforeWellFurniture();
                 if(shape.Id=="well-authoring-v1"&&shape.Version==1)yield return current.BeforeWellStructure();

@@ -6,7 +6,9 @@ namespace StarTournament.ProvingGround
     public static class WellFurniturePlan
     {
         public static bool IsFurniture(ArenaSolid solid)=>solid.Surface!=null&&solid.Surface.StartsWith("well-furniture-");
-        public static ArenaSolid[] Build()
+        public static ArenaSolid[] Build()=>BuildRevisionFour();
+        /// <summary>Frozen revision-4 furniture, retained for historical map and Lab hashes.</summary>
+        public static ArenaSolid[] BuildRevisionFour()
         {
             var result=new List<ArenaSolid>(BuildRevisionThree());
             // well-corridor-zones-v1: fixed authoring, four deliberate additions per storey.
