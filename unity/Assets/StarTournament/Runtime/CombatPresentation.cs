@@ -421,7 +421,7 @@ namespace StarTournament.ProvingGround
             for(int p=0;p<session.ParticipantCount;p++)
             {
                 var life=session.Life(p);
-                if(!life.Dead)bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,life.Health,life.Life);
+                if(!life.Dead)bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,life.Health,life.Life,session.Pose(p).Grounded);
                 // Both representations use the same simulation phase: the model changes only at the lift apex.
                 bodies[p].GetComponent<WeaponModelPresentation>()?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
             }

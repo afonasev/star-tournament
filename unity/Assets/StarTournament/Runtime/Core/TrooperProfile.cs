@@ -2,10 +2,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeVectorFighter()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<9)return this;
+            var p=DetachedCopy();p.version=8;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.air")||d.Path.StartsWith("animation.land")||d.Path=="view.airMeters");
+            p.values.RemoveAll(v=>v.Path.StartsWith("animation.air")||v.Path.StartsWith("animation.land")||v.Path=="view.airMeters");
+            return p;
+        }
         internal ProvingProfile BeforeEquipmentReadability()
         {
             if(id!="unity-trooper-presentation-v1"||version<8)return this;
-            var p=DetachedCopy();p.version=7;
+            var p=BeforeVectorFighter().DetachedCopy();p.version=7;
             p.FindDescriptor("view.fillIntensity").DefaultValue=.05f;
             p.Set("view.fillIntensity",.05f);
             return p;
@@ -76,7 +84,13 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=8};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=9};
+            p.Add("animation.airResponseSeconds","trooper-animation","Переход в прыжок","Плавность визуальной позы при отрыве и возвращении на опору.","seconds",.03f,.5f,.01f,.12f);
+            p.Add("animation.airHipDegrees","trooper-animation","Подъём бедра в воздухе","Насколько боец поднимает бедро в прыжке.","degrees",0,65,1,30);
+            p.Add("animation.airKneeDegrees","trooper-animation","Сгиб колена в воздухе","Насколько боец поджимает ноги в прыжке.","degrees",0,100,1,55);
+            p.Add("animation.landSeconds","trooper-animation","Возврат после приземления","Длительность визуального поглощения приземления.","seconds",.1f,.8f,.01f,.28f);
+            p.Add("animation.landDegrees","trooper-animation","Амплитуда приземления","Сгиб ног при касании опоры.","degrees",0,35,1,14);
+            p.Add("view.airMeters","trooper-view","Ход рук в прыжке","Мягкое опускание рук в прыжке и при приземлении; камера остаётся стабильной.","meters",0,.08f,.001f,.025f);
             p.Add("animation.walkThreshold","trooper-animation","Порог шага","Минимальная фактическая горизонтальная скорость для walk.","meters-per-second",.01f,3,.01f,.1f);
             p.Add("animation.runThreshold","trooper-animation","Порог бега","Фактическая горизонтальная скорость переключения walk на run.","meters-per-second",3,15,.1f,6);
             p.Add("animation.blendSeconds","trooper-animation","Переход позы","Время сглаживания весов только визуальных клипов.","seconds",0,.5f,.01f,.12f);

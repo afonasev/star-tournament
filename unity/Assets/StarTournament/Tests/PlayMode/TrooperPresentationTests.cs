@@ -41,6 +41,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             double start=snapshot.Time;first.ResetPose(start);second.ResetPose(start);
             var rest=first.transform.localPosition;var stationary=second.transform.localPosition;
             string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            bool sequence=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_SEQUENCE")=="1";
             var mount=first.GetComponentsInChildren<Transform>().Single(t=>t.name=="trooper:rig:weapon-mount");
             Vector3 previous=Vector3.zero;float maximumStep=0;
             var samples=new System.Collections.Generic.List<string>{"weapon,time,offset_x,offset_y,mount_x,mount_y,mount_z"};
@@ -59,7 +60,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     var point=camera.transform.InverseTransformPoint(mount.position);
                     samples.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1:F3},{2:F6},{3:F6},{4:F6},{5:F6},{6:F6}",weapon,ground.Session.Time,first.WalkOffset.x,first.WalkOffset.y,point.x,point.y,point.z));
                     if(tick>0)maximumStep=Mathf.Max(maximumStep,Vector3.Distance(previous,point));previous=point;
-                    if(!string.IsNullOrEmpty(directory)&&(tick==0||tick==16||tick==32||tick==49||tick==65))
+                    if(!string.IsNullOrEmpty(directory)&&(sequence||tick==0||tick==16||tick==32||tick==49||tick==65))
                         CaptureWalkFrame(directory,weapon+"-"+tick.ToString("D2"));
                 }
                 if(!string.IsNullOrEmpty(directory))System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,"motion.csv"),samples);

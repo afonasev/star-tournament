@@ -1,0 +1,40 @@
+{
+  "body": {
+    "sha256": "5ff03b9ed15540b238d8878353f7cd81c19d8c915fb5ee34d15c546cd9f5c5fe",
+    "bytes": 14167268,
+    "meshes": 3,
+    "materials": 20,
+    "skins": [
+      57
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "vertices": 139723
+  },
+  "arms": {
+    "sha256": "9a190959a2073aab97af06a63ad0a9ae4b4f3918196e0749fdf1ebc3ffefb734",
+    "bytes": 10166780,
+    "meshes": 2,
+    "materials": 19,
+    "skins": [
+      57
+    ],
+    "clips": [
+      "aim",
+      "death",
+      "fire",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "vertices": 74014
+  }
+}

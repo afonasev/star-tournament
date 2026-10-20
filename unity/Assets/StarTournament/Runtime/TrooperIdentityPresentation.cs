@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround
         {
             string name=material.name;
             // Authored material roles: large limb plates, helmet, chest, thighs and rear jet pack.
-            return IsStatus(material)||name.StartsWith("vector-ceramic",StringComparison.OrdinalIgnoreCase)||
+            return name.StartsWith("vector-fighter-identity",StringComparison.OrdinalIgnoreCase)||IsStatus(material)||name.StartsWith("vector-ceramic",StringComparison.OrdinalIgnoreCase)||
                 name=="TECI_helmet"||name=="torso"||name=="jumpjet";
         }
         public static void ApplyBody(GameObject root,Color color,ProvingProfile profile=null)
