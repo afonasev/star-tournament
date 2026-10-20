@@ -32,15 +32,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var meshes=arena.GetComponentsInChildren<MeshFilter>();bool well=id==WellArenaCatalog.Id,bowl=id==CombatBowlCatalog.Id,lunar=id==LunarLaboratoryCatalog.Id;
                 var settings=well?ProvingProfile.CreateWellDefault():lunar?ProvingProfile.CreateLunarPresentation():id==IndustrialTunnelsCatalog.Id?ProvingProfile.CreateIndustrialTunnelsPresentation():ProvingProfile.CreateCombatBowlRingPresentationDefault();
                 string prefix=well?"well.":lunar?"lunar.":"tunnels.";float radius=bowl?settings.Get("detail.ringRadius"):settings.Get(prefix+"pickupRingRadius"),width=bowl?settings.Get("detail.lineWidth"):settings.Get(prefix+"pickupRingWidth");
+                var whitePickups=definition.Pickups.Where(item=>id!=IndustrialTunnelsCatalog.Id||item.Id!="tunnels-damage-central").ToArray();
                 MeshFilter paint=null;Vector3[] before=null;
                 if(!bowl)
                 {
                     paint=meshes.Single(m=>m.name==(well?"Well permanent pickup circles":ArenaPickupMarkings.Name));before=paint.sharedMesh.vertices;
-                    Assert.That(paint.sharedMesh.vertexCount,Is.EqualTo(count*128));Assert.That(paint.sharedMesh.triangles.Length,Is.EqualTo(count*384));
+                    Assert.That(paint.sharedMesh.vertexCount,Is.EqualTo(whitePickups.Length*128));Assert.That(paint.sharedMesh.triangles.Length,Is.EqualTo(whitePickups.Length*384));
                     Assert.That(paint.GetComponents<Collider>(),Is.Empty);Assert.That(paint.GetComponents<Light>(),Is.Empty);
                     var renderer=paint.GetComponent<MeshRenderer>();Assert.That(renderer.sharedMaterial.color,Is.EqualTo(Color.white));Assert.That(renderer.shadowCastingMode,Is.EqualTo(ShadowCastingMode.Off));Assert.That(renderer.receiveShadows,Is.False);
-                    for(int i=0;i<count;i++)foreach(var v in before.Skip(i*128).Take(128))
-                    {var anchor=definition.Pickups[i].Anchor;float height=settings.Get(prefix+"pickupRingHeight")+(lunar&&anchor.y==0?.054f:0);Assert.That(v.y,Is.EqualTo(anchor.y+height).Within(.0001f));Assert.That(Vector2.Distance(new Vector2(v.x,v.z),new Vector2(anchor.x,anchor.z)),Is.EqualTo(radius).Within(width/2+.0001f));}
+                    for(int i=0;i<whitePickups.Length;i++)foreach(var v in before.Skip(i*128).Take(128))
+                    {var anchor=whitePickups[i].Anchor;float height=settings.Get(prefix+"pickupRingHeight")+(lunar&&anchor.y==0?.054f:0);Assert.That(v.y,Is.EqualTo(anchor.y+height).Within(.0001f));Assert.That(Vector2.Distance(new Vector2(v.x,v.z),new Vector2(anchor.x,anchor.z)),Is.EqualTo(radius).Within(width/2+.0001f));}
                 }
                 else
                 {
@@ -49,6 +50,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(white,Is.Not.Empty,"Existing white markings batch");
                     var vertices=white.SelectMany(m=>m.sharedMesh.vertices.Select(v=>m.transform.TransformPoint(v))).ToArray();
                     foreach(var pickup in definition.Pickups)Assert.That(vertices.Count(v=>Mathf.Abs(v.y-pickup.Anchor.y-.012f)<.004f&&Mathf.Abs(Vector2.Distance(new Vector2(v.x,v.z),new Vector2(pickup.Anchor.x,pickup.Anchor.z))-radius)<width),Is.GreaterThanOrEqualTo(64),pickup.Id);
+                }
+                if(id==IndustrialTunnelsCatalog.Id)
+                {
+                    Assert.That(whitePickups.Length,Is.EqualTo(5),"Only the five other points get white paint");
+                    var central=definition.Pickups.Single(item=>item.Id=="tunnels-damage-central");
+                    var sector=meshes.Single(m=>m.name=="Sector 5 muted paint");
+                    Assert.That(sector.GetComponent<MeshRenderer>().sharedMaterial.color,Is.EqualTo(new Color(.69f,.65f,.52f)*settings.Get("tunnels.wayfinding.paint")));
+                    float yellowRadius=settings.Get("tunnels.wayfinding.ringRadius");
+                    Assert.That(sector.sharedMesh.vertices.Count(v=>Mathf.Abs(v.y-central.Anchor.y-.008f)<.004f&&Mathf.Abs(Vector2.Distance(new Vector2(v.x,v.z),new Vector2(central.Anchor.x,central.Anchor.z))-yellowRadius)<.13f),Is.GreaterThanOrEqualTo(64),"Existing yellow circle stays at the central anchor");
                 }
                 cameraGo=new GameObject("Pickup circle review");var camera=cameraGo.AddComponent<Camera>();camera.fieldOfView=70;camera.nearClipPlane=.05f;rt=new RenderTexture(960,720,24,RenderTextureFormat.DefaultHDR);camera.targetTexture=rt;
                 string directory=Path.Combine(Environment.GetEnvironmentVariable("STAR_TOURNAMENT_ALL_CIRCLES_OUTPUT")??Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/all-arena-pickup-circles/views")),id);Directory.CreateDirectory(directory);

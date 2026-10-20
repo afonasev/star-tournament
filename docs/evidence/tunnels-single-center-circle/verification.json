@@ -1,0 +1,46 @@
+{
+  "feedback": "F1: remove central white circle; retain yellow",
+  "baseline": "d0aa2079102d3ea0740559e232fcabcd1a0f6fcd",
+  "tested_source_tree": "d4b8bc7ca35944da851bc9b7f3273a4998e3a8ec",
+  "filter": "ArenaPickupCircleCoverageTests.TunnelsAllSixAnchors;ArenaPickupCircleCoverageTests.LunarAllElevenAnchors",
+  "runner": "~/.local/bin/unity-run --shared --project <owned-worktree>/unity -- Unity -batchmode -noaudio -muted -projectPath <owned-worktree>/unity -runTests -testPlatform PlayMode -testFilter <filter> -testResults <isolated>/playmode.xml -logFile <isolated>/playmode.log",
+  "result": {
+    "pass": 2,
+    "fail": 0,
+    "skip": 0,
+    "exit": 0
+  },
+  "scope": "one yellow central ring, five unchanged white tunnel rings; unchanged lunar default helper path; map JSON exact, static geometry persists after collection",
+  "visual_review": "Inspected real Editor central PNG: one yellow ring and no white duplicate. 17 current point PNGs retained.",
+  "storage": "text logs/XML use LF for Git core.autocrlf=input",
+  "not_run": [
+    "full suite",
+    "EditMode (no profile/history/metadata changes)",
+    "Player build",
+    "release",
+    "deploy",
+    "human acceptance"
+  ],
+  "files": {
+    "qa-scope.md": "5ae7c5321eb86d816943bf5f687cbddf81a66422f01ef0d964862ccc18c18377",
+    "playmode.xml": "913eb91c526e7124366eb9fcc59c45ba3428c9413a0bca11720edb332926863a",
+    "playmode.log": "a396630f06f780580db5a1f6a4605aa1098a588d4a5004aa2df58f748e8ec91a",
+    "views/industrial-tunnels-v1/tunnels-armor-east.png": "19b764c34148fa0fd8084600480cbd625a7423a32f7f6849fca91c7da383b631",
+    "views/industrial-tunnels-v1/tunnels-pulse-south.png": "1e59a7a81625a5952aeab856983761c993071870d6182641a50f3d685a1a9f6e",
+    "views/industrial-tunnels-v1/tunnels-armor-west.png": "d5b7867b3b4399021466de33eb710be3f32ca53b198b50ce2de95c06d09de96c",
+    "views/industrial-tunnels-v1/tunnels-shotgun-nw.png": "ff816b26fbda2032b8642a0072537c3bc5b79bb46da2263be3d020a3efb360b0",
+    "views/industrial-tunnels-v1/tunnels-cutter-ne.png": "4062f1804ce2070e76c9c4f7d5a16f9df4c9640f2d866a473745f84f0141f07c",
+    "views/industrial-tunnels-v1/tunnels-damage-central.png": "2d6ee4c2de657571bdf1cb5b1b4f2a9097f03cdcded2bdf51ec6bc6933e7ae02",
+    "views/lunar-laboratory-v1/A1.png": "dd9a12c4c17616a3b944aed674c7ebe27a4a6c94534c1ea056fc019f1fd5e7cd",
+    "views/lunar-laboratory-v1/H.png": "ea9e427b6ab9878e77b4483c444638908e3d75ba77aeaf04ef552744b9e26af9",
+    "views/lunar-laboratory-v1/A2.png": "8064943fd5ae6ce468e1dbb2c34a0f0f285c860ad3680b8dc626201322a3b1a4",
+    "views/lunar-laboratory-v1/W4.png": "7744db6453fd9d07c4576618bc4b3c10bd9c8ee80f0a09d3d68e34882bde102a",
+    "views/lunar-laboratory-v1/W5.png": "4df66fb907ae2e358275bf04e90b6bc56ec866116b49b1a3850f67516bcaab6b",
+    "views/lunar-laboratory-v1/V.png": "dd3157aa39d5f50b364d199a55f9f6838266e4f54b101d979b868be1c9f8bcc6",
+    "views/lunar-laboratory-v1/W6.png": "2b515991ce041762bad2519c7ce280a0c9826c162407ff1a4dfa4bbf8a4d4e5a",
+    "views/lunar-laboratory-v1/W2.png": "ed66cad3b3503657c8c8c4b25a75916b0d47e2bc04c2b7daaf0a16f4f841e4bf",
+    "views/lunar-laboratory-v1/D.png": "cc0db356a2d8b6fa0dd6aaa92945919035e5a512e3044752274fb70f7fe41129",
+    "views/lunar-laboratory-v1/W3.png": "e3e60dbe697dcae1ad9dc1bd61e51d4f179b66401b64843c22f7b4bb41584537",
+    "views/lunar-laboratory-v1/W1.png": "04a30b1e10d24209bc9bf826ae8ce715579fb419280cede7a1d88741f8eb5b8a"
+  }
+}

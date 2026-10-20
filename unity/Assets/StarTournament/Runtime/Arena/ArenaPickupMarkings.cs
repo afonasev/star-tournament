@@ -8,13 +8,14 @@ namespace StarTournament.ProvingGround
     public static class ArenaPickupMarkings
     {
         public const string Name="Permanent white pickup circles";
-        public static Mesh Build(Transform parent,ArenaDefinition definition,Material material,float radius,float width,Func<ArenaPickupDefinition,float> height)
+        public static Mesh Build(Transform parent,ArenaDefinition definition,Material material,float radius,float width,Func<ArenaPickupDefinition,float> height,Func<ArenaPickupDefinition,bool> include=null)
         {
             var vertices=new List<Vector3>();var triangles=new List<int>();
             // Match Combat Bowl's fixed silhouette tessellation; this is not a balance setting.
             const int segments=64;
             foreach(var pickup in definition.Pickups)
             {
+                if(include!=null&&!include(pickup))continue;
                 int first=vertices.Count;var center=pickup.Anchor+Vector3.up*height(pickup);
                 for(int i=0;i<segments;i++)
                 {
