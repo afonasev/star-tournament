@@ -61,7 +61,7 @@
     "first-play/playmode.log": "8192346427b08c6607d21ae0403ba07d8ef72d5c025e3021bc8f359d414cf22b",
     "first-play/playmode.xml": "caa5fb08871f1f85c43b7ee191564dc71961a2ea931ecde0295e2dd8bcd04864",
     "industrial-tunnels-v1-contact.png": "58533dd2c3345c9a885fb317080bd4ad6978dfd1237d62b16a93f4143e681af7",
-    "initial-editmode/editmode.log": "a623141cddd343f0b1dc5f1332b5c16f1b99b0a44097160b5a97e24db34d5e00",
+    "initial-editmode/editmode.log": "b01bdbf3de395b5b2fbae6f578916aee821d48ede1746eb4e348b3b3f22c5001",
     "initial-editmode/editmode.xml": "9b31a5959964c6792eed56a86deb82b22b69d1a8d36b935f25b7a1f54fc51a35",
     "initial-editmode/scope.txt": "838b3004e2503d8d98b4d133afeaa0c697e22b0e535107b07f4bcfa37c2e7ac0",
     "lunar-laboratory-v1-contact.png": "e304d04690921ab0edf4db83603603149049c1e85a21bfc631ddb90650812769",
@@ -117,5 +117,11 @@
     "well-regression-views/heal-H.png": "dd20fb0660c249de67f0b1c5384cdb5224b6d3e870e4db4ed105fdb67d884d05",
     "well-regression-views/rocket-02.png": "1be0e853ceb8776effb48d083a78d1a6e38ffc546c47ad4bb1e2ceae78f6ca5e",
     "well-regression-views/shotgun-02.png": "b0622709397c420d1e038747a6a977c9cbb9137fc00738a4dea6be5cde7a8dcc"
+  },
+  "storage_note": {
+    "file": "initial-editmode/editmode.log",
+    "raw_capture_sha256": "a623141cddd343f0b1dc5f1332b5c16f1b99b0a44097160b5a97e24db34d5e00",
+    "stored_sha256": "b01bdbf3de395b5b2fbae6f578916aee821d48ede1746eb4e348b3b3f22c5001",
+    "reason": "core.autocrlf=input normalized CRLF when Git stored this initial import log. File content, failure evidence and all PNG bytes preserved; file manifest records stored bytes."
   }
 }
