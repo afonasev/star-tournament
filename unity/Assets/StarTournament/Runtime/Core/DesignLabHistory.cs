@@ -384,6 +384,8 @@ namespace StarTournament.ProvingGround
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeEquipmentReadability()).ToList()};
 
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??6)<6)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellPickupMarkings()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??5)<5)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDaylight()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??4)<4)
