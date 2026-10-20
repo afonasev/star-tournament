@@ -261,7 +261,7 @@ namespace StarTournament.ProvingGround
         }
         void PickupSigns(ArenaDefinition d)
         {
-            var markingSettings=p.Version>=5?p:ProvingProfile.CreateLunarPresentation();
+            var markingSettings=p.Version>=6?p:ProvingProfile.CreateLunarPresentation();
             var paint=Mat("Lunar white pickup paint",Color.white,null,0,true);
             owned.Add(ArenaPickupMarkings.Build(transform,d,paint,markingSettings.Get("lunar.pickupRingRadius"),markingSettings.Get("lunar.pickupRingWidth"),item=>markingSettings.Get("lunar.pickupRingHeight")+(item.Anchor.y==0?.054f:0)));
             foreach(var item in d.Pickups)

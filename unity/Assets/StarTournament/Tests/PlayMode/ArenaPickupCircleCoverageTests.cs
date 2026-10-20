@@ -33,6 +33,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var settings=well?ProvingProfile.CreateWellDefault():lunar?ProvingProfile.CreateLunarPresentation():id==IndustrialTunnelsCatalog.Id?ProvingProfile.CreateIndustrialTunnelsPresentation():ProvingProfile.CreateCombatBowlRingPresentationDefault();
                 string prefix=well?"well.":lunar?"lunar.":"tunnels.";float radius=bowl?settings.Get("detail.ringRadius"):settings.Get(prefix+"pickupRingRadius"),width=bowl?settings.Get("detail.lineWidth"):settings.Get(prefix+"pickupRingWidth");
                 var whitePickups=definition.Pickups.Where(item=>id!=IndustrialTunnelsCatalog.Id||item.Id!="tunnels-damage-central").ToArray();
+                Assert.That(radius,Is.EqualTo(1.35f),"Shared default radius across all four maps");
                 MeshFilter paint=null;Vector3[] before=null;
                 if(!bowl)
                 {

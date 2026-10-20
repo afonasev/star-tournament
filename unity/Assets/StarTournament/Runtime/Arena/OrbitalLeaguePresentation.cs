@@ -310,7 +310,7 @@ namespace StarTournament.ProvingGround
         }
         void PickupMarkings(ArenaDefinition definition)
         {
-            float width=p.Get("detail.lineWidth"),radius=p.Get("detail.ringRadius");
+            float width=p.Get("detail.lineWidth"),radius=(p.Version>=11?p:ProvingProfile.CreateCombatBowlRingPresentationDefault()).Get("detail.ringRadius");
             // Permanent presentation follows authored anchors, independently of pickup availability.
             foreach(var pickup in definition.Pickups ?? Array.Empty<ArenaPickupDefinition>())
             {

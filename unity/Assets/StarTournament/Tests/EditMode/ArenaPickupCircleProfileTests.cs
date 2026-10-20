@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TestCase(false)][TestCase(true)] public void MetadataIsAdditiveAndFitsExistingSurfaces(bool lunar)
         {
             var current=lunar?ProvingProfile.CreateLunarPresentation():ProvingProfile.CreateIndustrialTunnelsPresentation();var old=Before(current);string prefix=lunar?"lunar.":"tunnels.";
-            Assert.That(current.Version,Is.EqualTo(lunar?5:3));Assert.That(old.Version,Is.EqualTo(lunar?4:2));Assert.That(current.Validate(),Is.Empty);
+            Assert.That(current.Version,Is.EqualTo(lunar?6:4));Assert.That(old.Version,Is.EqualTo(lunar?4:2));Assert.That(current.Validate(),Is.Empty);
             foreach(var d in old.Descriptors){Assert.That(JsonUtility.ToJson(current.Descriptors.Single(x=>x.Path==d.Path)),Is.EqualTo(JsonUtility.ToJson(d)),d.Path);Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);}
             foreach(var key in new[]{"pickupRingRadius","pickupRingWidth","pickupRingHeight"}){var descriptor=current.Descriptors.Single(d=>d.Path==prefix+key);Assert.That(descriptor.Validate(out var reason),Is.True,reason);Assert.That(descriptor.Group,Is.EqualTo("pickup-markings"));}
             Assert.That(current.Get(prefix+"pickupRingWidth"),Is.EqualTo(ProvingProfile.CreateOrbitalLeagueDefault().Get("detail.lineWidth")));
@@ -31,7 +31,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
                 var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==number);Assert.That(preserved.Hash,Is.EqualTo(hash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(hash));
                 Assert.That(upgraded.Selected.Snapshot.Get("lunar.officeLamp"),Is.EqualTo(19));Assert.That(upgraded.Selected.Snapshot.Get("tunnels.light.warm"),Is.EqualTo(11));
-                Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id==ProvingProfile.TunnelsArtId).Version,Is.EqualTo(3));Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id=="lunar-laboratory-presentation-v1").Version,Is.EqualTo(5));
+                Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id==ProvingProfile.TunnelsArtId).Version,Is.EqualTo(4));Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id=="lunar-laboratory-presentation-v1").Version,Is.EqualTo(6));
                 var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(upgraded.Selected.Hash));Assert.That(reopened.SelectedProfile.Revisions.Single(r=>r.Number==number).Hash,Is.EqualTo(hash));
             }
             finally{Directory.Delete(directory,true);}

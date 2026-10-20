@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateIndustrialTunnelsPresentation()
         {
-            var p=new ProvingProfile{id=TunnelsArtId,version=3};
+            var p=new ProvingProfile{id=TunnelsArtId,version=4};
             void V(string key,string group,string label,string unit,float min,float max,float step,float value)
                 =>p.Add("tunnels."+key,group,label,"Технические тоннели: "+label+". Управляет оформлением, не меняет collision или предметы.",unit,min,max,step,value);
             V("light.fill","tunnel-light","Рассеянный свет","ratio",.05f,.8f,.01f,.32f);
@@ -37,7 +37,7 @@ namespace StarTournament.ProvingGround
             V("wayfinding.signHeight","tunnel-wayfinding","Высота указателя выхода","m",.35f,.75f,.05f,.55f);
             V("wayfinding.approach","tunnel-wayfinding","Продолжение краски в тоннель","m",1,4,.5f,3);
             V("wayfinding.ringRadius","tunnel-wayfinding","Радиус маркировки центра","m",1.5f,3,.1f,2.2f);
-            AddPickupMarkings(p,"tunnels.",1.65f,2,.012f);
+            AddPickupMarkings(p,"tunnels.",1.35f,2,.012f);
             return p;
         }
         internal ProvingProfile BeforeTunnelWayfinding()

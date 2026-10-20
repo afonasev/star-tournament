@@ -1,0 +1,19 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=UniformPickupCircleProfileTests
+lab_history=/Users/eaafonasev/.codex/worktrees/uniform-pickup-circles/star-tournament/.local/uniform-circles/retry-edit-history.json
+revision=e9e9a0e640fd1c79e701b3a455a85ec5e9185c0a
+M  ../docs/GAME_SPEC.md
+M  Assets/StarTournament/Runtime/Arena/IndustrialTunnelsPresentation.cs
+M  Assets/StarTournament/Runtime/Arena/LunarLaboratoryPresentation.cs
+M  Assets/StarTournament/Runtime/Arena/OrbitalLeaguePresentation.cs
+M  Assets/StarTournament/Runtime/Core/ArenaPickupMarkingProfiles.cs
+M  Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+M  Assets/StarTournament/Runtime/Core/IndustrialTunnelsProfile.cs
+M  Assets/StarTournament/Runtime/Core/LunarLaboratoryProfile.cs
+M  Assets/StarTournament/Runtime/Core/OrbitalLeagueProfile.cs
+M  Assets/StarTournament/Tests/EditMode/ArenaPickupCircleProfileTests.cs
+AM Assets/StarTournament/Tests/EditMode/UniformPickupCircleProfileTests.cs
+A  Assets/StarTournament/Tests/EditMode/UniformPickupCircleProfileTests.cs.meta
+M  Assets/StarTournament/Tests/PlayMode/ArenaPickupCircleCoverageTests.cs
+ M ProjectSettings/ShaderGraphSettings.asset
