@@ -34,6 +34,86 @@
       "path": "docs/evidence/vector-fighter/f3-world2",
       "bytes": 871185,
       "reason": "replaced by unchanged final world pose images f3-world3"
+    },
+    {
+      "path": ".local/unity-evidence/f3-diagnostic",
+      "bytes": 87584,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-fit1",
+      "bytes": 93946,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-fit2",
+      "bytes": 93807,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-fit3",
+      "bytes": 91543,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-final",
+      "bytes": 119664,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-final2",
+      "bytes": 114465,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-final3",
+      "bytes": 116515,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/focused-editmode.UvBCZ5",
+      "bytes": 125580,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/focused-editmode.oNHGuD",
+      "bytes": 128183,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-player",
+      "bytes": 2445,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-player-batch",
+      "bytes": 13874,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-player-final",
+      "bytes": 13327,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-switch-player",
+      "bytes": 12262,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-switch-final",
+      "bytes": 12257,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-switch-viewoffset",
+      "bytes": 13360,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
+    },
+    {
+      "path": ".local/unity-evidence/f3-vector-exact",
+      "bytes": 13271,
+      "reason": "own raw QA; required XML/logs/native results preserved in tracked f3 evidence"
     }
   ],
   "retained": [
@@ -41,7 +121,12 @@
     "f3-diagnosis rejected-fit examples",
     "f3-fps3 final hands/FPS/motion",
     "f3-world3 final synthetic world poses",
-    "f3-qa XML and compressed logs"
+    "f3-qa XML and compressed logs",
+    "sole current macOS test app and muted launcher in unity/Builds",
+    "owned active worktree/Library pending human review",
+    "editable Blender source unchanged from F2",
+    "f3-player and f3-switch-player native frames/results/video"
   ],
-  "scope": "own F3 intermediate evidence only"
+  "scope": "own F3 intermediate evidence only",
+  "taskProcesses": "all exited; no foreign processes stopped"
 }

@@ -10,6 +10,12 @@ F2 thin forearms, matte cloth, broad shoulders, geometry/materials, cameras and 
 
 Final affected EditMode 27/27; graphical PlayMode 4/4. Actual current FPS and both sides of both hands: f3-fps3/. Synthetic world pose evidence: f3-world3/. Baseline f3-before/ and rejected-fit examples f3-diagnosis/ are historical. Exact commands/results and compressed logs: verification-plan.md and f3-qa/. Final source hashes: f3-source.json.
 
-Next authorized step: local macOS Development Player build, real-session jump/fire evidence for all weapons and existing native weapon-switch/death/respawn smoke. Keep the sole test app pending human acceptance. No installation, release, publication or full suite is authorized. Guide: f3-test-guide.md.
+Local macOS Universal Development Player built and retained at:
+`/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Builds/StarTournamentProvingGround.app`.
+Exact source commit: `36667859544f6fb214a4b1981749ef39cb07c8ef`; branch codex/vector-fighter. Hash manifest and build/smoke identity: f3-build.json and f3-build-files.sha256. Local main is not integrated (ancestry and patch equivalence checked).
 
-Open gates: human/visual/device/audio/performance acceptance; whole-model art fidelity and ordinary full world-action acceptance remain separate. Do not mark the overall change complete or merge it merely for the test build.
+Final exact-app native evidence: all four weapons jumped, landed and accepted fire, with 30 real camera frames (f3-player/). Native weapon-switch diagnostic passed 39 checks including 36 transitions at .1/1/3 seconds, pause, four seats and death/respawn; frames and video in f3-switch-player/. Old failures are preserved: inactive window, missing batch backbuffer, legacy base-root expectation. Development capture now renders cameras directly, and the switch diagnostic preserves exact equality to the accepted configured rest + ViewOffset contract. No air pose disabling, thresholds, switch durations or gameplay changes.
+
+Guide: f3-test-guide.md. Sole current test app, editable Blender source, current branch/worktree and Library retained pending human review. Raw own F3 intermediates cleaned after preserving XML/compressed logs.
+
+Open gates: human/visual/device/audio/performance acceptance; whole-model art fidelity remains separate. Overall change remains implementing, not merged or accepted. No install/release/publication/full-suite run. No further task-owned process remains after smoke.

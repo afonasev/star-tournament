@@ -156,3 +156,13 @@ ViewOffset, preserving exact equality, switch durations, all model/fire/apex/pau
 seat/death assertions and thresholds. No disabling air presentation or gameplay
 changes. The separate airborne and 4-weapon real jump witnesses retain coverage.
 Preserve switch-grounded-fixture-fail.log.gz.
+
+Final exact Player source 36667859544f6fb214a4b1981749ef39cb07c8ef: build exit 0,
+STAR_PROVING_BUILD_PASS 411961820. Native switch smoke 39 checks / 36 transitions
+passed; all four weapons real-session jump/landing/fire passed. Both native commands
+exit 0, direct camera captures saved and inspected; no backbuffer capture errors in
+final runs. f3-build.json records commands, identity and classification.
+Gameplay/grip/profile source is unchanged since the final 27/27 EditMode and 4/4
+graphical PlayMode snapshot; subsequent changes affect development review helpers.
+Full suite, install, release, deploy, physical controller/audio/performance and human
+acceptance remain NotRun. No merge.

@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "3f3f64a8274108cf635a9bca1219417f23ce172d",
+  "sourceCommit": "36667859544f6fb214a4b1981749ef39cb07c8ef",
   "branch": "codex/vector-fighter",
   "app": "/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Builds/StarTournamentProvingGround.app",
   "launch": "/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Builds/Start-muted.command",
@@ -9,11 +9,41 @@
   ],
   "buildCommand": "UNITY_RUN_MODE=shared unity/tools.sh build",
   "buildExit": 0,
-  "buildMarker": "STAR_PROVING_BUILD_PASS 411961588",
-  "treeManifestSha256": "e871b916bf9b9d8d3664544c921facc70484ad68c122f463db49181bb3d4d786",
+  "buildMarker": "STAR_PROVING_BUILD_PASS 411961820",
+  "treeManifestSha256": "a4a1b4879ee4794c52a5c200afb52968c328acb6ca76c35fc6f572641b5a3de9",
   "fileCount": 283,
-  "bytes": 411961588,
+  "bytes": 411961820,
   "buildLog": "f3-qa/build.log.gz",
-  "smoke": "pending final capture and switching scenarios",
-  "classification": "local Development test candidate; no installation/publication; human acceptance pending"
+  "smoke": {
+    "sourceCommit": "36667859544f6fb214a4b1981749ef39cb07c8ef",
+    "vector": {
+      "exit": 0,
+      "allWeaponsRealJumpLandingFire": true,
+      "renderedFrames": 30,
+      "result": "f3-player/complete.json",
+      "log": "f3-qa/player-final.log.gz",
+      "command": "STAR_TOURNAMENT_VECTOR_EVIDENCE=<f3-player> STAR_TOURNAMENT_QA_LAB_HISTORY=<isolated> UNITY_RUN_MODE=shared unity/tools.sh run -batchmode -noaudio -muted -vectorReview -screen-fullscreen 0 -screen-width 1280 -screen-height 720 -logFile <player-final.log>"
+    },
+    "switch": {
+      "exit": 0,
+      "checks": 39,
+      "transitions": 36,
+      "pause": true,
+      "independentSeats": 4,
+      "deathRespawn": true,
+      "result": "f3-switch-player/complete.json",
+      "log": "f3-qa/switch-final.log.gz",
+      "command": "STAR_TOURNAMENT_QA_LAB_HISTORY=<isolated> UNITY_RUN_MODE=shared unity/tools.sh run -batchmode -noaudio -muted -weaponSwitchReview <f3-switch-player> -screen-fullscreen 0 -screen-width 1280 -screen-height 720 -logFile <switch-final.log>"
+    },
+    "captures": "actual native seat-camera render, 640x480; no screen-space overlay HUD",
+    "physicalDevicesHumanPerformanceAudioAcceptance": "NotRun"
+  },
+  "classification": "local Development test candidate; no installation/publication; human acceptance pending",
+  "integration": {
+    "mainRef": "local main",
+    "mainCommit": "abea34bf72f4c43d01e2b7f331edf7d1dc25df3b",
+    "ancestor": false,
+    "patchEquivalent": false,
+    "evidence": "git cherry main HEAD lists all F3 source commits with +"
+  }
 }
