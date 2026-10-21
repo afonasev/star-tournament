@@ -131,3 +131,10 @@ history cases and four primary/support contact cases across aim/fire/air/reset.
 Final graphical fit: 4/4 passed; no assertion failures or weakened contracts.
 Prepare succeeded; retained only intended TrooperProfile @12 scene block. Other
 regenerated scene/default/serializer settings changes discarded from this owned worktree.
+
+First native window launch stayed inactive before scenario execution: NotRun; stopped
+only own PID 21604. Native batch launch exited 0 and completed actual four-weapon
+jump/landing/fire assertions, but every ScreenCapture failed (no window backbuffer).
+Preserved first build identity and logs. Replace only development review capture with
+direct seat-camera RenderTexture output; no gameplay/profile change, prior QA remains
+valid. Rebuild authorized local test candidate, then repeat native scenarios.

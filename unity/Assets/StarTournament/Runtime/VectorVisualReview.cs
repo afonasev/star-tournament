@@ -79,7 +79,26 @@ namespace StarTournament.ProvingGround
             }
             ground.Session.Restore(baseline);
         }
-        IEnumerator Capture(string name){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return null;}
+        IEnumerator Capture(string name)
+        {
+            yield return new WaitForEndOfFrame();
+            // Native batchmode has no window backbuffer. Render the actual seat cameras
+            // directly; these evidence frames omit screen-space overlay UI.
+            int width=Screen.width,height=Screen.height;
+            var target=new RenderTexture(width,height,24);target.Create();
+            var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);var previous=RenderTexture.active;
+            try
+            {
+                foreach(var camera in ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled).OrderBy(c=>c.depth))
+                {
+                    var old=camera.targetTexture;
+                    try{camera.targetTexture=target;camera.Render();}finally{camera.targetTexture=old;}
+                }
+                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
+                File.WriteAllBytes(Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
+            }
+            finally{RenderTexture.active=previous;target.Release();Destroy(target);Destroy(pixels);}
+        }
         void OnDestroy(){if(pads!=null)foreach(var p in pads)if(p!=null&&p.added)InputSystem.RemoveDevice(p);}
     }
 }
