@@ -82,6 +82,10 @@ namespace StarTournament.ProvingGround
         IEnumerator Capture(string name)
         {
             yield return new WaitForEndOfFrame();
+            CaptureCameras(ground,Path.Combine(directory,name+".png"));
+        }
+        internal static void CaptureCameras(ProvingGround ground,string path)
+        {
             // Native batchmode has no window backbuffer. Render the actual seat cameras
             // directly; these evidence frames omit screen-space overlay UI.
             int width=Screen.width,height=Screen.height;
@@ -95,7 +99,7 @@ namespace StarTournament.ProvingGround
                     try{camera.targetTexture=target;camera.Render();}finally{camera.targetTexture=old;}
                 }
                 RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
-                File.WriteAllBytes(Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
+                File.WriteAllBytes(path,pixels.EncodeToPNG());
             }
             finally{RenderTexture.active=previous;target.Release();Destroy(target);Destroy(pixels);}
         }

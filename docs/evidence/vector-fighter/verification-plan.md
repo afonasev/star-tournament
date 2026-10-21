@@ -138,3 +138,12 @@ jump/landing/fire assertions, but every ScreenCapture failed (no window backbuff
 Preserved first build identity and logs. Replace only development review capture with
 direct seat-camera RenderTexture output; no gameplay/profile change, prior QA remains
 valid. Rebuild authorized local test candidate, then repeat native scenarios.
+
+Native switch smoke initial FAIL: exact resting-root assertion in legacy fixture.
+The fixture teleports to old (0,-1.2,+/-5) coordinates and begins switching without
+settling; current air/landing ViewOffset is valid and must stay separate from zero
+ground WalkOffset. Preserve all exact comparisons, durations and switch contracts.
+Use actual authored spawns, require all participants grounded after 100 settling
+ticks and reset their visual poses at that clock. Capture the same sequence directly
+from cameras. This changes development evidence setup only, not gameplay or QA
+assertions. Preserve switch-initial-fail.log.gz; repeat exact native switch witness.

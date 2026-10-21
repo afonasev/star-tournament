@@ -53,9 +53,19 @@ namespace StarTournament.ProvingGround
         {
             Render();Require(ground.Running,"Capture must show the active match");
             Require(!ground.GetComponentsInChildren<Transform>(true).Any(t=>t.name=="setup-screen"&&t.gameObject.activeInHierarchy),"Setup covers gameplay");
-            yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));
+            yield return new WaitForEndOfFrame();VectorVisualReview.CaptureCameras(ground,Path.Combine(directory,name+".png"));
             File.WriteAllText(Path.Combine(directory,name+".json"),JsonUtility.ToJson(ground.Session.Capture(),true));
             yield return new WaitForSecondsRealtime(.15f);
+        }
+        void PrepareGrounded()
+        {
+            // Use valid authored spawns from the current arena, not legacy coordinates.
+            // Preserve exact resting-root assertions by starting the switch on stable ground.
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            for(int participant=0;participant<ground.Session.ParticipantCount;participant++)
+                Require(ground.Session.Pose(participant).Grounded,"Switch fixture failed to settle on authored spawn");
+            foreach(var visual in ground.GetComponentsInChildren<TrooperVisual>())visual.ResetPose(ground.Session.Time);
+            Render();
         }
         IEnumerator Start()
         {
@@ -66,7 +76,7 @@ namespace StarTournament.ProvingGround
             foreach(float seconds in new[]{.1f,1f,3f})
             {
                 ground.LifeProfile.Set("weapon.switchSeconds",seconds);ground.StartCombatReview(new[]{pads[0]},backgroundDiagnostic:true,ensureOpponent:true);
-                ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,-5),0);ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,5),0,180);Render();
+                PrepareGrounded();
                 var rest=View(0).transform.localPosition;var duration=ground.Session.WeaponSwitchSeconds;
                 if(seconds==1)yield return Capture("01-rest-rifle");
                 foreach(var target in new[]{WeaponSelection.Shotgun,WeaponSelection.Rifle,WeaponSelection.RocketLauncher,WeaponSelection.Rifle,WeaponSelection.Cutter,WeaponSelection.Shotgun,WeaponSelection.RocketLauncher,WeaponSelection.Cutter,WeaponSelection.RocketLauncher,WeaponSelection.Shotgun,WeaponSelection.Cutter,WeaponSelection.Rifle})
@@ -116,16 +126,16 @@ namespace StarTournament.ProvingGround
             }
             // Capture a continuous native sequence with the ordinary one-second fixture profile.
             ground.LifeProfile.Set("weapon.switchSeconds",1);ground.StartCombatReview(new[]{pads[0]},backgroundDiagnostic:true,ensureOpponent:true);
-            ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,-5),0);ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,5),0,180);
+            PrepareGrounded();
             var frames=Path.Combine(directory,"frames");Directory.CreateDirectory(frames);Select(WeaponSelection.Shotgun);
             for(int frame=0;frame<=20;frame++)
             {
-                Render();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(frames,frame.ToString("D3")+".png"));
+                Render();yield return new WaitForEndOfFrame();VectorVisualReview.CaptureCameras(ground,Path.Combine(frames,frame.ToString("D3")+".png"));
                 yield return new WaitForSecondsRealtime(.05f);
                 if(frame<20)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.05f);
             }
             ground.LifeProfile.Set("weapon.switchSeconds",1);ground.StartCombatReview(pads,backgroundDiagnostic:true);
-            for(int i=0;i<4;i++)ground.PlaceCombatReviewSeat(i,new Vector3(0,-1.2f,-6+i*3),0);
+            PrepareGrounded();
             Render();Select(WeaponSelection.Shotgun);TickTo(.75);
             for(int i=1;i<4;i++)
             {

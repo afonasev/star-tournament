@@ -8,12 +8,13 @@
     "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "4396cc3bedabc5f07af165c7a508b5ba1ff744e2dad9dc3081c919bc8f9443ee",
     "unity/Assets/StarTournament/Runtime/OrbitalGripPose.cs": "5ec388eec4d9546d8e08b3df65f49f6180474c3ee45eb5b3dcd658a21c045d1b",
     "unity/Assets/StarTournament/Runtime/TrooperVisual.cs": "97c49b85eee7fbddeb5d2c467256fef3672bd878c991cb6c33d813fa36e268ee",
-    "unity/Assets/StarTournament/Runtime/VectorVisualReview.cs": "3f7b7151441aead22dc727819207c1fccec5f9e1e13faef67025c9e0bde669b2",
+    "unity/Assets/StarTournament/Runtime/VectorVisualReview.cs": "393a2cad26991a321908f32b8ef42a6df8c6ce7ee2cec17a5dcd1ce944d46d3f",
     "unity/Assets/StarTournament/Scenes/ProvingGround.unity": "9e2ff4d261fd97cc891167fd587c67369843db67ded3dc22feceeb395a8369a6",
     "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "796e6a4a5cde17fb3e53de245ed6f7969afa5a9032581c1be1137ea34338c09c",
     "unity/Assets/StarTournament/Tests/EditMode/FirstPersonWalkTests.cs": "3b3859b8c06c3c8e7f2ce536c898bef9603814c01aa77d185f183c476b633814",
     "unity/Assets/StarTournament/Tests/EditMode/WeaponSwitchPresentationTests.cs": "d498c588fe3a7a20db40168a279b303f44d5a45a741efda139406beda6208437",
-    "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "92c97a0f53a141455f39fd472a536e6daf72015ce0388ced20d7266cad7ff00c"
+    "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "92c97a0f53a141455f39fd472a536e6daf72015ce0388ced20d7266cad7ff00c",
+    "unity/Assets/StarTournament/Runtime/NativeWeaponSwitchReview.cs": "6554c210f01b7c8144b1212a794ffb3a16ede8cbc44507e1a83b34a4d2cbcf5f"
   },
   "assets": "F2 mesh/Blender unchanged; exact asset hashes in f2-source.json",
   "checks": {

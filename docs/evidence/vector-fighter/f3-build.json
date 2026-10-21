@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "5446e4f831322b2412513c31d735f21df8b0d0ac",
+  "sourceCommit": "3f3f64a8274108cf635a9bca1219417f23ce172d",
   "branch": "codex/vector-fighter",
   "app": "/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Builds/StarTournamentProvingGround.app",
   "launch": "/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Builds/Start-muted.command",
@@ -9,11 +9,11 @@
   ],
   "buildCommand": "UNITY_RUN_MODE=shared unity/tools.sh build",
   "buildExit": 0,
-  "buildMarker": "STAR_PROVING_BUILD_PASS 411960200",
-  "treeManifestSha256": "871b264a4464ca8f498d3292299b44e506ceb9101565b494fd5f43a5bdbb5b0e",
+  "buildMarker": "STAR_PROVING_BUILD_PASS 411961588",
+  "treeManifestSha256": "e871b916bf9b9d8d3664544c921facc70484ad68c122f463db49181bb3d4d786",
   "fileCount": 283,
-  "bytes": 411960200,
+  "bytes": 411961588,
   "buildLog": "f3-qa/build.log.gz",
-  "smoke": "pending",
+  "smoke": "pending final capture and switching scenarios",
   "classification": "local Development test candidate; no installation/publication; human acceptance pending"
 }

@@ -13,11 +13,12 @@
   "treeManifestSha256": "871b264a4464ca8f498d3292299b44e506ceb9101565b494fd5f43a5bdbb5b0e",
   "fileCount": 283,
   "bytes": 411960200,
-  "buildLog": "f3-qa/build.log.gz",
+  "buildLog": "f3-qa/build-first.log.gz",
   "smoke": {
     "gameplay": "four weapons real jump/landing/fire passed, exit 0",
     "screenshots": "FAIL: batchmode backbuffer unavailable",
     "firstInteractiveLaunch": "NotRun: paused while window inactive; own process terminated"
   },
-  "classification": "local Development test candidate; no installation/publication; human acceptance pending"
+  "classification": "local Development test candidate; no installation/publication; human acceptance pending",
+  "binaryRetention": "Superseded in place by final same-gameplay candidate; exact first identity and failed capture evidence retained. No active process/user acceptance depends on first binary."
 }
