@@ -143,6 +143,40 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 dump.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}",bone.name,p.x,p.y,p.z,q.x,q.y,q.z,q.w,curl.x,curl.y,curl.z,spread.x,spread.y,spread.z));
             }
             System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,weapon+"-axes.csv"),dump);
+            // Actual rendered triangles in weapon coordinates, for contact inspection.
+            if(System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_GRIP_MESH")=="1")
+            {
+                var obj=new System.Text.StringBuilder();int offset=1;
+                void AppendMesh(string name,Mesh mesh,Transform transform)
+                {
+                    obj.AppendLine("o "+name.Replace(' ','_'));
+                    foreach(var v in mesh.vertices)
+                    {var q=mount.InverseTransformPoint(transform.TransformPoint(v));obj.AppendLine(System.FormattableString.Invariant($"v {q.x:R} {q.y:R} {q.z:R}"));}
+                    var ts=mesh.triangles;for(int i=0;i<ts.Length;i+=3)obj.AppendLine($"f {offset+ts[i]} {offset+ts[i+1]} {offset+ts[i+2]}");
+                    offset+=mesh.vertexCount;
+                }
+                foreach(var renderer in visual.GetComponentsInChildren<SkinnedMeshRenderer>().Where(r=>r.enabled))
+                {
+                    var mesh=new Mesh();renderer.BakeMesh(mesh);AppendMesh(renderer.name,mesh,renderer.transform);
+                    if(renderer.sharedMesh.boneWeights.Length==mesh.vertexCount)
+                    {
+                        var skin=new System.Text.StringBuilder();var verts=mesh.vertices;var ws=renderer.sharedMesh.boneWeights;
+                        foreach(var b in renderer.bones)
+                        {var p=mount.InverseTransformPoint(b.position);var q=Quaternion.Inverse(mount.rotation)*b.rotation;skin.AppendLine(System.FormattableString.Invariant($"b {b.name} {p.x:R} {p.y:R} {p.z:R} {q.x:R} {q.y:R} {q.z:R} {q.w:R}"));}
+                        for(int i=0;i<verts.Length;i++)
+                        {
+                            var w=ws[i];var ids=new[]{w.boneIndex0,w.boneIndex1,w.boneIndex2,w.boneIndex3};var weights=new[]{w.weight0,w.weight1,w.weight2,w.weight3};
+                            if(!ids.Any(id=>renderer.bones[id].name.StartsWith("LeftHand")||renderer.bones[id].name.StartsWith("LeftThumb")||renderer.bones[id].name.StartsWith("LeftIndex")||renderer.bones[id].name.StartsWith("LeftMiddle")||renderer.bones[id].name.StartsWith("LeftRing")||renderer.bones[id].name.StartsWith("LeftLittle")))continue;
+                            var p=mount.InverseTransformPoint(renderer.transform.TransformPoint(verts[i]));skin.Append(System.FormattableString.Invariant($"v {p.x:R} {p.y:R} {p.z:R}"));
+                            for(int j=0;j<4;j++)if(weights[j]>0)skin.Append(System.FormattableString.Invariant($" {renderer.bones[ids[j]].name}:{weights[j]:R}"));skin.AppendLine();
+                        }
+                        System.IO.File.WriteAllText(System.IO.Path.Combine(directory,weapon+"-"+renderer.name.Replace(' ','_')+"-skin.txt"),skin.ToString());
+                    }
+                    Object.Destroy(mesh);
+                }
+                foreach(var mesh in visual.GetComponentsInChildren<MeshFilter>().Where(m=>m.GetComponent<Renderer>()?.enabled==true))AppendMesh(mesh.name,mesh.sharedMesh,mesh.transform);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(directory,weapon+"-actual-mesh.obj"),obj.ToString());
+            }
             var go=new GameObject("grip-review-camera");var camera=go.AddComponent<Camera>();camera.CopyFrom(source);
             camera.rect=new Rect(0,0,1,1);camera.orthographic=true;camera.orthographicSize=.12f;camera.nearClipPlane=.01f;
             var target=new RenderTexture(1000,1000,24);target.Create();camera.targetTexture=target;

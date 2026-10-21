@@ -96,7 +96,7 @@ namespace StarTournament.ProvingGround
             // glTF-to-Unity handedness reflection reverses authored axial rotations.
             wrist.localRotation*=Quaternion.AngleAxis(-(profile.Get("grip.supportRoll")+profile.Get(fit+"supportRoll")),rollAxis);
             // Rotate around the palm contact, then solve the elbow without stretching bones.
-            var turn=Quaternion.AngleAxis(profile.Get(fit+"supportYaw"),mount.up);
+            var turn=Quaternion.AngleAxis(profile.Get(fit+"supportPitch"),mount.right)*Quaternion.AngleAxis(profile.Get(fit+"supportYaw"),mount.up);
             var pivot=palm.position;
             var target=mount.TransformPoint(new Vector3(profile.Get(fit+"supportX"),profile.Get(fit+"supportY"),profile.Get(fit+"supportZ")))+turn*(wrist.position-pivot);
             var handRotation=turn*wrist.rotation;

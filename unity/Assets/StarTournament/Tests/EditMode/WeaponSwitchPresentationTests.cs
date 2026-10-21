@@ -189,6 +189,33 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{UnityEngine.Object.DestroyImmediate(view);}
         }
+        [TestCase(-30f)][TestCase(30f)]
+        public void SupportPitchKeepsPalmMountLengthsAndFrozenPose(float pitch)
+        {
+            var view=UnityEngine.Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Trooper/TrooperArms.prefab"));
+            try
+            {
+                var profile=ProvingProfile.CreateTrooperDefault();var visual=view.AddComponent<TrooperVisual>();visual.EquippedWeapon=WeaponId.RocketLauncher;
+                visual.Initialize(TrooperVisual.ClipNames.Select(n=>UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/StarTournament/Trooper/"+n+".anim")).ToArray(),profile,true);
+                var bones=view.GetComponentsInChildren<Transform>(true);Transform Bone(string n)=>bones.Single(t=>t.name==n);
+                var mount=Bone("trooper:rig:weapon-mount");var upper=Bone("LeftUpperArm");var lower=Bone("LeftLowerArm");var hand=Bone("LeftHand");
+                visual.Render(.2,Vector3.zero,100,1);
+                var mountPosition=mount.position;var mountRotation=mount.rotation;var originalHand=hand.rotation;
+                float arm=Vector3.Distance(upper.position,lower.position),forearm=Vector3.Distance(lower.position,hand.position);
+                profile.Set("grip.RocketLauncher.supportPitch",pitch);visual.ResetPose(0);visual.Render(.2,Vector3.zero,100,1);
+                Assert.That(Quaternion.Angle(originalHand,hand.rotation),Is.GreaterThan(20),"Pitch actually changes the hand");
+                Assert.That(Vector3.Distance(mountPosition,mount.position),Is.LessThan(.000001f));
+                Assert.That(Quaternion.Angle(mountRotation,mount.rotation),Is.LessThan(.01f));
+                var target=new Vector3(profile.Get("grip.RocketLauncher.supportX"),profile.Get("grip.RocketLauncher.supportY"),profile.Get("grip.RocketLauncher.supportZ"));
+                Assert.That(Vector3.Distance(target,mount.InverseTransformPoint(Bone("LeftMiddleProximal").position)),Is.LessThan(.001f));
+                Assert.That(Vector3.Distance(upper.position,lower.position),Is.EqualTo(arm).Within(.000001f));
+                Assert.That(Vector3.Distance(lower.position,hand.position),Is.EqualTo(forearm).Within(.000001f));
+                var local=bones.Select(t=>(t.localPosition,t.localRotation)).ToArray();
+                for(int repeat=0;repeat<5;repeat++)visual.Render(.2,Vector3.zero,100,1);
+                for(int i=0;i<bones.Length;i++){Assert.That(Vector3.Distance(local[i].localPosition,bones[i].localPosition),Is.LessThan(.000001f));Assert.That(Quaternion.Angle(local[i].localRotation,bones[i].localRotation),Is.LessThan(.01f));}
+            }
+            finally{UnityEngine.Object.DestroyImmediate(view);}
+        }
         [TestCase(false)][TestCase(true)]
         public void LabUpgradePreservesPreSwitchAndOlderProfileHistory(bool includePalette)
         {

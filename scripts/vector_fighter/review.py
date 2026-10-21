@@ -5,8 +5,10 @@ from mathutils import Vector
 ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'docs/evidence/vector-fighter';OUT=Path(sys.argv[sys.argv.index('--output')+1]) if '--output' in sys.argv else OUT;OUT.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 source=ROOT/'.local/vector-fighter/candidate-body.glb' if '--candidate' in sys.argv else ROOT/'unity/Assets/StarTournament/Art/trooper-body-animated.glb'
+if '--source' in sys.argv:source=Path(sys.argv[sys.argv.index('--source')+1])
 bpy.ops.import_scene.gltf(filepath=str(source))
 rig=next(o for o in bpy.context.scene.objects if o.type=='ARMATURE')
+rig.animation_data_create()
 for t in rig.animation_data.nla_tracks:t.mute=True
 rig.animation_data.action=None
 for p in rig.pose.bones:p.matrix_basis.identity()

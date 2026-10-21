@@ -69,3 +69,15 @@ It still includes source vest/pad geometry and visibly intersects the new shells
 it is NOT a proposed finished model. Do not use it as production or acceptance
  evidence. A clean authored garment extraction and proper surface remodeling
 remain necessary; automated overlaying is not a completed substitute.
+
+F6 (2026-10-22): `--candidate --forms remodel` extracts pinned sewn sleeve/trouser
+components and authors new torso/shell surfaces. `f6-remodel-study.blend` is an
+unaccepted study, NOT the production source. Its full-body renders still show
+cloth/armor intersections and insufficient concept fidelity; production export
+remains blocked by the candidate assertion. Do not promote it automatically.
+
+`fit_grip_surface.py CAPTURE_DIR OUTPUT.txt` fits per-digit overrides against
+Unity-baked glove vertices and measured rectangular support-grip bounds using
+NumPy/SciPy. It is an offline art aid, not a mesh collision proof or execution test.
+Its outputs require actual Unity capture review. Actual weapon triangle OBJ and
+skin/axes data come from the optional CaptureGrip evidence path.

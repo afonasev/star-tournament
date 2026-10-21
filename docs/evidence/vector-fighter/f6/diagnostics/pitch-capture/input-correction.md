@@ -1,0 +1,1 @@
+Measured bones confirm this run consumed original pitch90 / x-.1 / y-.2 / z.5 overrides before the file was changed. applied-overrides.txt was copied too late and is NOT this capture input. Preserve this failure in evidence. Correct next run uses immutable vertical-neutral.txt. Test1/1 passed; visual pose unsuitable.

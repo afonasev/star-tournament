@@ -491,7 +491,9 @@ def build():
   assert '--candidate' in sys.argv, 'Primary-form studies require visual approval before production export'
   import importlib.util
   sys.dont_write_bytecode=True
-  spec=importlib.util.spec_from_file_location('vector_forms',ROOT/'scripts/vector_fighter/sculpt_forms.py');forms=importlib.util.module_from_spec(spec);spec.loader.exec_module(forms)
+  sys.path.insert(0,str(ROOT/'scripts/vector_fighter'))
+  formfile='remodel.py' if sys.argv[sys.argv.index('--forms')+1]=='remodel' else 'sculpt_forms.py'
+  spec=importlib.util.spec_from_file_location('vector_forms',ROOT/'scripts/vector_fighter'/formfile);forms=importlib.util.module_from_spec(spec);spec.loader.exec_module(forms)
   forms.build(sys.modules[__name__],sys.argv[sys.argv.index('--forms')+1])
  else:
   suit();helmet();combat_details();equipment_details()
