@@ -11,7 +11,7 @@ ART=ROOT/'unity/Assets/StarTournament/Art'
 WORK=ROOT/'.local/vector-fighter';WORK.mkdir(parents=True,exist_ok=True)
 BASE='00fbd33209eb755dd5f86499aa8ea12867a2efd0'
 # Authored costume dimensions, not camera or gameplay scale. One source for skin and seams.
-LIMBS={'UpperLeg':(.172,.185),'LowerLeg':(.125,.143),'UpperArm':(.108,.117),'LowerArm':(.077,.085)}
+LIMBS={'UpperLeg':(.172,.185),'LowerLeg':(.125,.143),'UpperArm':(.124,.131),'LowerArm':(.077,.085)}
 
 
 def material(name,color,metal,rough):
@@ -146,7 +146,7 @@ def shell(name,a,b,width,depth,bone,start=.1,end=.9,back=False):
 
 def breastplate():
  # Contoured horizontal rows produce clean reflections, without a central triangle fan.
- levels=[(1.435,.120,-.088),(1.400,.176,-.082),(1.360,.172,-.094),(1.323,.160,-.106),(1.298,.118,-.118),(1.254,.084,-.128)]
+ levels=[(1.435,.120,-.088),(1.400,.195,-.082),(1.360,.190,-.094),(1.323,.174,-.106),(1.298,.118,-.118),(1.254,.084,-.128)]
  verts=[];faces=[];N=25
  for row,(z,w,y) in enumerate(levels):
   for i in range(N):
@@ -166,10 +166,10 @@ def breastplate():
  # Small recessed service hatch beneath the collar and bevel-following side inlays.
  panel('VECTOR chest collar insert',[(-.046,-.116,1.416),(.046,-.116,1.416),(.036,-.120,1.398),(-.036,-.120,1.398)],trim,'Chest',.002,.001)
  for sign in [-1,1]:
-  tube('VECTOR pectoral inset',[(sign*.154,-.101,1.382),(sign*.147,-.114,1.343),(sign*.108,-.132,1.314),(sign*.078,-.145,1.268)],.0015,rubber,'Chest')
+  tube('VECTOR pectoral inset',[(sign*.171,-.101,1.382),(sign*.161,-.114,1.343),(sign*.108,-.132,1.314),(sign*.078,-.145,1.268)],.0015,rubber,'Chest')
 
 def suit():
- loft('VECTOR fitted torso',[(0,.035,z,rx,ry) for z,rx,ry in [(.82,.09,.065),(.88,.155,.10),(1.0,.16,.10),(1.08,.132,.09),(1.17,.14,.10),(1.28,.176,.105),(1.38,.196,.105),(1.43,.172,.092),(1.465,.074,.06)]],cloth,'Spine',
+ loft('VECTOR fitted torso',[(0,.035,z,rx,ry) for z,rx,ry in [(.82,.09,.065),(.88,.155,.10),(1.0,.16,.10),(1.08,.143,.09),(1.17,.156,.10),(1.28,.195,.112),(1.38,.216,.112),(1.43,.191,.098),(1.465,.074,.06)]],cloth,'Spine',
  weights=[{'Hips':1},{'Hips':1},{'Hips':.6,'Spine':.4},{'Spine':1},{'Spine':.7,'Chest':.3},{'Chest':1},{'Chest':.75,'UpperChest':.25},{'UpperChest':1},{'UpperChest':1}])
  loft('VECTOR neck seal',[(0,.025,z,r,r*.85) for z,r in [(1.43,.067),(1.47,.061),(1.52,.056),(1.57,.058)]],rubber,'Neck')
  for z in [1.464,1.477,1.490,1.503,1.516,1.529]:
@@ -198,7 +198,7 @@ def suit():
     joint=side+('LowerLeg' if region=='UpperLeg' else 'LowerArm');p=b
     ellipsoid('VECTOR '+joint+' hinge',p,(width*.43,depth*.42,width*.40),rubber,joint)
    if region=='UpperArm':
-    # Shoulder cup sits close to the athlete instead of oversized military pauldrons.
+    # Broader deltoid cup defines the soldier silhouette; forearm dimensions stay slim.
     shoulder_cap(side,a,b)
    if region=='LowerLeg':
     p=a+Vector((0,-.081,-.012));panel('VECTOR '+side+' knee',[(p.x-.048,p.y,p.z+.039),(p.x+.048,p.y,p.z+.039),(p.x+.056,p.y-.01,p.z-.017),(p.x+.029,p.y-.013,p.z-.072),(p.x-.029,p.y-.013,p.z-.072),(p.x-.056,p.y-.01,p.z-.017)],metal,name,.012,.006)
@@ -216,10 +216,10 @@ def shoulder_cap(side,a,b):
  # Longitudinal dome over deltoid. The boundary curves down over the shoulder;
  # it never creates the upward cut edge of the rejected early strip.
  axis=(Vector(b)-Vector(a)).normalized();front=Vector((0,-1,0));sideaxis=axis.cross(front).normalized()
- ellipsoid('VECTOR '+side+' shoulder cushion',Vector(a)+axis*.018,(.066,.064,.064),cloth,name)
+ ellipsoid('VECTOR '+side+' shoulder cushion',Vector(a)+axis*.018,(.080,.074,.075),cloth,name)
  verts=[];faces=[];N=28;M=12
  for j in range(M+1):
-  t=j/M;z=-.032+.133*t;r=.026+.053*math.sin(math.pi*(.10+.77*t))
+  t=j/M;z=-.040+.154*t;r=.034+.066*math.sin(math.pi*(.10+.77*t))
   for i in range(N):
    ang=(i/(N-1)-.5)*3.85
    verts.append(Vector(a)+axis*z+sideaxis*(math.sin(ang)*r)+front*(math.cos(ang)*r*.95))
@@ -232,7 +232,7 @@ def shoulder_cap(side,a,b):
  mod=o.modifiers.new('Skin','ARMATURE');mod.object=rig
  # Neutral lower guard and flush shoulder latches.
  for t in [.22,.75]:
-  p=Vector(a)+axis*(.145*t)+front*.073
+  p=Vector(a)+axis*(.145*t)+front*.092
   ellipsoid('VECTOR '+side+' shoulder latch',p,(.008,.004,.009),metal,name)
 
 
@@ -309,15 +309,59 @@ def combat_details():
     tube('VECTOR '+name+' inlaid seam',points,.0012,rubber,name)
   # Deltoid lower rim and metal trim echo the shoulder cutout in VECTOR.
   bone=rig.data.bones[side+'UpperArm'];a=bone.head_local;axis=(bone.tail_local-a).normalized();f=Vector((0,-1,0));l=axis.cross(f).normalized()
-  pts=[a+axis*.084+l*(math.sin(theta)*.071)+f*(math.cos(theta)*.068) for theta in [-1.8,-1.3,-.8,-.3,.3,.8,1.3,1.8]]
+  pts=[a+axis*.098+l*(math.sin(theta)*.090)+f*(math.cos(theta)*.086) for theta in [-1.8,-1.3,-.8,-.3,.3,.8,1.3,1.8]]
   tube('VECTOR '+side+' shoulder rim',pts,.003,metal,side+'UpperArm')
-  tube('VECTOR '+side+' shoulder separation',[a+axis*t+l*.042+f*.061 for t in [-.012,.015,.045,.075]],.0017,rubber,side+'UpperArm')
-  p=a+axis*.078+l*.050+f*.051
+  tube('VECTOR '+side+' shoulder separation',[a+axis*t+l*.053+f*.081 for t in [-.012,.015,.045,.085]],.0017,rubber,side+'UpperArm')
+  p=a+axis*.090+l*.065+f*.065
   box('VECTOR '+side+' shoulder lock',p,(.020,.010,.019),metal,side+'UpperArm',.002)
   # Raised trapezoidal rear plates remove the old interrupted/sliver silhouette.
   sign=1 if side=='Left' else -1
   panel('VECTOR '+side+' scapula cover',[(sign*.035,.154,1.432),(sign*.122,.146,1.426),(sign*.150,.143,1.367),(sign*.118,.159,1.294),(sign*.042,.164,1.272)],paint,'Chest',.008,.001)
   tube('VECTOR '+side+' scapula seam',[(sign*.055,.172,1.414),(sign*.068,.177,1.350),(sign*.060,.175,1.292)],.0018,rubber,'Chest')
+
+def equipment_details():
+ # Flush markings and hardware communicate assembly and scale without bulky armor.
+ def stencil(name,text,pos,size,bone):
+  curve=bpy.data.curves.new(name,'FONT');curve.body=text;curve.size=size;curve.extrude=.0001
+  curve.space_character=1.15;curve.align_x='CENTER'
+  o=bpy.data.objects.new(name,curve);bpy.context.collection.objects.link(o)
+  o.location=pos;o.rotation_euler=(math.pi/2,0,0)
+  bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o
+  bpy.ops.object.convert(target='MESH');bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
+  o.data.materials.append(metal);o.vertex_groups.new(name=bone).add(list(range(len(o.data.vertices))),1,'REPLACE')
+  mod=o.modifiers.new('Skin','ARMATURE');mod.object=rig;o.parent=rig;parts.append(o);o.select_set(False)
+ stencil('VECTOR chest designation','V / 01',(-.092,-.110,1.379),.012,'Chest')
+ stencil('VECTOR collar serial','VECTOR',(0,-.123,1.403),.008,'Chest')
+ for sign in [-1,1]:
+  # Recessed intake cartridges, placed on the broad upper plate below the collar.
+  for i in range(4):
+   x=sign*(.105+i*.010)
+   # Surface follows the convex breastplate cross section at this height.
+   y=-.085-.026*(1-(x/.192)**2)-.002
+   box('VECTOR chest intake',(x,y,1.390),(.004,.002,.013),rubber,'Chest',.0007)
+  # Titanium corner locks and captive screw heads.
+  panel('VECTOR pectoral corner lock',[(sign*.172,-.104,1.377),(sign*.187,-.095,1.388),(sign*.185,-.101,1.360),(sign*.172,-.111,1.351)],metal,'Chest',.002,.001)
+  for x,y,z in [(sign*.179,-.105,1.365),(sign*.095,-.143,1.286)]:
+   ellipsoid('VECTOR captive screw',(x,y,z),(.003,.0015,.003),trim,'Chest')
+   tube('VECTOR screw slot',[(x-.0013,y-.0016,z),(x+.0013,y-.0016,z)],.00045,metal,'Chest',6)
+  # Radial ear screws and concentric acoustic grille sit on the flat outer bezel.
+  for i in range(4):
+   a=math.pi/4+i*math.pi/2;y=.020+.028*math.cos(a);z=1.673+.028*math.sin(a)
+   ellipsoid('VECTOR ear captive screw',(sign*.115,y,z),(.0017,.0023,.0023),rubber,'Head')
+  for z in [1.663,1.669,1.675,1.681]:
+   tube('VECTOR ear recessed grille',[(sign*.115,.010,z),(sign*.115,.030,z)],.001,rubber,'Head',6)
+  # Segmented belt webbing, with actual recessed clasp and keeper.
+  panel('VECTOR belt side plate',[(sign*.068,-.080,1.056),(sign*.149,-.046,1.065),(sign*.163,-.030,1.025),(sign*.079,-.081,1.016)],metal,'Hips',.005,.002)
+  box('VECTOR belt lock insert',(sign*.113,-.073,1.040),(.025,.008,.014),rubber,'Hips',.003)
+ for side in ['Left','Right']:
+  b=rig.data.bones[side+'UpperArm'];a=b.head_local;axis=(b.tail_local-a).normalized();f=Vector((0,-1,0));lat=axis.cross(f).normalized()
+  # Thin overlapping shoulder edge plates, rather than an enlarged spherical shoulder.
+  for sg in [-1,1]:
+   pts=[a+axis*t+lat*(sg*x)+f*y for t,x,y in [(.042,.074,.058),(.070,.083,.058),(.106,.067,.055),(.090,.057,.068)]]
+   panel('VECTOR '+side+' deltoid edge bracket',pts,metal,side+'UpperArm',.003,.001)
+   p=a+axis*.080+lat*(sg*.071)+f*.066
+   ellipsoid('VECTOR '+side+' deltoid screw',p,(.003,.002,.003),trim,side+'UpperArm')
+
 
 def helmet():
  # Continuous shell under separated armor plates. The visor and its gasket share
@@ -436,7 +480,7 @@ def build():
    data.extend((value,value,value,1))
  grain.pixels=data;grain.pack();node=paint.node_tree.nodes.new('ShaderNodeTexImage');node.image=grain
  paint.node_tree.links.new(node.outputs['Color'],paint.node_tree.nodes.get('Principled BSDF').inputs['Base Color'])
- parts=[];suit();helmet();combat_details();tailoring_details()
+ parts=[];suit();helmet();combat_details();equipment_details();tailoring_details()
  # Every weighted channel must resolve to a real bone; duplicate group names
  # silently export unbound geometry and cannot be accepted as a working skin.
  for o in parts+handparts:

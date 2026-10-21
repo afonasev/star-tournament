@@ -157,6 +157,7 @@ namespace StarTournament.ProvingGround
                 if(i==active) SampleTime=time;
             }
             if(immediate) Array.Copy(weights,transitionFrom,weights.Length);
+            equipmentGrip?.RestorePrimary();
             graph.Evaluate(0);
             if(!corpse&&chest&&hitProfile!=null)
             {
@@ -171,6 +172,7 @@ namespace StarTournament.ProvingGround
         }
         public void Release()
         {
+            equipmentGrip?.RestorePrimary();
             if(graph.IsValid()) graph.Destroy();
             active=-1;
         }

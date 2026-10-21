@@ -2,10 +2,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforePrimaryGripFit()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<11)return this;
+            var p=DetachedCopy();p.version=10;
+            p.descriptors.RemoveAll(d=>d.Path=="grip.primaryWristYaw");
+            p.values.RemoveAll(v=>v.Path=="grip.primaryWristYaw");
+            return p;
+        }
         internal ProvingProfile BeforeDiffuseEquipmentFill()
         {
             if(id!="unity-trooper-presentation-v1"||version<10)return this;
-            var p=DetachedCopy();p.version=9;
+            var p=BeforePrimaryGripFit().DetachedCopy();p.version=9;
             p.descriptors.RemoveAll(d=>d.Path=="view.fillBackMeters");
             p.values.RemoveAll(v=>v.Path=="view.fillBackMeters");
             return p;
@@ -92,7 +100,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=10};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=11};
             p.Add("animation.airResponseSeconds","trooper-animation","Переход в прыжок","Плавность визуальной позы при отрыве и возвращении на опору.","seconds",.03f,.5f,.01f,.12f);
             p.Add("animation.airHipDegrees","trooper-animation","Подъём бедра в воздухе","Насколько боец поднимает бедро в прыжке.","degrees",0,65,1,30);
             p.Add("animation.airKneeDegrees","trooper-animation","Сгиб колена в воздухе","Насколько боец поджимает ноги в прыжке.","degrees",0,100,1,55);
@@ -112,6 +120,7 @@ namespace StarTournament.ProvingGround
             p.Add("view.switchShoulderDegrees","trooper-view","Подъём рук при смене","Промежуточный по высоте подъём от неподвижных плеч перед камерой; в верхней позе оружие меняется в руках. Весь цикл следует weapon.switchSeconds.","degrees",0,75,1,60);
             p.Add("view.switchElbowDegrees","trooper-view","Сгиб локтей при смене","Небольшой сгиб предплечий при смене; ограничен, чтобы кисти не проходили через камеру.","degrees",0,10,1,0);
             p.Add("view.z","trooper-view","Руки по глубине","Смещение модели рук вперёд относительно камеры.","meters",-.5f,1,.01f,.05f);
+            p.Add("grip.primaryWristYaw","trooper-grip","Подвод ладони к рукояти","Поворот правой кисти вокруг вертикали оружия без смещения самого оружия.","degrees",-25,25,1,-12);
             p.Add("grip.supportRoll","trooper-grip","Разворот опорной кисти","Доворот тыльной стороны левой кисти к внешней стороне цевья после клипа.","degrees",-90,90,1,55);
             p.Add("grip.supportFingerCurl","trooper-grip","Хват опорных пальцев","Добавочный сгиб пальцев вокруг цевья; не меняет стрельбу.","degrees",-30,45,1,12);
             p.Add("grip.supportThumbCurl","trooper-grip","Опорный большой палец","Добавочный сгиб большого пальца в опорном хвате.","degrees",-30,45,1,5);

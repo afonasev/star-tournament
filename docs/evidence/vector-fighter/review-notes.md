@@ -19,3 +19,6 @@ was not relaxed. Automated checks do not imply visual or human acceptance.
 
 The latest model is a further art iteration, still simpler than the illustration.
 See `checkpoint.md` for ownership, remaining gates and the continuation point.
+
+## F2 review
+User rejected F1 primary grip: the hand was visibly beside the rifle. This was a real defect despite the former structural tests. F2 turns the wrist into the handle and preserves sampled equipment placement. New geometry adds upper-body breadth and small manufactured details. The unchanged thin forearm and dark textile remain. Final images are actual model/Unity outputs; concept-level fidelity and complete world action/human acceptance remain open.

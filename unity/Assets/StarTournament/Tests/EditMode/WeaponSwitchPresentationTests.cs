@@ -117,6 +117,43 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{UnityEngine.Object.DestroyImmediate(mesh);UnityEngine.Object.DestroyImmediate(view);UnityEngine.Object.DestroyImmediate(owner);}
         }
+        [Test]
+        public void PrimaryPalmFitsRifleAndWristCorrectionLeavesEquipmentFixed()
+        {
+            var view=UnityEngine.Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Trooper/TrooperArms.prefab"));
+            try
+            {
+                var profile=ProvingProfile.CreateTrooperDefault();var correction=profile.Get("grip.primaryWristYaw");
+                var visual=view.AddComponent<TrooperVisual>();
+                visual.Initialize(TrooperVisual.ClipNames.Select(n=>UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/StarTournament/Trooper/"+n+".anim")).ToArray(),profile,true);
+                var bones=view.GetComponentsInChildren<Transform>(true);
+                var mount=bones.Single(t=>t.name=="trooper:rig:weapon-mount");
+                var palm=bones.Single(t=>t.name=="RightMiddleProximal");
+                var tip=bones.Single(t=>t.name=="RightMiddleDistal");
+                var support=bones.Single(t=>t.name=="LeftHand");
+                foreach(bool firing in new[]{false,true})
+                {
+                    profile.Set("grip.primaryWristYaw",0);visual.ResetPose(0);
+                    if(firing)visual.Fire(.1);
+                    visual.Render(.2,Vector3.zero,100,1);visual.Render(.4,Vector3.zero,100,1);
+                    var position=mount.position;var rotation=mount.rotation;var supportPosition=support.position;
+                    float before=mount.InverseTransformPoint(palm.position).x;
+                    profile.Set("grip.primaryWristYaw",correction);visual.Render(.4,Vector3.zero,100,1);
+                    Assert.That(Vector3.Distance(position,mount.position),Is.LessThan(.00001f));
+                    Assert.That(Quaternion.Angle(rotation,mount.rotation),Is.LessThan(.01f));
+                    Assert.That(Vector3.Distance(supportPosition,support.position),Is.LessThan(.00001f));
+                    var p=mount.InverseTransformPoint(palm.position);var d=mount.InverseTransformPoint(tip.position);
+                    // Rifle's authored grip spans x=+/-0.055 in mount units. Finger
+                    // bones sit inside glove padding; a 0.04-unit gap is 12.8 mm.
+                    Assert.That(p.x,Is.InRange(.055f,.095f),"Palm must lie against the outer grip face");
+                    Assert.That(p.x,Is.LessThan(before));
+                    Assert.That(d.x,Is.LessThan(0),"Distal phalanx must wrap across the grip centre");
+                    for(int repeat=0;repeat<5;repeat++)visual.Render(.4,Vector3.zero,100,1);
+                    Assert.That(Vector3.Distance(p,mount.InverseTransformPoint(palm.position)),Is.LessThan(.00001f));
+                }
+            }
+            finally{UnityEngine.Object.DestroyImmediate(view);}
+        }
         [TestCase(false)][TestCase(true)]
         public void LabUpgradePreservesPreSwitchAndOlderProfileHistory(bool includePalette)
         {

@@ -61,7 +61,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     samples.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1:F3},{2:F6},{3:F6},{4:F6},{5:F6},{6:F6}",weapon,ground.Session.Time,first.WalkOffset.x,first.WalkOffset.y,point.x,point.y,point.z));
                     if(tick>0)maximumStep=Mathf.Max(maximumStep,Vector3.Distance(previous,point));previous=point;
                     if(!string.IsNullOrEmpty(directory)&&(sequence||tick==0||tick==16||tick==32||tick==49||tick==65))
-                        CaptureWalkFrame(directory,weapon+"-"+tick.ToString("D2"));
+                        { CaptureWalkFrame(directory,weapon+"-"+tick.ToString("D2"));
+                          if(tick==0)CaptureGrip(directory,weapon.ToString(),first,camera);
+                          if(tick==32)CaptureSingleView(directory,weapon.ToString(),camera); }
                 }
                 if(!string.IsNullOrEmpty(directory))System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,"motion.csv"),samples);
                 Assert.That(maximumOffset,Is.GreaterThan(.003f),"Ground movement must produce visible small steps");
@@ -89,6 +91,46 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
             }
             finally{RenderTexture.active=previous;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
+        }
+        static void CaptureSingleView(string directory,string weapon,Camera camera)
+        {
+            // Same seat projection, rendered alone at higher resolution for visual review.
+            var target=new RenderTexture(1200,1350,24);target.Create();
+            var pixels=new Texture2D(1200,1350,TextureFormat.RGB24,false);
+            var old=RenderTexture.active;var oldTarget=camera.targetTexture;var rect=camera.rect;
+            try
+            {
+                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;camera.Render();
+                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1200,1350),0,0);pixels.Apply();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-fps.png"),pixels.EncodeToPNG());
+            }
+            finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=old;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
+        }
+        void CaptureGrip(string directory,string weapon,TrooperVisual visual,Camera source)
+        {
+            var bones=visual.GetComponentsInChildren<Transform>(true);
+            var wrist=bones.Single(t=>t.name=="RightHand");
+            var mount=bones.Single(t=>t.name=="trooper:rig:weapon-mount");
+            var lines=new System.Collections.Generic.List<string>{"name,x,y,z"};
+            foreach(var t in bones.Where(t=>t.name.StartsWith("Right")||t.name=="rifle-grip"||t.name=="pistol grip"))
+            {var p=mount.InverseTransformPoint(t.position);lines.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1:F6},{2:F6},{3:F6}",t.name,p.x,p.y,p.z));}
+            System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,weapon+"-grip.csv"),lines);
+            var go=new GameObject("grip-review-camera");var camera=go.AddComponent<Camera>();camera.CopyFrom(source);
+            camera.rect=new Rect(0,0,1,1);camera.orthographic=true;camera.orthographicSize=.12f;camera.nearClipPlane=.01f;
+            var target=new RenderTexture(1000,1000,24);target.Create();camera.targetTexture=target;
+            var pixels=new Texture2D(1000,1000,TextureFormat.RGB24,false);var old=RenderTexture.active;
+            try
+            {
+                foreach(int sign in new[]{-1,1})
+                {
+                    var center=bones.Single(t=>t.name=="RightMiddleProximal").position;
+                    camera.transform.position=center+mount.TransformDirection(new Vector3(sign*.5f,.05f,-.2f));
+                    camera.transform.LookAt(center,mount.up);camera.Render();RenderTexture.active=target;
+                    pixels.ReadPixels(new Rect(0,0,1000,1000),0,0);pixels.Apply();
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-grip-"+sign+".png"),pixels.EncodeToPNG());
+                }
+            }
+            finally{RenderTexture.active=old;target.Release();Object.Destroy(target);Object.Destroy(pixels);Object.Destroy(go);}
         }
         [UnityTest] public IEnumerator VectorMuzzlesAndParticlesRespectSeatClockAndLifetime()
         {

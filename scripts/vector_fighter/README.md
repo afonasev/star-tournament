@@ -41,3 +41,11 @@ Unity Trooper profile @10 places its existing per-seat equipment fill behind the
 camera (`view.fillBackMeters`) to avoid near-field sleeve overexposure. This does
 not scale or move the camera, weapon grips or skeleton. The earlier @9 profile
 can still be reconstructed by the history registry.
+
+F2 broadens the shoulder cups, upper arms and upper torso while retaining the F1
+forearm dimensions/material. Chest and belt hardware, intake slots, engraved
+markings and ear grille are authored geometry. Trooper @11 adds
+`grip.primaryWristYaw`: the right wrist fits inward, but the sampled weapon world
+pose is preserved. Restore the previous additive correction before graph sampling
+so clips without wrist/mount channels remain idempotent. @10 history remains
+reconstructible through BeforePrimaryGripFit.

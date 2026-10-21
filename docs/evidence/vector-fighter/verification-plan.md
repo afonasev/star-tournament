@@ -86,3 +86,16 @@ Final source differs from the passing 25/25 EditMode only in the new fill distan
 Seven historical registry cases passed in the retained initial 31/32 run; no
 history migration code changed afterward. Full suite, Player build, ordinary full
 world action video, performance/device/human acceptance remain NotRun.
+
+## F2 grip and shoulder refinement
+Baseline 41c8773d375039d92af5038590f3b2d6abf9606e. Authored shoulder/torso geometry and small armor detail; diagnose actual primary grip and correct it. Preserve thin forearms/matte cloth.
+First capture diagnostic actual Unity grip from multiple directions with the existing walk fixture. Then prepare changed GLBs and run TrooperImportTests, WeaponSwitchPresentationTests plus TrooperPresentationTests.OrbitalGripDoesNotAccumulateAcrossFrozenSamples, FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene, ParticipantColorIdentityTests, VectorAirbornePresentationTests. Add an actual contact contract once geometry is measured. Shared, -noaudio -muted; isolated QA history. No full suite or Player build.
+
+F2 diagnosis: palm middle proximal x=0.1679 in weapon mount space vs rifle outer grip face x=0.055. A -12 degree wrist yaw closes the palm to x=0.0801 with distal phalanx x=-0.0423. First candidate erroneously restored the prefab attachment after sampling and displaced the gun; rejected despite two old stability checks passing. Restore prior additive wrist/mount transforms BEFORE graph evaluation, then preserve the actual sampled weapon world pose during fitting. New focused contact test checks palm interval, distal crossing, and unchanged weapon/support hand in aim/fire.
+Profile @11 adds named grip.primaryWristYaw; reconstruct @10 with BeforePrimaryGripFit and cover its saved-history case. Repeat FirstPersonWalkTests for profile initialization/upgrade. Exact selected history case: OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes("BeforePrimaryGripFit").
+Final graphical filter also includes OrbitalGripDoesNotAccumulateAcrossFrozenSamples and DeathRespawnAndRepeatClearViewAndCorpseState, because wrist/mount pre-sample restoration touches reset/death behavior.
+
+F2 final EditMode: 27/27 passed, including actual primary palm/weapon invariance in aim/fire, existing weapon switch/walk/import checks and BeforePrimaryGripFit saved-history case. XML/log retained as f2-editmode-pass.*. No failed assertions or weakened thresholds in this final run.
+
+F2 final graphical PlayMode: 6/6 passed. Inspected all four final FPS captures and rifle grip side views. Final body/arm hashes match f2-source.json and actual studio render-source.json. Source/profile snapshot is unchanged since the 27/27 EditMode result. All Unity runs used shared wrapper, -noaudio -muted, separate QA histories.
+No full suite, Player build, release, ordinary full world action video, physical device/performance or human acceptance was performed.
