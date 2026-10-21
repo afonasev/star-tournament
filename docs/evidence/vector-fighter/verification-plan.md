@@ -147,3 +147,12 @@ Use actual authored spawns, require all participants grounded after 100 settling
 ticks and reset their visual poses at that clock. Capture the same sequence directly
 from cameras. This changes development evidence setup only, not gameplay or QA
 assertions. Preserve switch-initial-fail.log.gz; repeat exact native switch witness.
+
+Grounded native fixture still FAILed the legacy root comparison. This is the same
+pre-F1 assumption: root == rest, whereas the accepted F1/F2 runtime contract is
+root == rest + ViewOffset (ground WalkOffset remains independent and zero in air).
+Update the diagnostic's expected root to configured rest + actual legitimate
+ViewOffset, preserving exact equality, switch durations, all model/fire/apex/pause/
+seat/death assertions and thresholds. No disabling air presentation or gameplay
+changes. The separate airborne and 4-weapon real jump witnesses retain coverage.
+Preserve switch-grounded-fixture-fail.log.gz.
