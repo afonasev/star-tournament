@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """UI-only gate. Scope review and native visual QA are recorded separately."""
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import subprocess
@@ -13,7 +14,55 @@ SUITES = {
     'PlayMode': ('FourPlayerMenuTests', 'IndependentPauseMenuTests'),
 }
 
-MIN_CASES = {'LocalSeatLayoutTests': 3, 'FourPlayerMenuTests': 3, 'IndependentPauseMenuTests': 4}
+# Keep this in sync with the actual NUnit [Test]/[UnityTest] methods selected by
+# SUITES. NUnit emits one test-case per method today; explicit counts make any
+# future parameterized cases part of the contract rather than a threshold.
+EXPECTED_CASES = {
+    'LocalSeatLayoutTests': {
+        'StarTournament.ProvingGround.Tests.LocalSeatLayoutTests.ApprovedViewportsCoverScreenWithoutOverlapping': 1,
+        'StarTournament.ProvingGround.Tests.LocalSeatLayoutTests.RemovingKeyboardSeatReleasesMouseOwnership': 1,
+        'StarTournament.ProvingGround.Tests.LocalSeatLayoutTests.ShrinkReleasesOnlyRemovedDevicesAndGrowRequiresFreshJoins': 1,
+    },
+    'FourPlayerMenuTests': {
+        'StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FourGamepadsCanJoinStartPauseAndResumeWithoutMouse': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FpsSettingPersistsAndKeepsSamplingWhilePaused': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.FramesStayWithAssignedSeatAndEdgesAreConsumedOnce': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.NewBotsConfirmDefaultDifficultyWithOneSubmit': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.FourPlayerMenuTests.StartLaunchesReadyRosterWithoutFocusAndDoesNotPauseWhileHeld': 1,
+    },
+    'IndependentPauseMenuTests': {
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.AntialiasingPropagatesAcrossOpenSeatSettingsAndAllCameras': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.BalanceIdentityFitsOneTwoAndFourViewportsAndOperatorPause': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.ColorGradingPropagatesBetweenSeatsWithoutAdvancingMatch': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.DisconnectedSeatCannotResumeThroughTheOtherMenu': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GamepadNavigationSubmitsOnlyItsOwnViewport': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.GraphicsEffectsPropagateBetweenSeatsWithoutAdvancingMatch': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.MatchDisplayConfirmationHasOneOwnerAndRollsBackOnClose': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PauseShowsTheFrozenSavedBalanceWithoutChangingMatch': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PersonalSettingsAndGlobalConfirmationStayScoped': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.QualityChangesAcrossSeatsPreserveIndependentPreferencesAndFrozenBalance': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SplitScreenDrawsOneGlobalFpsCounter': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.TwoSeatMenusKeepOneFrozenMatchUntilTheLastCloses': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.VSyncPropagatesBetweenSeatsWithoutAdvancingMatch': 1,
+    },
+}
+
+
+def _validate_cases(cases, expected):
+    actual = Counter(case.get('fullname', '') for case in cases)
+    if actual != Counter(expected):
+        missing = Counter(expected) - actual
+        extra = actual - Counter(expected)
+        details = []
+        if missing:
+            details.append('missing: ' + ', '.join(f'{name} x{count}' for name, count in sorted(missing.items())))
+        if extra:
+            details.append('unexpected or duplicate: ' + ', '.join(f'{name or "<empty fullname>"} x{count}' for name, count in sorted(extra.items())))
+        raise ValueError('UI test case set mismatch (' + '; '.join(details) + ')')
+    return sum(actual.values())
+
 
 def validate_results(path, fixtures):
     root = ET.parse(path).getroot()
@@ -23,9 +72,13 @@ def validate_results(path, fixtures):
     for case in cases:
         if case.get('result') != 'Passed':
             raise ValueError('Every selected UI test must pass: ' + case.get('fullname', '?'))
+    expected = Counter()
     for fixture in fixtures:
-        if sum('.' + fixture + '.' in case.get('fullname', '') for case in cases) < MIN_CASES[fixture]:
-            raise ValueError('Missing or incomplete UI fixture: ' + fixture)
+        try:
+            expected.update(EXPECTED_CASES[fixture])
+        except KeyError as error:
+            raise ValueError('Unknown UI fixture: ' + str(error.args[0])) from error
+    _validate_cases(cases, expected)
     return len(cases)
 
 
