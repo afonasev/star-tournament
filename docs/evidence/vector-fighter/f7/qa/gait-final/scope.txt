@@ -1,0 +1,16 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=VectorGroundedGaitTests
+lab_history=/Users/eaafonasev/.codex/worktrees/vector-grip-refinement/star-tournament/unity/../.local/unity-evidence/focused-editmode.01rqmO/qa-lab-history.json
+revision=3c18a6ddf0c458dea2fa8199334157f9904da82d
+ M ../docs/evidence/vector-fighter/f7/source-hashes.json
+ M ../scripts/vector_fighter/fit_vertical_grips.py
+ M Assets/StarTournament/Runtime/Core/TrooperProfile.cs
+ M Assets/StarTournament/Runtime/TrooperVisual.cs
+ M Assets/StarTournament/Runtime/VectorGroundedGait.cs
+ M Assets/StarTournament/Tests/EditMode/VectorGroundedGaitTests.cs
+ M Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/vector-fighter/f7/qa/focused-edit/
+?? ../scripts/vector_fighter/__pycache__/

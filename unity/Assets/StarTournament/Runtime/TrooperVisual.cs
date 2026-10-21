@@ -122,6 +122,7 @@ namespace StarTournament.ProvingGround
             airborne.Update(clock,velocity,grounded);
             gait?.Update(clock,grounded);
             if(firstPerson)UpdateWalk(clock,speed,grounded);
+            // Body motion has no art-tuned idle dead zone; this epsilon rejects only numeric noise.
             int next=firstPerson?3:!grounded||speed<.00001f?0:speed<profile.Get("animation.runThreshold")?1:2;
             if(clock-firedAt<profile.Get("animation.aimHoldSeconds")) next=3;
             if(clock-firedAt<Clips[4].length) next=4;

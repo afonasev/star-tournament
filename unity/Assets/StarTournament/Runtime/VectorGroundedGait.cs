@@ -53,6 +53,14 @@ namespace StarTournament.ProvingGround
             if(grounded&&dt>0)
             {
                 var velocity=displacement/(float)dt;float speed=velocity.magnitude;
+                if(swing>=0&&speed>1e-5f)
+                {
+                    float nextDuration=Mathf.Min(profile.Get("animation.stepSeconds"),profile.Get("animation.stepLengthMeters")/speed);
+                    // Preserve the current phase while adapting to acceleration. A
+                    // first slow sample must not hold the support foot through a sprint.
+                    double phase=Math.Max(0,previous-stepAt)/duration;
+                    stepAt=previous-phase*nextDuration;duration=nextDuration;
+                }
                 if(swing>=0&&clock-stepAt>=duration)
                 {legs[swing].Anchor=legs[swing].Target;next=1-swing;swing=-1;}
                 // Epsilon is only floating point noise, not the old walk/idle speed dead zone.

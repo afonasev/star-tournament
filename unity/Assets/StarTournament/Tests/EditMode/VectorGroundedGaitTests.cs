@@ -10,6 +10,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     {
         [TestCase(.03f,0f)][TestCase(2f,0f)][TestCase(6f,0f)][TestCase(1f,90f)][TestCase(1f,180f)]
         public void ActualDisplacementPlantsStanceFootAndShortMotionSteps(float speed,float angle)
+        => CheckDisplacement(speed,angle,false);
+        [Test] public void AccelerationKeepsTheFirstSupportFootWithinReach()=>CheckDisplacement(6,0,true);
+        static void CheckDisplacement(float speed,float angle,bool acceleration)
         {
             var root=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Trooper/TrooperBody.prefab"));
             try
@@ -23,8 +26,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var direction=Quaternion.Euler(0,angle,0)*Vector3.forward;
                 for(int i=1;i<=60;i++)
                 {
-                    root.transform.position+=direction*speed*.02f;var position=root.transform.position;
-                    visual.Render(i*.02,direction*speed,100,1);
+                    float actualSpeed=acceleration?Mathf.Min(speed,i*.8f):speed;
+                    root.transform.position+=direction*actualSpeed*.02f;var position=root.transform.position;
+                    visual.Render(i*.02,direction*actualSpeed,100,1);
                     int moving=(int)swing.GetValue(gait);
                     for(int foot=0;foot<2;foot++)
                     {

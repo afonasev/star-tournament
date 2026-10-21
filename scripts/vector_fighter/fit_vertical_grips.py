@@ -54,7 +54,8 @@ for weapon,z in [('RocketLauncher',.49),('Cutter',.406)]:
             if not thumb:
                 y=np.clip(data[0][0][1],center[1]-extent[1]+.018,center[1]+extent[1]-.035)
                 target=np.array([[.015,y,z+.08],[.07,y,z+.02]])
-                out.extend(((ps[1:]-target)*8).ravel())
+                if digit=='Little':target=np.array([[-.015,center[1]-extent[1]+.015,z+.055],[.048,center[1]-extent[1]+.025,z+.05]])
+                out.extend(((ps[1:]-target)*80).ravel())
             else:
                 out.extend((ps[1:,1]-(center[1]+.025))*1.5)
             out.extend(x[:4]*.000035)

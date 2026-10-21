@@ -9,6 +9,7 @@ namespace StarTournament.ProvingGround
             var p=DetachedCopy();p.version=14;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.step"));
             p.values.RemoveAll(v=>v.Path.StartsWith("animation.step"));
+            var threshold=p.FindDescriptor("animation.walkThreshold");threshold.Label="Порог шага";threshold.Description="Минимальная фактическая горизонтальная скорость для walk.";
             return p;
         }
         internal ProvingProfile BeforeVerticalSupportGrips()
@@ -151,7 +152,7 @@ namespace StarTournament.ProvingGround
             p.Add("animation.landSeconds","trooper-animation","Возврат после приземления","Длительность визуального поглощения приземления.","seconds",.1f,.8f,.01f,.28f);
             p.Add("animation.landDegrees","trooper-animation","Амплитуда приземления","Сгиб ног при касании опоры.","degrees",0,35,1,14);
             p.Add("view.airMeters","trooper-view","Ход рук в прыжке","Мягкое опускание рук в прыжке и при приземлении; камера остаётся стабильной.","meters",0,.08f,.001f,.025f);
-            p.Add("animation.walkThreshold","trooper-animation","Порог шага","Минимальная фактическая горизонтальная скорость для walk.","meters-per-second",.01f,3,.01f,.1f);
+            p.Add("animation.walkThreshold","trooper-animation","Порог покачивания рук","Минимальная скорость для покачивания рук от первого лица; стопы тела реагируют на любое фактическое перемещение.","meters-per-second",.01f,3,.01f,.1f);
             p.Add("animation.runThreshold","trooper-animation","Порог бега","Фактическая горизонтальная скорость переключения walk на run.","meters-per-second",3,15,.1f,6);
             p.Add("animation.blendSeconds","trooper-animation","Переход позы","Время сглаживания весов только визуальных клипов.","seconds",0,.5f,.01f,.12f);
             p.Add("animation.aimHoldSeconds","trooper-animation","Боевая стойка","Сколько удерживать aim после принятого выстрела.","seconds",.4f,5,.1f,1.6f);

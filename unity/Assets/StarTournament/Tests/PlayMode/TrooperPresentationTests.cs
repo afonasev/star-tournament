@@ -99,19 +99,26 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var swing=gait.GetType().GetProperty("SwingFoot");var anchor=gait.GetType().GetMethod("Anchor");
             string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WORLD_STEPS_EVIDENCE");
             var rows=new System.Collections.Generic.List<string>{"frame,time,stage,root_x,root_y,root_z,speed,grounded,swing,left_x,left_y,left_z,right_x,right_y,right_z,stance_error"};
-            var go=new GameObject("world-step-review-camera");var camera=go.AddComponent<Camera>();camera.enabled=false;camera.fieldOfView=39;camera.nearClipPlane=.05f;camera.farClipPlane=50;camera.cullingMask=1|(1<<11);
-            bool rose=false,fell=false,landed=false;float maximumSlip=0,shortTravel=0;var start=ground.Session.Pose(0).Position;
+            // Diagnostic view of the actual native actor. Arena rails occlude its
+            // feet here, so show a reference floor at the measured ground height.
+            var go=new GameObject("world-step-review-camera");var camera=go.AddComponent<Camera>();camera.enabled=false;camera.fieldOfView=39;camera.nearClipPlane=.05f;camera.farClipPlane=100;camera.cullingMask=(1<<11)|(1<<31);
+            var floor=GameObject.CreatePrimitive(PrimitiveType.Plane);floor.name="capture-reference-floor";floor.layer=31;floor.GetComponent<Collider>().enabled=false;floor.transform.position=new Vector3(0,-.001f,0);floor.transform.localScale=Vector3.one*10;
+            var grid=new Texture2D(32,32);for(int y=0;y<32;y++)for(int x=0;x<32;x++)grid.SetPixel(x,y,x==0||y==0?new Color(.16f,.19f,.22f):new Color(.3f,.34f,.38f));grid.Apply();grid.wrapMode=TextureWrapMode.Repeat;
+            var floorMaterial=new Material(Shader.Find("Universal Render Pipeline/Unlit"));floorMaterial.mainTexture=grid;floorMaterial.mainTextureScale=Vector2.one*100;floor.GetComponent<Renderer>().sharedMaterial=floorMaterial;
+            var fill=new GameObject("capture-fill-light");var light=fill.AddComponent<Light>();light.type=LightType.Directional;light.intensity=.8f;light.cullingMask=1<<11;fill.transform.rotation=Quaternion.Euler(35,-30,0);
+            bool rose=false,fell=false,landed=false;float maximumSlip=0,shortTravel=0,shortSpeed=0;var start=ground.Session.Pose(0).Position;
             try
             {
                 for(int tick=0;tick<240;tick++)
                 {
                     string stage=tick<60?"short":tick<110?"walk":tick<145?"strafe":tick<205?"jump":"settle";
-                    var action=new LocalAction{Move=tick<60?new Vector2(0,.02f):tick<110?Vector2.up:tick<145?Vector2.right:tick<175?Vector2.up:Vector2.zero,Jump=tick==145};
+                    var action=new LocalAction{Move=tick<60?new Vector2(0,.015f):tick<110?Vector2.up:tick<145?Vector2.right:tick<175?Vector2.up:Vector2.zero,Jump=tick==145};
                     ground.Session.Tick(new[]{action,new LocalAction()},.02f);ground.SendMessage("LateUpdate");
                     var pose=ground.Session.Pose(0);int moving=(int)swing.GetValue(gait);float slip=0;
                     if(pose.Grounded)for(int foot=0;foot<2;foot++)if(foot!=moving)slip=Mathf.Max(slip,Vector3.Distance(feet[foot].position,(Vector3)anchor.Invoke(gait,new object[]{foot})));
                     maximumSlip=Mathf.Max(maximumSlip,slip);
                     rose|=body.AirborneState=="rising";fell|=body.AirborneState=="falling";landed|=rose&&pose.Grounded;
+                    if(tick<60)shortSpeed=Mathf.Max(shortSpeed,new Vector2(pose.Velocity.x,pose.Velocity.z).magnitude);
                     if(tick==59)shortTravel=Vector3.ProjectOnPlane(pose.Position-start,Vector3.up).magnitude;
                     var l=feet[0].position;var r=feet[1].position;
                     rows.Add(System.FormattableString.Invariant($"{tick},{ground.Session.Time:R},{stage},{pose.Position.x:R},{pose.Position.y:R},{pose.Position.z:R},{pose.Velocity.magnitude:R},{pose.Grounded},{moving},{l.x:R},{l.y:R},{l.z:R},{r.x:R},{r.y:R},{r.z:R},{slip:R}"));
@@ -124,10 +131,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
                 if(!string.IsNullOrEmpty(directory))System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,"world-steps.csv"),rows);
                 Assert.That(shortTravel,Is.GreaterThan(.005f),"Small analog input produces actual movement");
+                Assert.That(shortSpeed,Is.LessThan(body.Tuning.Get("animation.walkThreshold")),"Short-step witness must exercise the old idle dead zone");
                 Assert.That(maximumSlip,Is.LessThan(.003f),"Actual native motor sequence retains planted support contact");
                 Assert.That(rose&&fell&&landed,Is.True,"Native jump, flight and landing actually occurred");
             }
-            finally{Object.Destroy(go);}
+            finally{Object.Destroy(go);Object.Destroy(floor);Object.Destroy(floorMaterial);Object.Destroy(grid);Object.Destroy(fill);}
         }
         void CaptureWalkFrame(string directory,string name)
         {
