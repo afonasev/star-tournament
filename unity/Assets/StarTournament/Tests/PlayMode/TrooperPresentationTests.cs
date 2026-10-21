@@ -36,6 +36,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // Let the native capsules settle after placement before testing a stationary seat.
             // Penetration resolution is real movement and must not be mistaken for cross-seat sway.
             for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
+            if(System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_GRIP_FACTORY")=="1")
+                foreach(var d in ProvingProfile.CreateTrooperDefault().Descriptors)first.Tuning.Set(d.Path,d.DefaultValue);
+            var reviewOverrides=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_GRIP_OVERRIDES");
+            if(!string.IsNullOrEmpty(reviewOverrides))
+                foreach(var line in System.IO.File.ReadAllLines(reviewOverrides))
+                {
+                    var parts=line.Split('=');first.Tuning.Set(parts[0],float.Parse(parts[1],System.Globalization.CultureInfo.InvariantCulture));
+                }
             var snapshot=ground.Session.Capture();
             Assert.That(new Vector2(snapshot.Poses[1].Velocity.x,snapshot.Poses[1].Velocity.z).magnitude,Is.LessThan(second.Tuning.Get("animation.walkThreshold")),"Stationary fixture must have settled");
             double start=snapshot.Time;first.ResetPose(start);second.ResetPose(start);

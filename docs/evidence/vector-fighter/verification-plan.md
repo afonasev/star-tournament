@@ -166,3 +166,8 @@ Gameplay/grip/profile source is unchanged since the final 27/27 EditMode and 4/4
 graphical PlayMode snapshot; subsequent changes affect development review helpers.
 Full suite, install, release, deploy, physical controller/audio/performance and human
 acceptance remain NotRun. No merge.
+
+## F4 anatomical grip refinement
+Baseline `1b5f667ef4b94030978ecd4f3cd396ba44bc63bb`, codex/vector-fighter. F3 visual rejected by user; old automated PASS does not cover anatomical naturalness. Changes limited to support arm/wrist and independently authored digit joints for each weapon; preserve gun/camera/gameplay/mesh.
+Diagnostic graphical Editor run: `UNITY_RUN_MODE=shared unity/tools.sh editor -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene -testResults <owned>/results.xml -logFile <owned>/editor.log`, isolated QA Lab history; optional pose overrides and captures. Needed to inspect actual skeletal deformation, no Player build.
+Final planned affected checks: WeaponSwitchPresentationTests, TrooperImportTests.ProfileAndAttributionAreComplete, DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes (selected predecessor cases); graphical walk/freeze/death-respawn and VectorAirbornePresentationTests. No full suite, performance/device/audio or human acceptance.

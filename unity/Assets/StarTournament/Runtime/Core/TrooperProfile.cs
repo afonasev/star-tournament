@@ -3,10 +3,26 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeAnatomicalGrips()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<13)return this;
+            var p=DetachedCopy();p.version=12;
+            p.descriptors.RemoveAll(d=>d.Path.Contains(".left.")||d.Path.Contains(".right."));
+            p.values.RemoveAll(v=>v.Path.Contains(".left.")||v.Path.Contains(".right."));
+            foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
+            {
+                string prefix="grip."+weapon+".";
+                void Restore(string name,float value){var d=p.FindDescriptor(prefix+name);d.DefaultValue=value;p.Set(d.Path,value);}
+                Restore("supportYaw",80);Restore("thumbOpposition",weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?90:75);
+                Restore("supportX",weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?.08f:.06f);
+                Restore("supportZ",weapon==WeaponId.Rifle?.30f:weapon==WeaponId.Shotgun?.42f:.40f);
+            }
+            return p;
+        }
         internal ProvingProfile BeforeWeaponGripFits()
         {
             if(id!="unity-trooper-presentation-v1"||version<12)return this;
-            var p=DetachedCopy();p.version=11;
+            var p=BeforeAnatomicalGrips().DetachedCopy();p.version=11;
             p.descriptors.RemoveAll(d=>System.Enum.GetNames(typeof(WeaponId)).Any(w=>d.Path.StartsWith("grip."+w+"."))||(d.Path.StartsWith("grip.support")&&d.Path.EndsWith("Bias")));
             p.values.RemoveAll(v=>System.Enum.GetNames(typeof(WeaponId)).Any(w=>v.Path.StartsWith("grip."+w+"."))||(v.Path.StartsWith("grip.support")&&v.Path.EndsWith("Bias")));
             return p;
@@ -109,7 +125,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=12};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=13};
             p.Add("animation.airResponseSeconds","trooper-animation","Переход в прыжок","Плавность визуальной позы при отрыве и возвращении на опору.","seconds",.03f,.5f,.01f,.12f);
             p.Add("animation.airHipDegrees","trooper-animation","Подъём бедра в воздухе","Насколько боец поднимает бедро в прыжке.","degrees",0,65,1,30);
             p.Add("animation.airKneeDegrees","trooper-animation","Сгиб колена в воздухе","Насколько боец поджимает ноги в прыжке.","degrees",0,100,1,55);
@@ -149,11 +165,32 @@ namespace StarTournament.ProvingGround
                 p.Add(prefix+"primaryYaw",group,"Доворот правой кисти","Поправка контакта с рукоятью выбранного оружия; оружие остаётся неподвижным.","degrees",-20,20,1,0);
                 p.Add(prefix+"primaryCurl",group,"Обхват рукояти","Дополнительный сгиб пальцев правой руки под толщину рукояти.","degrees",-20,20,1,0);
                 p.Add(prefix+"supportRoll",group,"Разворот поперёк цевья","Поправка разворота опорной ладони вокруг её продольной оси.","degrees",-90,90,1,-55);
-                p.Add(prefix+"supportYaw",group,"Направление опорной ладони","Разворот ладони вокруг точки контакта на цевье.","degrees",-100,100,1,80);
+                p.Add(prefix+"supportYaw",group,"Направление опорной ладони","Разворот ладони вокруг точки контакта на цевье.","degrees",-100,100,1,weapon==WeaponId.Rifle?35:weapon==WeaponId.Shotgun?30:weapon==WeaponId.RocketLauncher?40:35);
                 p.Add(prefix+"supportCurl",group,"Обхват цевья","Поправка сгиба опорных пальцев под корпус оружия.","degrees",-30,90,1,weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?15:20);
                 p.Add(prefix+"supportThumb",group,"Опорный большой палец","Поправка большого пальца под корпус оружия.","degrees",-30,60,1,-5);
-                p.Add(prefix+"thumbOpposition",group,"Оппозиция большого пальца","Разворот большого пальца вокруг поперечного сечения цевья.","degrees",-90,90,1,weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?90:75);
-                foreach(var axis in new[]{"X","Y","Z"})p.Add(prefix+"support"+axis,group,"Контакт цевья "+axis,"Точка контакта оснований пальцев в координатах оружия; длины костей сохраняются.","rig-units",-.8f,.8f,.005f,axis=="Z"?(weapon==WeaponId.Rifle?.30f:weapon==WeaponId.Shotgun?.42f:.40f):axis=="Y"?(weapon==WeaponId.RocketLauncher?-.20f:weapon==WeaponId.Cutter?-.20f:weapon==WeaponId.Shotgun?-.15f:-.12f):(weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?.08f:.06f));
+                p.Add(prefix+"thumbOpposition",group,"Оппозиция большого пальца","Разворот большого пальца вокруг поперечного сечения цевья.","degrees",-90,90,1,weapon==WeaponId.Rifle?65:weapon==WeaponId.Shotgun?60:weapon==WeaponId.RocketLauncher?70:68);
+                foreach(var axis in new[]{"X","Y","Z"})p.Add(prefix+"support"+axis,group,"Контакт цевья "+axis,"Точка контакта оснований пальцев в координатах оружия; длины костей сохраняются.","rig-units",-.8f,.8f,.005f,axis=="Z"?(weapon==WeaponId.Rifle?.42f:weapon==WeaponId.Shotgun?.52f:.48f):axis=="Y"?(weapon==WeaponId.RocketLauncher?-.20f:weapon==WeaponId.Cutter?-.20f:weapon==WeaponId.Shotgun?-.15f:-.12f):(weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?.06f:.04f));
+
+                // Each row is a separately authored digit: MCP, PIP, DIP and MCP spread.
+                // Values are exposed below as independent Lab descriptors, not a shared curl multiplier.
+                float[,] left=weapon==WeaponId.Rifle?new float[,]{{10,25,25,0},{0,-10,-15,20},{-4,-5,-10,5},{3,4,-5,-5},{10,10,0,-8}}:
+                    weapon==WeaponId.Shotgun?new float[,]{{15,30,20,0},{-5,-12,-18,22},{-2,-8,-12,7},{2,2,-8,-4},{8,8,-3,-8}}:
+                    weapon==WeaponId.RocketLauncher?new float[,]{{18,35,25,0},{5,-8,-10,16},{0,-3,-5,3},{5,6,0,-5},{12,12,5,-10}}:
+                    new float[,]{{20,32,28,0},{3,-6,-12,18},{-2,0,-8,4},{7,5,-2,-6},{14,10,3,-10}};
+                float[,] right=weapon==WeaponId.Rifle?new float[,]{{-2,4,2,0},{-8,-12,-8,3},{0,0,0,0},{3,4,2,-2},{6,6,4,-3}}:
+                    weapon==WeaponId.Shotgun?new float[,]{{0,6,3,0},{-10,-14,-10,4},{0,0,0,0},{4,3,4,-2},{8,7,5,-4}}:
+                    weapon==WeaponId.RocketLauncher?new float[,]{{3,8,4,0},{-6,-10,-6,2},{0,0,0,0},{2,5,3,-1},{5,8,5,-3}}:
+                    new float[,]{{2,7,5,0},{-7,-9,-5,2},{0,0,0,0},{3,6,4,-2},{7,9,6,-4}};
+                var digitNames=new[]{"Thumb","Index","Middle","Ring","Little"};
+                var digitLabels=new[]{"Большой","Указательный","Средний","Безымянный","Мизинец"};
+                var jointNames=new[]{"Proximal","Intermediate","Distal","Spread"};
+                var jointLabels=new[]{"основание","средний сустав","кончик","разведение"};
+                foreach(var side in new[]{"left","right"})
+                    for(int digit=0;digit<5;digit++)for(int joint=0;joint<4;joint++)
+                        p.Add(prefix+side+"."+digitNames[digit]+"."+jointNames[joint],group,
+                            (side=="left"?"Левая: ":"Правая: ")+digitLabels[digit]+" — "+jointLabels[joint],
+                            "Индивидуальная поправка сустава для геометрии "+weapon+". Сгиб не меняет стрельбу или положение оружия.",
+                            "degrees",joint==3?-25:-40,joint==3?25:45,1,(side=="left"?left:right)[digit,joint]);
             }
             return p;
         }

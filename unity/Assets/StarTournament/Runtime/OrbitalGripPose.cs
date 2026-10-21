@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         Quaternion mountRotation,primaryRotation;
         bool primaryApplied;
         readonly Vector3 rollAxis;
+        readonly Dictionary<Transform,Vector3> spreadAxes=new Dictionary<Transform,Vector3>();
         readonly List<(Transform bone,Vector3 axis,bool thumb,string bias)> digits=new List<(Transform,Vector3,bool,string)>();
         readonly List<(Transform bone,Vector3 axis,string path,bool thumb)> primaryDigits=new List<(Transform,Vector3,string,bool)>();
         public OrbitalGripPose(Transform root)
@@ -26,6 +27,7 @@ namespace StarTournament.ProvingGround
                 foreach(var segment in new[]{"Proximal","Intermediate","Distal"})
                 {
                     var bone=bones["Left"+digit+segment];
+                    spreadAxes[bone]=bone.InverseTransformDirection(Vector3.Cross(row,(bones["LeftMiddleProximal"].position-wrist.position).normalized));
                     digits.Add((bone,bone.InverseTransformDirection(row),digit=="Thumb","grip.support"+segment+"Bias"));
                 }
             if(!bones.TryGetValue("RightHand",out primaryWrist))return;
@@ -36,6 +38,7 @@ namespace StarTournament.ProvingGround
                 foreach(var segment in new[]{"Proximal","Intermediate","Distal"})
                 {
                     var bone=bones["Right"+digit+segment];
+                    spreadAxes[bone]=bone.InverseTransformDirection(Vector3.Cross(primaryRow,(bones["RightMiddleProximal"].position-primaryWrist.position).normalized));
                     primaryDigits.Add((bone,bone.InverseTransformDirection(primaryRow),"grip.primary"+segment+"Curl",digit=="Thumb"));
                 }
             sampledBones=new[]{upper,lower,wrist}.Concat(digits.Select(d=>d.bone)).Concat(primaryDigits.Select(d=>d.bone)).ToArray();
@@ -88,11 +91,19 @@ namespace StarTournament.ProvingGround
             foreach(var thumb in digits.Where(d=>d.thumb&&d.bone.name.EndsWith("Proximal")))
                 thumb.bone.rotation=Quaternion.AngleAxis(profile.Get(fit+"thumbOpposition"),mount.forward)*thumb.bone.rotation;
             foreach(var item in digits)
-                item.bone.localRotation*=Quaternion.AngleAxis(-(profile.Get(item.thumb?"grip.supportThumbCurl":"grip.supportFingerCurl")+profile.Get(fit+(item.thumb?"supportThumb":"supportCurl"))+(item.thumb?0:profile.Get(item.bias))),item.axis);
+            {
+                string digit=item.bone.name.Substring(4);string joint=digit.EndsWith("Proximal")?"Proximal":digit.EndsWith("Intermediate")?"Intermediate":"Distal";
+                string path=fit+"left."+digit.Substring(0,digit.Length-joint.Length)+".";
+                if(joint=="Proximal")item.bone.localRotation*=Quaternion.AngleAxis(profile.Get(path+"Spread"),spreadAxes[item.bone]);
+                item.bone.localRotation*=Quaternion.AngleAxis(-(profile.Get(item.thumb?"grip.supportThumbCurl":"grip.supportFingerCurl")+profile.Get(fit+(item.thumb?"supportThumb":"supportCurl"))+(item.thumb?0:profile.Get(item.bias))+profile.Get(path+joint)),item.axis);
+            }
             foreach(var item in primaryDigits)
             {
                 var angle=(profile.Get(item.path)+profile.Get(fit+"primaryCurl"))*(item.thumb?profile.Get("grip.primaryThumbFactor"):1f);
-                item.bone.localRotation*=Quaternion.AngleAxis(-angle,item.axis);
+                string digit=item.bone.name.Substring(5);string joint=digit.EndsWith("Proximal")?"Proximal":digit.EndsWith("Intermediate")?"Intermediate":"Distal";
+                string path=fit+"right."+digit.Substring(0,digit.Length-joint.Length)+".";
+                if(joint=="Proximal")item.bone.localRotation*=Quaternion.AngleAxis(profile.Get(path+"Spread"),spreadAxes[item.bone]);
+                item.bone.localRotation*=Quaternion.AngleAxis(-(angle+profile.Get(path+joint)),item.axis);
             }
         }
     }
