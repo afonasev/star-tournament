@@ -168,15 +168,15 @@ namespace StarTournament.ProvingGround
                 p.Add(prefix+"supportYaw",group,"Направление опорной ладони","Разворот ладони вокруг точки контакта на цевье.","degrees",-100,100,1,weapon==WeaponId.Rifle?35:weapon==WeaponId.Shotgun?30:weapon==WeaponId.RocketLauncher?40:35);
                 p.Add(prefix+"supportCurl",group,"Обхват цевья","Поправка сгиба опорных пальцев под корпус оружия.","degrees",-30,90,1,weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?15:20);
                 p.Add(prefix+"supportThumb",group,"Опорный большой палец","Поправка большого пальца под корпус оружия.","degrees",-30,60,1,-5);
-                p.Add(prefix+"thumbOpposition",group,"Оппозиция большого пальца","Разворот большого пальца вокруг поперечного сечения цевья.","degrees",-90,90,1,weapon==WeaponId.Rifle?65:weapon==WeaponId.Shotgun?60:weapon==WeaponId.RocketLauncher?70:68);
+                p.Add(prefix+"thumbOpposition",group,"Оппозиция большого пальца","Разворот большого пальца вокруг поперечного сечения цевья.","degrees",-90,90,1,weapon==WeaponId.Rifle?56:weapon==WeaponId.Shotgun?39:weapon==WeaponId.RocketLauncher?39:42);
                 foreach(var axis in new[]{"X","Y","Z"})p.Add(prefix+"support"+axis,group,"Контакт цевья "+axis,"Точка контакта оснований пальцев в координатах оружия; длины костей сохраняются.","rig-units",-.8f,.8f,.005f,axis=="Z"?(weapon==WeaponId.Rifle?.42f:weapon==WeaponId.Shotgun?.52f:.48f):axis=="Y"?(weapon==WeaponId.RocketLauncher?-.20f:weapon==WeaponId.Cutter?-.20f:weapon==WeaponId.Shotgun?-.15f:-.12f):(weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?.06f:.04f));
 
                 // Each row is a separately authored digit: MCP, PIP, DIP and MCP spread.
                 // Values are exposed below as independent Lab descriptors, not a shared curl multiplier.
-                float[,] left=weapon==WeaponId.Rifle?new float[,]{{10,25,25,0},{0,-10,-15,20},{-4,-5,-10,5},{3,4,-5,-5},{10,10,0,-8}}:
-                    weapon==WeaponId.Shotgun?new float[,]{{15,30,20,0},{-5,-12,-18,22},{-2,-8,-12,7},{2,2,-8,-4},{8,8,-3,-8}}:
-                    weapon==WeaponId.RocketLauncher?new float[,]{{18,35,25,0},{5,-8,-10,16},{0,-3,-5,3},{5,6,0,-5},{12,12,5,-10}}:
-                    new float[,]{{20,32,28,0},{3,-6,-12,18},{-2,0,-8,4},{7,5,-2,-6},{14,10,3,-10}};
+                float[,] left=weapon==WeaponId.Rifle?new float[,] {{-25,45,-36,-62},{-11,-14,45,-36},{-15,30,25,-32},{2,45,4,-48},{2,45,-3,-32}}:
+                    weapon==WeaponId.Shotgun?new float[,] {{10,33,-40,-65},{-10,-22,45,-41},{-15,24,33,-37},{1,45,3,-52},{4,45,-2,-36}}:
+                    weapon==WeaponId.RocketLauncher?new float[,] {{45,-33,0,-60},{-6,-6,45,-32},{-11,35,26,-29},{5,45,12,-43},{3,44,5,-29}}:
+                    new float[,] {{45,-37,3,-64},{-6,-9,45,-36},{-10,35,25,-33},{7,45,16,-48},{8,45,7,-32}};
                 float[,] right=weapon==WeaponId.Rifle?new float[,]{{-2,4,2,0},{-8,-12,-8,3},{0,0,0,0},{3,4,2,-2},{6,6,4,-3}}:
                     weapon==WeaponId.Shotgun?new float[,]{{0,6,3,0},{-10,-14,-10,4},{0,0,0,0},{4,3,4,-2},{8,7,5,-4}}:
                     weapon==WeaponId.RocketLauncher?new float[,]{{3,8,4,0},{-6,-10,-6,2},{0,0,0,0},{2,5,3,-1},{5,8,5,-3}}:
@@ -190,7 +190,7 @@ namespace StarTournament.ProvingGround
                         p.Add(prefix+side+"."+digitNames[digit]+"."+jointNames[joint],group,
                             (side=="left"?"Левая: ":"Правая: ")+digitLabels[digit]+" — "+jointLabels[joint],
                             "Индивидуальная поправка сустава для геометрии "+weapon+". Сгиб не меняет стрельбу или положение оружия.",
-                            "degrees",joint==3?-25:-40,joint==3?25:45,1,(side=="left"?left:right)[digit,joint]);
+                            "degrees",joint==3?-70:-40,joint==3?70:45,1,(side=="left"?left:right)[digit,joint]);
             }
             return p;
         }

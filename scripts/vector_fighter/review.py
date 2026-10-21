@@ -2,7 +2,7 @@
 import bpy,math,json,hashlib,sys
 from pathlib import Path
 from mathutils import Vector
-ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'docs/evidence/vector-fighter';OUT.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'docs/evidence/vector-fighter';OUT=Path(sys.argv[sys.argv.index('--output')+1]) if '--output' in sys.argv else OUT;OUT.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 source=ROOT/'.local/vector-fighter/candidate-body.glb' if '--candidate' in sys.argv else ROOT/'unity/Assets/StarTournament/Art/trooper-body-animated.glb'
 bpy.ops.import_scene.gltf(filepath=str(source))
@@ -31,7 +31,8 @@ m=bpy.data.materials.new('studio floor');m.diffuse_color=(.35,.35,.35,1);floor.d
 for pos,power,size in [((2,-3,4),480,3),((-2,-1,2.5),290,2),((1,2,3),600,2)]:
  bpy.ops.object.light_add(type='AREA',location=pos);o=bpy.context.object;o.data.energy=power;o.data.shape='DISK';o.data.size=size;o.rotation_euler=(Vector((0,0,1))-o.location).to_track_quat('-Z','Y').to_euler()
 bpy.ops.object.camera_add();cam=bpy.context.object;s.camera=cam;cam.data.type='ORTHO'
-for name,center,offset,scale in [('model-front',(0,0,.9),(2,-4,1.2),2.05),('model-back',(0,0,.9),(-2,4,1),2.05),('helmet',(0,0,1.66),(.35,-.65,.14),.43)]:
+for name,center,offset,scale in [('model-front',(0,0,.9),(2,-4,1.2),2.05),('model-back',(0,0,.9),(-2,4,1),2.05),('helmet',(0,0,1.66),(.35,-.65,.14),.43),('torso',(0,0,1.33),(.3,-1,.08),.61)]:
+ if '--views' in sys.argv and name not in sys.argv[sys.argv.index('--views')+1].split(','):continue
  center=Vector(center);cam.location=center+Vector(offset);cam.rotation_euler=(center-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=scale;s.render.filepath=str(OUT/(name+'.png'));bpy.ops.render.render(write_still=True)
 (OUT/'render-source.json').write_text(json.dumps({'source':str(source.relative_to(ROOT)),'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'blender':bpy.app.version_string,'view':'studio; display teal override; imported actual mesh; no gameplay evidence'},indent=2)+'\n')
 print('VECTOR_REVIEW_RENDERED')

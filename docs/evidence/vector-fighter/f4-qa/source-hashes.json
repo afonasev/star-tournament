@@ -1,0 +1,10 @@
+{
+  "unity/Assets/StarTournament/Runtime/OrbitalGripPose.cs": "9034ce397c20d416d39a2783a82b5d57f00460410a8e5b454854b096370ed2af",
+  "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "0ec1d8c407dd4e81d5712b841d4b726b153204e4145c083f1a944711981d9571",
+  "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "e8de937659e01c547d98b03b6a1312c2ab59fd3d85bd701f9f840e941e1a9cbf",
+  "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "a6a0be22bef44cd039b99d9c7c804bf0e2f1165c097e61aef2c39bb1f514a72e",
+  "unity/Assets/StarTournament/Tests/EditMode/WeaponSwitchPresentationTests.cs": "d498c588fe3a7a20db40168a279b303f44d5a45a741efda139406beda6208437",
+  "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "1820deec3b7667d1600f19bbba3d4b31c2f7da2c42eaf78abad68a0b21f33de6",
+  "unity/Assets/StarTournament/Art/trooper-body-animated.glb": "c9773ac2c039e314aee1d8d2bd49a8dc9def8ad0ab234a12060cbaf6b6d54a22",
+  "unity/Assets/StarTournament/Art/trooper-arms-animated.glb": "51b0339aa928974b9d894a7997a98a6ae3a23d1ceaa2bac005ced8432b21e93e"
+}

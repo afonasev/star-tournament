@@ -424,7 +424,7 @@ def export(path,objects):
 
 
 def build():
- global rig,paint,metal,rubber,cloth,trim,glass,parts
+ global rig,paint,metal,rubber,cloth,trim,glass,parts,source_garment
  bpy.ops.wm.read_factory_settings(use_empty=True)
  bpy.context.preferences.filepaths.save_version=0
  # Use body rig/actions/equipment unchanged; import the matching detailed hand geometry separately.
@@ -435,6 +435,12 @@ def build():
  for t in rig.animation_data.nla_tracks:t.mute=True
  rig.animation_data.action=None
  for p in rig.pose.bones:p.matrix_basis.identity()
+ # Preserve authored cloth topology for an isolated primary-form comparison.
+ source_garment=[]
+ if '--forms' in sys.argv:
+  for o in list(bpy.context.scene.objects):
+   if o.type=='MESH' and o.data.materials and o.data.materials[0].name in ['material','pants','torso']:
+    copy=o.copy();copy.data=o.data.copy();source_garment.append(copy)
  # Keep equipment and hierarchy, replace all original costume geometry.
  for o in list(bpy.context.scene.objects):
   if o.type=='MESH' and o.name!='weapon:joined':bpy.data.objects.remove(o,do_unlink=True)
@@ -480,7 +486,22 @@ def build():
    data.extend((value,value,value,1))
  grain.pixels=data;grain.pack();node=paint.node_tree.nodes.new('ShaderNodeTexImage');node.image=grain
  paint.node_tree.links.new(node.outputs['Color'],paint.node_tree.nodes.get('Principled BSDF').inputs['Base Color'])
- parts=[];suit();helmet();combat_details();equipment_details();tailoring_details()
+ parts=[]
+ if '--forms' in sys.argv:
+  assert '--candidate' in sys.argv, 'Primary-form studies require visual approval before production export'
+  import importlib.util
+  sys.dont_write_bytecode=True
+  spec=importlib.util.spec_from_file_location('vector_forms',ROOT/'scripts/vector_fighter/sculpt_forms.py');forms=importlib.util.module_from_spec(spec);spec.loader.exec_module(forms)
+  forms.build(sys.modules[__name__],sys.argv[sys.argv.index('--forms')+1])
+ else:
+  suit();helmet();combat_details();equipment_details()
+  if '--details' in sys.argv:
+   assert '--candidate' in sys.argv, 'Additive-detail studies were rejected and must not replace production assets'
+   import importlib.util
+   sys.dont_write_bytecode=True
+   spec=importlib.util.spec_from_file_location('vector_details',ROOT/'scripts/vector_fighter/refine_details.py');details=importlib.util.module_from_spec(spec);spec.loader.exec_module(details)
+   details.build(sys.modules[__name__],sys.argv[sys.argv.index('--details')+1])
+  tailoring_details()
  # Every weighted channel must resolve to a real bone; duplicate group names
  # silently export unbound geometry and cannot be accepted as a working skin.
  for o in parts+handparts:

@@ -1,0 +1,6 @@
+{
+  "source": ".local/vector-fighter/candidate-body.glb",
+  "sha256": "9d34407f8b533b20bab8db79491ef776ee5787ed0664fb2d53d8fe0cc4f10d35",
+  "blender": "5.2.1 LTS",
+  "view": "studio; display teal override; imported actual mesh; no gameplay evidence"
+}

@@ -49,3 +49,23 @@ markings and ear grille are authored geometry. Trooper @11 adds
 pose is preserved. Restore the previous additive correction before graph sampling
 so clips without wrist/mount channels remain idempotent. @10 history remains
 reconstructible through BeforePrimaryGripFit.
+
+
+F4/F5 recovery and rejected visual route (2026-10-21): `--details tailored`
+and `--details technical` are development studies, not accepted detail upgrades.
+After provisionally choosing technical armor, the user rejected the primitive
+construction itself. Do not ship these attached service details.
+
+`--candidate --forms planar` reconstructs garment continuity and new shell
+cross-sections; `primary-form-study.blend` is its editable, **unaccepted** study.
+This is still too schematic and is NOT the shipping model. Its real GLB renders
+are in `docs/evidence/vector-fighter/f5-surface-study/`. The production source
+`vector-fighter.blend` and shipping GLBs remain unchanged by these studies.
+The remaining model work is primary form/art quality against the approved
+VECTOR reference, not adding more objects or subdividing existing parts.
+
+`--candidate --forms authored-cloth` is a diagnostic of retained source clothing.
+It still includes source vest/pad geometry and visibly intersects the new shells;
+it is NOT a proposed finished model. Do not use it as production or acceptance
+ evidence. A clean authored garment extraction and proper surface remodeling
+remain necessary; automated overlaying is not a completed substitute.

@@ -69,7 +69,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     samples.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1:F3},{2:F6},{3:F6},{4:F6},{5:F6},{6:F6}",weapon,ground.Session.Time,first.WalkOffset.x,first.WalkOffset.y,point.x,point.y,point.z));
                     if(tick>0)maximumStep=Mathf.Max(maximumStep,Vector3.Distance(previous,point));previous=point;
                     if(!string.IsNullOrEmpty(directory)&&(sequence||tick==0||tick==16||tick==32||tick==49||tick==65))
-                        { CaptureWalkFrame(directory,weapon+"-"+tick.ToString("D2"));
+                        { // Let the normal rendered-frame skinning consume the current bones before capture.
+                          yield return null;
+                          CaptureWalkFrame(directory,weapon+"-"+tick.ToString("D2"));
                           if(tick==0)CaptureGrip(directory,weapon.ToString(),first,camera);
                           if(tick==32)CaptureSingleView(directory,weapon.ToString(),camera); }
                 }
@@ -130,6 +132,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 lines.Add(mesh.name+" bounds "+bounds.ToString("F5"));
             }
             System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,weapon+"-grip.csv"),lines);
+            var grip=typeof(TrooperVisual).GetField("equipmentGrip",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(visual);
+            var axes=(System.Collections.IDictionary)grip.GetType().GetField("spreadAxes",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(grip);
+            var dump=new System.Collections.Generic.List<string>{"name,px,py,pz,qx,qy,qz,qw,cx,cy,cz,sx,sy,sz"};
+            foreach(string field in new[]{"digits","primaryDigits"})
+            foreach(var item in (System.Collections.IEnumerable)grip.GetType().GetField(field,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(grip))
+            {
+                var type=item.GetType();var bone=(Transform)type.GetField("Item1").GetValue(item);var curl=(Vector3)type.GetField("Item2").GetValue(item);var spread=(Vector3)axes[bone];
+                var p=mount.InverseTransformPoint(bone.position);var q=Quaternion.Inverse(mount.rotation)*bone.rotation;
+                dump.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}",bone.name,p.x,p.y,p.z,q.x,q.y,q.z,q.w,curl.x,curl.y,curl.z,spread.x,spread.y,spread.z));
+            }
+            System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,weapon+"-axes.csv"),dump);
             var go=new GameObject("grip-review-camera");var camera=go.AddComponent<Camera>();camera.CopyFrom(source);
             camera.rect=new Rect(0,0,1,1);camera.orthographic=true;camera.orthographicSize=.12f;camera.nearClipPlane=.01f;
             var target=new RenderTexture(1000,1000,24);target.Create();camera.targetTexture=target;
