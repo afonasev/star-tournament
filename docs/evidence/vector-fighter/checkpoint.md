@@ -1,35 +1,15 @@
-# VECTOR checkpoint — F2 grip and shoulder revision
+# VECTOR checkpoint — F3 all-weapon grips and local test build
 
-Change: `replace-player-with-vector-fighter`; owner `01a15a85-0aa3-74c3-a647-a4a7e1d1d6bc`.
-Branch `codex/vector-fighter`; F2 baseline `41c8773d375039d92af5038590f3b2d6abf9606e`.
-The final saved commit is recorded in shared planning delivery.json. Not integrated.
+Change replace-player-with-vector-fighter; owner 01a15f1c-f40b-7c41-a66c-6a091778d889.
+Branch codex/vector-fighter, baseline 2f13175cf113f27d82275b26f7ab88b43d694e25.
+No integration into main. F3 source commit and Player identity are recorded in f3-build.json after build.
 
-User feedback F2: hand does not wrap the grip; increase model detail and broaden shoulders slightly.
+F3 implements separate named contact profiles for Rifle, Shotgun, RocketLauncher and Cutter. The support palm reaches a fixed weapon-local contact using a two-bone arm solve without stretching. Palm yaw/roll, individual finger-segment curls and opposed thumb wrap replace the previous open hand alongside the barrel. The established primary wrist fit remains; all four primary contacts are checked in aim/fire/air/reset. Every modified local pose is restored before graph sampling, including unkeyed channels. Visible slot is selected before evaluating grip, including the switch apex and completion-tick muzzle reads. Trooper @12 reconstructs exact @11 and earlier saved history.
 
-- Right wrist fits inward by the named Trooper @11 `grip.primaryWristYaw` parameter.
-  The gun and supporting hand retain their actual sampled world poses. Previous
-  additive correction is restored BEFORE graph evaluation to avoid accumulated
-  or doubled offsets on channels not keyed by a clip. Existing finger curls remain.
-- Broader deltoid cups, upper arms and upper chest; less pinched waist. F1 slim
-  forearms, thin shells and matte cloth/fill remain. Skeleton proportions unchanged.
-- Added pectoral hardware, four-slot intakes, serial markings, shoulder brackets,
-  segmented belt fittings and helmet ear grille/screws.
-- Existing 57-joint rig and seven actions retained. Editable Blender source preserved.
+F2 thin forearms, matte cloth, broad shoulders, geometry/materials, cameras and weapon/gameplay balance remain unchanged.
 
-Current evidence:
-- `f2-source.json`: exact GLB/Blender hashes; `render-source.json` binds studio images.
-- `model-front.png`, `model-back.png`, `helmet.png`: actual F2 shipping mesh studio renders.
-- `f2-fps/`: final actual Unity FPS and close-up grip captures for all four weapons.
-- `f2-world/`: actual skeletal presentation states, not ordinary jump trajectory.
-- `f2-diagnosis/`: original gap and visually rejected first fit preserved. Existing
-  tests passed that rejected candidate; new contact/weapon-invariance check added.
-- `verification-plan.md`: selected QA, results and limitations.
-- F1 and earlier evidence remains historical and does not depict the latest mesh.
+Final affected EditMode 27/27; graphical PlayMode 4/4. Actual current FPS and both sides of both hands: f3-fps3/. Synthetic world pose evidence: f3-world3/. Baseline f3-before/ and rejected-fit examples f3-diagnosis/ are historical. Exact commands/results and compressed logs: verification-plan.md and f3-qa/. Final source hashes: f3-source.json.
 
-Visual fidelity remains open: the model still has simpler surface detail and
-fabric tailoring than the concept. Full ordinary world action sequences and
-human/device/performance acceptance remain open. No Player build/full suite/release.
-Next: review the actual F2 model and grip; then continue art/world action review
-before integration. Owned active worktree/Library retained for this continuation.
+Next authorized step: local macOS Development Player build, real-session jump/fire evidence for all weapons and existing native weapon-switch/death/respawn smoke. Keep the sole test app pending human acceptance. No installation, release, publication or full suite is authorized. Guide: f3-test-guide.md.
 
-Final F2 focused results: EditMode 27/27, graphical PlayMode 6/6. Profile @10 saved-history compatibility passed. Actual grip test covers aim/fire and unchanged weapon/support hand; scene tests cover frozen samples, walking, airborne states, identity and death/respawn/repeat. These checks are not full gameplay or human acceptance.
+Open gates: human/visual/device/audio/performance acceptance; whole-model art fidelity and ordinary full world-action acceptance remain separate. Do not mark the overall change complete or merge it merely for the test build.

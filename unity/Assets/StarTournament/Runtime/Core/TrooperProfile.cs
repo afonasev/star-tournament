@@ -1,11 +1,20 @@
+using System.Linq;
 namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeWeaponGripFits()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<12)return this;
+            var p=DetachedCopy();p.version=11;
+            p.descriptors.RemoveAll(d=>System.Enum.GetNames(typeof(WeaponId)).Any(w=>d.Path.StartsWith("grip."+w+"."))||(d.Path.StartsWith("grip.support")&&d.Path.EndsWith("Bias")));
+            p.values.RemoveAll(v=>System.Enum.GetNames(typeof(WeaponId)).Any(w=>v.Path.StartsWith("grip."+w+"."))||(v.Path.StartsWith("grip.support")&&v.Path.EndsWith("Bias")));
+            return p;
+        }
         internal ProvingProfile BeforePrimaryGripFit()
         {
             if(id!="unity-trooper-presentation-v1"||version<11)return this;
-            var p=DetachedCopy();p.version=10;
+            var p=BeforeWeaponGripFits().DetachedCopy();p.version=10;
             p.descriptors.RemoveAll(d=>d.Path=="grip.primaryWristYaw");
             p.values.RemoveAll(v=>v.Path=="grip.primaryWristYaw");
             return p;
@@ -100,7 +109,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=11};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=12};
             p.Add("animation.airResponseSeconds","trooper-animation","Переход в прыжок","Плавность визуальной позы при отрыве и возвращении на опору.","seconds",.03f,.5f,.01f,.12f);
             p.Add("animation.airHipDegrees","trooper-animation","Подъём бедра в воздухе","Насколько боец поднимает бедро в прыжке.","degrees",0,65,1,30);
             p.Add("animation.airKneeDegrees","trooper-animation","Сгиб колена в воздухе","Насколько боец поджимает ноги в прыжке.","degrees",0,100,1,55);
@@ -131,6 +140,21 @@ namespace StarTournament.ProvingGround
             p.Add("view.fillIntensity","trooper-view","Подсветка оборудования","Мягкий свет только на руки своего viewport для читаемости тёмной перчатки.","intensity",0,4,.05f,.35f);
             p.Add("view.fillBackMeters","trooper-view","Удаление подсветки","Расстояние света за камерой: убирает резкий пересвет ближнего рукава, сохраняя подсветку оборудования.","meters",0,1.5f,.05f,.25f);
             p.Add("view.fillRange","trooper-view","Дальность подсветки","Радиус локального света оборудования; мир исключён маской слоя.","meters",.5f,3,.1f,2);
+            p.Add("grip.supportProximalBias","trooper-grip","Основания опорных пальцев","Разгиб оснований пальцев для опоры снизу цевья.","degrees",-60,60,1,-25);
+            p.Add("grip.supportIntermediateBias","trooper-grip","Средние опорные фаланги","Сгиб вокруг боковой грани цевья.","degrees",-60,60,1,25);
+            p.Add("grip.supportDistalBias","trooper-grip","Кончики опорных пальцев","Замыкание хвата вокруг боковой грани.","degrees",-60,60,1,10);
+            foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
+            {
+                var prefix="grip."+weapon+".";var group="trooper-grip-"+weapon;
+                p.Add(prefix+"primaryYaw",group,"Доворот правой кисти","Поправка контакта с рукоятью выбранного оружия; оружие остаётся неподвижным.","degrees",-20,20,1,0);
+                p.Add(prefix+"primaryCurl",group,"Обхват рукояти","Дополнительный сгиб пальцев правой руки под толщину рукояти.","degrees",-20,20,1,0);
+                p.Add(prefix+"supportRoll",group,"Разворот поперёк цевья","Поправка разворота опорной ладони вокруг её продольной оси.","degrees",-90,90,1,-55);
+                p.Add(prefix+"supportYaw",group,"Направление опорной ладони","Разворот ладони вокруг точки контакта на цевье.","degrees",-100,100,1,80);
+                p.Add(prefix+"supportCurl",group,"Обхват цевья","Поправка сгиба опорных пальцев под корпус оружия.","degrees",-30,90,1,weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?15:20);
+                p.Add(prefix+"supportThumb",group,"Опорный большой палец","Поправка большого пальца под корпус оружия.","degrees",-30,60,1,-5);
+                p.Add(prefix+"thumbOpposition",group,"Оппозиция большого пальца","Разворот большого пальца вокруг поперечного сечения цевья.","degrees",-90,90,1,weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?90:75);
+                foreach(var axis in new[]{"X","Y","Z"})p.Add(prefix+"support"+axis,group,"Контакт цевья "+axis,"Точка контакта оснований пальцев в координатах оружия; длины костей сохраняются.","rig-units",-.8f,.8f,.005f,axis=="Z"?(weapon==WeaponId.Rifle?.30f:weapon==WeaponId.Shotgun?.42f:.40f):axis=="Y"?(weapon==WeaponId.RocketLauncher?-.20f:weapon==WeaponId.Cutter?-.20f:weapon==WeaponId.Shotgun?-.15f:-.12f):(weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?.08f:.06f));
+            }
             return p;
         }
     }

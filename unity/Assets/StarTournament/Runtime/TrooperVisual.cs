@@ -66,6 +66,7 @@ namespace StarTournament.ProvingGround
         public string AirborneState => airborne?.State??"grounded";
         public double SampleTime { get; private set; }
         public bool GraphValid => graph.IsValid();
+        public WeaponId EquippedWeapon {get;set;}=WeaponId.Rifle;
         public int PoseRevision { get; private set; }
         public void Initialize(AnimationClip[] clips,ProvingProfile tuning,bool view=false)
         {
@@ -167,7 +168,7 @@ namespace StarTournament.ProvingGround
                 var actorToParent=Quaternion.Inverse(chest.parent.rotation)*transform.rotation;
                 chest.localRotation=(actorToParent*impulse*Quaternion.Inverse(actorToParent))*chest.localRotation;
             }
-            if(!corpse){airborne?.Apply();equipmentGrip?.Apply(profile);}
+            if(!corpse){airborne?.Apply();equipmentGrip?.Apply(profile,EquippedWeapon);}
             PoseRevision++;
         }
         public void Release()

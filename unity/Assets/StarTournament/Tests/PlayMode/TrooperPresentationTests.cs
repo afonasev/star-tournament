@@ -112,8 +112,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var wrist=bones.Single(t=>t.name=="RightHand");
             var mount=bones.Single(t=>t.name=="trooper:rig:weapon-mount");
             var lines=new System.Collections.Generic.List<string>{"name,x,y,z"};
-            foreach(var t in bones.Where(t=>t.name.StartsWith("Right")||t.name=="rifle-grip"||t.name=="pistol grip"))
+            foreach(var t in bones.Where(t=>t.name.StartsWith("Right")||t.name.StartsWith("Left")||t.name=="rifle-grip"||t.name=="pistol grip"))
             {var p=mount.InverseTransformPoint(t.position);lines.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1:F6},{2:F6},{3:F6}",t.name,p.x,p.y,p.z));}
+            foreach(var mesh in visual.GetComponentsInChildren<MeshFilter>().Where(m=>m.GetComponent<Renderer>()?.enabled==true))
+            {
+                var points=mesh.sharedMesh.vertices.Select(v=>mount.InverseTransformPoint(mesh.transform.TransformPoint(v))).ToArray();
+                if(points.Length==0)continue;
+                var bounds=new Bounds(points[0],Vector3.zero);foreach(var point in points)bounds.Encapsulate(point);
+                lines.Add(mesh.name+" bounds "+bounds.ToString("F5"));
+            }
             System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,weapon+"-grip.csv"),lines);
             var go=new GameObject("grip-review-camera");var camera=go.AddComponent<Camera>();camera.CopyFrom(source);
             camera.rect=new Rect(0,0,1,1);camera.orthographic=true;camera.orthographicSize=.12f;camera.nearClipPlane=.01f;
@@ -121,13 +128,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var pixels=new Texture2D(1000,1000,TextureFormat.RGB24,false);var old=RenderTexture.active;
             try
             {
+                foreach(string hand in new[]{"Right","Left"})
                 foreach(int sign in new[]{-1,1})
                 {
-                    var center=bones.Single(t=>t.name=="RightMiddleProximal").position;
+                    var center=bones.Single(t=>t.name==hand+"MiddleProximal").position;
                     camera.transform.position=center+mount.TransformDirection(new Vector3(sign*.5f,.05f,-.2f));
                     camera.transform.LookAt(center,mount.up);camera.Render();RenderTexture.active=target;
                     pixels.ReadPixels(new Rect(0,0,1000,1000),0,0);pixels.Apply();
-                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-grip-"+sign+".png"),pixels.EncodeToPNG());
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-"+hand+"-grip-"+sign+".png"),pixels.EncodeToPNG());
                 }
             }
             finally{RenderTexture.active=old;target.Release();Object.Destroy(target);Object.Destroy(pixels);Object.Destroy(go);}

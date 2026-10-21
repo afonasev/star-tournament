@@ -1,0 +1,47 @@
+{
+  "removed": [
+    {
+      "path": "docs/evidence/vector-fighter/f3-fit1",
+      "bytes": 32287059,
+      "reason": "rejected intermediate fit; representative contact images and measurements preserved in f3-diagnosis"
+    },
+    {
+      "path": "docs/evidence/vector-fighter/f3-fit2",
+      "bytes": 32461236,
+      "reason": "rejected intermediate fit; representative contact images and measurements preserved in f3-diagnosis"
+    },
+    {
+      "path": "docs/evidence/vector-fighter/f3-fit3",
+      "bytes": 32245390,
+      "reason": "rejected intermediate fit; representative contact images and measurements preserved in f3-diagnosis"
+    },
+    {
+      "path": "docs/evidence/vector-fighter/f3-fps",
+      "bytes": 33689917,
+      "reason": "rejected intermediate fit; representative contact images and measurements preserved in f3-diagnosis"
+    },
+    {
+      "path": "docs/evidence/vector-fighter/f3-fps2",
+      "bytes": 34462105,
+      "reason": "rejected intermediate fit; representative contact images and measurements preserved in f3-diagnosis"
+    },
+    {
+      "path": "docs/evidence/vector-fighter/f3-world",
+      "bytes": 871431,
+      "reason": "replaced by unchanged final world pose images f3-world3"
+    },
+    {
+      "path": "docs/evidence/vector-fighter/f3-world2",
+      "bytes": 871185,
+      "reason": "replaced by unchanged final world pose images f3-world3"
+    }
+  ],
+  "retained": [
+    "f3-before baseline hands/FPS",
+    "f3-diagnosis rejected-fit examples",
+    "f3-fps3 final hands/FPS/motion",
+    "f3-world3 final synthetic world poses",
+    "f3-qa XML and compressed logs"
+  ],
+  "scope": "own F3 intermediate evidence only"
+}

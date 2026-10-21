@@ -1,0 +1,24 @@
+{
+  "baseline": "2f13175cf113f27d82275b26f7ab88b43d694e25",
+  "branch": "codex/vector-fighter",
+  "profile": "unity-trooper-presentation-v1@12",
+  "sourceHashes": {
+    "unity/Assets/StarTournament/Runtime/CombatPresentation.cs": "c126cfda5e49d3aaecd02482e60953d7256c55d91713c0a4f53a725f4875b142",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "ab4c627dea78ead59c616a0345d0857617a093141bf15461ad47045b5c325313",
+    "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "4396cc3bedabc5f07af165c7a508b5ba1ff744e2dad9dc3081c919bc8f9443ee",
+    "unity/Assets/StarTournament/Runtime/OrbitalGripPose.cs": "5ec388eec4d9546d8e08b3df65f49f6180474c3ee45eb5b3dcd658a21c045d1b",
+    "unity/Assets/StarTournament/Runtime/TrooperVisual.cs": "97c49b85eee7fbddeb5d2c467256fef3672bd878c991cb6c33d813fa36e268ee",
+    "unity/Assets/StarTournament/Runtime/VectorVisualReview.cs": "63d3d13627bd12dc576d99a6ed7844e92d35673abbc50f17fcef0f0ceb53b34d",
+    "unity/Assets/StarTournament/Scenes/ProvingGround.unity": "9e2ff4d261fd97cc891167fd587c67369843db67ded3dc22feceeb395a8369a6",
+    "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "796e6a4a5cde17fb3e53de245ed6f7969afa5a9032581c1be1137ea34338c09c",
+    "unity/Assets/StarTournament/Tests/EditMode/FirstPersonWalkTests.cs": "3b3859b8c06c3c8e7f2ce536c898bef9603814c01aa77d185f183c476b633814",
+    "unity/Assets/StarTournament/Tests/EditMode/WeaponSwitchPresentationTests.cs": "d498c588fe3a7a20db40168a279b303f44d5a45a741efda139406beda6208437",
+    "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "92c97a0f53a141455f39fd472a536e6daf72015ce0388ced20d7266cad7ff00c"
+  },
+  "assets": "F2 mesh/Blender unchanged; exact asset hashes in f2-source.json",
+  "checks": {
+    "EditMode": "27/27 final-editmode.xml",
+    "PlayMode": "4/4 f3-final3-results.xml"
+  },
+  "classification": "focused automated evidence, not full game or human acceptance"
+}

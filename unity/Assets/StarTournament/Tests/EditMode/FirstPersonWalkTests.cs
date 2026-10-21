@@ -78,7 +78,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test] public void EquipmentReadabilityDefaultKeepsExistingLabControlAndOldRegistry()
         {
-            Assert.That(profile.Version,Is.EqualTo(11));
+            Assert.That(profile.Version,Is.EqualTo(12));
             var control=profile.Descriptor("view.fillIntensity");
             Assert.That(control.DefaultValue,Is.EqualTo(.35f));Assert.That(control.Group,Is.EqualTo("trooper-view"));
             Assert.That(control.Minimum,Is.EqualTo(0));Assert.That(control.Maximum,Is.EqualTo(4));Assert.That(control.Step,Is.EqualTo(.05f));
@@ -88,7 +88,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var untouched=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(old));untouched.EnsureTrooperDescriptors();
             Assert.That(untouched.Get("view.fillIntensity"),Is.EqualTo(.35f),"The old scene's untouched default adopts the readable fill");
             old.Set("view.fillIntensity",.25f);old.EnsureTrooperDescriptors();
-            Assert.That(old.Version,Is.EqualTo(11));Assert.That(old.Get("view.fillIntensity"),Is.EqualTo(.25f));
+            Assert.That(old.Version,Is.EqualTo(12));Assert.That(old.Get("view.fillIntensity"),Is.EqualTo(.25f));
             Assert.That(old.Validate(),Is.Empty);
         }
         [TestCase(.05f,.05f)][TestCase(.25f,.25f)][TestCase(0f,0f)]

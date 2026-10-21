@@ -99,3 +99,35 @@ F2 final EditMode: 27/27 passed, including actual primary palm/weapon invariance
 
 F2 final graphical PlayMode: 6/6 passed. Inspected all four final FPS captures and rifle grip side views. Final body/arm hashes match f2-source.json and actual studio render-source.json. Source/profile snapshot is unchanged since the 27/27 EditMode result. All Unity runs used shared wrapper, -noaudio -muted, separate QA histories.
 No full suite, Player build, release, ordinary full world action video, physical device/performance or human acceptance was performed.
+
+## F3 all-weapon grip / local test Player
+Baseline 2f13175cf113f27d82275b26f7ab88b43d694e25, codex/vector-fighter.
+First expand existing capture helper to inspect both hands and exact weapon mesh bounds.
+Diagnostic: shared graphical/muted walk fixture with isolated Lab history, all four weapons.
+Then select affected grip/switch/airborne/death/reset and saved-history contracts after actual diff.
+Player build explicitly requested in successor handoff; local build and muted native smoke only.
+Full suite, install, release/deploy not authorized.
+
+F3 refinement: per-weapon absolute palm contacts, support palm yaw/roll/finger/thumb
+opposition and length-preserving arm solve; primary fit retains established handle
+geometry. Sampled local transforms restored before graph evaluation, including unkeyed
+channels. Trooper @12; BeforeWeaponGripFits reconstructs @11. Weapon presentation
+chooses current visible slot before grip evaluation (including switch apex and muzzle).
+Affected EditMode: WeaponSwitchPresentationTests; FirstPersonWalkTests; exact saved
+history BeforeWeaponGripFits and BeforePrimaryGripFit cases. Graphical PlayMode:
+walk capture, frozen grip, death/respawn/repeat, VectorAirbornePresentationTests and
+NativeWeaponSwitchPresentationTests (if present). No asset change: prior import and
+identity results remain valid; whole game/full suite not repeated.
+
+F3 final fit uses segment-specific support curls so MCP joints support the underside
+and the next phalanges wrap the outside. Absolute per-weapon contacts avoid drift
+between aim/fire/locomotion samples. Final graphical set 4/4 passed (f3-final3);
+all four FPS and both sides of both hands inspected. Intermediate fits that passed
+structural QA but clipped side plates were rejected visually. Final EditMode reruns
+27 affected cases after the final metadata/segment curl changes.
+
+F3 final EditMode: 27/27 passed (f3-qa/final-editmode.xml), including both predecessor
+history cases and four primary/support contact cases across aim/fire/air/reset.
+Final graphical fit: 4/4 passed; no assertion failures or weakened contracts.
+Prepare succeeded; retained only intended TrooperProfile @12 scene block. Other
+regenerated scene/default/serializer settings changes discarded from this owned worktree.

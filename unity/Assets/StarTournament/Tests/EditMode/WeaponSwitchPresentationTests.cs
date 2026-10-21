@@ -154,6 +154,41 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{UnityEngine.Object.DestroyImmediate(view);}
         }
+        [TestCase(WeaponId.Rifle)][TestCase(WeaponId.Shotgun)][TestCase(WeaponId.RocketLauncher)][TestCase(WeaponId.Cutter)]
+        public void BothHandsKeepContactWithoutStretchAcrossFireAirAndReset(WeaponId weapon)
+        {
+            var view=UnityEngine.Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Trooper/TrooperArms.prefab"));
+            try
+            {
+                var profile=ProvingProfile.CreateTrooperDefault();var fit="grip."+weapon+".";
+                var visual=view.AddComponent<TrooperVisual>();visual.EquippedWeapon=weapon;
+                visual.Initialize(TrooperVisual.ClipNames.Select(n=>UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/StarTournament/Trooper/"+n+".anim")).ToArray(),profile,true);
+                var bones=view.GetComponentsInChildren<Transform>(true);Transform Bone(string n)=>bones.Single(t=>t.name==n);
+                var mount=Bone("trooper:rig:weapon-mount");var upper=Bone("LeftUpperArm");var lower=Bone("LeftLowerArm");var hand=Bone("LeftHand");
+                float arm=Vector3.Distance(upper.position,lower.position),forearm=Vector3.Distance(lower.position,hand.position);
+                foreach(bool fire in new[]{false,true})
+                foreach(bool grounded in new[]{true,false})
+                {
+                    visual.ResetPose(0);if(fire)visual.Fire(.1);
+                    visual.Render(.2,Vector3.forward*8,100,1,grounded);visual.Render(.4,Vector3.forward*8,100,1,grounded);
+                    var contact=mount.InverseTransformPoint(Bone("LeftMiddleProximal").position);
+                    var target=new Vector3(profile.Get(fit+"supportX"),profile.Get(fit+"supportY"),profile.Get(fit+"supportZ"));
+                    Assert.That(Vector3.Distance(contact,target),Is.LessThan(.001f),weapon+" palm target");
+                    Assert.That(Vector3.Distance(upper.position,lower.position),Is.EqualTo(arm).Within(.000001f));
+                    Assert.That(Vector3.Distance(lower.position,hand.position),Is.EqualTo(forearm).Within(.000001f));
+                    Assert.That(mount.InverseTransformPoint(Bone("RightMiddleProximal").position).x,Is.InRange(.055f,.095f));
+                    Assert.That(mount.InverseTransformPoint(Bone("RightMiddleDistal").position).x,Is.LessThan(0));
+                    Assert.That(mount.InverseTransformPoint(Bone("LeftMiddleDistal").position).x,Is.GreaterThan(.12f),"Fingers wrap opposite the thumb");
+                    Assert.That(mount.InverseTransformPoint(Bone("LeftThumbDistal").position).x,Is.LessThan(-.12f),"Thumb opposes fingers");
+                    var local=bones.Select(t=>(t.localPosition,t.localRotation)).ToArray();
+                    for(int repeat=0;repeat<5;repeat++)visual.Render(.4,Vector3.forward*8,100,1,grounded);
+                    for(int i=0;i<bones.Length;i++){Assert.That(Vector3.Distance(local[i].localPosition,bones[i].localPosition),Is.LessThan(.000001f));Assert.That(Quaternion.Angle(local[i].localRotation,bones[i].localRotation),Is.LessThan(.01f));}
+                    visual.BeginDeath(.5);visual.ResetPose(1);visual.Render(1,Vector3.zero,100,2);
+                    Assert.That(Vector3.Distance(target,mount.InverseTransformPoint(Bone("LeftMiddleProximal").position)),Is.LessThan(.001f));
+                }
+            }
+            finally{UnityEngine.Object.DestroyImmediate(view);}
+        }
         [TestCase(false)][TestCase(true)]
         public void LabUpgradePreservesPreSwitchAndOlderProfileHistory(bool includePalette)
         {
