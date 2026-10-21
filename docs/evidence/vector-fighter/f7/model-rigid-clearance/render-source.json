@@ -1,0 +1,6 @@
+{
+  "source": ".local/vector-f7/candidate-body.glb",
+  "sha256": "477e58e573cf3d6378c2132d8fa39fcd1cf6c350a677a3f773743b1f3c5262dd",
+  "blender": "5.2.1 LTS",
+  "view": "studio; display teal override; imported actual mesh; no gameplay evidence"
+}

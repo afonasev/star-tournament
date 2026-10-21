@@ -1,0 +1,8 @@
+{
+  "unity/Assets/StarTournament/Runtime/VectorGroundedGait.cs": "3fd5ba4c8e8a7fa8fd6fe4ad74ffbf9e96d99b6170ff393dd19683f9415c21f7",
+  "unity/Assets/StarTournament/Runtime/TrooperVisual.cs": "8856074978c5b0967944a35ee06dc83e38585b10152397752f4b6b0e3f91a8dd",
+  "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "99173ee0ee0ebd42612ecd3f9775448968bce5102aab19db999850b5e13a2f9e",
+  "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "d5e3194348c0035c4188fa5616549e2822b93340562f57c738698d1accf2989b",
+  "unity/Assets/StarTournament/Tests/EditMode/VectorGroundedGaitTests.cs": "3e302528f3a47c8f2f275663d301e7a7898cd3c5724f713e51f9d06a2d2b57b5",
+  "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "36e65e3993f01f97929660a53ba48858c98e6331d4b132f35f4cb984b2f766f4"
+}

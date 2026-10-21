@@ -5,7 +5,7 @@ from mathutils import Vector
 ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'docs/evidence/vector-fighter';OUT=Path(sys.argv[sys.argv.index('--output')+1]) if '--output' in sys.argv else OUT;OUT.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 source=ROOT/'.local/vector-fighter/candidate-body.glb' if '--candidate' in sys.argv else ROOT/'unity/Assets/StarTournament/Art/trooper-body-animated.glb'
-if '--source' in sys.argv:source=Path(sys.argv[sys.argv.index('--source')+1])
+if '--source' in sys.argv:source=Path(sys.argv[sys.argv.index('--source')+1]).resolve()
 bpy.ops.import_scene.gltf(filepath=str(source))
 rig=next(o for o in bpy.context.scene.objects if o.type=='ARMATURE')
 rig.animation_data_create()
@@ -16,6 +16,10 @@ for p in rig.pose.bones:p.matrix_basis.identity()
 from mathutils import Quaternion
 for side,sign in [('Left',1),('Right',-1)]:
  b=rig.pose.bones[side+'UpperArm'];axis=b.bone.matrix_local.to_3x3().inverted()@Vector((0,1,0));b.rotation_mode='QUATERNION';b.rotation_quaternion=Quaternion(axis,math.radians(28*sign))
+if '--pose' in sys.argv:
+ for side in ['Left','Right']:
+  for part,degrees in [('UpperLeg',-35),('LowerLeg',70),('Foot',-35)]:
+   b=rig.pose.bones[side+part];axis=b.bone.matrix_local.to_3x3().inverted()@Vector((1,0,0));b.rotation_mode='QUATERNION';b.rotation_quaternion=Quaternion(axis,math.radians(degrees))
 for o in bpy.context.scene.objects:
  if o.name=='weapon:joined':o.hide_render=True
 for m in bpy.data.materials:
@@ -36,5 +40,5 @@ bpy.ops.object.camera_add();cam=bpy.context.object;s.camera=cam;cam.data.type='O
 for name,center,offset,scale in [('model-front',(0,0,.9),(2,-4,1.2),2.05),('model-back',(0,0,.9),(-2,4,1),2.05),('helmet',(0,0,1.66),(.35,-.65,.14),.43),('torso',(0,0,1.33),(.3,-1,.08),.61)]:
  if '--views' in sys.argv and name not in sys.argv[sys.argv.index('--views')+1].split(','):continue
  center=Vector(center);cam.location=center+Vector(offset);cam.rotation_euler=(center-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=scale;s.render.filepath=str(OUT/(name+'.png'));bpy.ops.render.render(write_still=True)
-(OUT/'render-source.json').write_text(json.dumps({'source':str(source.relative_to(ROOT)),'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'blender':bpy.app.version_string,'view':'studio; display teal override; imported actual mesh; no gameplay evidence'},indent=2)+'\n')
+(OUT/'render-source.json').write_text(json.dumps({'source':str(source.relative_to(ROOT)),'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'blender':bpy.app.version_string,'view':'studio; display teal override; imported actual mesh; no gameplay evidence','pose':'bent-leg diagnostic' if '--pose' in sys.argv else 'neutral review'},indent=2)+'\n')
 print('VECTOR_REVIEW_RENDERED')

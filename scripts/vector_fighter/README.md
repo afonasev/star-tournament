@@ -81,3 +81,12 @@ Unity-baked glove vertices and measured rectangular support-grip bounds using
 NumPy/SciPy. It is an offline art aid, not a mesh collision proof or execution test.
 Its outputs require actual Unity capture review. Actual weapon triangle OBJ and
 skin/axes data come from the optional CaptureGrip evidence path.
+
+F7 repairs the existing F6 costume with `blender -b -noaudio --python
+scripts/vector_fighter/refine_pose.py`. It creates no additional costume objects:
+rigid panels retain their designed surfaces, covered cloth follows those panels,
+and existing glove seam islands receive cloth-interpolated skin weights.
+`f7-pose-repair.blend` is the editable source; real exported-model renders and
+native execution results are recorded in `docs/evidence/vector-fighter/f7/`.
+The body gait uses actual root displacement and planted world-space support feet;
+only the visual pelvis/legs move, never the simulation actor or camera.

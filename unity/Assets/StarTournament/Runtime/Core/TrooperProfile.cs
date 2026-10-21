@@ -3,10 +3,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforePlantedSteps()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<15)return this;
+            var p=DetachedCopy();p.version=14;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.step"));
+            p.values.RemoveAll(v=>v.Path.StartsWith("animation.step"));
+            return p;
+        }
         internal ProvingProfile BeforeVerticalSupportGrips()
         {
             if(id!="unity-trooper-presentation-v1"||version<14)return this;
-            var p=DetachedCopy();p.version=13;
+            var p=BeforePlantedSteps().DetachedCopy();p.version=13;
             p.descriptors.RemoveAll(d=>d.Path.EndsWith(".supportPitch"));
             p.values.RemoveAll(v=>v.Path.EndsWith(".supportPitch"));
             return p;
@@ -133,7 +141,10 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=14};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=15};
+            p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
+            p.Add("animation.stepLengthMeters","trooper-animation","Длина шага","Предельное продвижение за шаг; опорная стопа остаётся на месте в мире.","meters",.2f,1.2f,.05f,.65f);
+            p.Add("animation.stepHeightMeters","trooper-animation","Подъём стопы","Высота переноса при полном шаге; короткие движения поднимают стопу пропорционально.","meters",.01f,.2f,.01f,.09f);
             p.Add("animation.airResponseSeconds","trooper-animation","Переход в прыжок","Плавность визуальной позы при отрыве и возвращении на опору.","seconds",.03f,.5f,.01f,.12f);
             p.Add("animation.airHipDegrees","trooper-animation","Подъём бедра в воздухе","Насколько боец поднимает бедро в прыжке.","degrees",0,65,1,30);
             p.Add("animation.airKneeDegrees","trooper-animation","Сгиб колена в воздухе","Насколько боец поджимает ноги в прыжке.","degrees",0,100,1,55);

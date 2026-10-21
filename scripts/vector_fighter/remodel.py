@@ -1,7 +1,7 @@
 """VECTOR costume remodeling: extracted sewn cloth and new shaped shell topology.
 All dimensions are offline mesh authoring; rig, clips, weapon geometry remain intact.
 """
-import bpy, bmesh, math
+import bpy, bmesh, math, sys
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 
@@ -108,7 +108,7 @@ def build(g,style):
             point=Vector(point);t=max(0,min(1,(point-rest.head_local).dot(axis)/axis.length_squared));anchor=rest.head_local+axis*t
             ray=point-anchor
             hit,normal,index,distance=clearance.ray_cast(anchor,ray.normalized(),.30)
-            if hit is not None and distance+.006>ray.length:point=anchor+ray.normalized()*(distance+.006)
+            if '--pose-base' not in sys.argv and hit is not None and distance+.006>ray.length:point=anchor+ray.normalized()*(distance+.006)
             cleared.append(point)
         v=cleared
         o=g.finish('VECTOR '+name,v,f,mat or g.paint,bone)
@@ -143,6 +143,7 @@ def build(g,style):
       'LowerArm':[(-1.05,.08),(-.40,.16),(.20,.08),(1.12,.17),(1.04,.72),(.42,.94),(-.30,.89),(-.92,.72)],
       'UpperLeg':[(-1.05,.04),(-.27,.12),(.35,.20),(1.08,.32),(1.10,.73),(.54,.94),(-.10,.85),(-.90,.63)],
       'LowerLeg':[(-1.0,.18),(-.45,.07),(.25,.11),(1.04,.22),(.93,.63),(.45,.94),(-.14,.97),(-.77,.82)]}
+    if '--pose-base' in sys.argv:outlines['LowerLeg']=[(a,max(.30,t)) for a,t in outlines['LowerLeg']]
     profiles={
       'UpperArm':[(0,.080,.077),(.25,.076,.082),(.52,.067,.070),(.8,.049,.056),(1,.043,.046)],
       'LowerArm':[(0,.043,.047),(.24,.049,.054),(.55,.041,.047),(1,.030,.034)],

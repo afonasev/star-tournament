@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "c9773ac2c039e314aee1d8d2bd49a8dc9def8ad0ab234a12060cbaf6b6d54a22",
+      "sha256": "84be303ae438eba4e2e988f3ae4ac0a304b982fe97c3174e53e752ce39e488ad",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR original suit v2; scripts/vector_fighter/build.py; compatible attributed Trooper skeleton and articulated glove derivative"
+      "source": "VECTOR posed garment and glove skin repair; scripts/vector_fighter/refine_pose.py and f7-pose-repair.blend; compatible attributed rig"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "51b0339aa928974b9d894a7997a98a6ae3a23d1ceaa2bac005ced8432b21e93e",
+      "sha256": "54626b380fb16e2c9689bb9ee7e5ac5ef8cd5d6944200d54a1d3938b74241b35",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR original suit v2; scripts/vector_fighter/build.py; compatible attributed Trooper skeleton and articulated glove derivative"
+      "source": "VECTOR posed garment and glove skin repair; scripts/vector_fighter/refine_pose.py and f7-pose-repair.blend; compatible attributed rig"
     },
     {
       "key": "speed-pickup",

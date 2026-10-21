@@ -85,6 +85,50 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<100;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
             Assert.That(Vector3.Distance(first.transform.localPosition,rest),Is.LessThan(.00001f));
         }
+        [UnityTest] public IEnumerator NativeShortStepsStrafeAndJumpKeepWorldContact()
+        {
+            yield return Load(2);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);ground.PlaceCombatReviewSeat(1,new Vector3(8,0,30),0,180);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
+            ground.SendMessage("LateUpdate");
+            var body=ground.transform.Find("player-1/trooper-presentation").GetComponent<TrooperVisual>();
+            body.ResetPose(ground.Session.Time);
+            var feet=body.GetComponentsInChildren<Transform>().Where(t=>t.name=="LeftFoot"||t.name=="RightFoot").OrderBy(t=>t.name).ToArray();
+            var gait=typeof(TrooperVisual).GetField("gait",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).GetValue(body);
+            var swing=gait.GetType().GetProperty("SwingFoot");var anchor=gait.GetType().GetMethod("Anchor");
+            string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WORLD_STEPS_EVIDENCE");
+            var rows=new System.Collections.Generic.List<string>{"frame,time,stage,root_x,root_y,root_z,speed,grounded,swing,left_x,left_y,left_z,right_x,right_y,right_z,stance_error"};
+            var go=new GameObject("world-step-review-camera");var camera=go.AddComponent<Camera>();camera.enabled=false;camera.fieldOfView=39;camera.nearClipPlane=.05f;camera.farClipPlane=50;camera.cullingMask=1|(1<<11);
+            bool rose=false,fell=false,landed=false;float maximumSlip=0,shortTravel=0;var start=ground.Session.Pose(0).Position;
+            try
+            {
+                for(int tick=0;tick<240;tick++)
+                {
+                    string stage=tick<60?"short":tick<110?"walk":tick<145?"strafe":tick<205?"jump":"settle";
+                    var action=new LocalAction{Move=tick<60?new Vector2(0,.02f):tick<110?Vector2.up:tick<145?Vector2.right:tick<175?Vector2.up:Vector2.zero,Jump=tick==145};
+                    ground.Session.Tick(new[]{action,new LocalAction()},.02f);ground.SendMessage("LateUpdate");
+                    var pose=ground.Session.Pose(0);int moving=(int)swing.GetValue(gait);float slip=0;
+                    if(pose.Grounded)for(int foot=0;foot<2;foot++)if(foot!=moving)slip=Mathf.Max(slip,Vector3.Distance(feet[foot].position,(Vector3)anchor.Invoke(gait,new object[]{foot})));
+                    maximumSlip=Mathf.Max(maximumSlip,slip);
+                    rose|=body.AirborneState=="rising";fell|=body.AirborneState=="falling";landed|=rose&&pose.Grounded;
+                    if(tick==59)shortTravel=Vector3.ProjectOnPlane(pose.Position-start,Vector3.up).magnitude;
+                    var l=feet[0].position;var r=feet[1].position;
+                    rows.Add(System.FormattableString.Invariant($"{tick},{ground.Session.Time:R},{stage},{pose.Position.x:R},{pose.Position.y:R},{pose.Position.z:R},{pose.Velocity.magnitude:R},{pose.Grounded},{moving},{l.x:R},{l.y:R},{l.z:R},{r.x:R},{r.y:R},{r.z:R},{slip:R}"));
+                    if(!string.IsNullOrEmpty(directory))
+                    {
+                        var center=body.transform.position+Vector3.up*.85f;
+                        go.transform.position=center+body.transform.forward*3.3f+body.transform.right*2.1f+Vector3.up*.6f;go.transform.LookAt(center);
+                        yield return null;CaptureSingleView(directory,"world-"+tick.ToString("D3"),camera);
+                    }
+                }
+                if(!string.IsNullOrEmpty(directory))System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,"world-steps.csv"),rows);
+                Assert.That(shortTravel,Is.GreaterThan(.005f),"Small analog input produces actual movement");
+                Assert.That(maximumSlip,Is.LessThan(.003f),"Actual native motor sequence retains planted support contact");
+                Assert.That(rose&&fell&&landed,Is.True,"Native jump, flight and landing actually occurred");
+            }
+            finally{Object.Destroy(go);}
+        }
         void CaptureWalkFrame(string directory,string name)
         {
             System.IO.Directory.CreateDirectory(directory);
@@ -104,6 +148,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         static void CaptureSingleView(string directory,string weapon,Camera camera)
         {
+            System.IO.Directory.CreateDirectory(directory);
             // Same seat projection, rendered alone at higher resolution for visual review.
             var target=new RenderTexture(1200,1350,24);target.Create();
             var pixels=new Texture2D(1200,1350,TextureFormat.RGB24,false);

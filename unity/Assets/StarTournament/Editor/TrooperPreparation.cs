@@ -12,6 +12,13 @@ namespace StarTournament.ProvingGround.Editor
     {
         const string Art="Assets/StarTournament/Art/";
         const string Output="Assets/StarTournament/Trooper/";
+        public static void RefreshExistingScene()
+        {
+            var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/StarTournament/Scenes/ProvingGround.unity");
+            var ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+            Prepare(ground,AssetDatabase.LoadAssetAtPath<GameObject>(Art+"trooper-body-animated.glb"),AssetDatabase.LoadAssetAtPath<GameObject>(Art+"trooper-arms-animated.glb"));
+            // Existing prefab GUIDs remain stable; do not serialize unrelated scene defaults.
+        }
         public static void Prepare(ProvingGround ground,GameObject source,GameObject arms)
         {
             Directory.CreateDirectory(Output); AssetDatabase.Refresh();
