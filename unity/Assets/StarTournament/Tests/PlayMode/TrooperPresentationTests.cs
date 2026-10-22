@@ -219,7 +219,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         for(int i=0;i<verts.Length;i++)
                         {
                             var w=ws[i];var ids=new[]{w.boneIndex0,w.boneIndex1,w.boneIndex2,w.boneIndex3};var weights=new[]{w.weight0,w.weight1,w.weight2,w.weight3};
-                            if(!ids.Any(id=>renderer.bones[id].name.StartsWith("LeftHand")||renderer.bones[id].name.StartsWith("LeftThumb")||renderer.bones[id].name.StartsWith("LeftIndex")||renderer.bones[id].name.StartsWith("LeftMiddle")||renderer.bones[id].name.StartsWith("LeftRing")||renderer.bones[id].name.StartsWith("LeftLittle")))continue;
+                            if(!ids.Any(id=>new[]{"Left","Right"}.Any(side=>new[]{"Hand","Thumb","Index","Middle","Ring","Little"}.Any(digit=>renderer.bones[id].name.StartsWith(side+digit)))))continue;
                             var p=mount.InverseTransformPoint(renderer.transform.TransformPoint(verts[i]));skin.Append(System.FormattableString.Invariant($"v {p.x:R} {p.y:R} {p.z:R}"));
                             for(int j=0;j<4;j++)if(weights[j]>0)skin.Append(System.FormattableString.Invariant($" {renderer.bones[ids[j]].name}:{weights[j]:R}"));skin.AppendLine();
                         }
@@ -231,6 +231,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 System.IO.File.WriteAllText(System.IO.Path.Combine(directory,weapon+"-actual-mesh.obj"),obj.ToString());
             }
             var go=new GameObject("grip-review-camera");var camera=go.AddComponent<Camera>();camera.CopyFrom(source);
+            // Diagnostic fill reveals finger geometry on the dark glove; FPS light is unchanged.
+            var reviewLight=go.AddComponent<Light>();reviewLight.type=LightType.Point;reviewLight.range=3;reviewLight.intensity=.15f;reviewLight.cullingMask=source.cullingMask;reviewLight.shadows=LightShadows.None;
             camera.rect=new Rect(0,0,1,1);camera.orthographic=true;camera.orthographicSize=.12f;camera.nearClipPlane=.01f;
             var target=new RenderTexture(1000,1000,24);target.Create();camera.targetTexture=target;
             var pixels=new Texture2D(1000,1000,TextureFormat.RGB24,false);var old=RenderTexture.active;

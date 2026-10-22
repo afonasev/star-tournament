@@ -1,0 +1,250 @@
+{
+  "Rifle": {
+    "RightThumb": {
+      "minimum_signed_rig_units": 0.0032156556844711304,
+      "contact_abs_p01_rig_units": 0.006049804389476776,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 16286
+    },
+    "RightIndex": {
+      "minimum_signed_rig_units": 0.007428711745887995,
+      "contact_abs_p01_rig_units": 0.009424184449017048,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 10112
+    },
+    "RightMiddle": {
+      "minimum_signed_rig_units": 0.00018471479415893555,
+      "contact_abs_p01_rig_units": 0.0018955841660499573,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 11145
+    },
+    "RightRing": {
+      "minimum_signed_rig_units": -0.022733084857463837,
+      "contact_abs_p01_rig_units": 0.0007688701152801514,
+      "penetration_fraction_below_003": 0.03996399639963996,
+      "vertices": 11110
+    },
+    "RightLittle": {
+      "minimum_signed_rig_units": -0.02428884617984295,
+      "contact_abs_p01_rig_units": 0.002193664200603962,
+      "penetration_fraction_below_003": 0.030453339485523128,
+      "vertices": 8669
+    },
+    "LeftThumb": {
+      "minimum_signed_rig_units": -0.048542119562625885,
+      "contact_abs_p01_rig_units": 0.0005125477910041809,
+      "penetration_fraction_below_003": 0.13844737649585762,
+      "vertices": 16295
+    },
+    "LeftLittle": {
+      "minimum_signed_rig_units": -0.05955114960670471,
+      "contact_abs_p01_rig_units": 0.000985933467745781,
+      "penetration_fraction_below_003": 0.11374080882352941,
+      "vertices": 8704
+    },
+    "LeftIndex": {
+      "minimum_signed_rig_units": -0.0050360821187496185,
+      "contact_abs_p01_rig_units": 0.003901969874277711,
+      "penetration_fraction_below_003": 0.0017903322060871295,
+      "vertices": 10054
+    },
+    "LeftMiddle": {
+      "minimum_signed_rig_units": -0.032323673367500305,
+      "contact_abs_p01_rig_units": 0.0007152557373046875,
+      "penetration_fraction_below_003": 0.0737302508256717,
+      "vertices": 11203
+    },
+    "LeftRing": {
+      "minimum_signed_rig_units": -0.05869276076555252,
+      "contact_abs_p01_rig_units": 0.0006571881822310388,
+      "penetration_fraction_below_003": 0.1175886652829167,
+      "vertices": 11081
+    }
+  },
+  "Shotgun": {
+    "RightThumb": {
+      "minimum_signed_rig_units": -0.000244435912463814,
+      "contact_abs_p01_rig_units": 0.004774727392941713,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 16286
+    },
+    "RightIndex": {
+      "minimum_signed_rig_units": -0.05197921395301819,
+      "contact_abs_p01_rig_units": 0.00021634995937347412,
+      "penetration_fraction_below_003": 0.41683148734177217,
+      "vertices": 10112
+    },
+    "RightMiddle": {
+      "minimum_signed_rig_units": -0.07253873348236084,
+      "contact_abs_p01_rig_units": 0.0007031634449958801,
+      "penetration_fraction_below_003": 0.3746074472857784,
+      "vertices": 11145
+    },
+    "RightRing": {
+      "minimum_signed_rig_units": -0.0315527617931366,
+      "contact_abs_p01_rig_units": 0.00037547945976257324,
+      "penetration_fraction_below_003": 0.20927092709270928,
+      "vertices": 11110
+    },
+    "RightLittle": {
+      "minimum_signed_rig_units": -0.11718834191560745,
+      "contact_abs_p01_rig_units": 0.04162111133337021,
+      "penetration_fraction_below_003": 0.30476410197254583,
+      "vertices": 8669
+    },
+    "LeftThumb": {
+      "minimum_signed_rig_units": -0.049652330577373505,
+      "contact_abs_p01_rig_units": 0.013548240065574646,
+      "penetration_fraction_below_003": 0.02160171831850261,
+      "vertices": 16295
+    },
+    "LeftLittle": {
+      "minimum_signed_rig_units": -0.013492544181644917,
+      "contact_abs_p01_rig_units": 0.0007390381069853902,
+      "penetration_fraction_below_003": 0.009765625,
+      "vertices": 8704
+    },
+    "LeftIndex": {
+      "minimum_signed_rig_units": -0.021220825612545013,
+      "contact_abs_p01_rig_units": 0.0005634576082229614,
+      "penetration_fraction_below_003": 0.1179629998010742,
+      "vertices": 10054
+    },
+    "LeftMiddle": {
+      "minimum_signed_rig_units": -0.021242424845695496,
+      "contact_abs_p01_rig_units": 0.0014420896768569946,
+      "penetration_fraction_below_003": 0.05355708292421673,
+      "vertices": 11203
+    },
+    "LeftRing": {
+      "minimum_signed_rig_units": -0.018090151250362396,
+      "contact_abs_p01_rig_units": 0.0004018170584458858,
+      "penetration_fraction_below_003": 0.017326956050897933,
+      "vertices": 11081
+    }
+  },
+  "RocketLauncher": {
+    "RightThumb": {
+      "minimum_signed_rig_units": 0.031694382429122925,
+      "contact_abs_p01_rig_units": 0.03355657681822777,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 16286
+    },
+    "RightIndex": {
+      "minimum_signed_rig_units": -0.00947109330445528,
+      "contact_abs_p01_rig_units": 0.0020652320235967636,
+      "penetration_fraction_below_003": 0.007318037974683544,
+      "vertices": 10112
+    },
+    "RightMiddle": {
+      "minimum_signed_rig_units": -0.006821364164352417,
+      "contact_abs_p01_rig_units": 0.0026897182688117027,
+      "penetration_fraction_below_003": 0.0016150740242261105,
+      "vertices": 11145
+    },
+    "RightRing": {
+      "minimum_signed_rig_units": -0.008893024176359177,
+      "contact_abs_p01_rig_units": 0.0027093233074992895,
+      "penetration_fraction_below_003": 0.0036903690369036904,
+      "vertices": 11110
+    },
+    "RightLittle": {
+      "minimum_signed_rig_units": -0.0008086603484116495,
+      "contact_abs_p01_rig_units": 0.030937284231185913,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 8669
+    },
+    "LeftThumb": {
+      "minimum_signed_rig_units": -0.08324627578258514,
+      "contact_abs_p01_rig_units": 0.0057161226868629456,
+      "penetration_fraction_below_003": 6.13685179502915e-05,
+      "vertices": 16295
+    },
+    "LeftLittle": {
+      "minimum_signed_rig_units": -0.010222792625427246,
+      "contact_abs_p01_rig_units": 0.0003190040588378906,
+      "penetration_fraction_below_003": 0.08846507352941177,
+      "vertices": 8704
+    },
+    "LeftIndex": {
+      "minimum_signed_rig_units": -3.7017140130046755e-05,
+      "contact_abs_p01_rig_units": 0.004279661923646927,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 10054
+    },
+    "LeftMiddle": {
+      "minimum_signed_rig_units": 0.01062626950442791,
+      "contact_abs_p01_rig_units": 0.012830521911382675,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 11203
+    },
+    "LeftRing": {
+      "minimum_signed_rig_units": -0.001305317971855402,
+      "contact_abs_p01_rig_units": 0.003456865204498172,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 11081
+    }
+  },
+  "Cutter": {
+    "RightThumb": {
+      "minimum_signed_rig_units": 0.0015367493033409119,
+      "contact_abs_p01_rig_units": 0.007557692471891642,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 16286
+    },
+    "RightIndex": {
+      "minimum_signed_rig_units": -0.017495661973953247,
+      "contact_abs_p01_rig_units": 0.0006444528698921204,
+      "penetration_fraction_below_003": 0.0981012658227848,
+      "vertices": 10112
+    },
+    "RightMiddle": {
+      "minimum_signed_rig_units": 0.005204399581998587,
+      "contact_abs_p01_rig_units": 0.0089406818151474,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 11145
+    },
+    "RightRing": {
+      "minimum_signed_rig_units": 0.008080294355750084,
+      "contact_abs_p01_rig_units": 0.011364009231328964,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 11110
+    },
+    "RightLittle": {
+      "minimum_signed_rig_units": 0.03743969649076462,
+      "contact_abs_p01_rig_units": 0.046878963708877563,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 8669
+    },
+    "LeftThumb": {
+      "minimum_signed_rig_units": -0.001402090536430478,
+      "contact_abs_p01_rig_units": 0.0019819545559585094,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 16295
+    },
+    "LeftLittle": {
+      "minimum_signed_rig_units": 0.006668916437774897,
+      "contact_abs_p01_rig_units": 0.00907859206199646,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 8704
+    },
+    "LeftIndex": {
+      "minimum_signed_rig_units": -0.03370639681816101,
+      "contact_abs_p01_rig_units": 0.0008312762947753072,
+      "penetration_fraction_below_003": 0.022975929978118162,
+      "vertices": 10054
+    },
+    "LeftMiddle": {
+      "minimum_signed_rig_units": 0.009000508114695549,
+      "contact_abs_p01_rig_units": 0.012886352837085724,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 11203
+    },
+    "LeftRing": {
+      "minimum_signed_rig_units": 0.013035562820732594,
+      "contact_abs_p01_rig_units": 0.016638867557048798,
+      "penetration_fraction_below_003": 0.0,
+      "vertices": 11081
+    }
+  }
+}
