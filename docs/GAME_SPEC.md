@@ -852,3 +852,6 @@ First-install macOS поставляется DMG с полным приложе�
 Все белые круги точек подбора имеют default radius 1.35 m, как на Колодце; жёлтый круг в центре тоннелей сохраняет прежний размер. Профили: Orbital League @11, тоннели @4, Луна @6; Well v6 не меняется. Исторические snapshots/hashes и осознанные custom values сохраняются; untuned Default получает общий радиус без изменения света/карты/gameplay.
 
 - 2026-10-22, VECTOR F11: выбранная форма FPS-концепта №3 сочетается с тканью и швами №2. Широкая округлая керамика, непрерывный рукав и компактная мягкая манжета заменяют угловатые края и отдельные кольца. `unity-trooper-presentation-v1@17` добавляет по оружию `grip.<weapon>.wristAlignment`: поворот локтя при сохранении ладони, пальцев и длин костей; @16 и предыдущие snapshots сохраняются. Камера/FOV, оружие, походка и gameplay не меняются. Художественная приёмка по реальным FPS остаётся отдельной.
+
+### VECTOR F12 support grip correction
+Factory trooper presentation @18 keeps the support forearm approximately aligned across Rifle, Shotgun, RocketLauncher and Cutter. The vertical-handle grips use revised palm contact/pitch/yaw instead of F11's elbow swivel; camera, weapon pose, bone lengths, meshes and finger joint curls remain unchanged. Exact @17 and earlier Lab snapshots remain reconstructible. Evidence: `docs/evidence/vector-fighter/f12-result/`.

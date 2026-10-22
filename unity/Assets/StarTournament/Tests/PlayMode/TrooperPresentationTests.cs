@@ -300,11 +300,48 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<bones.Length;i++)Assert.That(Quaternion.Angle(death[i],bones[i].localRotation),Is.LessThan(.01f));
             }
         }
+        static ProvingProfile BeforeStableSupportGrip(ProvingProfile profile)
+        {
+            return (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeStableSupportGrip",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(profile,null);
+        }
+        [UnityTest] public IEnumerator FactorySupportGripsKeepForearmDirectionAndNaturalWrist()
+        {
+            yield return Load(2);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var current=ProvingProfile.CreateTrooperDefault();
+            var previous=BeforeStableSupportGrip(current);
+            var bones=visual.GetComponentsInChildren<Transform>();
+            var upper=bones.Single(t=>t.name=="LeftUpperArm");var lower=bones.Single(t=>t.name=="LeftLowerArm");
+            var wrist=bones.Single(t=>t.name=="LeftHand");var palm=bones.Single(t=>t.name=="LeftMiddleProximal");
+            var independent=bones.Where(t=>t.name.StartsWith("Right")||t.name=="trooper:rig:weapon-mount").ToArray();
+            var directions=new System.Collections.Generic.List<Vector3>();
+            foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
+            {
+                visual.EquippedWeapon=weapon;
+                foreach(var d in previous.Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+                visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+                var positions=independent.Select(t=>t.position).ToArray();var rotations=independent.Select(t=>t.rotation).ToArray();
+                var lengths=new[]{Vector3.Distance(upper.position,lower.position),Vector3.Distance(lower.position,wrist.position)};
+                foreach(var d in current.Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+                visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+                Assert.That(Vector3.Angle(wrist.position-lower.position,palm.position-wrist.position),Is.LessThan(12),weapon.ToString());
+                var direction=(wrist.position-lower.position).normalized;
+                foreach(var other in directions)Assert.That(Vector3.Angle(other,direction),Is.LessThan(15),weapon+" support forearm direction");
+                directions.Add(direction);
+                Assert.That(Vector3.Distance(upper.position,lower.position),Is.EqualTo(lengths[0]).Within(.00001f));
+                Assert.That(Vector3.Distance(lower.position,wrist.position),Is.EqualTo(lengths[1]).Within(.00001f));
+                for(int i=0;i<independent.Length;i++)
+                {
+                    Assert.That(Vector3.Distance(positions[i],independent[i].position),Is.LessThan(.0001f),independent[i].name);
+                    Assert.That(Quaternion.Angle(rotations[i],independent[i].rotation),Is.LessThan(.05f),independent[i].name);
+                }
+            }
+        }
         [UnityTest] public IEnumerator SupportWristAlignmentPreservesPalmDigitsAndBoneLengths()
         {
             yield return Load(2);
             var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
-            foreach(var d in ProvingProfile.CreateTrooperDefault().Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+            foreach(var d in BeforeStableSupportGrip(ProvingProfile.CreateTrooperDefault()).Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
             var bones=visual.GetComponentsInChildren<Transform>();
             var upper=bones.Single(t=>t.name=="LeftUpperArm");var lower=bones.Single(t=>t.name=="LeftLowerArm");
             var wrist=bones.Single(t=>t.name=="LeftHand");var palm=bones.Single(t=>t.name=="LeftMiddleProximal");

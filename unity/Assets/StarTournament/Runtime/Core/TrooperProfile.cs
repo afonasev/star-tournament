@@ -3,11 +3,25 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Exact @17 factory poses remain available to saved Lab snapshots.
+        internal ProvingProfile BeforeStableSupportGrip()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<18)return this;
+            var p=DetachedCopy();p.version=17;
+            foreach(var weapon in new[]{WeaponId.RocketLauncher,WeaponId.Cutter})
+            {
+                var prefix="grip."+weapon+".";
+                void Restore(string name,float value){var d=p.FindDescriptor(prefix+name);d.DefaultValue=value;p.Set(d.Path,value);}
+                Restore("wristAlignment",1);Restore("supportPitch",8);Restore("supportYaw",1);
+                Restore("supportX",-.105f);Restore("supportY",-.11f);Restore("supportZ",weapon==WeaponId.RocketLauncher?.46f:.375f);
+            }
+            return p;
+        }
         // Exact @16 schema/defaults remain available to saved Lab snapshots.
         internal ProvingProfile BeforeAlignedSupportWrist()
         {
             if(id!="unity-trooper-presentation-v1"||version<17)return this;
-            var p=DetachedCopy();p.version=16;
+            var p=BeforeStableSupportGrip().DetachedCopy();p.version=16;
             p.descriptors.RemoveAll(d=>d.Path.EndsWith(".wristAlignment"));
             p.values.RemoveAll(v=>v.Path.EndsWith(".wristAlignment"));
             return p;
@@ -170,7 +184,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=17};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=18};
             p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
             p.Add("animation.stepLengthMeters","trooper-animation","Длина шага","Предельное продвижение за шаг; опорная стопа остаётся на месте в мире.","meters",.2f,1.2f,.05f,.65f);
             p.Add("animation.stepHeightMeters","trooper-animation","Подъём стопы","Высота переноса при полном шаге; короткие движения поднимают стопу пропорционально.","meters",.01f,.2f,.01f,.09f);
@@ -213,7 +227,7 @@ namespace StarTournament.ProvingGround
                 p.Add(prefix+"primaryYaw",group,"Доворот правой кисти","Поправка контакта с рукоятью выбранного оружия; оружие остаётся неподвижным.","degrees",-20,20,1,0);
                 p.Add(prefix+"primaryCurl",group,"Обхват рукояти","Дополнительный сгиб пальцев правой руки под толщину рукояти.","degrees",-20,20,1,0);
                 p.Add(prefix+"supportRoll",group,"Разворот поперёк цевья","Поправка разворота опорной ладони вокруг её продольной оси.","degrees",-90,90,1,-55);
-                p.Add(prefix+"wristAlignment",group,"Выпрямление опорного запястья","Поворот локтя вокруг оси плечо–кисть к продолжению ладони; контакт пальцев и длины костей сохраняются.","ratio",0,1,.05f,weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?1:0);
+                p.Add(prefix+"wristAlignment",group,"Выпрямление опорного запястья","Поворот локтя вокруг оси плечо–кисть к продолжению ладони; контакт пальцев и длины костей сохраняются.","ratio",0,1,.05f,0);
                 p.Add(prefix+"supportPitch",group,"Наклон опорной ладони","Поворот кисти вокруг поперечной оси оружия для вертикальной передней рукояти.","degrees",-120,120,1,0);
                 p.Add(prefix+"supportYaw",group,"Направление опорной ладони","Разворот ладони вокруг точки контакта на цевье.","degrees",-100,100,1,weapon==WeaponId.Rifle?35:weapon==WeaponId.Shotgun?30:weapon==WeaponId.RocketLauncher?40:35);
                 p.Add(prefix+"supportCurl",group,"Обхват цевья","Поправка сгиба опорных пальцев под корпус оружия.","degrees",-30,90,1,weapon==WeaponId.RocketLauncher||weapon==WeaponId.Cutter?15:20);
@@ -243,7 +257,7 @@ namespace StarTournament.ProvingGround
                             "degrees",joint==3?-70:-40,joint==3?70:45,1,(side=="left"?left:right)[digit,joint]);
             }
             void Fit(string path,float value){p.FindDescriptor(path).DefaultValue=value;p.Set(path,value);}
-            Fit("grip.RocketLauncher.supportY",-0.11f);
+            Fit("grip.RocketLauncher.supportY",-0.155f);
             Fit("grip.RocketLauncher.left.Thumb.Proximal",25);
             Fit("grip.RocketLauncher.left.Thumb.Intermediate",7);
             Fit("grip.RocketLauncher.left.Thumb.Distal",33);
@@ -265,7 +279,7 @@ namespace StarTournament.ProvingGround
             Fit("grip.RocketLauncher.left.Little.Intermediate",-33);
             Fit("grip.RocketLauncher.left.Little.Distal",10);
             Fit("grip.RocketLauncher.left.Little.Spread",1);
-            Fit("grip.Cutter.supportY",-0.11f);
+            Fit("grip.Cutter.supportY",-0.155f);
             Fit("grip.Cutter.left.Thumb.Proximal",19);
             Fit("grip.Cutter.left.Thumb.Intermediate",12);
             Fit("grip.Cutter.left.Thumb.Distal",43);
@@ -287,17 +301,17 @@ namespace StarTournament.ProvingGround
             Fit("grip.Cutter.left.Little.Intermediate",-37);
             Fit("grip.Cutter.left.Little.Distal",-4);
             Fit("grip.Cutter.left.Little.Spread",-1);
-            Fit("grip.RocketLauncher.supportPitch",8);
-            Fit("grip.RocketLauncher.supportYaw",1);
+            Fit("grip.RocketLauncher.supportPitch",0f);
+            Fit("grip.RocketLauncher.supportYaw",18f);
             Fit("grip.RocketLauncher.supportRoll",49);
-            Fit("grip.RocketLauncher.supportX",-0.105f);
-            Fit("grip.RocketLauncher.supportZ",0.46f);
+            Fit("grip.RocketLauncher.supportX",-0.11f);
+            Fit("grip.RocketLauncher.supportZ",0.49f);
             Fit("grip.RocketLauncher.supportCurl",45);
-            Fit("grip.Cutter.supportPitch",8);
-            Fit("grip.Cutter.supportYaw",1);
+            Fit("grip.Cutter.supportPitch",-2f);
+            Fit("grip.Cutter.supportYaw",22f);
             Fit("grip.Cutter.supportRoll",49);
-            Fit("grip.Cutter.supportX",-0.105f);
-            Fit("grip.Cutter.supportZ",0.375f);
+            Fit("grip.Cutter.supportX",-0.11f);
+            Fit("grip.Cutter.supportZ",0.415f);
             Fit("grip.Cutter.supportCurl",45);
             return p;
         }

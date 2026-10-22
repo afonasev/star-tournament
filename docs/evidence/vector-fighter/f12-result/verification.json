@@ -1,0 +1,110 @@
+{
+  "baseline": "610fef5bada4c7afeb9724197a4212a4379b7922",
+  "branch": "codex/vector-fighter",
+  "checks": {
+    "candidate": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "30.1469213",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "candidate-2": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "29.951123",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "history": {
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "228.1895949",
+      "cases": [
+        {
+          "name": "OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(\"BeforeStableSupportGrip\")",
+          "result": "Passed"
+        },
+        {
+          "name": "OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(\"BeforeAlignedSupportWrist\")",
+          "result": "Passed"
+        },
+        {
+          "name": "OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(\"BeforeClosedVerticalGrips\")",
+          "result": "Passed"
+        }
+      ]
+    },
+    "final-native": {
+      "result": "Passed",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "48.8594067",
+      "cases": [
+        {
+          "name": "FactorySupportGripsKeepForearmDirectionAndNaturalWrist",
+          "result": "Passed"
+        },
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        },
+        {
+          "name": "OrbitalGripDoesNotAccumulateAcrossFrozenSamples",
+          "result": "Passed"
+        },
+        {
+          "name": "SupportWristAlignmentPreservesPalmDigitsAndBoneLengths",
+          "result": "Passed"
+        }
+      ]
+    }
+  },
+  "source_hashes": {
+    "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "808105cd07a13af934ee6cf36fe6d90f5cb50cf420dd877ee09a67857e2cf5c1",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "a9d2f50669c84604dfdfc75b911a0fdc9f23e6da5f73005f1df1cb8aa0e879cd",
+    "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "757bb128ecb6a0af0d4c152c1545d3755862156641dee095a4c825dda1892665",
+    "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "cbfc23a453d31b8ad63dec370f87bc87f143f8c1525328b5ed8684ec061462d2"
+  },
+  "failures": [
+    "First final run: test compilation failed on internal historical profile access; fixed with existing reflection pattern.",
+    "Second final run: exact fitted contact values violated Lab 0.005 step; stopped owned Editor (exit143), no complete XML; corrected factory contacts to existing step grid."
+  ],
+  "unchanged": [
+    "GLBs",
+    "Blender source",
+    "prefabs",
+    "weapon transforms",
+    "camera/FOV",
+    "finger curls",
+    "gameplay"
+  ],
+  "not_run": [
+    "full suite",
+    "Player build",
+    "physical devices",
+    "human acceptance",
+    "merge",
+    "release",
+    "deploy"
+  ]
+}

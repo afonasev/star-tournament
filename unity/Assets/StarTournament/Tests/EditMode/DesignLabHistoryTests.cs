@@ -349,6 +349,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TestCase("BeforeFootstepMix")]
         [TestCase("BeforeEquipmentReadability")]
         [TestCase("BeforeVectorFighter")]
+        [TestCase("BeforeStableSupportGrip")]
         [TestCase("BeforeAlignedSupportWrist")]
         [TestCase("BeforeClosedVerticalGrips")]
         [TestCase("BeforePlantedSteps")]
