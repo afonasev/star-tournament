@@ -300,6 +300,33 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<bones.Length;i++)Assert.That(Quaternion.Angle(death[i],bones[i].localRotation),Is.LessThan(.01f));
             }
         }
+        [UnityTest] public IEnumerator SupportWristAlignmentPreservesPalmDigitsAndBoneLengths()
+        {
+            yield return Load(2);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            foreach(var d in ProvingProfile.CreateTrooperDefault().Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+            var bones=visual.GetComponentsInChildren<Transform>();
+            var upper=bones.Single(t=>t.name=="LeftUpperArm");var lower=bones.Single(t=>t.name=="LeftLowerArm");
+            var wrist=bones.Single(t=>t.name=="LeftHand");var palm=bones.Single(t=>t.name=="LeftMiddleProximal");
+            var contacts=bones.Where(t=>t.name.StartsWith("Left")&&(t.name.Contains("Proximal")||t.name.Contains("Intermediate")||t.name.Contains("Distal")||t.name=="LeftHand")||t.name=="trooper:rig:weapon-mount").ToArray();
+            foreach(var weapon in new[]{WeaponId.RocketLauncher,WeaponId.Cutter})
+            {
+                visual.EquippedWeapon=weapon;var path="grip."+weapon+".wristAlignment";
+                visual.Tuning.Set(path,0);visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+                var positions=contacts.Select(t=>t.position).ToArray();var rotations=contacts.Select(t=>t.rotation).ToArray();
+                var lengths=new[]{Vector3.Distance(upper.position,lower.position),Vector3.Distance(lower.position,wrist.position)};
+                float before=Vector3.Angle(wrist.position-lower.position,palm.position-wrist.position);
+                visual.Tuning.Set(path,1);visual.Render(.25,Vector3.zero,100,1);
+                Assert.That(Vector3.Angle(wrist.position-lower.position,palm.position-wrist.position),Is.LessThan(before-5),weapon.ToString());
+                Assert.That(Vector3.Distance(upper.position,lower.position),Is.EqualTo(lengths[0]).Within(.00001f));
+                Assert.That(Vector3.Distance(lower.position,wrist.position),Is.EqualTo(lengths[1]).Within(.00001f));
+                for(int i=0;i<contacts.Length;i++)
+                {
+                    Assert.That(Vector3.Distance(positions[i],contacts[i].position),Is.LessThan(.0001f),contacts[i].name);
+                    Assert.That(Quaternion.Angle(rotations[i],contacts[i].rotation),Is.LessThan(.05f),contacts[i].name);
+                }
+            }
+        }
         [UnityTest] public IEnumerator OrbitalGripDoesNotAccumulateAcrossFrozenSamples()
         {
             yield return Load(2);

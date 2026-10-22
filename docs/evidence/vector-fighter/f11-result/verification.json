@@ -1,0 +1,68 @@
+{
+  "baseline": "ba8bf6b7e2e92140d4f9d98cfd05b646295ebe94",
+  "checks": {
+    "native": {
+      "result": "Passed",
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "47.0362376"
+    },
+    "import": {
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.4627701"
+    },
+    "history_and_initial_import": {
+      "result": "Passed",
+      "total": "17",
+      "passed": "17",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "1023.8069297"
+    }
+  },
+  "raw_frames": 40,
+  "capture": "actual Unity seat-camera projection; factory @17; no overrides; collages are identical crops/resizes only",
+  "source_sha256": "4dfd9d886f74fdf29a8963c8d4887526f7144ec2cf0e076de3aefc1728e16779",
+  "wrist_angles_degrees": {
+    "Rifle": {
+      "F9": 8.47,
+      "F11": 8.47
+    },
+    "Shotgun": {
+      "F9": 11.27,
+      "F11": 11.27
+    },
+    "RocketLauncher": {
+      "F9": 39.73,
+      "F11": 20.63
+    },
+    "Cutter": {
+      "F9": 48.2,
+      "F11": 24.17
+    }
+  },
+  "not_run": [
+    "full suite",
+    "Player build",
+    "integration",
+    "release/deploy",
+    "hardware/performance/human acceptance"
+  ],
+  "retention": "All continuation resources retained by explicit user request.",
+  "visual_review": "Final four-weapon FPS and both-side grip views inspected. Removed old cuff rings/clasps; rebuilt paired panel front/back surfaces to eliminate visible triangle breakthrough. Human art acceptance remains open.",
+  "intermediate_failures": [
+    "Initial visual candidate too dark/angular; retained separately.",
+    "Independent/flat panel back surfaces intersected; replaced with matching curved closed topology.",
+    "Blender intermediate BMesh-reference error; fixed before exporting/installation."
+  ],
+  "remaining_visual_limits": [
+    "Human comparison against selected F11 targets remains pending.",
+    "Diagnostic side cameras still expose coarse proximal sleeve/elbow overlaps outside the reviewed FPS composition; broader F5 costume work remains open."
+  ]
+}

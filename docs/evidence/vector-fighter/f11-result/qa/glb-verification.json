@@ -1,0 +1,12 @@
+{
+  "arms": {
+    "hierarchy": "exact",
+    "all_7_animation_arrays": "exact",
+    "sha256": "8375660c5416ed302bf77a8816fb817b5da21b68a747db1c146efda222e7e8ff"
+  },
+  "body": {
+    "hierarchy": "exact",
+    "all_7_animation_arrays": "exact",
+    "sha256": "f3084e482b0496bccc907a2667e6333e009e496139bd6c1cc0d5433cb3095781"
+  }
+}

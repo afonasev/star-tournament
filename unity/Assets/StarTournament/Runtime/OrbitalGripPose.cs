@@ -67,7 +67,7 @@ namespace StarTournament.ProvingGround
             mount.localPosition=mountPosition;mount.localRotation=mountRotation;
             primaryApplied=false;
         }
-        void Reach(Vector3 target)
+        void Reach(Vector3 target,Vector3 handDirection,float wristAlignment)
         {
             var a=upper.position;var b=lower.position;var c=wrist.position;
             // Numerical guard only: avoid a singular straight elbow, not an art parameter.
@@ -76,6 +76,12 @@ namespace StarTournament.ProvingGround
             var delta=target-a;float distance=Mathf.Clamp(delta.magnitude,Mathf.Abs(first-second)+reachEpsilon,first+second-reachEpsilon);
             var direction=delta.normalized;
             var bend=Vector3.ProjectOnPlane(b-a,direction).normalized;
+            // The elbow lies on a circle around shoulder-to-wrist. Its nearest
+            // point to the backwards palm axis minimizes wrist flexion while
+            // retaining both bone lengths and the authored palm contact.
+            var aligned=Vector3.ProjectOnPlane(-handDirection,direction);
+            if(aligned.sqrMagnitude>reachEpsilon*reachEpsilon)
+                bend=Vector3.Slerp(bend,aligned.normalized,wristAlignment).normalized;
             float along=(first*first+distance*distance-second*second)/(2*distance);
             var elbow=a+direction*along+bend*Mathf.Sqrt(Mathf.Max(0,first*first-along*along));
             upper.rotation=Quaternion.FromToRotation(b-a,elbow-a)*upper.rotation;
@@ -100,7 +106,8 @@ namespace StarTournament.ProvingGround
             var pivot=palm.position;
             var target=mount.TransformPoint(new Vector3(profile.Get(fit+"supportX"),profile.Get(fit+"supportY"),profile.Get(fit+"supportZ")))+turn*(wrist.position-pivot);
             var handRotation=turn*wrist.rotation;
-            Reach(target);wrist.rotation=handRotation;
+            var handDirection=turn*(palm.position-wrist.position).normalized;
+            Reach(target,handDirection,profile.Get(fit+"wristAlignment"));wrist.rotation=handRotation;
             foreach(var thumb in digits.Where(d=>d.thumb&&d.bone.name.EndsWith("Proximal")))
                 thumb.bone.rotation=Quaternion.AngleAxis(profile.Get(fit+"thumbOpposition"),mount.forward)*thumb.bone.rotation;
             foreach(var item in digits)
