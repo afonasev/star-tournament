@@ -1,0 +1,112 @@
+{
+  "history-import": {
+    "result": "Passed",
+    "total": "16",
+    "passed": "16",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "969.1505933",
+    "start-time": "2026-10-22 05:50:42Z",
+    "end-time": "2026-10-22 06:06:51Z"
+  },
+  "neutral-filter-notrun": {
+    "result": "Passed",
+    "total": "0",
+    "passed": "0",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "0.0062205",
+    "start-time": "2026-10-22 05:39:54Z",
+    "end-time": "2026-10-22 05:39:54Z"
+  },
+  "neutral": {
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "26.9503185",
+    "start-time": "2026-10-22 05:40:27Z",
+    "end-time": "2026-10-22 05:40:54Z"
+  },
+  "candidate": {
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "25.4360804",
+    "start-time": "2026-10-22 05:42:03Z",
+    "end-time": "2026-10-22 05:42:29Z"
+  },
+  "repaired": {
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "23.3896201",
+    "start-time": "2026-10-22 05:46:28Z",
+    "end-time": "2026-10-22 05:46:51Z"
+  },
+  "final": {
+    "result": "Passed",
+    "total": "2",
+    "passed": "2",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "30.0830293",
+    "start-time": "2026-10-22 05:49:53Z",
+    "end-time": "2026-10-22 05:50:23Z"
+  },
+  "final-palm": {
+    "result": "Passed",
+    "total": "2",
+    "passed": "2",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "32.4233604",
+    "start-time": "2026-10-22 06:10:31Z",
+    "end-time": "2026-10-22 06:11:04Z"
+  },
+  "final-rigid": {
+    "result": "Passed",
+    "total": "2",
+    "passed": "2",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "32.7815527",
+    "start-time": "2026-10-22 06:22:39Z",
+    "end-time": "2026-10-22 06:23:12Z"
+  },
+  "final-dorsal": {
+    "result": "Passed",
+    "total": "2",
+    "passed": "2",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "30.2474611",
+    "start-time": "2026-10-22 06:29:43Z",
+    "end-time": "2026-10-22 06:30:13Z"
+  },
+  "final-assembly": {
+    "result": "Passed",
+    "total": "2",
+    "passed": "2",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "29.81451",
+    "start-time": "2026-10-22 06:33:06Z",
+    "end-time": "2026-10-22 06:33:36Z"
+  },
+  "final-import": {
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "0.3634922",
+    "start-time": "2026-10-22 06:33:48Z",
+    "end-time": "2026-10-22 06:33:48Z"
+  }
+}

@@ -90,3 +90,16 @@ and existing glove seam islands receive cloth-interpolated skin weights.
 native execution results are recorded in `docs/evidence/vector-fighter/f7/`.
 The body gait uses actual root displacement and planted world-space support feet;
 only the visual pelvis/legs move, never the simulation actor or camera.
+
+F8 repairs the preserved F7 glove with `blender -b -noaudio --python
+scripts/vector_fighter/refine_glove.py`. Finger cloth follows its own anatomical
+chain, existing seam islands conform to that cloth, and existing finger/palm
+plate layers are seated on the garment. Each dorsal rim/coating pair is fitted
+as one existing assembly with a narrower footprint and preserved layer spacing.
+Object, vertex, bone and animation
+counts are preserved. Editable source: `f8-glove-repair.blend`; diagnostic
+exports go to `.local/vector-f8/`. This script does not promote GLBs or factory
+parameters automatically. Trooper @16 supplies separately authored closed
+RocketLauncher/Cutter grips; `BeforeClosedVerticalGrips` preserves exact @15
+factory defaults for saved history. Actual Unity evidence and remaining visual
+gates are recorded in `docs/evidence/vector-fighter/f8/`.

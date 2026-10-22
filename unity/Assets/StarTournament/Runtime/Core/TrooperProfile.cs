@@ -3,10 +3,29 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Exact factory defaults before the fitted closed vertical grips (@16).
+        internal ProvingProfile BeforeClosedVerticalGrips()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<16)return this;
+            var p=DetachedCopy();p.version=15;
+            foreach(var weapon in new[]{WeaponId.RocketLauncher,WeaponId.Cutter})
+            {
+                var prefix="grip."+weapon+".";
+                void Restore(string name,float value){var d=p.FindDescriptor(prefix+name);d.DefaultValue=value;p.Set(d.Path,value);}
+                Restore("supportPitch",0);Restore("supportYaw",weapon==WeaponId.RocketLauncher?40:35);
+                Restore("supportRoll",-55);Restore("supportX",.06f);Restore("supportY",-.20f);Restore("supportZ",.48f);
+                Restore("supportCurl",15);Restore("thumbOpposition",weapon==WeaponId.RocketLauncher?39:42);
+                float[,] digits=weapon==WeaponId.RocketLauncher?new float[,] {{45,-33,0,-60},{-6,-6,45,-32},{-11,35,26,-29},{5,45,12,-43},{3,44,5,-29}}:
+                    new float[,] {{45,-37,3,-64},{-6,-9,45,-36},{-10,35,25,-33},{7,45,16,-48},{8,45,7,-32}};
+                var names=new[]{"Thumb","Index","Middle","Ring","Little"};var joints=new[]{"Proximal","Intermediate","Distal","Spread"};
+                for(int digit=0;digit<5;digit++)for(int joint=0;joint<4;joint++)Restore("left."+names[digit]+"."+joints[joint],digits[digit,joint]);
+            }
+            return p;
+        }
         internal ProvingProfile BeforePlantedSteps()
         {
             if(id!="unity-trooper-presentation-v1"||version<15)return this;
-            var p=DetachedCopy();p.version=14;
+            var p=BeforeClosedVerticalGrips().DetachedCopy();p.version=14;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.step"));
             p.values.RemoveAll(v=>v.Path.StartsWith("animation.step"));
             var threshold=p.FindDescriptor("animation.walkThreshold");threshold.Label="Порог шага";threshold.Description="Минимальная фактическая горизонтальная скорость для walk.";
@@ -142,7 +161,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=15};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=16};
             p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
             p.Add("animation.stepLengthMeters","trooper-animation","Длина шага","Предельное продвижение за шаг; опорная стопа остаётся на месте в мире.","meters",.2f,1.2f,.05f,.65f);
             p.Add("animation.stepHeightMeters","trooper-animation","Подъём стопы","Высота переноса при полном шаге; короткие движения поднимают стопу пропорционально.","meters",.01f,.2f,.01f,.09f);
@@ -213,6 +232,63 @@ namespace StarTournament.ProvingGround
                             "Индивидуальная поправка сустава для геометрии "+weapon+". Сгиб не меняет стрельбу или положение оружия.",
                             "degrees",joint==3?-70:-40,joint==3?70:45,1,(side=="left"?left:right)[digit,joint]);
             }
+            void Fit(string path,float value){p.FindDescriptor(path).DefaultValue=value;p.Set(path,value);}
+            Fit("grip.RocketLauncher.supportY",-0.11f);
+            Fit("grip.RocketLauncher.left.Thumb.Proximal",25);
+            Fit("grip.RocketLauncher.left.Thumb.Intermediate",7);
+            Fit("grip.RocketLauncher.left.Thumb.Distal",33);
+            Fit("grip.RocketLauncher.left.Thumb.Spread",-32);
+            Fit("grip.RocketLauncher.thumbOpposition",-63);
+            Fit("grip.RocketLauncher.left.Index.Proximal",2);
+            Fit("grip.RocketLauncher.left.Index.Intermediate",-6);
+            Fit("grip.RocketLauncher.left.Index.Distal",9);
+            Fit("grip.RocketLauncher.left.Index.Spread",-12);
+            Fit("grip.RocketLauncher.left.Middle.Proximal",7);
+            Fit("grip.RocketLauncher.left.Middle.Intermediate",1);
+            Fit("grip.RocketLauncher.left.Middle.Distal",-10);
+            Fit("grip.RocketLauncher.left.Middle.Spread",-4);
+            Fit("grip.RocketLauncher.left.Ring.Proximal",22);
+            Fit("grip.RocketLauncher.left.Ring.Intermediate",-21);
+            Fit("grip.RocketLauncher.left.Ring.Distal",-12);
+            Fit("grip.RocketLauncher.left.Ring.Spread",-9);
+            Fit("grip.RocketLauncher.left.Little.Proximal",10);
+            Fit("grip.RocketLauncher.left.Little.Intermediate",-33);
+            Fit("grip.RocketLauncher.left.Little.Distal",10);
+            Fit("grip.RocketLauncher.left.Little.Spread",1);
+            Fit("grip.Cutter.supportY",-0.11f);
+            Fit("grip.Cutter.left.Thumb.Proximal",19);
+            Fit("grip.Cutter.left.Thumb.Intermediate",12);
+            Fit("grip.Cutter.left.Thumb.Distal",43);
+            Fit("grip.Cutter.left.Thumb.Spread",-31);
+            Fit("grip.Cutter.thumbOpposition",-78);
+            Fit("grip.Cutter.left.Index.Proximal",2);
+            Fit("grip.Cutter.left.Index.Intermediate",-7);
+            Fit("grip.Cutter.left.Index.Distal",10);
+            Fit("grip.Cutter.left.Index.Spread",-12);
+            Fit("grip.Cutter.left.Middle.Proximal",8);
+            Fit("grip.Cutter.left.Middle.Intermediate",-2);
+            Fit("grip.Cutter.left.Middle.Distal",-17);
+            Fit("grip.Cutter.left.Middle.Spread",-5);
+            Fit("grip.Cutter.left.Ring.Proximal",22);
+            Fit("grip.Cutter.left.Ring.Intermediate",-22);
+            Fit("grip.Cutter.left.Ring.Distal",-17);
+            Fit("grip.Cutter.left.Ring.Spread",-9);
+            Fit("grip.Cutter.left.Little.Proximal",4);
+            Fit("grip.Cutter.left.Little.Intermediate",-37);
+            Fit("grip.Cutter.left.Little.Distal",-4);
+            Fit("grip.Cutter.left.Little.Spread",-1);
+            Fit("grip.RocketLauncher.supportPitch",8);
+            Fit("grip.RocketLauncher.supportYaw",1);
+            Fit("grip.RocketLauncher.supportRoll",49);
+            Fit("grip.RocketLauncher.supportX",-0.105f);
+            Fit("grip.RocketLauncher.supportZ",0.46f);
+            Fit("grip.RocketLauncher.supportCurl",45);
+            Fit("grip.Cutter.supportPitch",8);
+            Fit("grip.Cutter.supportYaw",1);
+            Fit("grip.Cutter.supportRoll",49);
+            Fit("grip.Cutter.supportX",-0.105f);
+            Fit("grip.Cutter.supportZ",0.375f);
+            Fit("grip.Cutter.supportCurl",45);
             return p;
         }
     }

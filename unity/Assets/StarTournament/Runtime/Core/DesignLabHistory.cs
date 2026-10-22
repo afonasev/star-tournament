@@ -387,6 +387,8 @@ namespace StarTournament.ProvingGround
                 ?p.BeforeUniformPickupRadii():p).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="visual.bowlLocalLightScale"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeArenaHarmonization()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??16)<16)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeClosedVerticalGrips()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??15)<15)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePlantedSteps()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??14)<14)
