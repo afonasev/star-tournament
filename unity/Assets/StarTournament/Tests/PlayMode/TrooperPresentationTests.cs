@@ -95,6 +95,51 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<100;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
             Assert.That(Vector3.Distance(first.transform.localPosition,rest),Is.LessThan(.00001f));
         }
+        [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
+        [UnityTest] public IEnumerator ShotgunGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Shotgun);
+        [UnityTest] public IEnumerator RocketGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.RocketLauncher);
+        [UnityTest] public IEnumerator CutterGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Cutter);
+        IEnumerator NativeGripPhases(WeaponId selectedWeapon)
+        {
+            yield return Load(2);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            foreach(var descriptor in ProvingProfile.CreateTrooperDefault().Descriptors)visual.Tuning.Set(descriptor.Path,descriptor.DefaultValue);
+            ground.PlaceCombatReviewSeat(1,new Vector3(8,0,30),0,180);
+            string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            // One weapon per case keeps the original fixture timeout unchanged,
+            // including when optional native mesh/image evidence is enabled.
+            foreach(WeaponId weapon in new[]{selectedWeapon})
+            {
+                ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+                for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
+                var snapshot=ground.Session.Capture();var life=snapshot.Lives[0];
+                life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
+                life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
+                life.ShotgunAmmo=life.RocketAmmo=20;life.CutterEnergy=30;life.Ammo=CombatLife.AmmoFor(life,weapon);
+                snapshot.Lives[0]=life;ground.Session.Restore(snapshot);visual.ResetPose(snapshot.Time);
+                var captured=new System.Collections.Generic.HashSet<string>();
+                var states=new System.Collections.Generic.List<string>{"tick,state,airborne,weapon"};
+                for(int tick=0;tick<160;tick++)
+                {
+                    ground.Session.Tick(new[]{new LocalAction{Fire=tick==5,FireHeld=tick>=5&&tick<10,Jump=tick==25},new LocalAction()},.02f);
+                    ground.SendMessage("LateUpdate");
+                    string phase=tick>=8&&visual.State=="fire"?"fire":visual.AirborneState;
+                    if(phase!="fire"&&phase!="rising"&&phase!="falling"&&phase!="landing")continue;
+                    if(!captured.Add(phase))continue;
+                    yield return null;
+                    if(!string.IsNullOrEmpty(directory))
+                    {
+                        string output=System.IO.Path.Combine(directory,"poses",weapon+"-"+phase);System.IO.Directory.CreateDirectory(output);
+                        CaptureSingleView(output,weapon.ToString(),camera);CaptureGrip(output,weapon.ToString(),visual,camera);
+                    }
+                    states.Add(tick+","+visual.State+","+visual.AirborneState+","+visual.EquippedWeapon);
+                }
+                if(!string.IsNullOrEmpty(directory))System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,weapon+"-pose-states.csv"),states);
+                CollectionAssert.AreEquivalent(new[]{"fire","rising","falling","landing"},captured,"Native grip evidence must reach each requested phase for "+weapon);
+            }
+        }
         [UnityTest] public IEnumerator NativeShortStepsStrafeAndJumpKeepWorldContact()
         {
             yield return Load(2);

@@ -1,0 +1,2874 @@
+{
+  "Rifle": {
+    "fixed_arms_vs_F14": {
+      "LeftUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 1.8141557763835033e-15
+      },
+      "LeftLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 1.5074885505722792e-15
+      },
+      "LeftHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.9934241000206067e-15
+      },
+      "RightUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.2457894029210307e-15
+      },
+      "RightLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 3.8198441960874055e-15
+      },
+      "RightHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.778758392142589e-15
+      }
+    },
+    "digit_pose_deltas_relative_to_wrist": {
+      "fire": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 8.613331783557098e-07,
+            "angle_degrees": 0.0012961604021631136
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.1585450995368744e-06,
+            "angle_degrees": 0.0012839849614016718
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.124736889852227e-06,
+            "angle_degrees": 0.0012947760194234514
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 9.29721781960967e-07,
+            "angle_degrees": 8.70631592853473e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.047052578913428e-06,
+            "angle_degrees": 3.1632016933760625e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.5257200370771882e-06,
+            "angle_degrees": 1.91816994824432e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 9.08800997795246e-07,
+            "angle_degrees": 1.9501547826207587e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.6278207639170368e-06,
+            "angle_degrees": 5.824159580653421e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.0161765818042107e-06,
+            "angle_degrees": 5.715462891670103e-06
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.0073025616827445e-06,
+            "angle_degrees": 1.1323926131939979e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.7387697651444895e-06,
+            "angle_degrees": 2.6956455385174066e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.1888892338645963e-06,
+            "angle_degrees": 1.7209761314398046e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.147823377909572e-06,
+            "angle_degrees": 1.826564208765674e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.7175867403490786e-06,
+            "angle_degrees": 2.527251688408075e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.7372825805940356e-06,
+            "angle_degrees": 2.1295306281936823e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.628530108176597e-06,
+            "angle_degrees": 3.737941396990906e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.4580055427180034e-06,
+            "angle_degrees": 4.4558298273849355e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.050233896693481e-06,
+            "angle_degrees": 3.467480986365241e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.5877174331964e-06,
+            "angle_degrees": 3.459894181862603e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.141087140221122e-06,
+            "angle_degrees": 3.292382812101159e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.398691606229573e-06,
+            "angle_degrees": 1.4807667346885935e-05
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.737492314108553e-06,
+            "angle_degrees": 2.473804196486536e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.5768790266248983e-06,
+            "angle_degrees": 2.2292449429063304e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.082197784163434e-06,
+            "angle_degrees": 2.1725318564411307e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.0198028072750234e-06,
+            "angle_degrees": 3.413086629674676e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.568261005435776e-06,
+            "angle_degrees": 3.4101159171921314e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.51060428188366e-06,
+            "angle_degrees": 3.279580649797944e-05
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.002774715693925e-06,
+            "angle_degrees": 3.529462778246717e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.626668168550081e-06,
+            "angle_degrees": 2.8290310239537316e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.215856769412725e-06,
+            "angle_degrees": 2.293155557415757e-05
+          }
+        ]
+      },
+      "rising": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.0810119394046565e-06,
+            "angle_degrees": 1.5745618132929397e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.418251940346704e-06,
+            "angle_degrees": 1.697877795209382e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.123886989837152e-06,
+            "angle_degrees": 2.7456936084738534e-05
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.2003480094551165e-06,
+            "angle_degrees": 1.9216179911706444e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.3074545115786e-06,
+            "angle_degrees": 7.796839472142495e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.389857900674025e-06,
+            "angle_degrees": 1.1003000630438648e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.017726097978895e-06,
+            "angle_degrees": 1.3687688466103237e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.223476728297347e-06,
+            "angle_degrees": 2.0196058253054833e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.2116037202524276e-06,
+            "angle_degrees": 1.6266887124641155e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.153474098411784e-06,
+            "angle_degrees": 8.716834428863332e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.30903601467477e-06,
+            "angle_degrees": 1.966401106555409e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.2747163802160035e-06,
+            "angle_degrees": 1.3021114170899314e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.211597231178482e-06,
+            "angle_degrees": 7.641024482956058e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.137526979447043e-06,
+            "angle_degrees": 1.805599958307883e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.515585297822704e-06,
+            "angle_degrees": 1.9411968546671346e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.6337750321901235e-06,
+            "angle_degrees": 1.8626536217447544e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.63879774668425e-07,
+            "angle_degrees": 1.4598435192429336e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.9534947617970732e-06,
+            "angle_degrees": 2.9957374465656503e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.844206126144119e-07,
+            "angle_degrees": 2.400367519314747e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.959531126443317e-06,
+            "angle_degrees": 2.1029580716505205e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.00827553087244e-06,
+            "angle_degrees": 9.425851573400343e-06
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.8633705196381063e-07,
+            "angle_degrees": 2.1912350185074768e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8938725154472882e-06,
+            "angle_degrees": 2.0553824019573778e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.8041185268227901e-06,
+            "angle_degrees": 1.6570867012342636e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.9190064111188402e-06,
+            "angle_degrees": 2.9256125905726944e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8365126164180713e-06,
+            "angle_degrees": 2.2662809839749345e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.0280202175131265e-06,
+            "angle_degrees": 3.0043400841072826e-06
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.8569815731619378e-06,
+            "angle_degrees": 2.3137640152809192e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8269725201958227e-06,
+            "angle_degrees": 9.616246285136007e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.915599576540296e-06,
+            "angle_degrees": 1.5260650167201482e-05
+          }
+        ]
+      },
+      "falling": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.0243702865604782e-06,
+            "angle_degrees": 1.1482682319406441e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 9.378493766177876e-07,
+            "angle_degrees": 7.233471652738994e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.227199918697636e-07,
+            "angle_degrees": 1.3513290363784583e-05
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 7.95708294230011e-07,
+            "angle_degrees": 1.0791558052938079e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.2313418277122711e-07,
+            "angle_degrees": 1.3497714530084165e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.8676081746047687e-06,
+            "angle_degrees": 2.356723837701597e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.5801846615282945e-06,
+            "angle_degrees": 4.9937451635845635e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 8.897512525182939e-07,
+            "angle_degrees": 1.7291080747004573e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 9.611194590765127e-07,
+            "angle_degrees": 9.996321332341668e-06
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 8.564199312068225e-07,
+            "angle_degrees": 1.4777306532261441e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 9.274416627410521e-07,
+            "angle_degrees": 2.2054804443130465e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.0076518953702055e-06,
+            "angle_degrees": 1.3058741924030934e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.0109703992454503e-06,
+            "angle_degrees": 1.3722225455961062e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8042444349234987e-06,
+            "angle_degrees": 2.1435804805760152e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 9.66979272982702e-07,
+            "angle_degrees": 1.5143493467783775e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.4954526683025755e-08,
+            "angle_degrees": 3.1785752818303384e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 8.511662587455324e-08,
+            "angle_degrees": 5.564735774086467e-16
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.79393847731873e-08,
+            "angle_degrees": 5.746010221815915e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010507255013e-08,
+            "angle_degrees": 1.4116362464296685e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.344615320159624e-07,
+            "angle_degrees": 1.5734351927568364e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.8550426210638983e-07,
+            "angle_degrees": 1.7689172583358526e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.971156804954943e-08,
+            "angle_degrees": 7.776120537450946e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.2124102364631756e-08,
+            "angle_degrees": 2.1552177739991603e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.822302966960825e-08,
+            "angle_degrees": 1.858958751318744e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010501964586e-08,
+            "angle_degrees": 2.7911278665853135e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.493150236029107e-08,
+            "angle_degrees": 1.248698245127355e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.735040884162147e-07,
+            "angle_degrees": 3.3808418717153654e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.681335280217152e-08,
+            "angle_degrees": 5.226134219229728e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.0134914903509635e-07,
+            "angle_degrees": 1.6852316435362211e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.78794704317432e-08,
+            "angle_degrees": 2.7850276437619556e-15
+          }
+        ]
+      },
+      "landing": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.2152275177883944e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.3800233147626236e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.170949125507262e-15
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.3575361215350646e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.4743793362655908e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.7701612417130168e-15
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.3879325056556957e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 3.3650089096471997e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.705705712585415e-15
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.8414172158891594e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 4.0852027092509676e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.923212995274626e-15
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.483654225513997e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.506333956052488e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.226202109483135e-15
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.1785752818303384e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 5.564735774086467e-16
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 5.746010221815915e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.4116362464296685e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.5734351927568364e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.7689172583358526e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 7.776120537450946e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.1552177739991603e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.858958751318744e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.7911278665853135e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.248698245127355e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.3808418717153654e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 5.226134219229728e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.6852316435362211e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.7850276437619556e-15
+          }
+        ]
+      }
+    }
+  },
+  "Shotgun": {
+    "fixed_arms_vs_F14": {
+      "LeftUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 3.57604618937509e-15
+      },
+      "LeftLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 4.588217408257198e-15
+      },
+      "LeftHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 3.33622790775529e-16
+      },
+      "RightUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.2457894029210307e-15
+      },
+      "RightLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 3.8198441960874055e-15
+      },
+      "RightHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.778758392142589e-15
+      }
+    },
+    "digit_pose_deltas_relative_to_wrist": {
+      "fire": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.3695989211455643e-06,
+            "angle_degrees": 0.0008699155080745685
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.689701968643702e-06,
+            "angle_degrees": 0.0008672088279176062
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.4462895816787868e-06,
+            "angle_degrees": 0.0008683848829612782
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.660789325445323e-06,
+            "angle_degrees": 2.8406362676150232e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8537423405102975e-06,
+            "angle_degrees": 1.3322952809187672e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.937575484195891e-06,
+            "angle_degrees": 1.0249820571489764e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.7904528753283427e-06,
+            "angle_degrees": 1.1004800536025541e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.611758586597798e-06,
+            "angle_degrees": 1.3307813585274303e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.6029683067228123e-06,
+            "angle_degrees": 2.346605085113375e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.5461741495274888e-06,
+            "angle_degrees": 1.8435611576340964e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.922191323310681e-06,
+            "angle_degrees": 9.345763590086055e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.523658312428978e-06,
+            "angle_degrees": 1.4856065413591468e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.64287308516737e-06,
+            "angle_degrees": 1.3596097143587211e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.832066035964354e-06,
+            "angle_degrees": 2.365336346869312e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.6644881826300086e-06,
+            "angle_degrees": 9.632851444137863e-06
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.628530108176597e-06,
+            "angle_degrees": 3.737941396990906e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.4580055427180034e-06,
+            "angle_degrees": 4.4558298273849355e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.050233896693481e-06,
+            "angle_degrees": 3.467480986365241e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.5877174331964e-06,
+            "angle_degrees": 2.9904699257925618e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.489611700628975e-06,
+            "angle_degrees": 3.201531258286162e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.541569432106427e-06,
+            "angle_degrees": 2.9524435660448893e-05
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.737492314108553e-06,
+            "angle_degrees": 2.2103556885882204e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.299053983473534e-06,
+            "angle_degrees": 3.9103686537981014e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.1011581913306143e-06,
+            "angle_degrees": 3.936379914545579e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.0198028072750234e-06,
+            "angle_degrees": 3.413086629674676e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.568261005435776e-06,
+            "angle_degrees": 3.4101159171921314e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.51060428188366e-06,
+            "angle_degrees": 3.279580649797944e-05
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.002774715693925e-06,
+            "angle_degrees": 3.529462778246717e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.626668168550081e-06,
+            "angle_degrees": 2.8290310239537316e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.215856769412725e-06,
+            "angle_degrees": 2.293155557415757e-05
+          }
+        ]
+      },
+      "rising": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.696419030988458e-07,
+            "angle_degrees": 2.0935924044119625e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.3509252734064044e-06,
+            "angle_degrees": 2.2691045604748073e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.105843058965972e-06,
+            "angle_degrees": 3.1088857508271704e-05
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.1094563887049215e-06,
+            "angle_degrees": 2.2560040556199093e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 7.175670122459624e-07,
+            "angle_degrees": 1.1034934867916397e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.2457696672095947e-07,
+            "angle_degrees": 1.0403221204592482e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.191014726983167e-06,
+            "angle_degrees": 2.4950441714365487e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.784196538598481e-07,
+            "angle_degrees": 1.6083862455827497e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.498733149292318e-07,
+            "angle_degrees": 1.4976318532154775e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.056782653109732e-07,
+            "angle_degrees": 1.7457262330701045e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.229616541182853e-07,
+            "angle_degrees": 8.515922259554972e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.8412961695980635e-06,
+            "angle_degrees": 1.4640761755341413e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.489401916612929e-07,
+            "angle_degrees": 1.6257944285963276e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.5569731820701634e-07,
+            "angle_degrees": 2.6179519546448192e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 7.646801851807266e-07,
+            "angle_degrees": 1.9898638429228667e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.6337750321901235e-06,
+            "angle_degrees": 1.8626536217447544e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.63879774668425e-07,
+            "angle_degrees": 1.4598435192429336e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.9534947617970732e-06,
+            "angle_degrees": 2.9957374465656503e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.844206126144119e-07,
+            "angle_degrees": 1.3324065975150337e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 9.205642023042075e-07,
+            "angle_degrees": 1.5015873094767763e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.660658446224815e-07,
+            "angle_degrees": 1.2645892055090088e-05
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.8633705196381063e-07,
+            "angle_degrees": 2.0155315748195716e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.7205607908745354e-06,
+            "angle_degrees": 3.307167198922562e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.1295044653169492e-06,
+            "angle_degrees": 3.701633066216456e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.9190064111188402e-06,
+            "angle_degrees": 2.9256125905726944e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8365126164180713e-06,
+            "angle_degrees": 2.2662809839749345e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.0280202175131265e-06,
+            "angle_degrees": 3.0043400841072826e-06
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.8569815731619378e-06,
+            "angle_degrees": 2.3137640152809192e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8269725201958227e-06,
+            "angle_degrees": 9.616246285136007e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.915599576540296e-06,
+            "angle_degrees": 1.5260650167201482e-05
+          }
+        ]
+      },
+      "falling": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.005965862755196e-07,
+            "angle_degrees": 1.4522203709695092e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.64521999575958e-07,
+            "angle_degrees": 1.5949028422803173e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.1891930894403873e-07,
+            "angle_degrees": 3.487314625082803e-05
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.409515654743203e-07,
+            "angle_degrees": 1.065210437180902e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.2613952276820323e-07,
+            "angle_degrees": 1.4508863065589222e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.9630873174724854e-07,
+            "angle_degrees": 1.17733745546913e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.7519656159118965e-07,
+            "angle_degrees": 4.263636996873353e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.289726496939397e-07,
+            "angle_degrees": 1.904328084246645e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.040179036850929e-07,
+            "angle_degrees": 9.359006999139473e-06
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.2629191357418436e-07,
+            "angle_degrees": 1.2907738506546356e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.6187635892977143e-07,
+            "angle_degrees": 1.1637792404969144e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.720153374299184e-06,
+            "angle_degrees": 1.4907077655949055e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.206599925801325e-07,
+            "angle_degrees": 1.1203772550387624e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.5358855692105265e-07,
+            "angle_degrees": 6.437366549603158e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.7360567888002906e-06,
+            "angle_degrees": 7.001699504040697e-06
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.4954526683025755e-08,
+            "angle_degrees": 3.1785752818303384e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 8.511662587455324e-08,
+            "angle_degrees": 5.564735774086467e-16
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.79393847731873e-08,
+            "angle_degrees": 5.746010221815915e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010507255013e-08,
+            "angle_degrees": 1.1045988038081705e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.917195282853092e-08,
+            "angle_degrees": 1.0648904144466566e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.297952998982104e-08,
+            "angle_degrees": 4.732321111858306e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.971156804954943e-08,
+            "angle_degrees": 3.306969137934978e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.1299623484378357e-07,
+            "angle_degrees": 2.0061750478911455e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.1283382174944477e-07,
+            "angle_degrees": 3.81056246639759e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010501964586e-08,
+            "angle_degrees": 2.7911278665853135e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.493150236029107e-08,
+            "angle_degrees": 1.248698245127355e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.735040884162147e-07,
+            "angle_degrees": 3.3808418717153654e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.681335280217152e-08,
+            "angle_degrees": 5.226134219229728e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.0134914903509635e-07,
+            "angle_degrees": 1.6852316435362211e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.78794704317432e-08,
+            "angle_degrees": 2.7850276437619556e-15
+          }
+        ]
+      },
+      "landing": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 9.18069666041241e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.8287883608059293e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 9.147468488742832e-16
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.6985185074835935e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.561660853888683e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.069315850556768e-15
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.93664219036185e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.3759154978362553e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 5.450164399151669e-15
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.3170067353943164e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 4.640624521966157e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.246108232681949e-15
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.3104648607722786e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 4.153510093772373e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.8221073014562547e-15
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.1785752818303384e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 5.564735774086467e-16
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 5.746010221815915e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.1045988038081705e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.0648904144466566e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.732321111858306e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.306969137934978e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.0061750478911455e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.81056246639759e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.7911278665853135e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.248698245127355e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.3808418717153654e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 5.226134219229728e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.6852316435362211e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.7850276437619556e-15
+          }
+        ]
+      }
+    }
+  },
+  "RocketLauncher": {
+    "fixed_arms_vs_F14": {
+      "LeftUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 1.8540077557511683e-15
+      },
+      "LeftLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.715561785801106e-15
+      },
+      "LeftHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 4.187541131272003e-15
+      },
+      "RightUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.2457894029210307e-15
+      },
+      "RightLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 3.8198441960874055e-15
+      },
+      "RightHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.778758392142589e-15
+      }
+    },
+    "digit_pose_deltas_relative_to_wrist": {
+      "fire": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.9145342609834744e-06,
+            "angle_degrees": 0.001187289292434053
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.6266173922812773e-06,
+            "angle_degrees": 0.0011884413149485646
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.812191898582139e-06,
+            "angle_degrees": 0.0011959652232972316
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.3640546515812946e-06,
+            "angle_degrees": 1.2784661998079503e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.445061516822148e-06,
+            "angle_degrees": 1.6059260833465087e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.532175363594198e-06,
+            "angle_degrees": 1.4227403215429117e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.9015655289278228e-06,
+            "angle_degrees": 2.114116955029841e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.478912928429267e-06,
+            "angle_degrees": 2.3343721500543992e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.161714917567797e-06,
+            "angle_degrees": 1.1498507400021924e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.345310430784296e-06,
+            "angle_degrees": 1.3316001209226196e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.530217095656707e-06,
+            "angle_degrees": 1.9275740110997784e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.479537779612489e-06,
+            "angle_degrees": 1.6898565103322924e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.048839177498282e-06,
+            "angle_degrees": 1.9013600263873464e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.0769372312778938e-06,
+            "angle_degrees": 7.708542157850445e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 7.133363750810581e-07,
+            "angle_degrees": 2.9668109255856205e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.628530108176597e-06,
+            "angle_degrees": 3.295534631981091e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.151409047838983e-06,
+            "angle_degrees": 2.8251159671467127e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.387928866700469e-06,
+            "angle_degrees": 3.427080443417161e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.5877174331964e-06,
+            "angle_degrees": 3.516540301367479e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.1595070470365895e-06,
+            "angle_degrees": 4.6091026809976185e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.7154291612544324e-06,
+            "angle_degrees": 2.6768570756522267e-05
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.737492314108553e-06,
+            "angle_degrees": 3.4658899015176884e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.7915812946260427e-06,
+            "angle_degrees": 3.663391568594145e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.4490269395613176e-06,
+            "angle_degrees": 3.373596660942414e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.0198028072750234e-06,
+            "angle_degrees": 2.1657213911850448e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.2094932615712592e-06,
+            "angle_degrees": 2.550929125051184e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.990345327843287e-06,
+            "angle_degrees": 2.238251685237884e-05
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.002774715693925e-06,
+            "angle_degrees": 2.4777155863998042e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.8106647350914276e-06,
+            "angle_degrees": 4.903781187426078e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.5678402351816015e-06,
+            "angle_degrees": 3.6112290422887646e-05
+          }
+        ]
+      },
+      "rising": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.834063936083897e-07,
+            "angle_degrees": 3.7742988140367855e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.451383888660649e-06,
+            "angle_degrees": 4.0196086308964376e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.975810462013465e-07,
+            "angle_degrees": 3.888203414118571e-05
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.188249574658008e-07,
+            "angle_degrees": 1.1659887004233345e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.972715953208283e-07,
+            "angle_degrees": 1.5101113212702413e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.80040792740522e-07,
+            "angle_degrees": 2.568248959621181e-06
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.492319761701783e-07,
+            "angle_degrees": 7.691216761180307e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.10806764651261e-06,
+            "angle_degrees": 1.015561630770857e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.4459997178759555e-06,
+            "angle_degrees": 1.5814665236041456e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.069346072350933e-06,
+            "angle_degrees": 2.035185208084302e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.1961732361448051e-06,
+            "angle_degrees": 9.563755150659892e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.141819595279903e-06,
+            "angle_degrees": 2.094620595517683e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.790153536563417e-06,
+            "angle_degrees": 1.0465727763888159e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.7300954703434267e-07,
+            "angle_degrees": 1.0637543190788325e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.155200274200388e-07,
+            "angle_degrees": 2.8906290716444052e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.6337750321901235e-06,
+            "angle_degrees": 2.2698562314878328e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.6799554489704998e-06,
+            "angle_degrees": 1.6898939099502524e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.7438138222624765e-06,
+            "angle_degrees": 2.3493995638482077e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.844206126144119e-07,
+            "angle_degrees": 1.5693043479209427e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8726146499312593e-06,
+            "angle_degrees": 2.9596677712092316e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.7746710286279914e-06,
+            "angle_degrees": 1.80601974488036e-05
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.8633705196381063e-07,
+            "angle_degrees": 1.8747352872494173e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.7524185605687347e-06,
+            "angle_degrees": 3.4889578825058946e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.746484960370149e-06,
+            "angle_degrees": 3.95374007903147e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.9190064111188402e-06,
+            "angle_degrees": 2.467918537189904e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.5144086945793996e-06,
+            "angle_degrees": 1.5518255950226338e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.600317136850785e-06,
+            "angle_degrees": 2.24608914030386e-05
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.8569815731619378e-06,
+            "angle_degrees": 1.7643861855915418e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8728931691771226e-06,
+            "angle_degrees": 1.958837786381785e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.9050501285781048e-06,
+            "angle_degrees": 2.0667640957265376e-05
+          }
+        ]
+      },
+      "falling": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.187136114650937e-07,
+            "angle_degrees": 1.3404852222890879e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.4759602766348282e-06,
+            "angle_degrees": 1.6554425838168507e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.2253692796961206e-07,
+            "angle_degrees": 7.749786897732304e-06
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 7.887603317747137e-07,
+            "angle_degrees": 9.244878317430894e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 8.778568982316668e-07,
+            "angle_degrees": 1.5965250673599842e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.372647762521058e-07,
+            "angle_degrees": 9.81268835708809e-06
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.700406614931432e-08,
+            "angle_degrees": 1.6177263721782948e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.159973462170856e-08,
+            "angle_degrees": 9.926671186810333e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.3278492072331383e-07,
+            "angle_degrees": 1.278896274665796e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.7731084539410043e-06,
+            "angle_degrees": 1.54314719297278e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.96895605023955e-07,
+            "angle_degrees": 1.7647927450239365e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.5233451028861525e-06,
+            "angle_degrees": 1.77448379469894e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.966337947398041e-08,
+            "angle_degrees": 8.269374441375775e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 8.825245006353081e-07,
+            "angle_degrees": 1.3676026710512073e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.9998041227884785e-06,
+            "angle_degrees": 1.2498784855576126e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.4954526683025755e-08,
+            "angle_degrees": 1.394559277422739e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.836992868458684e-08,
+            "angle_degrees": 1.1475754503490607e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.9515419692063347e-08,
+            "angle_degrees": 1.1999650275726164e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010507255013e-08,
+            "angle_degrees": 1.071414276447072e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.756868718654045e-08,
+            "angle_degrees": 1.322763028122793e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.6844417524990845e-08,
+            "angle_degrees": 1.6321334069351655e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.971156804954943e-08,
+            "angle_degrees": 6.202787934687033e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.017225413071995e-08,
+            "angle_degrees": 3.573951249145888e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.144598538023325e-08,
+            "angle_degrees": 2.699874861807309e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010501964586e-08,
+            "angle_degrees": 4.488794893776407e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.140032572745702e-08,
+            "angle_degrees": 3.9032590316264715e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.994393567311118e-07,
+            "angle_degrees": 3.653072580740257e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.681335280217152e-08,
+            "angle_degrees": 6.663664385686425e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.9134874320830384e-08,
+            "angle_degrees": 1.4099593710569271e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.34253381848184e-08,
+            "angle_degrees": 4.04858070107673e-15
+          }
+        ]
+      },
+      "landing": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.040743672552924e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.4905263349527797e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.116060132175867e-15
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 6.9605991453568e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.332659413058465e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.790986627630754e-15
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 6.82936113282716e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 7.72519325419518e-16
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.156702857706575e-15
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 5.715384695664774e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 4.326501339182982e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.5225561736468903e-15
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 6.767905666776572e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.1665335479411683e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.1516156824774102e-15
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.394559277422739e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.1475754503490607e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.1999650275726164e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.071414276447072e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.322763028122793e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.6321334069351655e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 6.202787934687033e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 3.573951249145888e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.699874861807309e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.488794893776407e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 3.9032590316264715e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.653072580740257e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 6.663664385686425e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.4099593710569271e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.04858070107673e-15
+          }
+        ]
+      }
+    }
+  },
+  "Cutter": {
+    "fixed_arms_vs_F14": {
+      "LeftUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 4.315358230912385e-15
+      },
+      "LeftLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 3.090726767480108e-15
+      },
+      "LeftHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 4.741127133665368e-15
+      },
+      "RightUpperArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.2457894029210307e-15
+      },
+      "RightLowerArm": {
+        "position_delta": 0.0,
+        "angle_degrees": 3.8198441960874055e-15
+      },
+      "RightHand": {
+        "position_delta": 0.0,
+        "angle_degrees": 2.778758392142589e-15
+      }
+    },
+    "digit_pose_deltas_relative_to_wrist": {
+      "fire": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.0496572768747556e-06,
+            "angle_degrees": 0.001498529313566437
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.2327453899465443e-06,
+            "angle_degrees": 0.0014770776773748388
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.471602400308129e-06,
+            "angle_degrees": 0.0014709101794461922
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.6433755920938e-06,
+            "angle_degrees": 1.9229438488779603e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.4951821900671657e-06,
+            "angle_degrees": 2.252984735637328e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.2862842172114116e-06,
+            "angle_degrees": 2.7006155147427076e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.8501267607093327e-06,
+            "angle_degrees": 2.090535637093425e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.139937867782582e-06,
+            "angle_degrees": 1.7837970363650078e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.2350866579260478e-06,
+            "angle_degrees": 2.669531498544796e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.113765981296316e-07,
+            "angle_degrees": 1.1949286855277384e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.584806056385566e-06,
+            "angle_degrees": 2.3429483041372023e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 8.573549916486835e-07,
+            "angle_degrees": 2.7173495937944183e-05
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.3885368711688528e-06,
+            "angle_degrees": 2.303406972333284e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.987637863434847e-07,
+            "angle_degrees": 1.3236061006686592e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 7.84196261042331e-07,
+            "angle_degrees": 1.676169850821393e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.628530108176597e-06,
+            "angle_degrees": 5.057067500812301e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 2.190809647429041e-06,
+            "angle_degrees": 3.4007093442710073e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 9.111732420478441e-07,
+            "angle_degrees": 2.398604685958588e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.5877174331964e-06,
+            "angle_degrees": 3.516540301367479e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.1595070470365895e-06,
+            "angle_degrees": 2.052217748597533e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.921509547872942e-06,
+            "angle_degrees": 3.270793290546085e-05
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.737492314108553e-06,
+            "angle_degrees": 1.8718206987894773e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.493457144205111e-06,
+            "angle_degrees": 2.719309597704196e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.95299258289125e-06,
+            "angle_degrees": 3.903396369731825e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.0198028072750234e-06,
+            "angle_degrees": 2.1773788963840328e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 5.334665452937415e-06,
+            "angle_degrees": 1.58771049679931e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.75279477048836e-06,
+            "angle_degrees": 2.6099528610055063e-05
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.002774715693925e-06,
+            "angle_degrees": 2.9213550478059748e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.732446165663127e-06,
+            "angle_degrees": 2.67058850072438e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.957295025491687e-06,
+            "angle_degrees": 2.5118227961125958e-05
+          }
+        ]
+      },
+      "rising": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.753233080347038e-06,
+            "angle_degrees": 4.073635417629933e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.3816445413957703e-07,
+            "angle_degrees": 3.827608419462953e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 9.722775379063004e-07,
+            "angle_degrees": 1.8803991585792977e-05
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 2.731372093366695e-07,
+            "angle_degrees": 1.2187079072922496e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.3219150362025885e-07,
+            "angle_degrees": 7.206185614289562e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.756469412111163e-06,
+            "angle_degrees": 1.1888874858598384e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.22749210473513e-06,
+            "angle_degrees": 7.770676282016214e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.264913122188282e-06,
+            "angle_degrees": 1.832525541075741e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.157513297719919e-06,
+            "angle_degrees": 4.6725504298894376e-06
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.876758535818427e-07,
+            "angle_degrees": 1.4184368114330574e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 7.29947314090668e-07,
+            "angle_degrees": 1.755341709846198e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 9.530085100901655e-07,
+            "angle_degrees": 9.492211864882971e-06
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.777746000239678e-06,
+            "angle_degrees": 6.799434010151307e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.3073698059587044e-07,
+            "angle_degrees": 9.526003899279e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.035278585758567e-06,
+            "angle_degrees": 1.4403737609137163e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.6337750321901235e-06,
+            "angle_degrees": 2.7931881429177307e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8451041559287605e-06,
+            "angle_degrees": 1.7758390772308123e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.8118768357673743e-07,
+            "angle_degrees": 1.7583701908391304e-05
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.844206126144119e-07,
+            "angle_degrees": 1.5693043479209427e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8726146499312593e-06,
+            "angle_degrees": 1.0030536587934485e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.8138146012986353e-06,
+            "angle_degrees": 2.1609752187152946e-05
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.8633705196381063e-07,
+            "angle_degrees": 8.082122753103053e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.8251228401035351e-06,
+            "angle_degrees": 3.224283046881025e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 6.9814950365077516e-06,
+            "angle_degrees": 3.6946477259847746e-05
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.9190064111188402e-06,
+            "angle_degrees": 6.638587932594154e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.7207833736144725e-06,
+            "angle_degrees": 9.30157562568617e-06
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.602194150554056e-07,
+            "angle_degrees": 7.64699619513606e-06
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.8569815731619378e-06,
+            "angle_degrees": 2.7802325262940265e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.046011045489537e-07,
+            "angle_degrees": 1.568740390225267e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.865742789560961e-07,
+            "angle_degrees": 1.6796534274181096e-05
+          }
+        ]
+      },
+      "falling": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.713592616893867e-06,
+            "angle_degrees": 1.23254905632309e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 6.348777188242199e-07,
+            "angle_degrees": 1.2734372587478528e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.391224347492191e-07,
+            "angle_degrees": 3.82376233827361e-05
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 1.4969095626294599e-07,
+            "angle_degrees": 2.2846751399000832e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 7.035237907636867e-07,
+            "angle_degrees": 2.1761491899040737e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.7902368563643876e-06,
+            "angle_degrees": 1.8995285441376563e-05
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 6.1765409731163175e-06,
+            "angle_degrees": 1.0726906574669263e-05
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.949168397967839e-06,
+            "angle_degrees": 2.827837434953606e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.915189302802322e-06,
+            "angle_degrees": 1.7006907259605167e-05
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.650910283746631e-07,
+            "angle_degrees": 8.243133149122911e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 1.3186522299529437e-07,
+            "angle_degrees": 2.0582977169059736e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.477140660512975e-07,
+            "angle_degrees": 8.246805661202627e-06
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.157921167439771e-07,
+            "angle_degrees": 9.204516258103956e-06
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.8508471902808314e-07,
+            "angle_degrees": 1.755340052900272e-05
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 5.887550810016386e-06,
+            "angle_degrees": 1.4679997534181242e-05
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 5.4954526683025755e-08,
+            "angle_degrees": 4.501974599926299e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.469899329019535e-08,
+            "angle_degrees": 1.818521596241859e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 1.838477633776096e-08,
+            "angle_degrees": 2.6204626284292804e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010507255013e-08,
+            "angle_degrees": 1.071414276447072e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 4.756868718654045e-08,
+            "angle_degrees": 2.137507587554051e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.476020852262443e-08,
+            "angle_degrees": 4.278981459276793e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.971156804954943e-08,
+            "angle_degrees": 7.499931487119119e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.808884352817935e-08,
+            "angle_degrees": 2.6735749562420304e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 4.4420744053879894e-08,
+            "angle_degrees": 4.078941085861498e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 3.618010501964586e-08,
+            "angle_degrees": 4.63456390029153e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 3.693237066456809e-08,
+            "angle_degrees": 3.1862462507074453e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 2.612623210144413e-07,
+            "angle_degrees": 3.865688925170426e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 4.681335280217152e-08,
+            "angle_degrees": 2.5892105292907134e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 7.282168906480996e-08,
+            "angle_degrees": 5.200838409504893e-16
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 3.163345381042726e-07,
+            "angle_degrees": 1.6809740518570553e-15
+          }
+        ]
+      },
+      "landing": {
+        "LeftThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 9.341784114521951e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.9207757002505218e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.3307731755864638e-15
+          }
+        ],
+        "LeftIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.014272289122777e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.5647224178108096e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.917475584041282e-15
+          }
+        ],
+        "LeftMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 6.465823451759112e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.3163566621501826e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.570536653392707e-15
+          }
+        ],
+        "LeftRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 7.290370408299106e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 3.705785795215387e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.64960508070425e-15
+          }
+        ],
+        "LeftLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.733590693377252e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.3627473384116088e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.4179169362933705e-15
+          }
+        ],
+        "RightThumb": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.501974599926299e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 1.818521596241859e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.6204626284292804e-15
+          }
+        ],
+        "RightIndex": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.071414276447072e-15
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.137507587554051e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.278981459276793e-15
+          }
+        ],
+        "RightMiddle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 7.499931487119119e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 2.6735749562420304e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.078941085861498e-15
+          }
+        ],
+        "RightRing": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 4.63456390029153e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 3.1862462507074453e-15
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 3.865688925170426e-15
+          }
+        ],
+        "RightLittle": [
+          {
+            "segment": "Proximal",
+            "position_delta": 0.0,
+            "angle_degrees": 2.5892105292907134e-16
+          },
+          {
+            "segment": "Intermediate",
+            "position_delta": 0.0,
+            "angle_degrees": 5.200838409504893e-16
+          },
+          {
+            "segment": "Distal",
+            "position_delta": 0.0,
+            "angle_degrees": 1.6809740518570553e-15
+          }
+        ]
+      }
+    }
+  }
+}

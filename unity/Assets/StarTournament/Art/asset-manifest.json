@@ -24,7 +24,7 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "ee9aff3354201e5f752eecc5a579255d01f9d5ef8e0c6f57f4b20ffbac1b0cee",
+      "sha256": "7cf991589f239a4551a2d5c7b06b9c15c87a9e358d2042a306806a0095766a52",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -34,7 +34,7 @@
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "d1505fcdbff0731fdcfcd57b8a1b2958f083768bf662f80557ad96faa803406e",
+      "sha256": "3d6a6df9a36f597a08277d88b5d0c2efeadfefc1e847fb8dcd04fc9642bd1ac6",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",

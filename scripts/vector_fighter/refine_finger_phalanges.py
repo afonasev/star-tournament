@@ -1,4 +1,4 @@
-"""F14: rebuild anatomical glove cloth around the unchanged F12 skeleton.
+"""F15: rebuild anatomical glove cloth around the unchanged F12 skeleton.
 Continuous palm, thenar volume and tapered fingers replace inherited cloth;
 existing ceramic layers are retained. Arms/animation stay fixed; the approved
 Shotgun palm swell is reduced independently.
@@ -6,7 +6,7 @@ Shotgun palm swell is reduced independently.
 import bpy,bmesh,math,json,importlib.util
 from pathlib import Path
 from mathutils import Vector
-ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'.local/vector-f14';OUT.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'.local/vector-f15';OUT.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.open_mainfile(filepath=str(ROOT/'scripts/vector_fighter/f11-fps-forms.blend'))
 rig=next(o for o in bpy.context.scene.objects if o.type=='ARMATURE');o=bpy.data.objects['VECTOR articulated gloves'];count=len(bpy.context.scene.objects)
 # User-approved F14 clearance correction: shrink only the Strata palm swell.
@@ -76,50 +76,67 @@ from mathutils.bvhtree import BVHTree
 cloth={i for face in o.data.polygons if o.data.materials[face.material_index].name in ['material.001','vector-glove.001'] for i in face.vertices}
 # Author a clean closed hand volume around the existing skeleton. Elliptic
 # palm sections define the heel, metacarpals and knuckle row; tapered digit
-# capsules merge into that volume before smoothing/skin assignment.
+# sections join that volume before smoothing/skin assignment.
 verts=[];faces=[]
-def loft(rings,axis,normal,lateral,N=32):
+def loft(rings,axis,normal,lateral,N=32,power=1):
  start=len(verts)
  for center,rx,ry in rings:
+  exponent=power(center) if callable(power) else power
   for i in range(N):
-   theta=2*math.pi*i/N;verts.append(center+lateral*(rx*math.cos(theta))+normal*(ry*math.sin(theta)))
+   theta=2*math.pi*i/N;c=math.cos(theta);s=math.sin(theta)
+   verts.append(center+lateral*(rx*math.copysign(abs(c)**exponent,c))+normal*(ry*math.copysign(abs(s)**exponent,s)))
  faces.append(tuple(reversed([start+i for i in range(N)])))
  for j in range(len(rings)-1):
   for i in range(N):k=start+j*N+i;l=start+j*N+(i+1)%N;faces.append((k,l,l+N,k+N))
  faces.append(tuple(start+(len(rings)-1)*N+i for i in range(N)))
-def capsule(a,b,ra,rb):
- axis=(b-a).normalized();n=axis.cross(Vector((0,1,0)))
- if n.length<.01:n=axis.cross(Vector((0,0,1)))
- n.normalize();lat=axis.cross(n);rings=[]
- for theta in [-math.pi/2,-math.pi/3,-math.pi/6,0]:rings.append((a+axis*(ra*math.sin(theta)),max(.0001,ra*math.cos(theta)),max(.0001,ra*math.cos(theta))))
- rings.append((a.lerp(b,.5),(ra+rb)/2,(ra+rb)/2))
- for theta in [0,math.pi/6,math.pi/3,math.pi/2]:rings.append((b+axis*(rb*math.sin(theta)),max(.0001,rb*math.cos(theta)),max(.0001,rb*math.cos(theta))))
- loft(rings,axis,n,lat,24)
 for side in ['Left','Right']:
  w,axis,n,lat,length=frames[side]
  # Natural glove heel, flatter palm and broad MCP row, with no detached cuff.
- sections=[(-.03,.029,.029),(0,.030,.028),(.15,.033,.023),(.35,.039,.019),(.60,.043,.017),(.82,.044,.013),(.96,.042,.010),(1.04,.033,.006),(1.065,.012,.003)]
- loft([(w+axis*(t*length),rx,ry) for t,rx,ry in sections],axis,n,lat)
+ sections=[(-.03,.029,.029),(0,.030,.028),(.15,.033,.023),(.35,.039,.019),(.60,.043,.017),(.82,.044,.013),(.96,.042,.010),(1.015,.033,.006),(1.035,.012,.003)]
+ palm_start=len(verts)
+ # A padded palm has rounded rectangular sections; an ellipse collapses at
+ # the ulnar edge and exposes the little metacarpal as a separate tube.
+ loft([(w+axis*(t*length)-n*(.002*smooth(.10,.32,t)),rx,ry) for t,rx,ry in sections],axis,n,lat,
+      power=lambda center:1-.35*smooth(.10,.32,(center-w).dot(axis)/length))
+ knuckles=sorted(((rig.data.bones[side+d+'Proximal'].head_local-w).dot(lat),
+                  (rig.data.bones[side+d+'Proximal'].head_local-w).dot(axis)) for d in ['Index','Middle','Ring','Little'])
+ for v in verts[palm_start:]:
+  t=(v-w).dot(axis)/length;x=(v-w).dot(lat)
+  y=knuckles[0][1] if x<knuckles[0][0] else knuckles[-1][1]
+  for (x0,y0),(x1,y1) in zip(knuckles,knuckles[1:]):
+   if x0<=x<=x1:y=y0+(y1-y0)*(x-x0)/(x1-x0);break
+  v+=axis*smooth(.7,1.04,t)*(y-length-.003)
  for digit,rr in [('Thumb',.0115),('Index',.0095),('Middle',.010),('Ring',.0093),('Little',.008)]:
   bones=[rig.data.bones[side+digit+seg] for seg in ['Proximal','Intermediate','Distal']]
   if digit!='Thumb':
-   # Rounded metacarpal web overlaps both palm and digit before voxel union;
-   # shortening the palm alone would leave capped, disconnected fingers.
-   root=bones[0];d=(root.tail_local-root.head_local).normalized()
-   capsule(root.head_local-axis*.032,root.head_local+d*.006,rr*1.15,rr)
+   # Local rounded MCP volume, confined to the knuckle. The old 32 mm
+   # metacarpal stalk is gone; this only maintains volume through flexion.
+   root=bones[0];d=(root.tail_local-root.head_local).normalized();dn=(n-d*n.dot(d)).normalized();dl=dn.cross(d).normalized()
+   loft([(root.head_local+d*t,rr*rx,rr*ry) for t,rx,ry in [
+    (-.010,.35,.32),(-.006,.90,.78),(0,1.14,.94),(.006,1.02,.86),(.010,.60,.50)]],d,dn,dl,24)
   if digit=='Thumb':
    # The first thumb bone is a metacarpal inside the thenar eminence,
    # not a third exposed phalanx. Blend it into the palm/web.
-   capsule(w+axis*(length*.46),bones[0].tail_local,.015,.011)
+   # Broad thenar eminence: the metacarpal is enclosed in the palm,
+   # with a rounded triangular transition into the two exposed phalanges.
+   # A narrow capsule here creates an apparent third finger segment.
+   a=w+axis*(length*.42)+lat*(-.015 if side=='Left' else .015)-n*.005
+   b=bones[0].tail_local;da=(b-a).normalized();tn=(n-da*n.dot(da)).normalized();tl=tn.cross(da).normalized()
+   loft([(a.lerp(b,t),rx,ry) for t,rx,ry in [
+    (0,.024,.013),(.18,.023,.014),(.42,.020,.014),
+    (.65,.016,.012),(.82,.013,.011),(1,.012,.010),(1.04,.010,.009)]],da,tn,tl)
   # One continuous digit: near-straight shafts, narrow flexion creases,
   # modest knuckle volume and a flattened pad, not overlapping capsules.
   rings=[]
   for j,bone in enumerate(bones):
    if digit=='Thumb' and j==0:continue # Metacarpal is covered by thenar, not an exposed finger shaft.
    d=bone.tail_local-bone.head_local
-   for t,f in [(0,1.0),(.10,.97),(.28,.95),(.62,.92),(.88,.96),(.97,1.0)]:
+   # Extend the root section into the padded MCP row. A separate capped
+   # metacarpal capsule leaves a false extra segment beside a flexed pinky.
+   stations=([(-.18,1.06)] if j==0 and digit!='Thumb' else [])+[(0,1.0),(.10,.97),(.28,.95),(.62,.92),(.88,.96),(.97,1.0)]
+   for t,f in stations:
     if j==2 and t>.70:continue
-    r=(.016*(1-.25*t) if digit=='Thumb' and j==0 else rr*(1-.11*j))*f
+    r=rr*(1-.11*j)*f
     pad_root=(1-smooth(.02,.45,t)) if j==0 and digit!='Thumb' else 0
     nd=n-d.normalized()*n.dot(d.normalized());nd.normalize()
     rings.append((bone.head_local+d*t+nd*(.0025*pad_root),r,r*(.82-.20*pad_root),d.normalized()))
@@ -156,7 +173,7 @@ while remaining:
    if other in remaining:remaining.remove(other);todo.append(other)
  component_sizes.append(size)
 bm.free();assert len(component_sizes)==2,('Disconnected glove cloth',component_sizes)
-mod=shell.modifiers.new('Relax thumb web','SMOOTH');mod.factor=.35;mod.iterations=5;bpy.ops.object.modifier_apply(modifier=mod.name)
+mod=shell.modifiers.new('Relax thumb web','SMOOTH');mod.factor=.35;mod.iterations=10;bpy.ops.object.modifier_apply(modifier=mod.name)
 def assign(obj,index,weights):
  for group in obj.vertex_groups:group.remove([index])
  weights=dict(sorted(weights.items(),key=lambda x:-x[1])[:4]);total=sum(weights.values())
@@ -183,8 +200,14 @@ for v in shell.data.vertices:
   root_axis=(bones[0].tail_local-bones[0].head_local).normalized();advance=(p-bones[0].head_local).dot(root_axis)
   fade=smooth(-.020,.008,advance)
   fade*=1-smooth(.028 if digit=='Thumb' else .025,.048 if digit=='Thumb' else .045,nearest[0])
-  if digit!='Thumb':fade*=smooth(.65,.90,longitudinal)
-  else:fade*=smooth(.004,.025,lateral*(1 if thumb_lateral>0 else -1))
+  if digit!='Thumb':
+   # Keep metacarpals in the palm; allow rotation only around their MCP.
+   fade=smooth(-.016,.012,advance)*(1-smooth(.022,.042,nearest[0]))
+  else:
+   # Continuous thenar deformation across the palm-to-metacarpal fan.
+   radial=lateral*(1 if thumb_lateral>0 else -1)
+   fade=max(smooth(.016,.065,radial)*smooth(.018,.060,(p-w).dot(hand_axis)),smooth(lengths[0]-.016,lengths[0]+.005,advance))
+   fade*=1-smooth(.018,.038,nearest[0])
   options.append((fade/(nearest[0]+.008),fade,digit,nearest[1]))
  # Blend the web between adjacent chains continuously. A hard nearest-chain
  # switch produces a visible fan of stretched triangles when fingers spread.
@@ -237,16 +260,11 @@ for part,center,mat in panels:
  for layer in [part,coating[0]]:
   for vertex in layer:o.data.vertices[vertex.index].co+=delta
 bm.free()
+# Retained palm shields remain rigid. Only the textile web and the newly
+# authored individual phalanx shields participate in finger deformation.
 for v in o.data.vertices:
- hit,normal,idx,dist=surf.find_nearest(v.co)
- # Match deformation on the cloth web; use the nearest triangle's blended skin.
- a,b,c=triangles[idx];x=surface[b]-surface[a];y=surface[c]-surface[a];z=hit-surface[a];den=x.dot(x)*y.dot(y)-x.dot(y)**2
- u=(y.dot(y)*z.dot(x)-x.dot(y)*z.dot(y))/den if abs(den)>1e-15 else 0;vv=(x.dot(x)*z.dot(y)-x.dot(y)*z.dot(x))/den if abs(den)>1e-15 else 0
- weights={}
- for ii,factor in [(a,1-u-vv),(b,u),(c,vv)]:
-  for group in shell.data.vertices[ii].groups:
-   name=shell.vertex_groups[group.group].name;weights[name]=weights.get(name,0)+max(0,factor)*group.weight
- assign(o,v.index,weights)
+ side='Left' if v.co.x>0 else 'Right'
+ assign(o,v.index,{side+'Hand':1})
 # Replace inherited finger armor islands: they were sized for the rejected
 # inflated fingers and bridged flexion joints. Keep palm/wrist armor untouched.
 bm=bmesh.new();bm.from_mesh(o.data);bm.verts.ensure_lookup_table();remaining=set(bm.verts);remove=[]
@@ -306,7 +324,7 @@ bpy.context.view_layer.objects.active=o;bpy.ops.object.join()
 selected=cloth
 assert len(bpy.context.scene.objects)==count
 bpy.context.preferences.filepaths.save_version=0
-bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'scripts/vector_fighter/f14-hand-anatomy.blend'),compress=True)
+bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'scripts/vector_fighter/f15-hand-anatomy.blend'),compress=True)
 spec=importlib.util.spec_from_file_location('vector_build',ROOT/'scripts/vector_fighter/build.py');g=importlib.util.module_from_spec(spec);spec.loader.exec_module(g);g.rig=rig
 meshes=[m for m in bpy.context.scene.objects if m.type=='MESH' and m.name!='weapon:joined'];arm_parts=[m for m in meshes if ('LowerArm' in m.name or 'gloves' in m.name or ('UpperArm' in m.name and 'fabric' in m.name))];body_parts=[m for m in meshes if m not in arm_parts]
 def join(items,name):
@@ -315,4 +333,4 @@ def join(items,name):
  bpy.context.view_layer.objects.active=items[0];bpy.ops.object.join();items[0].name=name;return items[0]
 arms=join(arm_parts,'VECTOR world forearms');body=join(body_parts,'VECTOR body');equipment=[m for m in bpy.context.scene.objects if m.type!='MESH' or m.name=='weapon:joined']
 g.export(OUT/'candidate-body.glb',equipment+[arms,body]);arms.name='vector-armored-hands';g.export(OUT/'candidate-arms.glb',equipment+[arms])
-(OUT/'anatomy-report.json').write_text(json.dumps({'source':'f11-fps-forms.blend','changed_glove_vertices':changed,'replaced_cloth_vertices':len(selected),'removed_stitch_vertices':len(seams),'objects':count,'bones_and_actions':'unchanged','status':'candidate, requires native contact review'},indent=2)+'\n')
+(OUT/'anatomy-report.json').write_text(json.dumps({'source':'f11-fps-forms.blend','changed_glove_vertices':changed,'replaced_cloth_vertices':len(selected),'removed_stitch_vertices':len(seams),'objects':count,'cloth_component_sizes':component_sizes,'bones_and_actions':'unchanged','status':'candidate, requires native contact review'},indent=2)+'\n')

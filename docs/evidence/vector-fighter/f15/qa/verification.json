@@ -1,0 +1,30 @@
+{
+  "play": {
+    "result": "Passed",
+    "total": "6",
+    "passed": "6",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "266.1189814"
+  },
+  "edit": {
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "skipped": "0",
+    "duration": "1.4426981"
+  },
+  "baseline": "128ab5628be893312b203891fc406c66bc506056",
+  "human_art_acceptance": "Pending",
+  "integration": "Not performed",
+  "not_run": [
+    "full suite",
+    "Player",
+    "device",
+    "performance",
+    "release",
+    "deploy"
+  ],
+  "native_png_count": 160
+}
