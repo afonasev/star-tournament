@@ -1,0 +1,12 @@
+{
+  "source_sha256": "f0a4b075c1930dd6173ba70b2979eb74cb7139089edff41b3761f2ca8e5e034c",
+  "mesh_vertex_counts_unchanged": true,
+  "map_resolution": 2048,
+  "normal": "tangent; physical height gradients, not albedo shadows",
+  "height_metres": {
+    "margin": -0.00048,
+    "wrist_seat": -0.00042,
+    "edge_lip": 0.00012
+  },
+  "runtime_changes": "none; candidate assets only"
+}

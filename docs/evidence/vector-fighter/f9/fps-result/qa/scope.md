@@ -1,0 +1,4 @@
+# F9 selected material QA scope
+Baseline bb3ca11e (F8 runtime 0bf6d8e). User selected direction 1 and requested real first-person dimensional texture.
+Diff: authored forearm UV/albedo/tangent-normal/roughness maps; glove surface roughness. Preserve geometry, skin, seven clips, camera, gait, profiles and gameplay.
+Checks: Blender candidate export and GLB normal-texture/animation/skin readback; TrooperPreparation.RefreshExistingScene; TrooperImportTests (3); ParticipantColorIdentityTests affected identity contract; existing FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene and OrbitalGripDoesNotAccumulateAcrossFrozenSamples (2) with real all-four-weapon FPS captures. Shared runner, -noaudio -muted, isolated .local/vector-f9 history. No full, natural matches, Player build, integration or publication.
