@@ -42,7 +42,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(!string.IsNullOrEmpty(reviewOverrides))
                 foreach(var line in System.IO.File.ReadAllLines(reviewOverrides))
                 {
-                    var parts=line.Split('=');first.Tuning.Set(parts[0],float.Parse(parts[1],System.Globalization.CultureInfo.InvariantCulture));
+                    var parts=line.Split('=');var value=float.Parse(parts[1],System.Globalization.CultureInfo.InvariantCulture);
+                    // Explicit offline art studies may preview a new joint range before
+                    // committing factory/history metadata. Ordinary fixtures are unchanged.
+                    if(System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_GRIP_CANDIDATE_RANGES")=="1" &&
+                       parts[0].StartsWith("grip.")&&(parts[0].Contains(".left.")||parts[0].Contains(".right.")))
+                    {
+                        var descriptor=first.Tuning.Descriptors.Single(d=>d.Path==parts[0]);
+                        descriptor.Minimum=Mathf.Min(descriptor.Minimum,value);descriptor.Maximum=Mathf.Max(descriptor.Maximum,value);
+                    }
+                    first.Tuning.Set(parts[0],value);
+                    Assert.That(first.Tuning.Get(parts[0]),Is.EqualTo(value).Within(.000001f),"Capture override must not be silently clamped: "+parts[0]);
                 }
             var snapshot=ground.Session.Capture();
             Assert.That(new Vector2(snapshot.Poses[1].Velocity.x,snapshot.Poses[1].Velocity.z).magnitude,Is.LessThan(second.Tuning.Get("animation.walkThreshold")),"Stationary fixture must have settled");
@@ -239,10 +249,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             try
             {
                 foreach(string hand in new[]{"Right","Left"})
-                foreach(int sign in new[]{-1,1})
+                foreach(int sign in new[]{-1,1,2})
                 {
                     var center=bones.Single(t=>t.name==hand+"MiddleProximal").position;
-                    camera.transform.position=center+mount.TransformDirection(new Vector3(sign*.5f,.05f,-.2f));
+                    camera.transform.position=center+mount.TransformDirection(sign==2?new Vector3(.15f,-.35f,.6f):new Vector3(sign*.5f,.05f,-.2f));
                     camera.transform.LookAt(center,mount.up);camera.Render();RenderTexture.active=target;
                     pixels.ReadPixels(new Rect(0,0,1000,1000),0,0);pixels.Apply();
                     System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-"+hand+"-grip-"+sign+".png"),pixels.EncodeToPNG());
@@ -306,13 +316,40 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             return (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeRefinedHandAnatomy",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(profile,null);
         }
+        static ProvingProfile BeforeArticulatedFingerGrips(ProvingProfile profile)
+        {
+            return (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeArticulatedFingerGrips",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(profile,null);
+        }
         [UnityTest] public IEnumerator RefinedHandGripPreservesArmAndWeaponPlacement()
         {
             yield return Load(2);
             var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
-            var current=ProvingProfile.CreateTrooperDefault();var previous=BeforeRefinedHandAnatomy(current);
+            var current=BeforeArticulatedFingerGrips(ProvingProfile.CreateTrooperDefault());var previous=BeforeRefinedHandAnatomy(current);
             var fixedBones=visual.GetComponentsInChildren<Transform>().Where(t=>
                 t.name=="trooper:rig:weapon-mount"||((t.name.StartsWith("Left")||t.name.StartsWith("Right"))&&!t.name.StartsWith("RightThumb"))).ToArray();
+            foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
+            {
+                visual.EquippedWeapon=weapon;
+                foreach(var d in previous.Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+                visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+                var positions=fixedBones.Select(t=>t.position).ToArray();var rotations=fixedBones.Select(t=>t.rotation).ToArray();
+                foreach(var d in current.Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+                visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+                for(int i=0;i<fixedBones.Length;i++)
+                {
+                    Assert.That(Vector3.Distance(positions[i],fixedBones[i].position),Is.LessThan(.0001f),weapon+" "+fixedBones[i].name);
+                    Assert.That(Quaternion.Angle(rotations[i],fixedBones[i].rotation),Is.LessThan(.05f),weapon+" "+fixedBones[i].name);
+                }
+            }
+        }
+        [UnityTest] public IEnumerator ArticulatedFingerGripPreservesArmAndWeaponPlacement()
+        {
+            yield return Load(2);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var current=ProvingProfile.CreateTrooperDefault();var previous=BeforeArticulatedFingerGrips(current);
+            var fixedBones=visual.GetComponentsInChildren<Transform>().Where(t=>
+                t.name=="trooper:rig:weapon-mount"||new[]{"LeftUpperArm","LeftLowerArm","LeftHand","RightUpperArm","RightLowerArm","RightHand"}.Contains(t.name)).ToArray();
+            Assert.That(fixedBones.Length,Is.EqualTo(7),"Both complete arm chains and weapon mount must be checked");
             foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
             {
                 visual.EquippedWeapon=weapon;

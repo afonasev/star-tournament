@@ -3,11 +3,22 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Reconstruct exact @19 digit defaults/ranges for saved Lab snapshots.
+        internal ProvingProfile BeforeArticulatedFingerGrips()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<20)return this;
+            var p=DetachedCopy();p.version=19;
+            foreach(var old in CreateTrooperDefault(false).Descriptors.Where(d=>d.Path.StartsWith("grip.")&&(d.Path.Contains(".left.")||d.Path.Contains(".right."))))
+            {
+                var d=p.FindDescriptor(old.Path);d.Minimum=old.Minimum;d.Maximum=old.Maximum;d.DefaultValue=old.DefaultValue;p.Set(d.Path,old.DefaultValue);
+            }
+            return p;
+        }
         // Preserve exact @18 digit poses for existing Lab histories.
         internal ProvingProfile BeforeRefinedHandAnatomy()
         {
             if(id!="unity-trooper-presentation-v1"||version<19)return this;
-            var p=DetachedCopy();p.version=18;
+            var p=BeforeArticulatedFingerGrips().DetachedCopy();p.version=18;
             var weapons=new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter};
             var old=new float[,]{{-2,4,2,0},{0,6,3,0},{3,8,4,0},{2,7,5,0}};
             var joints=new[]{"Proximal","Intermediate","Distal","Spread"};
@@ -197,7 +208,8 @@ namespace StarTournament.ProvingGround
             // Old authored defaults follow the revised gesture; custom values stay within its safe range.
             return value==old.DefaultValue?current.DefaultValue:UnityEngine.Mathf.Clamp(value,current.Minimum,current.Maximum);
         }
-        public static ProvingProfile CreateTrooperDefault()
+        public static ProvingProfile CreateTrooperDefault()=>CreateTrooperDefault(true);
+        static ProvingProfile CreateTrooperDefault(bool articulated)
         {
             var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=19};
             p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
@@ -345,6 +357,176 @@ namespace StarTournament.ProvingGround
             Fit("grip.Cutter.right.Thumb.Intermediate",13);
             Fit("grip.Cutter.right.Thumb.Distal",11);
             Fit("grip.Cutter.right.Thumb.Spread",-10);
+            if(articulated)
+            {
+                p.version=20;
+                // Only the reviewed per-digit offsets change; wrists, arm targets
+                // and weapon mounting retain exact @19 defaults.
+                void Articulate(string path,float value)
+                {
+                    var d=p.FindDescriptor(path);d.Minimum=System.Math.Min(d.Minimum,value);d.Maximum=System.Math.Max(d.Maximum,value);d.DefaultValue=value;p.Set(path,value);
+                }
+                Articulate("grip.Rifle.left.Thumb.Proximal",-30);
+                Articulate("grip.Rifle.left.Thumb.Intermediate",45);
+                Articulate("grip.Rifle.left.Thumb.Distal",19);
+                Articulate("grip.Rifle.left.Thumb.Spread",-41);
+                Articulate("grip.Rifle.left.Index.Proximal",-21);
+                Articulate("grip.Rifle.left.Index.Intermediate",4);
+                Articulate("grip.Rifle.left.Index.Distal",2);
+                Articulate("grip.Rifle.left.Index.Spread",-43);
+                Articulate("grip.Rifle.left.Middle.Proximal",-3);
+                Articulate("grip.Rifle.left.Middle.Intermediate",37);
+                Articulate("grip.Rifle.left.Middle.Distal",12);
+                Articulate("grip.Rifle.left.Middle.Spread",-36);
+                Articulate("grip.Rifle.left.Ring.Proximal",37);
+                Articulate("grip.Rifle.left.Ring.Intermediate",37);
+                Articulate("grip.Rifle.left.Ring.Distal",2);
+                Articulate("grip.Rifle.left.Ring.Spread",-37);
+                Articulate("grip.Rifle.left.Little.Proximal",46);
+                Articulate("grip.Rifle.left.Little.Intermediate",38);
+                Articulate("grip.Rifle.left.Little.Distal",3);
+                Articulate("grip.Rifle.left.Little.Spread",-26);
+                Articulate("grip.Rifle.right.Thumb.Proximal",-17);
+                Articulate("grip.Rifle.right.Thumb.Intermediate",40);
+                Articulate("grip.Rifle.right.Thumb.Distal",31);
+                Articulate("grip.Rifle.right.Thumb.Spread",18);
+                Articulate("grip.Rifle.right.Index.Proximal",-30);
+                Articulate("grip.Rifle.right.Index.Intermediate",14);
+                Articulate("grip.Rifle.right.Index.Distal",22);
+                Articulate("grip.Rifle.right.Index.Spread",18);
+                Articulate("grip.Rifle.right.Middle.Proximal",-18);
+                Articulate("grip.Rifle.right.Middle.Intermediate",14);
+                Articulate("grip.Rifle.right.Middle.Distal",-22);
+                Articulate("grip.Rifle.right.Middle.Spread",13);
+                Articulate("grip.Rifle.right.Ring.Proximal",-37);
+                Articulate("grip.Rifle.right.Ring.Intermediate",12);
+                Articulate("grip.Rifle.right.Ring.Distal",-18);
+                Articulate("grip.Rifle.right.Ring.Spread",9);
+                Articulate("grip.Rifle.right.Little.Proximal",-17);
+                Articulate("grip.Rifle.right.Little.Intermediate",-1);
+                Articulate("grip.Rifle.right.Little.Distal",-7);
+                Articulate("grip.Rifle.right.Little.Spread",-11);
+                Articulate("grip.Shotgun.left.Thumb.Proximal",-34);
+                Articulate("grip.Shotgun.left.Thumb.Intermediate",26);
+                Articulate("grip.Shotgun.left.Thumb.Distal",41);
+                Articulate("grip.Shotgun.left.Thumb.Spread",-20);
+                Articulate("grip.Shotgun.left.Index.Proximal",-20);
+                Articulate("grip.Shotgun.left.Index.Intermediate",19);
+                Articulate("grip.Shotgun.left.Index.Distal",-24);
+                Articulate("grip.Shotgun.left.Index.Spread",-47);
+                Articulate("grip.Shotgun.left.Middle.Proximal",-17);
+                Articulate("grip.Shotgun.left.Middle.Intermediate",47);
+                Articulate("grip.Shotgun.left.Middle.Distal",-24);
+                Articulate("grip.Shotgun.left.Middle.Spread",-41);
+                Articulate("grip.Shotgun.left.Ring.Proximal",35);
+                Articulate("grip.Shotgun.left.Ring.Intermediate",22);
+                Articulate("grip.Shotgun.left.Ring.Distal",8);
+                Articulate("grip.Shotgun.left.Ring.Spread",-44);
+                Articulate("grip.Shotgun.left.Little.Proximal",49);
+                Articulate("grip.Shotgun.left.Little.Intermediate",19);
+                Articulate("grip.Shotgun.left.Little.Distal",7);
+                Articulate("grip.Shotgun.left.Little.Spread",-29);
+                Articulate("grip.Shotgun.right.Thumb.Proximal",-17);
+                Articulate("grip.Shotgun.right.Thumb.Intermediate",40);
+                Articulate("grip.Shotgun.right.Thumb.Distal",31);
+                Articulate("grip.Shotgun.right.Thumb.Spread",18);
+                Articulate("grip.Shotgun.right.Index.Proximal",-20);
+                Articulate("grip.Shotgun.right.Index.Intermediate",14);
+                Articulate("grip.Shotgun.right.Index.Distal",22);
+                Articulate("grip.Shotgun.right.Index.Spread",33);
+                Articulate("grip.Shotgun.right.Middle.Proximal",-18);
+                Articulate("grip.Shotgun.right.Middle.Intermediate",14);
+                Articulate("grip.Shotgun.right.Middle.Distal",-22);
+                Articulate("grip.Shotgun.right.Middle.Spread",17);
+                Articulate("grip.Shotgun.right.Ring.Proximal",-37);
+                Articulate("grip.Shotgun.right.Ring.Intermediate",12);
+                Articulate("grip.Shotgun.right.Ring.Distal",-18);
+                Articulate("grip.Shotgun.right.Ring.Spread",9);
+                Articulate("grip.Shotgun.right.Little.Proximal",-17);
+                Articulate("grip.Shotgun.right.Little.Intermediate",-1);
+                Articulate("grip.Shotgun.right.Little.Distal",-7);
+                Articulate("grip.Shotgun.right.Little.Spread",-11);
+                Articulate("grip.RocketLauncher.left.Thumb.Proximal",-18);
+                Articulate("grip.RocketLauncher.left.Thumb.Intermediate",4);
+                Articulate("grip.RocketLauncher.left.Thumb.Distal",7);
+                Articulate("grip.RocketLauncher.left.Thumb.Spread",9);
+                Articulate("grip.RocketLauncher.left.Index.Proximal",-32);
+                Articulate("grip.RocketLauncher.left.Index.Intermediate",-7);
+                Articulate("grip.RocketLauncher.left.Index.Distal",-18);
+                Articulate("grip.RocketLauncher.left.Index.Spread",-21);
+                Articulate("grip.RocketLauncher.left.Middle.Proximal",-31);
+                Articulate("grip.RocketLauncher.left.Middle.Intermediate",9);
+                Articulate("grip.RocketLauncher.left.Middle.Distal",-32);
+                Articulate("grip.RocketLauncher.left.Middle.Spread",-13);
+                Articulate("grip.RocketLauncher.left.Ring.Proximal",-15);
+                Articulate("grip.RocketLauncher.left.Ring.Intermediate",0);
+                Articulate("grip.RocketLauncher.left.Ring.Distal",-48);
+                Articulate("grip.RocketLauncher.left.Ring.Spread",-16);
+                Articulate("grip.RocketLauncher.left.Little.Proximal",-22);
+                Articulate("grip.RocketLauncher.left.Little.Intermediate",-25);
+                Articulate("grip.RocketLauncher.left.Little.Distal",-21);
+                Articulate("grip.RocketLauncher.left.Little.Spread",19);
+                Articulate("grip.RocketLauncher.right.Thumb.Proximal",8);
+                Articulate("grip.RocketLauncher.right.Thumb.Intermediate",-5);
+                Articulate("grip.RocketLauncher.right.Thumb.Distal",-4);
+                Articulate("grip.RocketLauncher.right.Thumb.Spread",-8);
+                Articulate("grip.RocketLauncher.right.Index.Proximal",-27);
+                Articulate("grip.RocketLauncher.right.Index.Intermediate",10);
+                Articulate("grip.RocketLauncher.right.Index.Distal",35);
+                Articulate("grip.RocketLauncher.right.Index.Spread",18);
+                Articulate("grip.RocketLauncher.right.Middle.Proximal",-16);
+                Articulate("grip.RocketLauncher.right.Middle.Intermediate",10);
+                Articulate("grip.RocketLauncher.right.Middle.Distal",-7);
+                Articulate("grip.RocketLauncher.right.Middle.Spread",14);
+                Articulate("grip.RocketLauncher.right.Ring.Proximal",-34);
+                Articulate("grip.RocketLauncher.right.Ring.Intermediate",6);
+                Articulate("grip.RocketLauncher.right.Ring.Distal",-1);
+                Articulate("grip.RocketLauncher.right.Ring.Spread",2);
+                Articulate("grip.RocketLauncher.right.Little.Proximal",-12);
+                Articulate("grip.RocketLauncher.right.Little.Intermediate",-15);
+                Articulate("grip.RocketLauncher.right.Little.Distal",1);
+                Articulate("grip.RocketLauncher.right.Little.Spread",-25);
+                Articulate("grip.Cutter.left.Thumb.Proximal",-38);
+                Articulate("grip.Cutter.left.Thumb.Intermediate",8);
+                Articulate("grip.Cutter.left.Thumb.Distal",-4);
+                Articulate("grip.Cutter.left.Thumb.Spread",-17);
+                Articulate("grip.Cutter.left.Index.Proximal",-36);
+                Articulate("grip.Cutter.left.Index.Intermediate",-9);
+                Articulate("grip.Cutter.left.Index.Distal",-16);
+                Articulate("grip.Cutter.left.Index.Spread",-22);
+                Articulate("grip.Cutter.left.Middle.Proximal",-35);
+                Articulate("grip.Cutter.left.Middle.Intermediate",9);
+                Articulate("grip.Cutter.left.Middle.Distal",-32);
+                Articulate("grip.Cutter.left.Middle.Spread",-14);
+                Articulate("grip.Cutter.left.Ring.Proximal",-18);
+                Articulate("grip.Cutter.left.Ring.Intermediate",2);
+                Articulate("grip.Cutter.left.Ring.Distal",-50);
+                Articulate("grip.Cutter.left.Ring.Spread",-17);
+                Articulate("grip.Cutter.left.Little.Proximal",-25);
+                Articulate("grip.Cutter.left.Little.Intermediate",-17);
+                Articulate("grip.Cutter.left.Little.Distal",-25);
+                Articulate("grip.Cutter.left.Little.Spread",11);
+                Articulate("grip.Cutter.right.Thumb.Proximal",-10);
+                Articulate("grip.Cutter.right.Thumb.Intermediate",31);
+                Articulate("grip.Cutter.right.Thumb.Distal",5);
+                Articulate("grip.Cutter.right.Thumb.Spread",15);
+                Articulate("grip.Cutter.right.Index.Proximal",-27);
+                Articulate("grip.Cutter.right.Index.Intermediate",5);
+                Articulate("grip.Cutter.right.Index.Distal",35);
+                Articulate("grip.Cutter.right.Index.Spread",18);
+                Articulate("grip.Cutter.right.Middle.Proximal",-16);
+                Articulate("grip.Cutter.right.Middle.Intermediate",4);
+                Articulate("grip.Cutter.right.Middle.Distal",-2);
+                Articulate("grip.Cutter.right.Middle.Spread",13);
+                Articulate("grip.Cutter.right.Ring.Proximal",-33);
+                Articulate("grip.Cutter.right.Ring.Intermediate",-1);
+                Articulate("grip.Cutter.right.Ring.Distal",4);
+                Articulate("grip.Cutter.right.Ring.Spread",2);
+                Articulate("grip.Cutter.right.Little.Proximal",-11);
+                Articulate("grip.Cutter.right.Little.Intermediate",-19);
+                Articulate("grip.Cutter.right.Little.Distal",-1);
+                Articulate("grip.Cutter.right.Little.Spread",-24);
+            }
             return p;
         }
     }

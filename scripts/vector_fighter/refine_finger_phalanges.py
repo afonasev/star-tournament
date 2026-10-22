@@ -1,6 +1,7 @@
 """F14: rebuild anatomical glove cloth around the unchanged F12 skeleton.
 Continuous palm, thenar volume and tapered fingers replace inherited cloth;
-existing ceramic layers are retained. No arm, weapon or animation edits.
+existing ceramic layers are retained. Arms/animation stay fixed; the approved
+Shotgun palm swell is reduced independently.
 """
 import bpy,bmesh,math,json,importlib.util
 from pathlib import Path
@@ -8,6 +9,28 @@ from mathutils import Vector
 ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'.local/vector-f14';OUT.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.open_mainfile(filepath=str(ROOT/'scripts/vector_fighter/f11-fps-forms.blend'))
 rig=next(o for o in bpy.context.scene.objects if o.type=='ARMATURE');o=bpy.data.objects['VECTOR articulated gloves'];count=len(bpy.context.scene.objects)
+# User-approved F14 clearance correction: shrink only the Strata palm swell.
+# The attachment, central grip and every other weapon component stay exact.
+weapon=bpy.data.objects['weapon:joined'];wb=bmesh.new();wb.from_mesh(weapon.data)
+bmesh.ops.remove_doubles(wb,verts=list(wb.verts),dist=.000001);remaining=set(wb.verts);swell=[]
+while remaining:
+ todo=[remaining.pop()];part=[]
+ while todo:
+  v=todo.pop();part.append(v)
+  for edge in v.link_edges:
+   other=edge.other_vert(v)
+   if other in remaining:remaining.remove(other);todo.append(other)
+ lo=Vector([min(v.co[i] for v in part) for i in range(3)]);hi=Vector([max(v.co[i] for v in part) for i in range(3)])
+ if abs((hi-lo).x-.153)<.00001 and abs(lo.z+.295)<.00001:swell.extend(tuple(round(c,6) for c in v.co) for v in part)
+wb.free();assert len(swell)==96,'Expected original Strata palm swell only'
+swell=set(swell);changed_swell=0
+for v in weapon.data.vertices:
+ if tuple(round(c,6) for c in v.co) in swell:
+  v.co.x=-.0095+(v.co.x+.0095)*(.0455/.153)
+  v.co.y=.07+(v.co.y-.07)*(.15/.28);changed_swell+=1
+assert changed_swell==115,changed_swell
+weapon.data.update()
+
 # The inherited detached stitch strips tear across the reshaped thumb web.
 # Replace their raised geometry with the continuous woven cloth surface;
 # retain the original source for comparison and all ceramic/chassis details.
@@ -75,36 +98,65 @@ def capsule(a,b,ra,rb):
 for side in ['Left','Right']:
  w,axis,n,lat,length=frames[side]
  # Natural glove heel, flatter palm and broad MCP row, with no detached cuff.
- sections=[(-.03,.029,.029),(0,.030,.028),(.15,.033,.023),(.35,.039,.019),(.60,.043,.017),(.82,.044,.016),(1,.041,.014),(1.04,.032,.011)]
+ sections=[(-.03,.029,.029),(0,.030,.028),(.15,.033,.023),(.35,.039,.019),(.60,.043,.017),(.82,.044,.013),(.96,.042,.010),(1.04,.033,.006),(1.065,.012,.003)]
  loft([(w+axis*(t*length),rx,ry) for t,rx,ry in sections],axis,n,lat)
  for digit,rr in [('Thumb',.0115),('Index',.0095),('Middle',.010),('Ring',.0093),('Little',.008)]:
   bones=[rig.data.bones[side+digit+seg] for seg in ['Proximal','Intermediate','Distal']]
+  if digit!='Thumb':
+   # Rounded metacarpal web overlaps both palm and digit before voxel union;
+   # shortening the palm alone would leave capped, disconnected fingers.
+   root=bones[0];d=(root.tail_local-root.head_local).normalized()
+   capsule(root.head_local-axis*.032,root.head_local+d*.006,rr*1.15,rr)
   if digit=='Thumb':
    # The first thumb bone is a metacarpal inside the thenar eminence,
    # not a third exposed phalanx. Blend it into the palm/web.
-   capsule(w+axis*(length*.40),bones[0].tail_local,.019,.012)
+   capsule(w+axis*(length*.46),bones[0].tail_local,.015,.011)
   # One continuous digit: near-straight shafts, narrow flexion creases,
   # modest knuckle volume and a flattened pad, not overlapping capsules.
   rings=[]
   for j,bone in enumerate(bones):
+   if digit=='Thumb' and j==0:continue # Metacarpal is covered by thenar, not an exposed finger shaft.
    d=bone.tail_local-bone.head_local
-   for t,f in [(0,1.04),(.10,.95),(.28,.93),(.62,.90),(.88,.92),(.97,.98)]:
+   for t,f in [(0,1.0),(.10,.97),(.28,.95),(.62,.92),(.88,.96),(.97,1.0)]:
     if j==2 and t>.70:continue
     r=(.016*(1-.25*t) if digit=='Thumb' and j==0 else rr*(1-.11*j))*f
-    rings.append((bone.head_local+d*t,r,r*.82))
+    pad_root=(1-smooth(.02,.45,t)) if j==0 and digit!='Thumb' else 0
+    nd=n-d.normalized()*n.dot(d.normalized());nd.normalize()
+    rings.append((bone.head_local+d*t+nd*(.0025*pad_root),r,r*(.82-.20*pad_root),d.normalized()))
   d=(bones[-1].tail_local-bones[-1].head_local).normalized();tip=bones[-1].tail_local
-  for back,f in [(rr*.55,.72),(rr*.22,.45),(0,.03)]:rings.append((tip-d*back,rr*.72*f,rr*.62*f))
+  for back,f in [(rr*.65,.90),(rr*.38,.76),(rr*.15,.48),(0,.08)]:rings.append((tip-d*back,rr*.78*f,rr*.64*f,d))
   direction=(bones[-1].tail_local-bones[0].head_local).normalized();dn=n-direction*n.dot(direction);dn.normalize();dl=dn.cross(direction).normalized()
-  loft(rings,direction,dn,dl,24)
+  # Sections follow each phalanx, rather than shearing obliquely to a
+  # single overall digit axis. This preserves pads in flexed skinning.
+  start=len(verts);N=24
+  for center,rx,ry,segment_axis in rings:
+   normal=n-segment_axis*n.dot(segment_axis);normal.normalize();lateral=normal.cross(segment_axis).normalized()
+   for i in range(N):
+    theta=2*math.pi*i/N;verts.append(center+lateral*(rx*math.cos(theta))+normal*(ry*math.sin(theta)))
+  faces.append(tuple(reversed([start+i for i in range(N)])))
+  for j in range(len(rings)-1):
+   for i in range(N):k=start+j*N+i;l=start+j*N+(i+1)%N;faces.append((k,l,l+N,k+N))
+  faces.append(tuple(start+(len(rings)-1)*N+i for i in range(N)))
 mesh=bpy.data.meshes.new('F14 continuous anatomical glove');mesh.from_pydata(verts,[],faces);mesh.update()
 shell=bpy.data.objects.new('F14 anatomical cloth',mesh);bpy.context.collection.objects.link(shell)
 for mat in o.data.materials:mesh.materials.append(mat)
 bm=bmesh.new();bm.from_mesh(mesh);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(mesh);bm.free()
 bpy.context.view_layer.objects.active=shell
 for mod in list(shell.modifiers):shell.modifiers.remove(mod)
-mod=shell.modifiers.new('Continuous anatomical glove surface','REMESH');mod.mode='VOXEL';mod.voxel_size=.0009;mod.use_smooth_shade=True;mod.use_remove_disconnected=False;bpy.ops.object.modifier_apply(modifier=mod.name)
+mod=shell.modifiers.new('Continuous anatomical glove surface','REMESH');mod.mode='VOXEL';mod.voxel_size=.00065;mod.use_smooth_shade=True;mod.use_remove_disconnected=False;bpy.ops.object.modifier_apply(modifier=mod.name)
 assert len(shell.data.vertices)>10000, 'Voxel shell lost volume: '+str(len(shell.data.vertices))
-mod=shell.modifiers.new('Relax thumb web','SMOOTH');mod.factor=.35;mod.iterations=3;bpy.ops.object.modifier_apply(modifier=mod.name)
+# Each hand must remain one connected textile surface.
+bm=bmesh.new();bm.from_mesh(shell.data);remaining=set(bm.verts);component_sizes=[]
+while remaining:
+ todo=[remaining.pop()];size=0
+ while todo:
+  v=todo.pop();size+=1
+  for edge in v.link_edges:
+   other=edge.other_vert(v)
+   if other in remaining:remaining.remove(other);todo.append(other)
+ component_sizes.append(size)
+bm.free();assert len(component_sizes)==2,('Disconnected glove cloth',component_sizes)
+mod=shell.modifiers.new('Relax thumb web','SMOOTH');mod.factor=.35;mod.iterations=5;bpy.ops.object.modifier_apply(modifier=mod.name)
 def assign(obj,index,weights):
  for group in obj.vertex_groups:group.remove([index])
  weights=dict(sorted(weights.items(),key=lambda x:-x[1])[:4]);total=sum(weights.values())
@@ -129,14 +181,21 @@ for v in shell.data.vertices:
    if nearest is None or dist<nearest[0]:nearest=(dist,offset+max(0,min(lengths[j],t)))
    offset+=lengths[j]
   root_axis=(bones[0].tail_local-bones[0].head_local).normalized();advance=(p-bones[0].head_local).dot(root_axis)
-  fade=smooth(-.008,.008,advance)
+  fade=smooth(-.020,.008,advance)
   fade*=1-smooth(.028 if digit=='Thumb' else .025,.048 if digit=='Thumb' else .045,nearest[0])
-  if digit!='Thumb':fade*=smooth(.85,.98,longitudinal)
-  else:fade*=smooth(.018,.032,lateral*(1 if thumb_lateral>0 else -1))
+  if digit!='Thumb':fade*=smooth(.65,.90,longitudinal)
+  else:fade*=smooth(.004,.025,lateral*(1 if thumb_lateral>0 else -1))
   options.append((fade/(nearest[0]+.008),fade,digit,nearest[1]))
- _,fade,digit,arc=max(options);bones,lengths=chains[side,digit];weights={side+'Hand':1-fade}
- j1=smooth(lengths[0]-.0035,lengths[0]+.0035,arc);j2=smooth(lengths[0]+lengths[1]-.003,lengths[0]+lengths[1]+.003,arc)
- weights[bones[0].name]=fade*(1-j1);weights[bones[1].name]=fade*j1*(1-j2);weights[bones[2].name]=fade*j2
+ # Blend the web between adjacent chains continuously. A hard nearest-chain
+ # switch produces a visible fan of stretched triangles when fingers spread.
+ candidates=sorted(options,reverse=True)[:2];scores=[max(0,item[0])**6 for item in candidates];total=sum(scores)
+ weights={side+'Hand':1.0}
+ for (_,fade,digit,arc),score in zip(candidates,scores):
+  influence=fade*score/total if total>1e-12 else 0
+  bones,lengths=chains[side,digit]
+  j1=smooth(lengths[0]-.0045,lengths[0]+.0045,arc);j2=smooth(lengths[0]+lengths[1]-.004,lengths[0]+lengths[1]+.004,arc)
+  weights[side+'Hand']-=influence
+  for name,value in [(bones[0].name,influence*(1-j1)),(bones[1].name,influence*j1*(1-j2)),(bones[2].name,influence*j2)]:weights[name]=weights.get(name,0)+value
  w,axis,n,lat,length=frames[side];along=(p-w).dot(axis)
  if along<.012:
   hand=smooth(-.015,.012,along);weights={side+'LowerArm':1-hand,side+'Hand':hand}
@@ -219,13 +278,26 @@ for side in ['Left','Right']:
    radius=rr*(1-.11*j);center=bone.head_local.lerp(bone.tail_local,.48)
    for label,offset,scale in [('chassis',.0005,1.0),('ceramic',.0014,.88)]:
     width=radius*.78*scale;half=lengths[j]*.30*scale;thick=.0006
-    contour=[(-.65,-1),(.65,-1),(1,-.65),(1,.65),(.65,1),(-.65,1),(-1,.65),(-1,-.65)]
-    pv=[]
+    # Sample the curved surface internally: an ngon bridges across the crown
+    # and cuts through the textile after triangulation.
+    rows=[-1,-.65,0,.65,1];columns=9;layer_size=len(rows)*columns
+    pv=[];pf=[]
     for depth in [-thick,thick]:
-     for x,y in contour:pv.append(center+dl*(x*width)+direction*(y*half)+dn*(radius*.82+offset+depth))
-    pf=[tuple(reversed(range(8))),tuple(range(8,16))]+[(i,(i+1)%8,(i+1)%8+8,i+8) for i in range(8)]
+     for y in rows:
+      row_width=.65 if abs(y)==1 else 1
+      for k in range(columns):
+       x=(-1+2*k/(columns-1))*row_width
+       pv.append(center+dl*(x*width)+direction*(y*half)+dn*(radius*.80*math.sqrt(max(.01,1-(x*.78*scale)**2))+offset+depth))
+    for layer in [0,layer_size]:
+     for row in range(len(rows)-1):
+      for col in range(columns-1):
+       a=layer+row*columns+col;pf.append((a,a+1,a+columns+1,a+columns))
+    boundary=list(range(columns))+[r*columns+columns-1 for r in range(1,len(rows))]+list(range(layer_size-2,layer_size-columns-1,-1))+[r*columns for r in range(len(rows)-2,0,-1)]
+    for i,a in enumerate(boundary):
+     b=boundary[(i+1)%len(boundary)];pf.append((a,b,b+layer_size,a+layer_size))
     pm=bpy.data.meshes.new('F14 '+label+' phalanx');pm.from_pydata(pv,[],pf);pm.update();pm.materials.append(next(m for m in o.data.materials if label in m.name))
-    po=bpy.data.objects.new('F14 fitted '+label,pm);bpy.context.collection.objects.link(po);po.vertex_groups.new(name=bone.name).add(list(range(16)),1,'REPLACE')
+    pb=bmesh.new();pb.from_mesh(pm);bmesh.ops.recalc_face_normals(pb,faces=list(pb.faces));pb.to_mesh(pm);pb.free()
+    po=bpy.data.objects.new('F14 fitted '+label,pm);bpy.context.collection.objects.link(po);po.vertex_groups.new(name=bone.name).add(list(range(len(pv))),1,'REPLACE')
     for face in pm.polygons:face.use_smooth=False
     plate_objects.append(po)
 bpy.ops.object.select_all(action='DESELECT');o.select_set(True);shell.select_set(True)

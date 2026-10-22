@@ -1,0 +1,14 @@
+{
+  "Rifle": {
+    "all_six_arm_bone_positions": "exact at recorded six decimals versus study3"
+  },
+  "Shotgun": {
+    "all_six_arm_bone_positions": "exact at recorded six decimals versus study3"
+  },
+  "RocketLauncher": {
+    "all_six_arm_bone_positions": "exact at recorded six decimals versus study3"
+  },
+  "Cutter": {
+    "all_six_arm_bone_positions": "exact at recorded six decimals versus study3"
+  }
+}
