@@ -1,0 +1,223 @@
+{
+  "baseline": "b55259a5a01b709b3a6260a9d54d163cbe149937",
+  "branch": "codex/vector-fighter",
+  "checks": {
+    "study-1": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "32.9707571",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "study-2": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "28.6079464",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "study-3": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "37.0461331",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "study-4": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "39.6678169",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "study-5": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "35.4884594",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "study-6": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "34.9518992",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "study": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "35.8215807",
+      "cases": [
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "final-before-material-fix": {
+      "result": "Failed(Child)",
+      "total": "6",
+      "passed": "5",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "64.502643",
+      "cases": [
+        {
+          "name": "MixedReviewHasOwnedMaterialsForEveryParticipant",
+          "result": "Failed"
+        },
+        {
+          "name": "FactorySupportGripsKeepForearmDirectionAndNaturalWrist",
+          "result": "Passed"
+        },
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        },
+        {
+          "name": "OrbitalGripDoesNotAccumulateAcrossFrozenSamples",
+          "result": "Passed"
+        },
+        {
+          "name": "RefinedHandGripPreservesArmAndWeaponPlacement",
+          "result": "Passed"
+        },
+        {
+          "name": "SupportWristAlignmentPreservesPalmDigitsAndBoneLengths",
+          "result": "Passed"
+        }
+      ]
+    },
+    "final-native": {
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "42.0316058",
+      "cases": [
+        {
+          "name": "MixedReviewHasOwnedMaterialsForEveryParticipant",
+          "result": "Passed"
+        },
+        {
+          "name": "FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene",
+          "result": "Passed"
+        }
+      ]
+    },
+    "history": {
+      "result": "Passed",
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "129.7636671",
+      "cases": [
+        {
+          "name": "OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(\"BeforeRefinedHandAnatomy\")",
+          "result": "Passed"
+        },
+        {
+          "name": "OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(\"BeforeStableSupportGrip\")",
+          "result": "Passed"
+        },
+        {
+          "name": "PersistedClipsHaveCompleteBindingsAndCorrectLoopPolicy",
+          "result": "Passed"
+        },
+        {
+          "name": "ProfileAndAttributionAreComplete",
+          "result": "Passed"
+        },
+        {
+          "name": "SkinsUseSharedBodyMaterialsAndBoundedWeights",
+          "result": "Passed"
+        }
+      ]
+    }
+  },
+  "source_hashes": {
+    "scripts/vector_fighter/refine_hand_anatomy.py": "b8e1c453d215597253bc10acf5b79819576ab7f9590619e5570a04b6cec696a8",
+    "scripts/vector_fighter/f13-hand-anatomy.blend": "f8a362e7e8dada43ebcd5c0a8a39cd6833a1811113e7f19ba333f4f46b448fda",
+    "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "4096a49740195d086f55001ff65734ac8deec62470b7936487d116160da90b62",
+    "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "657077032cff904352daa530a0fc7e079c3f4b8292796da2c89321776608f7b8",
+    "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "e3f1e27141fd20da8bd4f72a21d16b9b91d1a0f4c8525f35d8e3ffbea921c66d",
+    "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "44bd9d007fefa81b75699c454641d217f426c46e9e5a23e253923a6b309d0025"
+  },
+  "visual_iterations": {
+    "study-1": "Rejected: inherited thumb-web tears",
+    "study-2": "Rejected: volume loss from open source surfaces",
+    "study-3": "Rejected: source skin folds",
+    "study-4": "Rejected: remaining surface artifacts",
+    "study-5": "Rejected: inadequate inherited cloth; approach replaced",
+    "study-6": "Closed authored volume; finger-length/skin-region correction still needed",
+    "study": "Refined anatomical volume before final thenar/plate seating adjustment"
+  },
+  "material_regression": "First final run: 5/6 PASS; identity test failed because neutral material regions collapsed to2. Restored cuff/palm/flush stitch/chassis regions without weakening the >=4 contract. Re-ran identity plus FPS capture:2/2 PASS; unchanged placement/pose checks retain their original passes.",
+  "unchanged": [
+    "rig hierarchy",
+    "all seven sampled animation arrays",
+    "upper/lower arm and wrist transforms",
+    "left support contacts",
+    "camera/FOV",
+    "weapon transforms",
+    "gameplay"
+  ],
+  "not_run": [
+    "full suite",
+    "Player build",
+    "physical devices",
+    "performance",
+    "human acceptance",
+    "merge",
+    "release",
+    "deploy"
+  ]
+}

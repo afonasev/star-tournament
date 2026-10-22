@@ -300,6 +300,32 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<bones.Length;i++)Assert.That(Quaternion.Angle(death[i],bones[i].localRotation),Is.LessThan(.01f));
             }
         }
+        static ProvingProfile BeforeRefinedHandAnatomy(ProvingProfile profile)
+        {
+            return (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeRefinedHandAnatomy",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(profile,null);
+        }
+        [UnityTest] public IEnumerator RefinedHandGripPreservesArmAndWeaponPlacement()
+        {
+            yield return Load(2);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var current=ProvingProfile.CreateTrooperDefault();var previous=BeforeRefinedHandAnatomy(current);
+            var fixedBones=visual.GetComponentsInChildren<Transform>().Where(t=>
+                t.name=="trooper:rig:weapon-mount"||((t.name.StartsWith("Left")||t.name.StartsWith("Right"))&&!t.name.StartsWith("RightThumb"))).ToArray();
+            foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
+            {
+                visual.EquippedWeapon=weapon;
+                foreach(var d in previous.Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+                visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+                var positions=fixedBones.Select(t=>t.position).ToArray();var rotations=fixedBones.Select(t=>t.rotation).ToArray();
+                foreach(var d in current.Descriptors)visual.Tuning.Set(d.Path,d.DefaultValue);
+                visual.ResetPose(0);visual.Render(.25,Vector3.zero,100,1);
+                for(int i=0;i<fixedBones.Length;i++)
+                {
+                    Assert.That(Vector3.Distance(positions[i],fixedBones[i].position),Is.LessThan(.0001f),weapon+" "+fixedBones[i].name);
+                    Assert.That(Quaternion.Angle(rotations[i],fixedBones[i].rotation),Is.LessThan(.05f),weapon+" "+fixedBones[i].name);
+                }
+            }
+        }
         static ProvingProfile BeforeStableSupportGrip(ProvingProfile profile)
         {
             return (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeStableSupportGrip",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(profile,null);
@@ -308,7 +334,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load(2);
             var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
-            var current=ProvingProfile.CreateTrooperDefault();
+            var current=BeforeRefinedHandAnatomy(ProvingProfile.CreateTrooperDefault());
             var previous=BeforeStableSupportGrip(current);
             var bones=visual.GetComponentsInChildren<Transform>();
             var upper=bones.Single(t=>t.name=="LeftUpperArm");var lower=bones.Single(t=>t.name=="LeftLowerArm");

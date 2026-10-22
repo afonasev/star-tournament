@@ -3,11 +3,26 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Preserve exact @18 digit poses for existing Lab histories.
+        internal ProvingProfile BeforeRefinedHandAnatomy()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<19)return this;
+            var p=DetachedCopy();p.version=18;
+            var weapons=new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter};
+            var old=new float[,]{{-2,4,2,0},{0,6,3,0},{3,8,4,0},{2,7,5,0}};
+            var joints=new[]{"Proximal","Intermediate","Distal","Spread"};
+            for(int w=0;w<weapons.Length;w++)for(int j=0;j<joints.Length;j++)
+            {
+                var path="grip."+weapons[w]+".right.Thumb."+joints[j];
+                p.FindDescriptor(path).DefaultValue=old[w,j];p.Set(path,old[w,j]);
+            }
+            return p;
+        }
         // Exact @17 factory poses remain available to saved Lab snapshots.
         internal ProvingProfile BeforeStableSupportGrip()
         {
             if(id!="unity-trooper-presentation-v1"||version<18)return this;
-            var p=DetachedCopy();p.version=17;
+            var p=BeforeRefinedHandAnatomy().DetachedCopy();p.version=17;
             foreach(var weapon in new[]{WeaponId.RocketLauncher,WeaponId.Cutter})
             {
                 var prefix="grip."+weapon+".";
@@ -184,7 +199,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateTrooperDefault()
         {
-            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=18};
+            var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=19};
             p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
             p.Add("animation.stepLengthMeters","trooper-animation","Длина шага","Предельное продвижение за шаг; опорная стопа остаётся на месте в мире.","meters",.2f,1.2f,.05f,.65f);
             p.Add("animation.stepHeightMeters","trooper-animation","Подъём стопы","Высота переноса при полном шаге; короткие движения поднимают стопу пропорционально.","meters",.01f,.2f,.01f,.09f);
@@ -313,6 +328,23 @@ namespace StarTournament.ProvingGround
             Fit("grip.Cutter.supportX",-0.11f);
             Fit("grip.Cutter.supportZ",0.415f);
             Fit("grip.Cutter.supportCurl",45);
+            // Thumb opposition closes the grip without moving the wrist or arm.
+            Fit("grip.Rifle.right.Thumb.Proximal",-15);
+            Fit("grip.Rifle.right.Thumb.Intermediate",10);
+            Fit("grip.Rifle.right.Thumb.Distal",8);
+            Fit("grip.Rifle.right.Thumb.Spread",-10);
+            Fit("grip.Shotgun.right.Thumb.Proximal",-13);
+            Fit("grip.Shotgun.right.Thumb.Intermediate",12);
+            Fit("grip.Shotgun.right.Thumb.Distal",9);
+            Fit("grip.Shotgun.right.Thumb.Spread",-10);
+            Fit("grip.RocketLauncher.right.Thumb.Proximal",-10);
+            Fit("grip.RocketLauncher.right.Thumb.Intermediate",14);
+            Fit("grip.RocketLauncher.right.Thumb.Distal",10);
+            Fit("grip.RocketLauncher.right.Thumb.Spread",-10);
+            Fit("grip.Cutter.right.Thumb.Proximal",-11);
+            Fit("grip.Cutter.right.Thumb.Intermediate",13);
+            Fit("grip.Cutter.right.Thumb.Distal",11);
+            Fit("grip.Cutter.right.Thumb.Spread",-10);
             return p;
         }
     }

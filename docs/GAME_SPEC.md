@@ -855,3 +855,6 @@ First-install macOS поставляется DMG с полным приложе�
 
 ### VECTOR F12 support grip correction
 Factory trooper presentation @18 keeps the support forearm approximately aligned across Rifle, Shotgun, RocketLauncher and Cutter. The vertical-handle grips use revised palm contact/pitch/yaw instead of F11's elbow swivel; camera, weapon pose, bone lengths, meshes and finger joint curls remain unchanged. Exact @17 and earlier Lab snapshots remain reconstructible. Evidence: `docs/evidence/vector-fighter/f12-result/`.
+
+### VECTOR F13 hand anatomy
+The neutral glove shell uses a continuous anatomical palm/thenar/finger volume with adjacent-joint skin blending. Factory trooper @19 revises right-thumb articulation while preserving F12 arm/wrist placement, left support contacts and weapon/camera transforms. Exact @18 and earlier Lab snapshots are retained. Editable source and native four-weapon review: `scripts/vector_fighter/f13-hand-anatomy.blend`, `docs/evidence/vector-fighter/f13-result/`.
