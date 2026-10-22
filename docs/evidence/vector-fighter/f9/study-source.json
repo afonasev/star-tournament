@@ -1,0 +1,8 @@
+{
+  "baseline": "0bf6d8e1e5965d9eeb610ba879a6a24703e60173",
+  "source": "scripts/vector_fighter/f8-glove-repair.blend",
+  "sha256": "f0a4b075c1930dd6173ba70b2979eb74cb7139089edff41b3761f2ca8e5e034c",
+  "status": "material/surface concept study; not Unity/FPS acceptance",
+  "geometry": "F8 unchanged; no new overlays; procedural relief is shading only",
+  "runtime_assets": "unchanged"
+}
