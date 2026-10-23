@@ -1,0 +1,33 @@
+{
+  "baseline": "bb3ca11e4ea6aa7bbf502a1e66681ae5247ce3c0",
+  "scope": "Selected direction 1: neutral ceramic forearm albedo, normal and roughness maps; existing glove roughness",
+  "checks": {
+    "native": {
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "40.0461233"
+    },
+    "import": {
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.4077101"
+    }
+  },
+  "structural": "Both exported GLBs retain exact node hierarchy and all seven animation sample arrays. Editable source mesh vertex counts unchanged.",
+  "capture": "40 real Unity frames, four weapons, factory @16 grips, no overrides; FPS uses actual seat projection",
+  "visual": "Dimensional edge/wrist channels visible in FPS; restrained smooth ceramic finish. Existing glove/cuff texture and shape limitations remain; no full artistic acceptance.",
+  "not_run": [
+    "full suite",
+    "Player build",
+    "integration",
+    "release/deploy",
+    "hardware/performance/human acceptance"
+  ],
+  "preservation": "F7 gait and F8 grip code unchanged; all continuation resources retained"
+}

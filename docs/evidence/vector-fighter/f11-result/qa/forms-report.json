@@ -1,0 +1,9 @@
+{
+  "source": "f9-fp-detail.blend",
+  "objects_preserved": 50,
+  "removed_cuff_ring_vertices": 2304,
+  "removed_cuff_clasp_vertices": 80,
+  "replaced_sleeve_vertices": 596,
+  "form": "broad rounded shell; continuous tapered elbow/wrist textile; fitted glove layers",
+  "status": "candidate awaiting actual FPS"
+}

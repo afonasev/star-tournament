@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="32" result="Failed(Child)" total="32" passed="31" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:24:57Z" duration="602.3299017">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="732" result="Failed" site="Child" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:24:57Z" duration="602.329902" total="32" passed="31" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1902" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="732" result="Failed" site="Child" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:24:57Z" duration="602.318198" total="32" passed="31" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36367" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1903" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="732" result="Failed" site="Child" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:24:57Z" duration="602.311234" total="32" passed="31" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1904" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="732" result="Failed" site="Child" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:24:57Z" duration="602.282372" total="32" passed="31" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1905" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="732" result="Failed" site="Child" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:24:57Z" duration="602.271397" total="32" passed="31" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1906" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:24:57Z" duration="601.921499" total="29" passed="28" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1305" name="DesignLabHistoryTests" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="62" result="Passed" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:23:33Z" duration="518.422335" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1343" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:23:33Z" duration="518.398558" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1336" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeArenaHarmonization&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeArenaHarmonization&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1196409313" result="Passed" start-time="2026-10-20 20:14:55Z" end-time="2026-10-20 20:16:17Z" duration="82.039199" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1337" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeBloodIntensityIncrease&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeBloodIntensityIncrease&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="145573107" result="Passed" start-time="2026-10-20 20:16:17Z" end-time="2026-10-20 20:17:31Z" duration="74.166177" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1338" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeFootstepMix&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeFootstepMix&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1721403054" result="Passed" start-time="2026-10-20 20:17:31Z" end-time="2026-10-20 20:18:48Z" duration="76.974984" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1339" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeEquipmentReadability&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeEquipmentReadability&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1169943857" result="Passed" start-time="2026-10-20 20:18:48Z" end-time="2026-10-20 20:19:58Z" duration="70.123233" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1340" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeVectorFighter&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeVectorFighter&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1706904649" result="Passed" start-time="2026-10-20 20:19:58Z" end-time="2026-10-20 20:21:07Z" duration="69.500767" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1341" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeDiffuseEquipmentFill&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeDiffuseEquipmentFill&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1110873036" result="Passed" start-time="2026-10-20 20:21:07Z" end-time="2026-10-20 20:22:21Z" duration="73.397582" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1342" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeMediumWeaponSwitch&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeMediumWeaponSwitch&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1630139368" result="Passed" start-time="2026-10-20 20:22:21Z" end-time="2026-10-20 20:23:33Z" duration="72.179414" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+              <test-suite type="TestFixture" id="1377" name="FirstPersonWalkTests" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-20 20:23:33Z" end-time="2026-10-20 20:24:47Z" duration="74.264539" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1381" name="EquipmentReadabilityDefaultKeepsExistingLabControlAndOldRegistry" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.EquipmentReadabilityDefaultKeepsExistingLabControlAndOldRegistry" methodname="EquipmentReadabilityDefaultKeepsExistingLabControlAndOldRegistry" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="1211285124" result="Passed" start-time="2026-10-20 20:23:33Z" end-time="2026-10-20 20:23:33Z" duration="0.102335" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1385" name="EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-20 20:23:33Z" end-time="2026-10-20 20:24:10Z" duration="37.063358" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1382" name="EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(0.05f,0.05f)" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(0.05f,0.05f)" methodname="EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="1400813887" result="Passed" start-time="2026-10-20 20:23:33Z" end-time="2026-10-20 20:23:46Z" duration="12.352476" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1383" name="EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(0.25f,0.25f)" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(0.25f,0.25f)" methodname="EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="821543166" result="Passed" start-time="2026-10-20 20:23:46Z" end-time="2026-10-20 20:23:58Z" duration="12.395165" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1384" name="EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(0.0f,0.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision(0.0f,0.0f)" methodname="EquipmentReadabilityHistoryPreservesCustomValuesAndOriginalRevision" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="1111762546" result="Passed" start-time="2026-10-20 20:23:58Z" end-time="2026-10-20 20:24:10Z" duration="12.314042" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-suite type="ParameterizedMethod" id="1389" name="LabUpgradePreservesOldRevisionsAndCustomValues" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.LabUpgradePreservesOldRevisionsAndCustomValues" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 20:24:10Z" end-time="2026-10-20 20:24:47Z" duration="37.006275" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1387" name="LabUpgradePreservesOldRevisionsAndCustomValues(False)" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.LabUpgradePreservesOldRevisionsAndCustomValues(False)" methodname="LabUpgradePreservesOldRevisionsAndCustomValues" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="1674870139" result="Passed" start-time="2026-10-20 20:24:10Z" end-time="2026-10-20 20:24:29Z" duration="18.365277" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1388" name="LabUpgradePreservesOldRevisionsAndCustomValues(True)" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.LabUpgradePreservesOldRevisionsAndCustomValues(True)" methodname="LabUpgradePreservesOldRevisionsAndCustomValues" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="80915071" result="Passed" start-time="2026-10-20 20:24:29Z" end-time="2026-10-20 20:24:47Z" duration="18.639827" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1378" name="MovingHandsUseSteadyAimWithSmallSlowStepsAndFrozenSamples" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.MovingHandsUseSteadyAimWithSmallSlowStepsAndFrozenSamples" methodname="MovingHandsUseSteadyAimWithSmallSlowStepsAndFrozenSamples" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="1607439891" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.013733" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1379" name="ResponseIsCadenceIndependentAndFadesAfterStoppingOrLeavingGround" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.ResponseIsCadenceIndependentAndFadesAfterStoppingOrLeavingGround" methodname="ResponseIsCadenceIndependentAndFadesAfterStoppingOrLeavingGround" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="1833255781" result="Failed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.008522" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  No continuing ground steps in air
+  Expected: less than 9.99999975E-06f
+  But was:  0.0249987282f
+]]></message>
+                    <stack-trace><![CDATA[at StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.ResponseIsCadenceIndependentAndFadesAfterStoppingOrLeavingGround () [0x0014c] in /Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Assets/StarTournament/Tests/EditMode/FirstPersonWalkTests.cs:65
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1386" name="SerializedTrooperUpgradeRefreshesCachedValuesAndPreservesCustomGrip" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.SerializedTrooperUpgradeRefreshesCachedValuesAndPreservesCustomGrip" methodname="SerializedTrooperUpgradeRefreshesCachedValuesAndPreservesCustomGrip" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="970751444" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.002171" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1380" name="WalkingKeepsCombatClipsSwitchPhaseAndResetsOnNewLife" fullname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests.WalkingKeepsCombatClipsSwitchPhaseAndResetsOnNewLife" methodname="WalkingKeepsCombatClipsSwitchPhaseAndResetsOnNewLife" classname="StarTournament.ProvingGround.Tests.EditMode.FirstPersonWalkTests" runstate="Runnable" seed="759038160" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.001374" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1868" name="WeaponSwitchPresentationTests" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:57Z" duration="9.188317" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1877" name="AllWeaponPairsShareTheSamePhaseWithoutMutatingState" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.AllWeaponPairsShareTheSamePhaseWithoutMutatingState" methodname="AllWeaponPairsShareTheSamePhaseWithoutMutatingState" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="518842861" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.000938" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1872" name="AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.003605" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1869" name="AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary(0.1f)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary(0.1f)" methodname="AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="483787449" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.002450" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1870" name="AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary(1.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary(1.0f)" methodname="AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="698643581" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.000338" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1871" name="AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary(3.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary(3.0f)" methodname="AnimationTracksRemainingTimeAndFinishesOnTheFireBoundary" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="1430613716" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:47Z" duration="0.000306" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-suite type="ParameterizedMethod" id="1881" name="HandGeometryRemainsAheadOfCameraThroughoutTheGesture" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.HandGeometryRemainsAheadOfCameraThroughoutTheGesture" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:48Z" duration="0.997984" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1879" name="HandGeometryRemainsAheadOfCameraThroughoutTheGesture(60,0)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.HandGeometryRemainsAheadOfCameraThroughoutTheGesture(60,0)" methodname="HandGeometryRemainsAheadOfCameraThroughoutTheGesture" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="1422668059" result="Passed" start-time="2026-10-20 20:24:47Z" end-time="2026-10-20 20:24:48Z" duration="0.512752" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1880" name="HandGeometryRemainsAheadOfCameraThroughoutTheGesture(75,10)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.HandGeometryRemainsAheadOfCameraThroughoutTheGesture(75,10)" methodname="HandGeometryRemainsAheadOfCameraThroughoutTheGesture" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="570312669" result="Passed" start-time="2026-10-20 20:24:48Z" end-time="2026-10-20 20:24:48Z" duration="0.484753" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-suite type="ParameterizedMethod" id="1884" name="LabUpgradePreservesPreSwitchAndOlderProfileHistory" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.LabUpgradePreservesPreSwitchAndOlderProfileHistory" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 20:24:48Z" end-time="2026-10-20 20:24:57Z" duration="8.172920" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1882" name="LabUpgradePreservesPreSwitchAndOlderProfileHistory(False)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.LabUpgradePreservesPreSwitchAndOlderProfileHistory(False)" methodname="LabUpgradePreservesPreSwitchAndOlderProfileHistory" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="1811337363" result="Passed" start-time="2026-10-20 20:24:48Z" end-time="2026-10-20 20:24:52Z" duration="4.133218" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1883" name="LabUpgradePreservesPreSwitchAndOlderProfileHistory(True)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.LabUpgradePreservesPreSwitchAndOlderProfileHistory(True)" methodname="LabUpgradePreservesPreSwitchAndOlderProfileHistory" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="1712330290" result="Passed" start-time="2026-10-20 20:24:52Z" end-time="2026-10-20 20:24:57Z" duration="4.038711" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1878" name="ShoulderGestureKeepsPivotsAttachedAndRepeatedRenderingDoesNotAccumulate" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.ShoulderGestureKeepsPivotsAttachedAndRepeatedRenderingDoesNotAccumulate" methodname="ShoulderGestureKeepsPivotsAttachedAndRepeatedRenderingDoesNotAccumulate" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="1948020612" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.007928" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1876" name="VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.003243" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1873" name="VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf(0.1d)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf(0.1d)" methodname="VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="478642741" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.000897" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1874" name="VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf(1.0d)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf(1.0d)" methodname="VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="708972198" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.000216" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1875" name="VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf(3.0d)" fullname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests.VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf(3.0d)" methodname="VisibleWeaponChangesAtTheApexAndNeverOnTheFirstHalf" classname="StarTournament.ProvingGround.Tests.EditMode.WeaponSwitchPresentationTests" runstate="Runnable" seed="2037004048" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.000204" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1166" name="TrooperImportTests" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.321853" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1167" name="PersistedClipsHaveCompleteBindingsAndCorrectLoopPolicy" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests.PersistedClipsHaveCompleteBindingsAndCorrectLoopPolicy" methodname="PersistedClipsHaveCompleteBindingsAndCorrectLoopPolicy" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" seed="884791952" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.048840" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1169" name="ProfileAndAttributionAreComplete" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests.ProfileAndAttributionAreComplete" methodname="ProfileAndAttributionAreComplete" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" seed="596444355" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.001539" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1168" name="SkinsUseSharedBodyMaterialsAndBoundedWeights" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests.SkinsUseSharedBodyMaterialsAndBoundedWeights" methodname="SkinsUseSharedBodyMaterialsAndBoundedWeights" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" seed="1420262718" result="Passed" start-time="2026-10-20 20:24:57Z" end-time="2026-10-20 20:24:57Z" duration="0.270567" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

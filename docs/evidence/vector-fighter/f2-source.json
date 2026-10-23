@@ -1,0 +1,38 @@
+{
+  "baseline": "41c8773d375039d92af5038590f3b2d6abf9606e",
+  "assets": {
+    "body": {
+      "sha256": "c9773ac2c039e314aee1d8d2bd49a8dc9def8ad0ab234a12060cbaf6b6d54a22",
+      "bytes": 15556152,
+      "meshes": 3,
+      "materials": 20,
+      "joints": 57,
+      "clips": [
+        "aim",
+        "death",
+        "fire",
+        "hit",
+        "idle",
+        "run",
+        "walk"
+      ]
+    },
+    "arms": {
+      "sha256": "51b0339aa928974b9d894a7997a98a6ae3a23d1ceaa2bac005ced8432b21e93e",
+      "bytes": 10261840,
+      "meshes": 2,
+      "materials": 19,
+      "joints": 57,
+      "clips": [
+        "aim",
+        "death",
+        "fire",
+        "hit",
+        "idle",
+        "run",
+        "walk"
+      ]
+    }
+  },
+  "source_blend_sha256": "ca14094ad191bc1eebd5a0ed3fbcbf0870c0428c00e513b7dfb782da98676d3a"
+}

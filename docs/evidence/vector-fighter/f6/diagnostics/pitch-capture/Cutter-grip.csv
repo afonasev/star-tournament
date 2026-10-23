@@ -1,0 +1,57 @@
+name,x,y,z
+LeftUpperLeg,-0.232708,-1.494653,-1.036294
+LeftLowerLeg,-0.323080,-2.590328,-0.775789
+LeftFoot,-0.417756,-3.738167,-1.290903
+LeftToes,-0.417756,-3.937567,-0.909441
+RightUpperLeg,0.576455,-1.494653,-1.036294
+RightLowerLeg,0.660253,-2.510570,-0.549034
+RightFoot,0.761504,-3.738167,-0.822153
+RightToes,0.761504,-3.937568,-0.440690
+LeftShoulder,-0.015968,0.208067,-0.962881
+LeftUpperArm,-0.468344,0.067096,-0.917997
+LeftLowerArm,-0.408840,-0.210501,-0.218441
+LeftHand,-0.396383,0.099326,0.355065
+LeftIndexProximal,-0.155741,-0.255700,0.496429
+LeftIndexIntermediate,-0.035304,-0.266654,0.527391
+LeftIndexDistal,0.008666,-0.271188,0.592336
+LeftLittleProximal,-0.032032,-0.034111,0.518625
+LeftLittleIntermediate,0.061666,-0.030091,0.564564
+LeftLittleDistal,0.025159,-0.022849,0.627355
+LeftMiddleProximal,-0.100005,-0.200002,0.500003
+LeftMiddleIntermediate,0.030410,-0.206886,0.524834
+LeftMiddleDistal,0.019830,-0.202793,0.610834
+LeftRingProximal,-0.054700,-0.111112,0.506531
+LeftRingIntermediate,0.059533,-0.087863,0.540809
+LeftRingDistal,0.026571,-0.098922,0.620334
+LeftThumbProximal,-0.347025,-0.136887,0.447869
+LeftThumbIntermediate,-0.287563,-0.168758,0.554009
+LeftThumbDistal,-0.196547,-0.171622,0.598318
+LeftLowerArmTwist1,-0.405103,-0.117553,-0.046389
+LeftLowerArmTwist2,-0.401366,-0.024605,0.125663
+RightShoulder,0.359714,0.208067,-0.962881
+RightUpperArm,0.822092,0.125272,-1.039565
+RightLowerArm,0.727589,-0.568423,-0.757015
+RightHand,0.176943,-0.350124,-0.484637
+RightIndexProximal,0.085384,-0.136729,-0.097318
+RightIndexIntermediate,0.030154,-0.105822,0.010285
+RightIndexDistal,-0.033897,-0.084379,0.050396
+RightLittleProximal,0.050247,-0.388742,-0.084928
+RightLittleIntermediate,0.012123,-0.366614,0.009748
+RightLittleDistal,-0.060278,-0.359970,0.016254
+RightMiddleProximal,0.080114,-0.211425,-0.072530
+RightMiddleIntermediate,0.042373,-0.183051,0.051737
+RightMiddleDistal,-0.042349,-0.170879,0.065841
+RightRingProximal,0.068104,-0.310680,-0.071631
+RightRingIntermediate,0.001466,-0.281458,0.025685
+RightRingDistal,-0.082225,-0.273512,0.004111
+RightThumbProximal,0.110221,-0.157699,-0.325368
+RightThumbIntermediate,0.063604,-0.113772,-0.217134
+RightThumbDistal,0.010866,-0.084173,-0.135906
+pistol grip,0.000000,-0.190000,-0.029999
+rifle-grip,0.000000,-0.180000,0.000000
+RightLowerArmTwist1,0.562394,-0.502934,-0.675301
+RightLowerArmTwist2,0.397200,-0.437444,-0.593588
+cutter copper conductors bounds Center: (0.00000, 0.11200, 0.61810), Extents: (0.17710, 0.12180, 0.25410)
+cutter graphite bounds Center: (0.00000, -0.00385, 0.28000), Extents: (0.16170, 0.29015, 0.68600)
+cutter industrial yellow bounds Center: (0.00000, 0.06825, 0.09975), Extents: (0.18200, 0.22575, 0.52675)
+cutter steel bounds Center: (0.00000, 0.17920, 0.15050), Extents: (0.14840, 0.01330, 0.19880)

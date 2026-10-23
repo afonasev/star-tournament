@@ -1,0 +1,16 @@
+{
+  "baseline": "0bf6d8e1e5965d9eeb610ba879a6a24703e60173",
+  "scope": "Three Blender surface/material studies only. No runtime assets changed.",
+  "command": "blender -b -noaudio --python scripts/vector_fighter/study_fp_detail.py",
+  "render": "3/3 written and visually inspected",
+  "syntax": "PASS (ast.parse)",
+  "Unity": "NotRun: no runtime change; only offline studies",
+  "full_tests": "NotRun: not authorized",
+  "human_selection": "pending",
+  "limitations": [
+    "Studio camera is not FPS evidence.",
+    "F8 mesh and authored glove texture defects remain; these are direction studies, not final repaired art.",
+    "Relief is shader bump, not yet baked/exported.",
+    "Initial renders were too bright; final images use corrected lighting and explicit UV layout."
+  ]
+}

@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "4f77896887dce890db3d703bb223cd77c68fcf691ef6e7c69710a71213a3fdea",
+      "sha256": "5a0b66fa130960dbe9795905f66919406f97b4dbf2592045855862891710d32c",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Strata F4 oxblood world body with fitted primary palm grip; build_vector.py and strata_palette.py"
+      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "c74d56b1cd0cb6d58fdaa1d26ec3bb480ec44980e4ecbdae7f37ebfb2124bb20",
+      "sha256": "4e5cfd05c8145ebf5fadf1e16d7e534b93bffa3d6ab9e34591cf34633216a377",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Selected Orbital F3/F2 FPS hands and Strata F5 weapon over attributed ART_LOLL glove topology/UV and Trooper rig/clips; build_vector.py"
+      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
     },
     {
       "key": "speed-pickup",

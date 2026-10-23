@@ -1,0 +1,109 @@
+{
+  "baseline": "6d57c9e07a0edf7e1e49617888164becb1e1900c",
+  "branch": "codex/vector-fighter",
+  "source_identity": "source-hashes.json; final F7 commit includes these exact bytes",
+  "checks": {
+    "initial_gait": {
+      "result": "Failed(Child)",
+      "total": "5",
+      "passed": "3",
+      "failed": "2",
+      "skipped": "0",
+      "duration": "0.1714385",
+      "start-time": "2026-10-21 21:23:20Z",
+      "end-time": "2026-10-21 21:23:20Z",
+      "file": "docs/evidence/vector-fighter/f7/qa/initial-gait/results.xml"
+    },
+    "focused_edit": {
+      "result": "Passed",
+      "total": "28",
+      "passed": "28",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "85.9712817",
+      "start-time": "2026-10-21 21:43:05Z",
+      "end-time": "2026-10-21 21:44:31Z",
+      "file": "docs/evidence/vector-fighter/f7/qa/focused-edit/editmode.xml"
+    },
+    "gait_final": {
+      "result": "Passed",
+      "total": "6",
+      "passed": "6",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.188939",
+      "start-time": "2026-10-21 21:51:39Z",
+      "end-time": "2026-10-21 21:51:39Z",
+      "file": "docs/evidence/vector-fighter/f7/qa/gait-final/editmode.xml"
+    },
+    "native_initial": {
+      "result": "Failed(Child)",
+      "total": "6",
+      "passed": "5",
+      "failed": "1",
+      "skipped": "0",
+      "duration": "66.9425168",
+      "start-time": "2026-10-21 21:47:56Z",
+      "end-time": "2026-10-21 21:49:03Z",
+      "file": "docs/evidence/vector-fighter/f7/qa/native-initial/results.xml"
+    },
+    "native_final": {
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "49.3276247",
+      "start-time": "2026-10-21 21:52:58Z",
+      "end-time": "2026-10-21 21:53:48Z",
+      "file": "docs/evidence/vector-fighter/f7/qa/native-final/results.xml"
+    },
+    "native_motion": {
+      "result": "Passed",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "31.7112148",
+      "start-time": "2026-10-21 21:58:30Z",
+      "end-time": "2026-10-21 21:59:02Z",
+      "file": "docs/evidence/vector-fighter/f7/qa/native-motion/results.xml"
+    }
+  },
+  "metrics": {
+    "frames": 240,
+    "simulation_fps": 50,
+    "max_support_ankle_anchor_error_m": 0.000413531379,
+    "max_short_speed_m_s": 0.09000301,
+    "short_travel_between_first_and_last_recorded_frames_m": 0.1061999999999994,
+    "airborne_frames": 32,
+    "root_y_range_m": [
+      0.009999871,
+      1.19399941
+    ],
+    "final_grounded": "True"
+  },
+  "technical_scope": "Focused automated flat-ground presentation, import, weapon and predecessor compatibility. Repeated cases are not summed as unique tests.",
+  "visual": {
+    "model": "IMPROVED, not accepted: cloth clearance and knee/shin overlap repaired; angular shoulder/garment transitions remain. 50 model objects before and after.",
+    "glove": "PARTIAL: 20706 seam vertices reweighted; actual grip still shows little-finger/seam artifacts.",
+    "RocketLauncher_Cutter": "FAIL: support fingers insufficiently wrap the handle, gaps and little-finger deformation remain. Candidate overrides NOT promoted to defaults.",
+    "motion": "Actual Unity native motor240 frames at50 simulation fps; 25fps GIF,50fps MP4. Clear review camera and non-colliding grid at floor height replace occluding arena for diagnosis. Not ordinary gameplay camera or human acceptance.",
+    "camera_attempts": "native-final technical2/2 passed; world capture occluded by arena geometry, retained as capture failure. native-motion changes capture only,1/1 passed."
+  },
+  "failures_retained": [
+    "initial gait3/5, stance unreachable at2 and6m/s",
+    "native initial5/6, smallest test input did not displace native capsule; CSV additionally revealed acceleration slip",
+    "collapsed shell and wrinkled armor model studies",
+    "rejected vertical grip candidates and native-final occluded camera"
+  ],
+  "not_run": [
+    "queued gait cancelled by owner BEFORE execution; no XML, NotRun",
+    "full suite (explicitly forbidden)",
+    "Player build",
+    "integration/release/deploy",
+    "ordinary full gameplay action acceptance",
+    "human/device/performance acceptance"
+  ],
+  "retention": "User forbids continuation resource deletion; worktree, .local candidates/raw captures, Library and editable sources retained. Own Unity ProjectSettings whitespace restored; no continuation resources deleted."
+}

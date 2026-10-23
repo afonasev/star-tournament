@@ -1,0 +1,14 @@
+{
+  "cloth_vertices": 3318,
+  "stitch_vertices": 20706,
+  "existing_plates_seated": 40,
+  "palm_plate_layers_seated": 8,
+  "palm_assembly_travel_m": [
+    0.01641483182662534,
+    0.010579546989241313,
+    0.010882226979532885,
+    0.015209174198029637
+  ],
+  "objects_before": 50,
+  "objects_after": 50
+}

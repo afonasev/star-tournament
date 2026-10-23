@@ -1,0 +1,9 @@
+{
+  "status": "visual FAIL; not accepted and not shipped",
+  "source": "scripts/vector_fighter/remodel.py",
+  "editableStudy": "scripts/vector_fighter/f6-remodel-study.blend",
+  "actualRenders": ["model-candidate/model-front.png", "model-candidate/model-back.png", "model-candidate/torso.png", "model-clearance/model-front.png", "model-clearance/torso.png"],
+  "findings": ["Torso and limb panels remain too schematic compared with approved VECTOR", "Skin-weighted cloth and rigid shell surfaces intersect at knees and thighs in review pose", "Shoulder crown and upper-sleeve transition remain visibly unfinished", "Offline garment ray clearance did not fix posed intersection"],
+  "productionBodyAndArmsChanged": false,
+  "nextApproach": "Stop repeating procedural surface/detail studies; requires deliberate posed mesh editing and silhouette/art review against the approved concept."
+}

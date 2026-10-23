@@ -1,0 +1,14 @@
+{
+  "source": "f11-fps-forms.blend",
+  "changed_glove_vertices": 39248,
+  "replaced_cloth_vertices": 8518,
+  "removed_stitch_vertices": 16848,
+  "objects": 50,
+  "removed_single_voxel_vertices": 0,
+  "cloth_component_sizes": [
+    193792,
+    193794
+  ],
+  "bones_and_actions": "unchanged",
+  "status": "candidate, requires native contact review"
+}

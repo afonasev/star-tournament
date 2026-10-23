@@ -1,0 +1,46 @@
+{
+  "body": {
+    "animation_samples_exact": true,
+    "nodes_exact": true,
+    "animations": 7,
+    "forearm_material": {
+      "doubleSided": true,
+      "name": "vector-fighter-identity-forearm-f9",
+      "normalTexture": {
+        "index": 19
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 20
+        },
+        "metallicFactor": 0.1599999964237213,
+        "metallicRoughnessTexture": {
+          "index": 21
+        }
+      }
+    },
+    "sha256": "50963d0b1f2631d3e4413c64557ee77bd0ba7fb6e1748a518a5e223083fb53e0"
+  },
+  "arms": {
+    "animation_samples_exact": true,
+    "nodes_exact": true,
+    "animations": 7,
+    "forearm_material": {
+      "doubleSided": true,
+      "name": "vector-fighter-identity-forearm-f9",
+      "normalTexture": {
+        "index": 10
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 11
+        },
+        "metallicFactor": 0.1599999964237213,
+        "metallicRoughnessTexture": {
+          "index": 12
+        }
+      }
+    },
+    "sha256": "26825173d42bdfcbb25de2ac9e978686119f16e7249df64e4227a17de7f4aade"
+  }
+}

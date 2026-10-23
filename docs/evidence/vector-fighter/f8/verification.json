@@ -1,0 +1,102 @@
+{
+  "baseline": "2bbac4c4ea824a79aedbe4fcf19b998cf02cf7e7",
+  "branch": "codex/vector-fighter",
+  "source_identity": "source-hashes.json; canonical feedback_f8_result records exact final commit",
+  "scope": "RocketLauncher/Cutter support grips, little finger, shared glove cloth/stitches and existing plate fit. Preserve finished F7 gait.",
+  "changes": {
+    "factory": "Trooper @16; exact @15 predecessor and older reconstruction chain preserved",
+    "skin": {
+      "cloth_vertices": 3318,
+      "stitch_vertices": 20706,
+      "existing_plates_seated": 40,
+      "palm_plate_layers_seated": 8,
+      "palm_assembly_travel_m": [
+        0.01641483182662534,
+        0.010579546989241313,
+        0.010882226979532885,
+        0.015209174198029637
+      ],
+      "objects_before": 50,
+      "objects_after": 50
+    },
+    "preservation": "50 objects; unchanged mesh vertex/material/bone/animation counts; node hierarchy and all seven animation sample arrays exactly match F7; body and weapon positions unchanged"
+  },
+  "final_checks": {
+    "history": {
+      "passed": 13,
+      "total": 13,
+      "source": "qa/history-import/results.xml",
+      "reuse": "TrooperProfile.cs, DesignLabHistory.cs and DesignLabHistoryTests.cs hashes unchanged after history run; later changes only to glove skin/geometry"
+    },
+    "import": {
+      "result": "Passed",
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "0.3634922",
+      "start-time": "2026-10-22 06:33:48Z",
+      "end-time": "2026-10-22 06:33:48Z"
+    },
+    "native": {
+      "result": "Passed",
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "duration": "29.81451",
+      "start-time": "2026-10-22 06:33:06Z",
+      "end-time": "2026-10-22 06:33:36Z"
+    },
+    "blender_export": "PASS; actual source executed and GLBs imported",
+    "planning_strict": "PASS",
+    "python_syntax": "PASS; Blender execution and AST parse",
+    "diff_hygiene": "PASS"
+  },
+  "visual": {
+    "status": "READY FOR HUMAN REVIEW; no human acceptance recorded",
+    "RocketLauncher_Cutter": "Actual factory @16 captures inspected from both sides and FPS. F7 upward-folded little finger and detached seam strips removed. Existing dorsal rim/coating pairs fitted together with smaller footprint; shape preserved.",
+    "neighbours": "All four weapon grips and FPS retained. Rifle/Shotgun existing layered dorsal plate silhouette remains visible edge-on; human art judgement remains open. No claim of universal mesh/weapon collision clearance.",
+    "capture": "40 actual Unity images; all-weapon native walking/frozen-sample fixture, no grip overrides. Collages resize and label real frames only. Diagnostic close-up camera plus actual seat-camera FPS; not physical-device acceptance."
+  },
+  "failures_retained": [
+    {
+      "path": "qa/neutral-filter-notrun/results.xml",
+      "status": "NotRun: incorrect namespace filter selected zero cases; vendor XML Passed with total=0 is not PASS"
+    },
+    {
+      "path": "qa/candidate/visual-fail.png",
+      "status": "Rejected open/contact fit before final corrections; technical fixture pass is not art acceptance"
+    },
+    {
+      "path": "qa/final/visual-fail.png",
+      "status": "Rejected dorsal plate spacing retained from source"
+    },
+    {
+      "path": "qa/final-palm/visual-fail.png",
+      "status": "Rejected per-vertex palm-plate projection crumpled the panels; technical2/2"
+    },
+    {
+      "path": "qa/final-rigid/visual-fail.png",
+      "status": "Rejected independent rigid plate correction retained an edge gap; technical2/2"
+    },
+    {
+      "path": "qa/final-dorsal/visual-fail.png",
+      "status": "Rejected separately seated rim/coating layers intersected; technical2/2"
+    }
+  ],
+  "not_run": [
+    "full suite: explicitly forbidden",
+    "Player build",
+    "integration/release/deploy",
+    "whole model F5 art completion",
+    "physical/device/performance/human acceptance"
+  ],
+  "retention": "All continuation resources preserved, including .local/vector-f6, vector-f7, vector-fighter, vector-f8, Library, source Blend/GLBs and original Python cache. No archive/delete. Only own whitespace-only Unity ProjectSettings roundtrip restored.",
+  "commands": {
+    "history": "STAR_TOURNAMENT_QA_LAB_HISTORY=<isolated> unity/tools.sh test-edit-filter TrooperImportTests;OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes (quoted filter)",
+    "final_import": "UNITY_RUN_MODE=shared STAR_TOURNAMENT_QA_LAB_HISTORY=<isolated> unity/tools.sh test-edit-filter TrooperImportTests",
+    "final_native": "STAR_TOURNAMENT_GRIP_FACTORY=1 STAR_TOURNAMENT_GRIP_MESH=1 STAR_TOURNAMENT_WALK_EVIDENCE=<final-assembly> STAR_TOURNAMENT_QA_LAB_HISTORY=<isolated> UNITY_RUN_MODE=shared unity/tools.sh editor -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene;OrbitalGripDoesNotAccumulateAcrossFrozenSamples (quoted filter) -testResults <results.xml> -logFile <editor.log>"
+  },
+  "post_check_normalization": "Only Unity empty-YAML-value trailing spaces were restored in ProjectSettings and the two prefabs; prefab GUID/mesh references and all source/GLB/C# semantics unchanged. Final normalized prefab bytes match baseline."
+}

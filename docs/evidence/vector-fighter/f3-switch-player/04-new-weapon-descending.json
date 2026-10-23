@@ -1,0 +1,457 @@
+{
+    "Version": 9,
+    "Lifts": [],
+    "Match": {
+        "Version": 3,
+        "TuningIdentity": "50|12000|250|50|400|0|200|100,300,500,800,1200|10|1|timed-linear-v3|500|100|100",
+        "AssistLedger": [
+            -1,
+            -1,
+            -1,
+            -1
+        ],
+        "ChainAwards": [
+            0,
+            0
+        ],
+        "LastEligibleKillTicks": [
+            -1,
+            -1
+        ],
+        "DiedThisTick": [
+            false,
+            false
+        ],
+        "AchievementTelemetryVersion": 1,
+        "AwardSeed": -349079347,
+        "MinimumShots": 10,
+        "MinimumBeamSeconds": 1.0,
+        "AwardRecipients": [
+            true,
+            false
+        ],
+        "AwardsFrozen": false,
+        "Achievements": [],
+        "Tick": 141,
+        "RemainingTicks": 11859,
+        "Phase": 0,
+        "Trigger": "",
+        "Winner": -1,
+        "WinnerTeam": 0,
+        "Roster": {
+            "Mode": 0,
+            "Teams": [
+                0,
+                0
+            ]
+        },
+        "Standings": [
+            {
+                "Seat": 0,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0,
+                "AllyDamageDealt": 0.0,
+                "DistanceTravelled": 0.0,
+                "SelfDamageDealt": 0.0,
+                "EnemyDamageReceived": 0.0,
+                "Jumps": 0,
+                "Shots": 0,
+                "WeaponSwitches": 0,
+                "HealPickups": 0,
+                "ArmorPickups": 0,
+                "BonusPickups": 0,
+                "FirstDeathTick": 0,
+                "RifleAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                },
+                "ShotgunAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                },
+                "RocketAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                },
+                "CutterAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                }
+            },
+            {
+                "Seat": 1,
+                "Kills": 0,
+                "Assists": 0,
+                "Deaths": 0,
+                "Score": 0,
+                "SelfKills": 0,
+                "AllyKills": 0,
+                "AccumulatedPenalty": 0,
+                "DamageDealt": 0.0,
+                "DamageReceived": 0.0,
+                "AllyDamageDealt": 0.0,
+                "DistanceTravelled": 0.0,
+                "SelfDamageDealt": 0.0,
+                "EnemyDamageReceived": 0.0,
+                "Jumps": 0,
+                "Shots": 0,
+                "WeaponSwitches": 0,
+                "HealPickups": 0,
+                "ArmorPickups": 0,
+                "BonusPickups": 0,
+                "FirstDeathTick": 0,
+                "RifleAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                },
+                "ShotgunAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                },
+                "RocketAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                },
+                "CutterAccuracy": {
+                    "Used": 0.0,
+                    "Successful": 0.0
+                }
+            }
+        ],
+        "Teams": [],
+        "DirectKillsByPair": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "KillChains": [
+            0,
+            0
+        ]
+    },
+    "Poses": [
+        {
+            "Position": {
+                "x": -33.0,
+                "y": 4.009999752044678,
+                "z": -17.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0,
+            "TapLookReturning": false,
+            "TapLookRequiresGamepad": false,
+            "TapLookStartPitch": 0.0,
+            "TapLookElapsed": 0.0
+        },
+        {
+            "Position": {
+                "x": -33.0,
+                "y": 4.009999752044678,
+                "z": 17.0
+            },
+            "Velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Yaw": 0.0,
+            "Pitch": 0.0,
+            "Grounded": true,
+            "LookNeutralSeconds": 0.0,
+            "LookReturnVelocity": 0.0,
+            "TapLookReturning": false,
+            "TapLookRequiresGamepad": false,
+            "TapLookStartPitch": 0.0,
+            "TapLookElapsed": 0.0
+        }
+    ],
+    "RifleBullets": [],
+    "WeaponPickups": [
+        {
+            "InstanceId": "shotgun-west",
+            "Support": "support:lower-loop",
+            "Weapon": 2,
+            "Anchor": {
+                "x": -33.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "shotgun-east",
+            "Support": "support:lower-loop",
+            "Weapon": 2,
+            "Anchor": {
+                "x": 33.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "pulse-north",
+            "Support": "support:central",
+            "Weapon": 3,
+            "Anchor": {
+                "x": 12.0,
+                "y": 4.0,
+                "z": 21.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "pulse-south",
+            "Support": "support:central",
+            "Weapon": 3,
+            "Anchor": {
+                "x": -12.0,
+                "y": 4.0,
+                "z": -21.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "cutter-north",
+            "Support": "support:lower-loop",
+            "Weapon": 4,
+            "Anchor": {
+                "x": -8.0,
+                "y": 0.0,
+                "z": 28.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        },
+        {
+            "InstanceId": "cutter-south",
+            "Support": "support:lower-loop",
+            "Weapon": 4,
+            "Anchor": {
+                "x": 8.0,
+                "y": 0.0,
+                "z": -28.0
+            },
+            "Available": true,
+            "Remaining": 0.0
+        }
+    ],
+    "Beams": [
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        },
+        {
+            "Active": false,
+            "Wall": false,
+            "EmissionSeconds": 0.0,
+            "Origin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Endpoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Contacts": [
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                },
+                {
+                    "Life": 0,
+                    "Seconds": 0.0,
+                    "DamageRemainder": 0.0
+                }
+            ]
+        }
+    ],
+    "BeamReleaseRequired": [
+        false,
+        false
+    ],
+    "Rockets": [],
+    "HealPickups": [
+        {
+            "InstanceId": "heal-basement",
+            "Anchor": {
+                "x": 0.0,
+                "y": -1.2000000476837159,
+                "z": 0.0
+            },
+            "Available": false,
+            "Remaining": 17.23000004515052
+        }
+    ],
+    "ArenaIdentity": "combat-bowl-v1@18",
+    "DesignProfile": {
+        "ProfileId": "diagnostic-fixture",
+        "Revision": 0,
+        "Hash": "8b12a64691ee0f614980c0e888d1be52324bc06d6df8668b0b71ef3b65a9c748"
+    },
+    "Time": 2.7699999548494818,
+    "ShotSequence": 0,
+    "ShotCount": 0,
+    "Lives": [
+        {
+            "ParticipantId": "player-1",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 200,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 2,
+            "SwitchRemaining": 0.25,
+            "ShotgunOwned": true,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 200,
+            "ShotgunAmmo": 20,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        },
+        {
+            "ParticipantId": "player-2",
+            "Life": 1,
+            "Health": 100.0,
+            "Armor": 0.0,
+            "Ammo": 200,
+            "SelectedWeapon": 1,
+            "PendingWeapon": 0,
+            "SwitchRemaining": 0.0,
+            "ShotgunOwned": false,
+            "RocketOwned": false,
+            "CutterOwned": false,
+            "RifleAmmo": 200,
+            "ShotgunAmmo": 0,
+            "RocketAmmo": 0,
+            "CutterEnergy": 0.0,
+            "RifleCooldownRemaining": 0.0,
+            "ShotgunCooldownRemaining": 0.0,
+            "RocketCooldownRemaining": 0.0,
+            "Dead": false,
+            "FireHeld": false,
+            "CooldownRemaining": 0.0,
+            "RespawnRemaining": 0.0,
+            "KillerId": "",
+            "KillerLife": 0
+        }
+    ],
+    "ArmorPickups": [
+        {
+            "InstanceId": "armor-sw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        },
+        {
+            "InstanceId": "armor-ne",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": true,
+            "RespawnRemaining": 0.0
+        }
+    ],
+    "SpeedPickups": [
+        {
+            "InstanceId": "speed-nw",
+            "Anchor": {
+                "x": -32.0,
+                "y": 4.0,
+                "z": 28.0
+            },
+            "Available": false,
+            "Remaining": 7.230000045150518
+        },
+        {
+            "InstanceId": "speed-se",
+            "Anchor": {
+                "x": 32.0,
+                "y": 4.0,
+                "z": -28.0
+            },
+            "Available": false,
+            "Remaining": 7.230000045150518
+        }
+    ],
+    "SpeedRemaining": [
+        0.0,
+        0.0
+    ],
+    "DamagePickup": {
+        "InstanceId": "damage-hall",
+        "Anchor": {
+            "x": 0.0,
+            "y": 4.0,
+            "z": 0.0
+        },
+        "Available": false,
+        "Remaining": 27.23000004515052
+    },
+    "DamageRemaining": [
+        0.0,
+        0.0
+    ]
+}

@@ -53,9 +53,19 @@ namespace StarTournament.ProvingGround
         {
             Render();Require(ground.Running,"Capture must show the active match");
             Require(!ground.GetComponentsInChildren<Transform>(true).Any(t=>t.name=="setup-screen"&&t.gameObject.activeInHierarchy),"Setup covers gameplay");
-            yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));
+            yield return new WaitForEndOfFrame();VectorVisualReview.CaptureCameras(ground,Path.Combine(directory,name+".png"));
             File.WriteAllText(Path.Combine(directory,name+".json"),JsonUtility.ToJson(ground.Session.Capture(),true));
             yield return new WaitForSecondsRealtime(.15f);
+        }
+        void PrepareGrounded()
+        {
+            // Use valid authored spawns from the current arena, not legacy coordinates.
+            // Settle before the switch; root assertions separately include the accepted ViewOffset contract.
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            for(int participant=0;participant<ground.Session.ParticipantCount;participant++)
+                Require(ground.Session.Pose(participant).Grounded,"Switch fixture failed to settle on authored spawn");
+            foreach(var visual in ground.GetComponentsInChildren<TrooperVisual>())visual.ResetPose(ground.Session.Time);
+            Render();
         }
         IEnumerator Start()
         {
@@ -66,15 +76,16 @@ namespace StarTournament.ProvingGround
             foreach(float seconds in new[]{.1f,1f,3f})
             {
                 ground.LifeProfile.Set("weapon.switchSeconds",seconds);ground.StartCombatReview(new[]{pads[0]},backgroundDiagnostic:true,ensureOpponent:true);
-                ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,-5),0);ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,5),0,180);Render();
-                var rest=View(0).transform.localPosition;var duration=ground.Session.WeaponSwitchSeconds;
+                PrepareGrounded();
+                var tuning=View(0).GetComponent<TrooperVisual>().Tuning;
+                var rest=new Vector3(tuning.Get("view.x"),tuning.Get("view.y"),tuning.Get("view.z"));var duration=ground.Session.WeaponSwitchSeconds;
                 if(seconds==1)yield return Capture("01-rest-rifle");
                 foreach(var target in new[]{WeaponSelection.Shotgun,WeaponSelection.Rifle,WeaponSelection.RocketLauncher,WeaponSelection.Rifle,WeaponSelection.Cutter,WeaponSelection.Shotgun,WeaponSelection.RocketLauncher,WeaponSelection.Cutter,WeaponSelection.RocketLauncher,WeaponSelection.Shotgun,WeaponSelection.Cutter,WeaponSelection.Rifle})
                 {
                     var from=ground.Session.Life(0).SelectedWeapon;Select(target);
                     var pending=ground.Session.Life(0).PendingWeapon;int shots=ground.Session.ShotCount;RequireModel(0,from);
                     var shoulderLocal=Bone(0,"RightUpperArm").localPosition;
-                    TickTo(duration*.75);Require(View(0).transform.localPosition==rest,"View root detached from body");
+                    TickTo(duration*.75);Require(View(0).transform.localPosition==rest+View(0).GetComponent<TrooperVisual>().ViewOffset,"View root detached from body");
                     Require(Bone(0,"RightUpperArm").localPosition==shoulderLocal,"Shoulder joint translated");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("02-old-weapon-rising");
                     TickTo(duration*.5001);RequireModel(0,from);
@@ -84,7 +95,7 @@ namespace StarTournament.ProvingGround
                     float near=camera.GetComponent<Camera>().nearClipPlane;
                     foreach(var handName in new[]{"LeftHand","RightHand"})
                         Require(camera.InverseTransformPoint(Bone(0,handName).position).z>near,"Hand crossed the camera: "+handName);
-                    Require(View(0).transform.localPosition==rest,"Midpoint root moved");
+                    Require(View(0).transform.localPosition==rest+View(0).GetComponent<TrooperVisual>().ViewOffset,"Midpoint root moved");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("03-model-swap-in-raised-hands");
                     TickTo(duration*.25);RequireModel(0,pending);Require(ground.Session.Life(0).SelectedWeapon==from,"Authoritative slot changed early");
                     var phase=WeaponSwitchPose.Read(ground.Session.Life(0),duration);Require(phase.Weapon==pending,"Pending model missing on descent");
@@ -105,9 +116,9 @@ namespace StarTournament.ProvingGround
                     else
                     {
                         Require(ground.Session.ShotCount==shots+1,"New weapon failed to fire on completion tick");
-                        Require(View(0).transform.localPosition==rest,"Shot effect sampled a lifted muzzle on completion tick");
+                        Require(View(0).transform.localPosition==rest+View(0).GetComponent<TrooperVisual>().ViewOffset,"Shot effect sampled a lifted muzzle on completion tick");
                     }
-                    Render();Require(ground.Session.Life(0).SelectedWeapon==pending,"Slot failed to change");Require(View(0).transform.localPosition==rest,"Hands not at rest on completion");
+                    Render();Require(ground.Session.Life(0).SelectedWeapon==pending,"Slot failed to change");Require(View(0).transform.localPosition==rest+View(0).GetComponent<TrooperVisual>().ViewOffset,"Hands not at rest on completion");
                     if(seconds==1&&target==WeaponSelection.Shotgun&&from==WeaponId.Rifle)yield return Capture("05-switch-complete-shotgun");
                     checks.Add(seconds+"s "+from+" -> "+pending+" completed at rest; no early fire; first shot on completion");
                     // Diagnostic settling window leaves every slot cooldown ready for the next isolated pair.
@@ -116,16 +127,16 @@ namespace StarTournament.ProvingGround
             }
             // Capture a continuous native sequence with the ordinary one-second fixture profile.
             ground.LifeProfile.Set("weapon.switchSeconds",1);ground.StartCombatReview(new[]{pads[0]},backgroundDiagnostic:true,ensureOpponent:true);
-            ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,-5),0);ground.PlaceCombatReviewSeat(1,new Vector3(0,-1.2f,5),0,180);
+            PrepareGrounded();
             var frames=Path.Combine(directory,"frames");Directory.CreateDirectory(frames);Select(WeaponSelection.Shotgun);
             for(int frame=0;frame<=20;frame++)
             {
-                Render();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(frames,frame.ToString("D3")+".png"));
+                Render();yield return new WaitForEndOfFrame();VectorVisualReview.CaptureCameras(ground,Path.Combine(frames,frame.ToString("D3")+".png"));
                 yield return new WaitForSecondsRealtime(.05f);
                 if(frame<20)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.05f);
             }
             ground.LifeProfile.Set("weapon.switchSeconds",1);ground.StartCombatReview(pads,backgroundDiagnostic:true);
-            for(int i=0;i<4;i++)ground.PlaceCombatReviewSeat(i,new Vector3(0,-1.2f,-6+i*3),0);
+            PrepareGrounded();
             Render();Select(WeaponSelection.Shotgun);TickTo(.75);
             for(int i=1;i<4;i++)
             {
@@ -140,7 +151,7 @@ namespace StarTournament.ProvingGround
             int budgetRespawn=500;while(ground.Session.Life(0).Dead&&budgetRespawn-->0)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);Render();
             Require(!ground.Session.Life(0).Dead&&ground.Session.Life(0).SelectedWeapon==WeaponId.Rifle,"Respawn failed");
             var resting=View(0).GetComponent<TrooperVisual>().Tuning;
-            Require(View(0).transform.localPosition==new Vector3(resting.Get("view.x"),resting.Get("view.y"),resting.Get("view.z")),"Respawn retained lift");
+            Require(View(0).transform.localPosition==new Vector3(resting.Get("view.x"),resting.Get("view.y"),resting.Get("view.z"))+View(0).GetComponent<TrooperVisual>().ViewOffset,"Respawn retained lift");
             checks.Add("death cancels switch; respawn restores rifle and resting hands");yield return Capture("07-respawn-rest");
             File.WriteAllText(Path.Combine(directory,"complete.json"),JsonUtility.ToJson(new Result{arena=ground.Session.ArenaIdentity,profile=ground.Session.DesignProfile.Hash,muted=AudioListener.volume==0,checks=checks.ToArray(),width=Screen.width,height=Screen.height},true));
             Debug.Log("WEAPON_SWITCH_NATIVE_REVIEW_COMPLETE "+directory);Application.Quit();

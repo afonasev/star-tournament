@@ -1,0 +1,83 @@
+{
+  "baseline": "239f657f728f7d20e2843332218979387885be0e",
+  "branch": "codex/vector-fighter",
+  "sourceIdentity": "source-hashes.json; matches final tested source",
+  "result": "Focused technical PASS; model and RocketLauncher/Cutter grip visual FAIL; F4/F5 unfinished",
+  "checks": [
+    {
+      "xml": "qa/editmode.xml",
+      "result": "Passed",
+      "total": 30,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 765.4398012
+    },
+    {
+      "xml": "diagnostics/pitch-capture/results.xml",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 52.0388865
+    },
+    {
+      "xml": "diagnostics/vertical-neutral/results.xml",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 34.1369838
+    },
+    {
+      "xml": "diagnostics/surface-candidate/results.xml",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 24.9031885
+    },
+    {
+      "xml": "grip-candidate2/results.xml",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 29.2775129
+    }
+  ],
+  "editCommand": "UNITY_RUN_MODE=shared unity/tools.sh test-edit-filter 'WeaponSwitchPresentationTests;DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes'",
+  "playCommand": "UNITY_RUN_MODE=shared unity/tools.sh editor -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene -testResults <output>/results.xml -logFile <output>/editor.log",
+  "playScope": "Same single selected walking/capture test repeated for four changed diagnostic inputs; not four distinct fixtures or gameplay acceptance. Latest candidate input: surface-candidate2.txt. Initial pitch input caveat: diagnostics/pitch-capture/input-correction.md.",
+  "pythonSyntax": "PASS: compile() of scripts/vector_fighter/*.py without bytecode writes",
+  "planningValidation": "PASS: planning-validation.log",
+  "sourceDiffWhitespace": "PASS before final staging",
+  "modelReview": "Actual exported GLB rendered, visual FAIL; no production GLB changed",
+  "priorAttempts": [
+    {
+      "result": "FAIL",
+      "reason": "Initial capture compile error: unqualified FormattableString; fixed as System.FormattableString.Invariant; raw log lost in external archive-cleanup"
+    },
+    {
+      "result": "NotRun",
+      "reason": "First selector found zero tests; XML Passed/0 is not a pass; raw output lost in external deletion"
+    },
+    {
+      "result": "NotRun",
+      "reason": "Corrected capture interrupted by external worktree archive-cleanup; source recovered from snapshot"
+    }
+  ],
+  "productionAssets": "Unchanged; asset-hashes.json",
+  "notRun": [
+    "full suite",
+    "Player build",
+    "integration",
+    "release/deploy",
+    "human/device/performance acceptance"
+  ],
+  "retention": "retention.json"
+}

@@ -1,0 +1,3 @@
+# F6 interrupted by external archive-cleanup
+2026-10-22 01:24 UTC+5 snapshot c7c1ac16a4e333a38df4c0a653f2860b0d5b90c2 removed the active worktree despite continuation retention. Restored own source changes into the SAME path and codex/vector-fighter branch from 239f657f. Excluded snapshot ProjectSettings serializer churn. Warm Library and ignored diagnostics were removed externally. One compiler error was corrected; second run selected zero tests (NotRun); final correctly filtered diagnostic was interrupted and results are unavailable, NotRun. No final QA claim.
+Surviving torso render preserved separately; full candidate rerender required. No main edits, no integration.

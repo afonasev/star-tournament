@@ -12,6 +12,13 @@ namespace StarTournament.ProvingGround.Editor
     {
         const string Art="Assets/StarTournament/Art/";
         const string Output="Assets/StarTournament/Trooper/";
+        public static void RefreshExistingScene()
+        {
+            var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/StarTournament/Scenes/ProvingGround.unity");
+            var ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+            Prepare(ground,AssetDatabase.LoadAssetAtPath<GameObject>(Art+"trooper-body-animated.glb"),AssetDatabase.LoadAssetAtPath<GameObject>(Art+"trooper-arms-animated.glb"));
+            // Existing prefab GUIDs remain stable; do not serialize unrelated scene defaults.
+        }
         public static void Prepare(ProvingGround ground,GameObject source,GameObject arms)
         {
             Directory.CreateDirectory(Output); AssetDatabase.Refresh();
@@ -49,14 +56,17 @@ namespace StarTournament.ProvingGround.Editor
                 if(dot<0 || key.Length-dot!=4 || !int.TryParse(key.Substring(dot+1),out _))continue;
                 if(bodyMaterials.TryGetValue(key.Substring(0,dot),out var shared))materials[key]=shared;
             }
-            ground.TrooperBodyPrefab=Persist(source,"TrooperBody",ground.TrooperClips,materials);
-            ground.TrooperArmsPrefab=Persist(arms,"TrooperArms",ground.TrooperClips,materials);
+            var meshes=source.GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                .Select(r=>r.sharedMesh).Where(m=>m).GroupBy(m=>m.name).ToDictionary(g=>g.Key,g=>g.First());
+            ground.TrooperBodyPrefab=Persist(source,"TrooperBody",ground.TrooperClips,materials,meshes);
+            ground.TrooperArmsPrefab=Persist(arms,"TrooperArms",ground.TrooperClips,materials,meshes);
             // License travels with the Player, not just the repository.
             Directory.CreateDirectory("Assets/StreamingAssets");
             File.Copy(Art+"trooper-ATTRIBUTION.md","Assets/StreamingAssets/trooper-ATTRIBUTION.txt",true);
             AssetDatabase.SaveAssets(); AssetDatabase.Refresh();
         }
-        static GameObject Persist(GameObject source,string name,AnimationClip[] clips,System.Collections.Generic.Dictionary<string,Material> materials)
+        static GameObject Persist(GameObject source,string name,AnimationClip[] clips,System.Collections.Generic.Dictionary<string,Material> materials,
+            System.Collections.Generic.Dictionary<string,Mesh> meshes)
         {
             var instance=UnityEngine.Object.Instantiate(source); instance.name=name;
             try
@@ -77,6 +87,19 @@ namespace StarTournament.ProvingGround.Editor
                     }).ToArray();
                     if(renderer is SkinnedMeshRenderer skin)
                     {
+                        var mesh=skin.sharedMesh;
+                        if(mesh&&meshes.TryGetValue(mesh.name,out var sharedMesh)&&mesh!=sharedMesh)
+                        {
+                            // The shared forearms/equipment are exported in both GLBs. Reuse
+                            // their body subasset only after checking vertex and skin identity.
+                            bool same=mesh.vertices.SequenceEqual(sharedMesh.vertices)&&mesh.normals.SequenceEqual(sharedMesh.normals)&&
+                                mesh.uv.SequenceEqual(sharedMesh.uv)&&mesh.bindposes.SequenceEqual(sharedMesh.bindposes)&&
+                                mesh.boneWeights.SequenceEqual(sharedMesh.boneWeights)&&mesh.subMeshCount==sharedMesh.subMeshCount;
+                            for(int sub=0;same&&sub<mesh.subMeshCount;sub++)
+                                same=mesh.GetTopology(sub)==sharedMesh.GetTopology(sub)&&mesh.GetIndices(sub).SequenceEqual(sharedMesh.GetIndices(sub));
+                            if(!same)throw new BuildFailedException("Same-name trooper meshes differ: "+mesh.name);
+                            skin.sharedMesh=sharedMesh;
+                        }
                         skin.updateWhenOffscreen=true;
                         // Conservative content bounds cover authored fall and extended arms, independent of gameplay.
                         skin.localBounds=new Bounds(Vector3.up*.9f,Vector3.one*4);

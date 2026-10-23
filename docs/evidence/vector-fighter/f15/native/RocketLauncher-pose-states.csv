@@ -1,0 +1,5 @@
+tick,state,airborne,weapon
+8,fire,grounded,RocketLauncher
+27,aim,rising,RocketLauncher
+41,aim,falling,RocketLauncher
+58,aim,landing,RocketLauncher

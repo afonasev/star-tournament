@@ -1,0 +1,21 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=WeaponSwitchPresentationTests;DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes
+lab_history=/Users/eaafonasev/.codex/worktrees/vector-grip-refinement/star-tournament/unity/../.local/unity-evidence/focused-editmode.jiZy2O/qa-lab-history.json
+revision=239f657f728f7d20e2843332218979387885be0e
+ M ../scripts/vector_fighter/README.md
+ M ../scripts/vector_fighter/build.py
+ M ../scripts/vector_fighter/review.py
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/TrooperProfile.cs
+ M Assets/StarTournament/Runtime/OrbitalGripPose.cs
+ M Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs
+ M Assets/StarTournament/Tests/EditMode/WeaponSwitchPresentationTests.cs
+ M Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs
+ M ProjectSettings/ProjectSettings.asset
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/vector-fighter/f6/
+?? ../scripts/vector_fighter/__pycache__/
+?? ../scripts/vector_fighter/f6-remodel-study.blend
+?? ../scripts/vector_fighter/fit_grip_surface.py
+?? ../scripts/vector_fighter/remodel.py

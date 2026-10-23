@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.188939">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="750" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.188939" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1924" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/vector-grip-refinement/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="750" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.181668" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="56070" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1925" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="750" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.177602" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1926" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="750" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.174080" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1927" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="750" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.170421" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1928" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="575" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.165083" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1844" name="VectorGroundedGaitTests" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.159360" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1851" name="AccelerationKeepsTheFirstSupportFootWithinReach" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests.AccelerationKeepsTheFirstSupportFootWithinReach" methodname="AccelerationKeepsTheFirstSupportFootWithinReach" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" seed="1617852947" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.112094" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1850" name="ActualDisplacementPlantsStanceFootAndShortMotionSteps" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests.ActualDisplacementPlantsStanceFootAndShortMotionSteps" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.041165" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1845" name="ActualDisplacementPlantsStanceFootAndShortMotionSteps(0.03f,0.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests.ActualDisplacementPlantsStanceFootAndShortMotionSteps(0.03f,0.0f)" methodname="ActualDisplacementPlantsStanceFootAndShortMotionSteps" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" seed="1315268561" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.007248" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1846" name="ActualDisplacementPlantsStanceFootAndShortMotionSteps(2.0f,0.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests.ActualDisplacementPlantsStanceFootAndShortMotionSteps(2.0f,0.0f)" methodname="ActualDisplacementPlantsStanceFootAndShortMotionSteps" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" seed="1223050492" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.007023" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1847" name="ActualDisplacementPlantsStanceFootAndShortMotionSteps(6.0f,0.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests.ActualDisplacementPlantsStanceFootAndShortMotionSteps(6.0f,0.0f)" methodname="ActualDisplacementPlantsStanceFootAndShortMotionSteps" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" seed="1680777913" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.006919" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1848" name="ActualDisplacementPlantsStanceFootAndShortMotionSteps(1.0f,90.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests.ActualDisplacementPlantsStanceFootAndShortMotionSteps(1.0f,90.0f)" methodname="ActualDisplacementPlantsStanceFootAndShortMotionSteps" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" seed="1535466721" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.010030" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1849" name="ActualDisplacementPlantsStanceFootAndShortMotionSteps(1.0f,180.0f)" fullname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests.ActualDisplacementPlantsStanceFootAndShortMotionSteps(1.0f,180.0f)" methodname="ActualDisplacementPlantsStanceFootAndShortMotionSteps" classname="StarTournament.ProvingGround.Tests.EditMode.VectorGroundedGaitTests" runstate="Runnable" seed="208842524" result="Passed" start-time="2026-10-21 21:51:39Z" end-time="2026-10-21 21:51:39Z" duration="0.008127" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

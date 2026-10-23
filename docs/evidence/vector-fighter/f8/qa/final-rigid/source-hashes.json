@@ -1,0 +1,12 @@
+{
+  "scripts/vector_fighter/refine_glove.py": "c4150530fb1fa323d1d65b8a78e04f0f01e42920fab31d06c9e62a2a102496ba",
+  "scripts/vector_fighter/f8-glove-repair.blend": "cad91e25b594e9b0c8f51c03080d3b4faae9b78cc6374cbdbf3f2b0593112c80",
+  "unity/Assets/StarTournament/Art/trooper-body-animated.glb": "f65885f4ddc95b9c089b8b2f56f3b7876011478a7bae63c732baada6d393bd1e",
+  "unity/Assets/StarTournament/Art/trooper-arms-animated.glb": "eb75516275f101f9ae84ab9ac1baee94145278d7e696659f640706af58b0bb2a",
+  "unity/Assets/StarTournament/Art/asset-manifest.json": "6e3ed2016ed05d0857a36054fbddd31681b5d580adcc76cc6095aa61f21aeaa5",
+  "unity/Assets/StarTournament/Trooper/TrooperBody.prefab": "112d15c74eef22c59c104f1cdacceb009fa97ec5b425896c4067726d3b93096a",
+  "unity/Assets/StarTournament/Trooper/TrooperArms.prefab": "bb653fc61cf229ebfb3862e7d65dacd03503ea39c195eaf6a1952b04bb229902",
+  "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "aa5498804852460503ef7c61bad5c6c9e649dd13caea00758dfa43e035ca9864",
+  "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "c4e7d05ec4ede49d2655c4f0350a5efdd8c69674483774252b99d1537f4d9011",
+  "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "dcfec9d3e0ed34c36be1459d93702eaf74d411a033f31ef00b37d1888c615e35"
+}

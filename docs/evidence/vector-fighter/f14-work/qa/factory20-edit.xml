@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:45Z" duration="146.7945078">
+  <test-suite type="TestSuite" id="1000" name="Star Tournament Unity Proving Ground" fullname="Star Tournament Unity Proving Ground" runstate="Runnable" testcasecount="755" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:45Z" duration="146.794508" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1929" name="StarTournament.ProvingGround.EditMode.dll" fullname="/Users/eaafonasev/.codex/worktrees/vector-grip-refinement/star-tournament/unity/Library/ScriptAssemblies/StarTournament.ProvingGround.EditMode.dll" runstate="Runnable" testcasecount="755" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:45Z" duration="146.785810" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="60470" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1930" name="StarTournament" fullname="StarTournament" runstate="Runnable" testcasecount="755" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:45Z" duration="146.781410" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1931" name="ProvingGround" fullname="StarTournament.ProvingGround" runstate="Runnable" testcasecount="755" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:45Z" duration="146.777203" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1932" name="Tests" fullname="StarTournament.ProvingGround.Tests" runstate="Runnable" testcasecount="755" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:45Z" duration="146.772936" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1933" name="EditMode" fullname="StarTournament.ProvingGround.Tests.EditMode" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:43Z" duration="145.295379" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1305" name="DesignLabHistoryTests" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="72" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:43Z" duration="145.249279" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1353" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:09:43Z" duration="145.236390" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1341" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeArticulatedFingerGrips&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeArticulatedFingerGrips&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1074382120" result="Passed" start-time="2026-10-22 20:07:18Z" end-time="2026-10-22 20:08:30Z" duration="72.564302" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1342" name="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeRefinedHandAnatomy&quot;)" fullname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(&quot;BeforeRefinedHandAnatomy&quot;)" methodname="OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes" classname="StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests" runstate="Runnable" seed="1834196080" result="Passed" start-time="2026-10-22 20:08:30Z" end-time="2026-10-22 20:09:43Z" duration="72.663502" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1166" name="TrooperImportTests" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-22 20:09:43Z" end-time="2026-10-22 20:09:45Z" duration="1.467406" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1167" name="PersistedClipsHaveCompleteBindingsAndCorrectLoopPolicy" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests.PersistedClipsHaveCompleteBindingsAndCorrectLoopPolicy" methodname="PersistedClipsHaveCompleteBindingsAndCorrectLoopPolicy" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" seed="2063336999" result="Passed" start-time="2026-10-22 20:09:43Z" end-time="2026-10-22 20:09:43Z" duration="0.132606" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1169" name="ProfileAndAttributionAreComplete" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests.ProfileAndAttributionAreComplete" methodname="ProfileAndAttributionAreComplete" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" seed="590863906" result="Passed" start-time="2026-10-22 20:09:43Z" end-time="2026-10-22 20:09:43Z" duration="0.060416" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1168" name="SkinsUseSharedBodyMaterialsAndBoundedWeights" fullname="StarTournament.ProvingGround.Tests.TrooperImportTests.SkinsUseSharedBodyMaterialsAndBoundedWeights" methodname="SkinsUseSharedBodyMaterialsAndBoundedWeights" classname="StarTournament.ProvingGround.Tests.TrooperImportTests" runstate="Runnable" seed="1504692611" result="Passed" start-time="2026-10-22 20:09:43Z" end-time="2026-10-22 20:09:45Z" duration="1.212180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/eaafonasev/Library/Application Support/Afonasev/Star Tournament Unity Proving Ground/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

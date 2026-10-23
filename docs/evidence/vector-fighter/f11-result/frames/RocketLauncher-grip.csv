@@ -1,0 +1,59 @@
+name,x,y,z
+LeftUpperLeg,-0.232708,-1.494653,-1.036294
+LeftLowerLeg,-0.323080,-2.590328,-0.775789
+LeftFoot,-0.417756,-3.738167,-1.290903
+LeftToes,-0.417756,-3.937567,-0.909441
+RightUpperLeg,0.576455,-1.494653,-1.036294
+RightLowerLeg,0.660253,-2.510570,-0.549034
+RightFoot,0.761504,-3.738167,-0.822153
+RightToes,0.761504,-3.937568,-0.440690
+LeftShoulder,-0.015968,0.208067,-0.962881
+LeftUpperArm,-0.468344,0.067096,-0.917997
+LeftLowerArm,-0.228781,-0.532403,-0.526603
+LeftHand,-0.183332,-0.195924,0.029969
+LeftIndexProximal,-0.094426,-0.033929,0.442027
+LeftIndexIntermediate,-0.013727,-0.038669,0.537150
+LeftIndexDistal,0.056636,-0.019810,0.507736
+LeftLittleProximal,-0.106013,-0.288272,0.433457
+LeftLittleIntermediate,-0.029034,-0.290281,0.504006
+LeftLittleDistal,0.043755,-0.293767,0.499770
+LeftMiddleProximal,-0.105000,-0.110000,0.460001
+LeftMiddleIntermediate,-0.008619,-0.111312,0.551546
+LeftMiddleDistal,0.058716,-0.103578,0.497410
+LeftRingProximal,-0.110955,-0.209525,0.452523
+LeftRingIntermediate,-0.019730,-0.212413,0.532739
+LeftRingDistal,0.061541,-0.203161,0.503719
+LeftThumbProximal,-0.099725,-0.032168,0.211737
+LeftThumbIntermediate,-0.044108,-0.083694,0.312083
+LeftThumbDistal,-0.010181,-0.129790,0.395628
+LeftLowerArmTwist1,-0.215143,-0.431459,-0.359631
+LeftLowerArmTwist2,-0.201512,-0.330516,-0.192659
+RightShoulder,0.359714,0.208067,-0.962881
+RightUpperArm,0.822092,0.125272,-1.039565
+RightLowerArm,0.727589,-0.568423,-0.757015
+RightHand,0.176943,-0.350124,-0.484637
+RightIndexProximal,0.085384,-0.136729,-0.097318
+RightIndexIntermediate,0.028294,-0.105628,0.009254
+RightIndexDistal,-0.035763,-0.084173,0.049354
+RightLittleProximal,0.050247,-0.388742,-0.084928
+RightLittleIntermediate,0.015187,-0.368695,0.011383
+RightLittleDistal,-0.056774,-0.361916,0.021575
+RightMiddleProximal,0.080114,-0.211425,-0.072530
+RightMiddleIntermediate,0.042373,-0.183051,0.051737
+RightMiddleDistal,-0.042349,-0.170879,0.065841
+RightRingProximal,0.068104,-0.310680,-0.071631
+RightRingIntermediate,0.002837,-0.283624,0.027227
+RightRingDistal,-0.081551,-0.275661,0.008573
+RightThumbProximal,0.110221,-0.157699,-0.325368
+RightThumbIntermediate,0.062263,-0.113343,-0.217897
+RightThumbDistal,0.007480,-0.082816,-0.138384
+pistol grip,0.000000,-0.190000,-0.029999
+rifle-grip,0.000000,-0.180000,0.000000
+RightLowerArmTwist1,0.562394,-0.502934,-0.675301
+RightLowerArmTwist2,0.397200,-0.437444,-0.593588
+pulse bolts geometry bounds Center: (0.00000, 0.04200, -0.28700), Extents: (0.19600, 0.00910, 0.08610)
+pulse cyan strips geometry bounds Center: (0.00000, 0.13160, -0.02520), Extents: (0.19040, 0.03920, 0.29820)
+pulse graphite geometry bounds Center: (0.00000, -0.00875, 0.20825), Extents: (0.15260, 0.27335, 0.62825)
+pulse orange rings geometry bounds Center: (0.00000, 0.07105, 0.20300), Extents: (0.16940, 0.21035, 0.51450)
+pulse recessed black geometry bounds Center: (0.00000, 0.02076, 0.24185), Extents: (0.18340, 0.30824, 0.45185)
+pulse white ceramic geometry bounds Center: (0.00000, 0.02275, 0.11550), Extents: (0.18060, 0.32655, 0.57050)

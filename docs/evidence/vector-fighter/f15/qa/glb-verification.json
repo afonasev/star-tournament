@@ -1,0 +1,14 @@
+{
+  "arms": {
+    "approved_shotgun_positions_normals_indices": "exact",
+    "hierarchy": "exact",
+    "all_7_animation_arrays": "exact",
+    "sha256": "3d6a6df9a36f597a08277d88b5d0c2efeadfefc1e847fb8dcd04fc9642bd1ac6"
+  },
+  "body": {
+    "approved_shotgun_positions_normals_indices": "exact",
+    "hierarchy": "exact",
+    "all_7_animation_arrays": "exact",
+    "sha256": "7cf991589f239a4551a2d5c7b06b9c15c87a9e358d2042a306806a0095766a52"
+  }
+}

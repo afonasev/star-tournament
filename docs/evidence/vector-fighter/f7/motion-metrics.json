@@ -1,0 +1,13 @@
+{
+  "frames": 240,
+  "simulation_fps": 50,
+  "max_support_ankle_anchor_error_m": 0.000413531379,
+  "max_short_speed_m_s": 0.09000301,
+  "short_travel_between_first_and_last_recorded_frames_m": 0.1061999999999994,
+  "airborne_frames": 32,
+  "root_y_range_m": [
+    0.009999871,
+    1.19399941
+  ],
+  "final_grounded": "True"
+}

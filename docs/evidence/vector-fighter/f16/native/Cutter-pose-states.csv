@@ -1,0 +1,5 @@
+tick,state,airborne,weapon
+8,fire,grounded,Cutter
+27,aim,rising,Cutter
+41,aim,falling,Cutter
+58,aim,landing,Cutter

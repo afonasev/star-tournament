@@ -1,0 +1,88 @@
+name,x,y,z
+LeftUpperLeg,-0.232708,-1.494653,-1.036294
+LeftLowerLeg,-0.323080,-2.590328,-0.775789
+LeftFoot,-0.417756,-3.738167,-1.290903
+LeftToes,-0.417756,-3.937567,-0.909441
+RightUpperLeg,0.576455,-1.494653,-1.036294
+RightLowerLeg,0.660253,-2.510570,-0.549034
+RightFoot,0.761504,-3.738167,-0.822153
+RightToes,0.761504,-3.937568,-0.440690
+LeftShoulder,-0.015968,0.208067,-0.962881
+LeftUpperArm,-0.468344,0.067096,-0.917997
+LeftLowerArm,-0.630212,-0.441038,-0.383602
+LeftHand,-0.256384,-0.264936,0.120676
+LeftIndexProximal,-0.015736,-0.123572,0.475702
+LeftIndexIntermediate,0.104749,-0.092576,0.485958
+LeftIndexDistal,0.148701,-0.027596,0.490135
+LeftLittleProximal,0.107968,-0.101376,0.254113
+LeftLittleIntermediate,0.202435,-0.057066,0.249685
+LeftLittleDistal,0.161564,0.003031,0.242904
+LeftMiddleProximal,0.040000,-0.120000,0.420003
+LeftMiddleIntermediate,0.170505,-0.096063,0.428158
+LeftMiddleDistal,0.160247,-0.010018,0.424235
+LeftRingProximal,0.085306,-0.113471,0.331113
+LeftRingIntermediate,0.199777,-0.080087,0.307724
+LeftRingDistal,0.160956,-0.003567,0.320791
+LeftThumbProximal,-0.207019,-0.172133,0.356889
+LeftThumbIntermediate,-0.158775,-0.058996,0.383148
+LeftThumbDistal,-0.163007,0.041965,0.389807
+LeftLowerArmTwist1,-0.518060,-0.388207,-0.232319
+LeftLowerArmTwist2,-0.405914,-0.335377,-0.081035
+RightShoulder,0.359714,0.208067,-0.962881
+RightUpperArm,0.822092,0.125272,-1.039565
+RightLowerArm,0.727589,-0.568423,-0.757015
+RightHand,0.176943,-0.350124,-0.484637
+RightIndexProximal,0.085384,-0.136729,-0.097318
+RightIndexIntermediate,0.031650,-0.108122,0.011668
+RightIndexDistal,-0.029683,-0.088069,0.056481
+RightLittleProximal,0.050247,-0.388742,-0.084928
+RightLittleIntermediate,0.013506,-0.368498,0.010712
+RightLittleDistal,-0.058258,-0.361616,0.022164
+RightMiddleProximal,0.080114,-0.211425,-0.072530
+RightMiddleIntermediate,0.042373,-0.183051,0.051737
+RightMiddleDistal,-0.042349,-0.170879,0.065841
+RightRingProximal,0.068104,-0.310680,-0.071631
+RightRingIntermediate,0.001466,-0.281458,0.025685
+RightRingDistal,-0.082904,-0.273260,0.007045
+RightThumbProximal,0.110221,-0.157699,-0.325368
+RightThumbIntermediate,0.069118,-0.115388,-0.214294
+RightThumbDistal,0.024039,-0.088791,-0.127599
+pistol grip,0.000000,-0.190000,-0.029999
+rifle-grip,0.000000,-0.180000,0.000000
+RightLowerArmTwist1,0.562394,-0.502934,-0.675301
+RightLowerArmTwist2,0.397200,-0.437444,-0.593588
+angled forward shroud bounds Center: (0.00000, 0.09000, 0.68000), Extents: (0.11200, 0.08600, 0.20000)
+carry handle strut bounds Center: (0.09400, 0.30000, 0.18000), Extents: (0.01400, 0.08000, 0.02800)
+carry handle strut.001 bounds Center: (-0.09400, 0.30000, 0.18000), Extents: (0.01400, 0.08000, 0.02800)
+carry handle top bounds Center: (0.00000, 0.38000, 0.12000), Extents: (0.11000, 0.01600, 0.14000)
+cobalt receiver bounds Center: (0.00000, 0.11000, 0.24000), Extents: (0.14000, 0.10500, 0.29000)
+cobalt stock cheek bounds Center: (0.00000, 0.11600, -0.14000), Extents: (0.08000, 0.02800, 0.10500)
+dark muzzle bore bounds Center: (0.00000, 0.09200, 0.98000), Extents: (0.03400, 0.03400, 0.00300)
+dial core bounds Center: (-0.16800, 0.09200, 0.03000), Extents: (0.00900, 0.03600, 0.03600)
+lime magazine edge bounds Center: (0.00000, -0.13800, 0.22000), Extents: (0.06800, 0.01300, 0.09000)
+lime spine bounds Center: (0.00000, 0.21000, 0.56000), Extents: (0.01300, 0.01200, 0.19000)
+navy underframe bounds Center: (0.00000, -0.03200, 0.24000), Extents: (0.10500, 0.05500, 0.31000)
+pistol grip bounds Center: (0.00000, -0.19000, -0.03000), Extents: (0.05500, 0.16000, 0.07500)
+raised side armor bounds Center: (0.16200, 0.13000, 0.62000), Extents: (0.01600, 0.05500, 0.12000)
+raised side armor.001 bounds Center: (-0.16200, 0.13000, 0.62000), Extents: (0.01600, 0.05500, 0.12000)
+receiver dial bounds Center: (-0.15600, 0.09200, 0.03000), Extents: (0.00800, 0.06000, 0.06000)
+receiver inset bounds Center: (0.00000, 0.05000, -0.05000), Extents: (0.11000, 0.04500, 0.05500)
+recessed rear shoulder bounds Center: (0.00000, 0.02400, -0.15000), Extents: (0.07200, 0.05500, 0.11000)
+side lime inlay bounds Center: (0.14600, 0.10600, 0.26000), Extents: (0.00400, 0.01300, 0.18000)
+side lime inlay.001 bounds Center: (-0.14600, 0.10600, 0.26000), Extents: (0.00400, 0.01300, 0.18000)
+side rail bounds Center: (0.13000, 0.20600, 0.53000), Extents: (0.01200, 0.01000, 0.23000)
+side rail.001 bounds Center: (-0.13000, 0.20600, 0.53000), Extents: (0.01200, 0.01000, 0.23000)
+single recessed muzzle bounds Center: (0.00000, 0.09200, 0.93200), Extents: (0.05600, 0.05600, 0.04700)
+upper sight bridge bounds Center: (0.00000, 0.27200, 0.16000), Extents: (0.04200, 0.03500, 0.23000)
+upper vent slot bounds Center: (0.08000, 0.23200, 0.48000), Extents: (0.01800, 0.00500, 0.01800)
+upper vent slot.001 bounds Center: (0.08000, 0.23200, 0.56400), Extents: (0.01800, 0.00500, 0.01800)
+upper vent slot.002 bounds Center: (0.08000, 0.23200, 0.64800), Extents: (0.01800, 0.00500, 0.01800)
+upper vent slot.003 bounds Center: (-0.08000, 0.23200, 0.48000), Extents: (0.01800, 0.00500, 0.01800)
+upper vent slot.004 bounds Center: (-0.08000, 0.23200, 0.56400), Extents: (0.01800, 0.00500, 0.01800)
+upper vent slot.005 bounds Center: (-0.08000, 0.23200, 0.64800), Extents: (0.01800, 0.00500, 0.01800)
+vent ring bounds Center: (0.11800, 0.10600, 0.54000), Extents: (0.00400, 0.01800, 0.01800)
+vent ring.001 bounds Center: (0.11800, 0.10600, 0.61200), Extents: (0.00400, 0.01800, 0.01800)
+vent ring.002 bounds Center: (0.11800, 0.10600, 0.68400), Extents: (0.00400, 0.01800, 0.01800)
+vent ring.003 bounds Center: (-0.11800, 0.10600, 0.54000), Extents: (0.00400, 0.01800, 0.01800)
+vent ring.004 bounds Center: (-0.11800, 0.10600, 0.61200), Extents: (0.00400, 0.01800, 0.01800)
+vent ring.005 bounds Center: (-0.11800, 0.10600, 0.68400), Extents: (0.00400, 0.01800, 0.01800)

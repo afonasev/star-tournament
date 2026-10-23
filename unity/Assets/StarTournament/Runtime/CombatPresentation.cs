@@ -236,6 +236,7 @@ namespace StarTournament.ProvingGround
             // Fired is dispatched after ShotResolved. Seed the same recoil clock before sampling
             // so an automatic follow-up cannot freeze the previous shot's animated barrel.
             var visual=source.GetComponent<TrooperVisual>();
+            if(visual)visual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
             visual?.Fire(session.Time);
             visual?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
             if(view>=0)weaponSwitches[view]?.Apply(life,session.WeaponSwitchSeconds);
@@ -421,7 +422,9 @@ namespace StarTournament.ProvingGround
             for(int p=0;p<session.ParticipantCount;p++)
             {
                 var life=session.Life(p);
-                if(!life.Dead)bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,life.Health,life.Life);
+                var bodyVisual=bodies[p].GetComponent<TrooperVisual>();
+                if(bodyVisual)bodyVisual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
+                if(!life.Dead)bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,life.Health,life.Life,session.Pose(p).Grounded);
                 // Both representations use the same simulation phase: the model changes only at the lift apex.
                 bodies[p].GetComponent<WeaponModelPresentation>()?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
             }
@@ -430,6 +433,8 @@ namespace StarTournament.ProvingGround
                 int i=local[v];var life=session.Life(i); var pose=session.Pose(i);
                 if(!life.Dead)
                 {
+                    var viewVisual=views[v].GetComponent<TrooperVisual>();
+                    if(viewVisual)viewVisual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
                     views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
                     weaponSwitches[v]?.Apply(life,session.WeaponSwitchSeconds);
                     cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));

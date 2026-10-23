@@ -1,0 +1,5 @@
+{
+  "result": "exact",
+  "primitives": 6,
+  "scope": "all arm/glove vertex attributes, indices and skin joint names match between FPS and world exports"
+}

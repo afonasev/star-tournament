@@ -1,0 +1,2 @@
+body [{"name": "pre-f8-body.glb", "meshes": 3, "nodes": 64, "joints": 57, "animations": 7, "materials": 22, "vertices": 97809}, {"name": "candidate-body.glb", "meshes": 3, "nodes": 64, "joints": 57, "animations": 7, "materials": 22, "vertices": 97809}]
+arms [{"name": "pre-f8-arms.glb", "meshes": 2, "nodes": 63, "joints": 57, "animations": 7, "materials": 17, "vertices": 62465}, {"name": "candidate-arms.glb", "meshes": 2, "nodes": 63, "joints": 57, "animations": 7, "materials": 17, "vertices": 62465}]

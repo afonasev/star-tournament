@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "5446e4f831322b2412513c31d735f21df8b0d0ac",
+  "branch": "codex/vector-fighter",
+  "app": "/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Builds/StarTournamentProvingGround.app",
+  "launch": "/Users/eaafonasev/.codex/worktrees/vector-fighter/star-tournament/unity/Builds/Start-muted.command",
+  "architecture": [
+    "arm64",
+    "x86_64"
+  ],
+  "buildCommand": "UNITY_RUN_MODE=shared unity/tools.sh build",
+  "buildExit": 0,
+  "buildMarker": "STAR_PROVING_BUILD_PASS 411960200",
+  "treeManifestSha256": "871b264a4464ca8f498d3292299b44e506ceb9101565b494fd5f43a5bdbb5b0e",
+  "fileCount": 283,
+  "bytes": 411960200,
+  "buildLog": "f3-qa/build-first.log.gz",
+  "smoke": {
+    "gameplay": "four weapons real jump/landing/fire passed, exit 0",
+    "screenshots": "FAIL: batchmode backbuffer unavailable",
+    "firstInteractiveLaunch": "NotRun: paused while window inactive; own process terminated"
+  },
+  "classification": "local Development test candidate; no installation/publication; human acceptance pending",
+  "binaryRetention": "Superseded in place by final same-gameplay candidate; exact first identity and failed capture evidence retained. No active process/user acceptance depends on first binary."
+}

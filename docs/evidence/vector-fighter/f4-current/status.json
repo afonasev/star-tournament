@@ -1,0 +1,30 @@
+{
+  "status": "unfinished visual refinement; no acceptance",
+  "sourceHashes": "../f4-qa/source-hashes.json",
+  "capture": "actual Unity camera.Render after a normal frame boundary; factory @13 tuning; no override; shipping body/arms meshes unchanged",
+  "checks": {
+    "initialEdit": "26/27; decimal descriptor-step failure preserved",
+    "fixedEdit": "18/18; weapon fixture + exact BeforeAnatomicalGrips history case",
+    "otherHistory": "9/9 in initial run; mechanisms unchanged",
+    "graphicalPlay": "4/4"
+  },
+  "wristAngleDegrees": {
+    "Rifle": 8.47,
+    "Shotgun": 11.27,
+    "RocketLauncher": 22.08,
+    "Cutter": 17.81
+  },
+  "measurement": "angle between LeftLowerArm→LeftHand and LeftHand→LeftMiddleProximal at captured aim; not a complete anatomical quality measure",
+  "remaining": [
+    "RocketLauncher and Cutter support hand must be fitted to the actual front grip; casing-support candidate still shows gaps/intersection",
+    "Thumb shape and glove seam spikes still need art review",
+    "Whole model rejected as primitive assembly; primary-form studies remain FAIL"
+  ],
+  "notRun": [
+    "full suite",
+    "new Player build",
+    "integration",
+    "release/deploy",
+    "human/device/performance acceptance"
+  ]
+}

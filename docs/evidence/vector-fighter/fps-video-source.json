@@ -1,0 +1,21 @@
+{
+  "video": "fps-walk.mp4",
+  "sha256": "8e403af507cd59ecddc30c9ced9da19ccd37f9c942fdfcdf3d9c4fb453dbedcd",
+  "size": [
+    1600,
+    900
+  ],
+  "frames": 264,
+  "frames_per_second": 50,
+  "duration_seconds": 5.28,
+  "audio": false,
+  "order": [
+    "Rifle",
+    "Shotgun",
+    "RocketLauncher",
+    "Cutter"
+  ],
+  "source": "Unity PlayMode FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene; fixed 20ms session samples; 66 frames per weapon",
+  "scope": "two-seat FPS walking; not a complete animation or ordinary-match acceptance video",
+  "body_sha256": "5ff03b9ed15540b238d8878353f7cd81c19d8c915fb5ee34d15c546cd9f5c5fe"
+}

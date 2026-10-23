@@ -1,0 +1,31 @@
+scope=focused (affected evidence; NOT a full suite)
+platform=EditMode
+filter=VectorGroundedGaitTests;WeaponSwitchPresentationTests;TrooperImportTests;BeforePlantedSteps
+lab_history=/Users/eaafonasev/.codex/worktrees/vector-grip-refinement/star-tournament/unity/../.local/unity-evidence/focused-editmode.INSMGu/qa-lab-history.json
+revision=6d57c9e07a0edf7e1e49617888164becb1e1900c
+ M ../scripts/vector_fighter/README.md
+ M ../scripts/vector_fighter/remodel.py
+ M ../scripts/vector_fighter/review.py
+ M Assets/StarTournament/Art/asset-manifest.json
+ M Assets/StarTournament/Art/trooper-arms-animated.glb
+ M Assets/StarTournament/Art/trooper-body-animated.glb
+ M Assets/StarTournament/Art/trooper-mounts.json
+ M Assets/StarTournament/Editor/TrooperPreparation.cs
+ M Assets/StarTournament/Runtime/Core/DesignLabHistory.cs
+ M Assets/StarTournament/Runtime/Core/TrooperProfile.cs
+ M Assets/StarTournament/Runtime/TrooperVisual.cs
+ M Assets/StarTournament/Scenes/ProvingGround.unity
+ M Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs
+ M Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs
+ M Assets/StarTournament/Trooper/TrooperArms.prefab
+ M Assets/StarTournament/Trooper/TrooperBody.prefab
+ M ProjectSettings/ShaderGraphSettings.asset
+?? ../docs/evidence/vector-fighter/f7/
+?? ../scripts/vector_fighter/__pycache__/
+?? ../scripts/vector_fighter/f7-pose-repair.blend
+?? ../scripts/vector_fighter/fit_vertical_grips.py
+?? ../scripts/vector_fighter/refine_pose.py
+?? Assets/StarTournament/Runtime/VectorGroundedGait.cs
+?? Assets/StarTournament/Runtime/VectorGroundedGait.cs.meta
+?? Assets/StarTournament/Tests/EditMode/VectorGroundedGaitTests.cs
+?? Assets/StarTournament/Tests/EditMode/VectorGroundedGaitTests.cs.meta

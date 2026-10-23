@@ -1,0 +1,23 @@
+{
+  "owner": "01a1601c-bc6a-7c90-ac69-a383d5f881fb",
+  "change": "replace-player-with-vector-fighter",
+  "status": "unfinished; continuation resources retained by user instruction",
+  "worktree": "/Users/eaafonasev/.codex/worktrees/vector-grip-refinement/star-tournament",
+  "branch": "codex/vector-fighter",
+  "keep": [
+    "unity/Library",
+    ".local/vector-f6",
+    ".local/vector-fighter",
+    "scripts/vector_fighter/f6-remodel-study.blend",
+    "docs/evidence/vector-fighter/f6"
+  ],
+  "hashes": {
+    "docs/evidence/vector-fighter/f6/grip-review.png": "aafe51a9f6452dd42e2353bed715de21e88caba5eba52438f3c0aae159b996e6",
+    "docs/evidence/vector-fighter/f6/model-review.png": "23ec0d049c2da6274761aaec7abde5a8a6426d7129520424ecad324e66e27ede",
+    "scripts/vector_fighter/f6-remodel-study.blend": "1188f367854b8238e16af56ddeebaf081a6363f4499866c81ed3dd2530bc9edf"
+  },
+  "worktreeAttachment": "Rejected by app tool: Cannot verify that this ownerless worktree belongs to this task.",
+  "externalDeletion": "recovery.md",
+  "integration": "Not performed; verify after source commit",
+  "cleanup": "Removed only own scripts/vector_fighter/__pycache__; restored own Unity settings serialization churn to HEAD after Editor exit. No worktree/Library/candidate inputs deleted; no archive."
+}

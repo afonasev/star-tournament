@@ -1,0 +1,10 @@
+{
+  "source": "scripts/vector_fighter/f9-fp-detail.blend",
+  "status": "shape/material study only; not approved or exported",
+  "changes": [
+    "rounded existing shell contour rings",
+    "localized relaxation of existing lower sleeve",
+    "preserved glove texture with moderated normals and separated textile finish"
+  ],
+  "not_implemented": "elbow swivel correction; actual FPS verification"
+}

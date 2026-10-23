@@ -1,0 +1,80 @@
+[
+  {
+    "material": "vector-chassis",
+    "vertices": 3113,
+    "changed": 0,
+    "old_bounds": null,
+    "new_bounds": null
+  },
+  {
+    "material": "vector-glove",
+    "vertices": 423,
+    "changed": 115,
+    "old_bounds": [
+      [
+        -0.16249999403953552,
+        -0.29500001668930054,
+        -0.07000002264976501
+      ],
+      [
+        -0.009500004351139069,
+        -0.07500001043081284,
+        0.21000000834465027
+      ]
+    ],
+    "new_bounds": [
+      [
+        -0.054999999701976776,
+        -0.29500001668930054,
+        -0.07000001519918442
+      ],
+      [
+        -0.009500001557171345,
+        -0.07500001043081284,
+        0.08000000566244125
+      ]
+    ]
+  },
+  {
+    "material": "vector-bore",
+    "vertices": 6868,
+    "changed": 0,
+    "old_bounds": null,
+    "new_bounds": null
+  },
+  {
+    "material": "vector-titanium",
+    "vertices": 6283,
+    "changed": 0,
+    "old_bounds": null,
+    "new_bounds": null
+  },
+  {
+    "material": "orbital-seam-thread",
+    "vertices": 45,
+    "changed": 0,
+    "old_bounds": null,
+    "new_bounds": null
+  },
+  {
+    "material": "vector-ceramic",
+    "vertices": 3452,
+    "changed": 0,
+    "old_bounds": null,
+    "new_bounds": null
+  },
+  {
+    "material": "strata-oxblood-accent",
+    "vertices": 308,
+    "changed": 0,
+    "old_bounds": null,
+    "new_bounds": null
+  },
+  {
+    "material": "identity-vector-status",
+    "vertices": 232,
+    "changed": 0,
+    "old_bounds": null,
+    "new_bounds": null
+  }
+]

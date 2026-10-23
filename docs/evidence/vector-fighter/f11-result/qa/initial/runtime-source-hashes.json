@@ -1,0 +1,7 @@
+{
+  "unity/Assets/StarTournament/Runtime/OrbitalGripPose.cs": "64d7d1d40b6ff431c8c5e5b92d9d451db1ea78c3981770d809afb4d677945e17",
+  "unity/Assets/StarTournament/Runtime/Core/TrooperProfile.cs": "ce7edf10f15ba8c2c38ef5dc588cc70072b773bf0c29d689c3cab23ff14c5f77",
+  "unity/Assets/StarTournament/Runtime/Core/DesignLabHistory.cs": "8225b79c73834b4f41a441543b190666cb40f5f9579ba27987b2548ef209a164",
+  "unity/Assets/StarTournament/Tests/EditMode/DesignLabHistoryTests.cs": "e2d822fb910712b35d5305fb386a6f5c9e1a1c8dc31f46177baa0aecd063c8a1",
+  "unity/Assets/StarTournament/Tests/PlayMode/TrooperPresentationTests.cs": "ef58593cc68684188ce7fa035d79a4cc8352cd9b910432d358ea8b77dfafd19e"
+}

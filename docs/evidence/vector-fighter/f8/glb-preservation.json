@@ -1,0 +1,39 @@
+{
+  "body": {
+    "meshes": [
+      {
+        "name": "Object_4.001",
+        "changed_position_vertices": 0,
+        "total": 35344
+      },
+      {
+        "name": "Cube",
+        "changed_position_vertices": 0,
+        "total": 20724
+      },
+      {
+        "name": "Object_1.002",
+        "changed_position_vertices": 30840,
+        "total": 41741
+      }
+    ],
+    "animation_samples_exactly_equal": true,
+    "nodes_equal": true
+  },
+  "arms": {
+    "meshes": [
+      {
+        "name": "Object_1.002",
+        "changed_position_vertices": 30840,
+        "total": 41741
+      },
+      {
+        "name": "Cube",
+        "changed_position_vertices": 0,
+        "total": 20724
+      }
+    ],
+    "animation_samples_exactly_equal": true,
+    "nodes_equal": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "outcome": "VECTOR по выбранному концепту; все существующие действия и first-person руки",
+  "route": "standard",
+  "reason": "связанные model/skin/runtime и визуальная проверка",
+  "source": "user 01a15a85-0aa3-74c3-a647-a4a7e1d1d6bc: 1 давай сделаем такую модель",
+  "baseline": "00fbd33209eb755dd5f86499aa8ea12867a2efd0",
+  "checks": [
+    "Blender import/render",
+    "TrooperImportTests",
+    "TrooperPresentationTests",
+    "ParticipantColorIdentityTests",
+    "airborne tests",
+    "Editor visual sequences"
+  ],
+  "full": "NotRun; not authorized",
+  "build": "NotRun; not requested"
+}

@@ -1,0 +1,14 @@
+{
+  "status": "visual FAIL / unaccepted primary-form study",
+  "feedback": "User rejected primitive assembly and additive service details",
+  "productionAssetsChanged": false,
+  "editableSource": "scripts/vector_fighter/primary-form-study.blend",
+  "editableSourceSha256": "bff53a9854742365844354ffe0f8b2919fa3940b7113e93dab8b29d0b06ec5a2",
+  "command": "blender -b -noaudio --python scripts/vector_fighter/build.py -- --candidate --forms planar",
+  "remaining": [
+    "Schematic armor volumes and shoulder termination",
+    "Insufficient sculpted cloth and joint detail",
+    "Overall fidelity to approved VECTOR not reached"
+  ],
+  "runtimeQA": "NotRun; study only"
+}

@@ -1,0 +1,20 @@
+{
+  "status": "Visual FAIL; no candidate defaults promoted",
+  "factory": "@14 adds supportPitch=0; all previous grip defaults retained; @13 reconstruction available",
+  "lastCandidate": "surface-candidate2.txt",
+  "lastActualCapture": "grip-candidate2",
+  "findings": [
+    "RocketLauncher/Cutter index remains too close to the barrel/chassis",
+    "Finger row spacing and glove skin deformation remain unnatural",
+    "No clean full-palm/five-digit contact established",
+    "Rifle/Shotgun and primary hands unchanged; actual images preserved; not newly accepted"
+  ],
+  "technical": "Each of four diagnostic runs executed the selected walking fixture, 1/1; not contact validation",
+  "notRun": [
+    "full suite",
+    "Player build",
+    "integration",
+    "release/deploy",
+    "human/device acceptance"
+  ]
+}
