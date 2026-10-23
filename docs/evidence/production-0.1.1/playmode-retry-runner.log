@@ -1,5 +1,0 @@
-FOCUSED PlayMode: NativeParticipantRosterTests;NativeRivalryInputTests — iteration only, NOT a full gate
-Evidence: /Users/eaafonasev/.codex/worktrees/production-0-1-1/star-tournament/unity/../.local/unity-evidence/focused-playmode.LMZyCf
-unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/production-0-1-1/star-tournament/unity
-unity-run: started shared:1; guardian=95428 pid=95429
-unity-run: finished pid=95429 exit=0; capacity released

@@ -1,3 +1,0 @@
-unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/vector-grip-refinement/star-tournament/unity
-unity-run: started shared:1; guardian=32075 pid=32076
-unity-run: finished pid=32076 exit=0; capacity released

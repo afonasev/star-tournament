@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/Users/eaafonasev/.codex/worktrees/production-0-1-2/star-tournament/docs/evidence/production-0.1.2/verify-icon.py", line 35, in <module>
-    p=6+n*14;assert group[p:p+12]==metadata,(key,n,'metadata mismatch')
-                    ^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: ((14, 103, 1033), 0, 'metadata mismatch')

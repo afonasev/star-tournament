@@ -1,5 +1,0 @@
-FOCUSED EditMode: LunarLaboratoryTests;DesignLabHistoryTests;LabSnapshotCopyTests — iteration only, NOT a full gate
-Evidence: /Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/../.local/unity-evidence/focused-editmode.oQ3QEI
-unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity
-unity-run: started shared:1; guardian=94283 pid=94284
-unity-run: finished pid=94284 exit=2; capacity released

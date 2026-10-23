@@ -1,5 +1,0 @@
-FOCUSED EditMode: WeaponSwitchPresentationTests — iteration only, NOT a full gate
-Evidence: /Users/eaafonasev/.codex/worktrees/production-0-1-1/star-tournament/unity/../.local/unity-evidence/focused-editmode.oi2qrj
-unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/production-0-1-1/star-tournament/unity
-unity-run: started shared:1; guardian=53424 pid=53502
-unity-run: finished pid=53502 exit=0; capacity released

@@ -1,5 +1,0 @@
-./unity/tools.sh test-edit
-unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/production-0-1-1/star-tournament/unity
-unity-run: started shared:1; guardian=24043 pid=24044
-unity-run: finished pid=24044 exit=2; capacity released
-make: *** [test-edit] Error 2
