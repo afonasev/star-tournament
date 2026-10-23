@@ -57,3 +57,7 @@ Stable Windows x64/macOS arm64 installers and signed full updates are published 
 This source includes gamepad match-setup navigation, LT aim, Default v2 packaged balance, nonblocking saved Lab selection and compact update-menu identity. Verification: 406 EditMode / 235 PlayMode tests; 2 menu-state tests; 34 Python / 49 launcher security contracts. Internal source revision: `a7f809332e14878a623b80e85a7181188541a561`. Build preparation regenerates authored scene/prefab data; exact artifact custody is supplied with the release.
 
 Production startup repair: compatibility migration is validated in memory during startup. Existing Lab history stays unchanged until an explicit Lab mutation; old immutable revisions and their hashes are preserved.
+
+## Worktree storage
+
+See [WORKTREE_STORAGE.md](docs/WORKTREE_STORAGE.md) for sparse worktrees, compact evidence and recovery rules.

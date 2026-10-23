@@ -57,3 +57,7 @@ trooper-unity-shipping: ## Explicitly create Unity trooper derivatives; requires
 	@test "$(CONFIRM_TROOPER_UNITY_SHIPPING)" = "1" || { echo "Refusing to create Unity trooper derivatives. Re-run with CONFIRM_TROOPER_UNITY_SHIPPING=1 after reading scripts/trooper/README.md." >&2; exit 2; }
 	@echo "Running offline Unity trooper derivative pipeline; it is not a deploy or distribution command."
 	scripts/trooper/unity_shipping.sh
+
+.PHONY: storage-check
+storage-check: ## Check compact documentation and evidence storage.
+	python3 tools/worktree_storage.py check

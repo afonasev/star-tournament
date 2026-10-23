@@ -26,3 +26,5 @@
 | Нетривиальная реализация, worktree или поставка | `.agents/references/delivery-workflow.md` |
 | Player-visible/input/audio/browser QA | `.agents/references/game-qa.md` |
 | До выбора проверок и integration gate | `.agents/references/qa-scope.md` |
+
+- Before creating a worktree or saving evidence, read `docs/WORKTREE_STORAGE.md`; keep temporary payloads in ignored `.local/`.

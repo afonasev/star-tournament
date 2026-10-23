@@ -15,3 +15,5 @@ distribution/**/__pycache__/
 playwright-report/
 test-results/
 .asset-library/
+
+/.local/

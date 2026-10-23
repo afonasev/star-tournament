@@ -1,0 +1,11 @@
+{
+  "schema": "local-evidence-cleanup-publication-v1",
+  "project": "star-tournament",
+  "completedPackages": 69,
+  "removedLocalPayloadFiles": 4188,
+  "removedLocalPayloadBytes": 3601896464,
+  "exactRecoveryVerifiedBeforeAndAfterDeletion": 4188,
+  "publicBaseRevision": "5f1b2909fe5f95f256b090e5a4ba5c3158764bab",
+  "affectedPayloadPathsPresentInPublicBase": 0,
+  "note": "These historical payloads were already absent from the public source baseline. Cleanup preserves exact original bytes and per-file SHA-256 indexes in the canonical local planning store and local code Git history. Public game sources and current evidence are unchanged."
+}
