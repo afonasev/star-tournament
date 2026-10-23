@@ -1,0 +1,13 @@
+{
+  "sparse_patterns": [
+    "/*",
+    "!/artifacts/",
+    "!/docs/evidence/"
+  ],
+  "source_directories": [
+    {
+      "path": "docs/audio",
+      "reason": "Approved audio source consumed by tools/prepare-approved-audio.py"
+    }
+  ]
+}
