@@ -1,0 +1,21 @@
+{
+  "play": {
+    "result": "Passed",
+    "total": "6",
+    "passed": "6",
+    "failed": "0",
+    "skipped": "0"
+  },
+  "edit": {
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "skipped": "0"
+  },
+  "baseline": "a095e6ef17c9cb9e5e373101e3fcb27896567716",
+  "material_ownership": "PASS from preceding material-equivalent candidate, qa/material-ownership-and-poses-pass.xml",
+  "native_png_count": 176,
+  "human_art_acceptance": "Pending",
+  "integration": "Not performed"
+}

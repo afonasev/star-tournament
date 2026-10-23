@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+mkdir -p .local/vector-f16/review
+STAR_TOURNAMENT_WORLD_MODEL_EVIDENCE=1 STAR_TOURNAMENT_GRIP_FACTORY=1 STAR_TOURNAMENT_WALK_EVIDENCE="$PWD/.local/vector-f16/review" STAR_TOURNAMENT_QA_LAB_HISTORY="$PWD/.local/vector-f16/review/history.json" UNITY_RUN_MODE=shared unity/tools.sh editor -batchmode -noaudio -muted -runTests -testPlatform PlayMode -testFilter 'FirstPersonStepsStaySmoothAndIndependentInTheRenderedScene;ArticulatedFingerGripPreservesArmAndWeaponPlacement;RifleGripHasNativeFireAndAirbornePhases;ShotgunGripHasNativeFireAndAirbornePhases;RocketGripHasNativeFireAndAirbornePhases;CutterGripHasNativeFireAndAirbornePhases' -testResults "$PWD/.local/vector-f16/review/play.xml" -logFile "$PWD/.local/vector-f16/review/play.log" > .local/vector-f16/review/play-runner.log 2>&1
+UNITY_RUN_MODE=shared unity/tools.sh editor -batchmode -noaudio -muted -runTests -testPlatform EditMode -testFilter 'TrooperImportTests' -testResults "$PWD/.local/vector-f16/review/edit.xml" -logFile "$PWD/.local/vector-f16/review/edit.log" > .local/vector-f16/review/edit-runner.log 2>&1

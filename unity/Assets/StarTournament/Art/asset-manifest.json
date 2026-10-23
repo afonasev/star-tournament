@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "7cf991589f239a4551a2d5c7b06b9c15c87a9e358d2042a306806a0095766a52",
+      "sha256": "5a0b66fa130960dbe9795905f66919406f97b4dbf2592045855862891710d32c",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR posed garment and glove skin repair; scripts/vector_fighter/refine_pose.py and f7-pose-repair.blend; compatible attributed rig"
+      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "3d6a6df9a36f597a08277d88b5d0c2efeadfefc1e847fb8dcd04fc9642bd1ac6",
+      "sha256": "4e5cfd05c8145ebf5fadf1e16d7e534b93bffa3d6ab9e34591cf34633216a377",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR posed garment and glove skin repair; scripts/vector_fighter/refine_pose.py and f7-pose-repair.blend; compatible attributed rig"
+      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
     },
     {
       "key": "speed-pickup",

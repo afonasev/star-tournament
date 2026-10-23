@@ -1,0 +1,24 @@
+{
+  "vector_baseline": "a095e6ef17c9cb9e5e373101e3fcb27896567716",
+  "orbital_baseline": "00fbd33209eb755dd5f86499aa8ea12867a2efd0",
+  "gloves": [
+    {
+      "vertices": 16406,
+      "faces": 28182,
+      "separate_thread_vertices_omitted": 19656,
+      "cuff_cut_m": -0.004,
+      "materials": [
+        "orbital-restored-material",
+        "orbital-restored-vector-glove",
+        "orbital-restored-vector-chassis",
+        "vector-ceramic-orbital",
+        "orbital-restored-vector-titanium",
+        "orbital-restored-orbital-seam-thread"
+      ]
+    }
+  ],
+  "bind_skeleton": "matching within 1e-5",
+  "anatomical_cloth_vertex_edits": 0,
+  "raised_stitches": "separate thread islands omitted; original textured stitches retained",
+  "rig_actions": "retained"
+}

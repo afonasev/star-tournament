@@ -82,7 +82,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         { // Let the normal rendered-frame skinning consume the current bones before capture.
                           yield return null;
                           CaptureWalkFrame(directory,weapon+"-"+tick.ToString("D2"));
-                          if(tick==0)CaptureGrip(directory,weapon.ToString(),first,camera);
+                          if(tick==0)
+                          {
+                              CaptureGrip(directory,weapon.ToString(),first,camera);
+                              if(System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WORLD_MODEL_EVIDENCE")=="1")
+                                  CaptureWorldModel(directory,weapon.ToString());
+                          }
                           if(tick==32)CaptureSingleView(directory,weapon.ToString(),camera); }
                 }
                 if(!string.IsNullOrEmpty(directory))System.IO.File.WriteAllLines(System.IO.Path.Combine(directory,"motion.csv"),samples);
@@ -223,6 +228,26 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-fps.png"),pixels.EncodeToPNG());
             }
             finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=old;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
+        }
+        void CaptureWorldModel(string directory,string weapon)
+        {
+            var body=ground.transform.Find("player-1/trooper-presentation").GetComponent<TrooperVisual>();
+            var go=new GameObject("world-model-review-camera");var camera=go.AddComponent<Camera>();
+            camera.enabled=false;camera.fieldOfView=39;camera.nearClipPlane=.05f;camera.farClipPlane=7;
+            camera.cullingMask=1<<11;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.13f,.15f,.17f);
+            var fill=new GameObject("world-model-review-light");var light=fill.AddComponent<Light>();
+            light.type=LightType.Directional;light.intensity=.8f;light.cullingMask=1<<11;fill.transform.rotation=Quaternion.Euler(35,-30,0);
+            try
+            {
+                var center=body.transform.position+Vector3.up*.95f;
+                foreach(var angle in new[]{0,90,180,270})
+                {
+                    var direction=Quaternion.AngleAxis(angle,Vector3.up)*body.transform.forward;
+                    go.transform.position=center+direction*3.4f+Vector3.up*.15f;go.transform.LookAt(center);
+                    CaptureSingleView(System.IO.Path.Combine(directory,"world"),weapon+"-"+angle,camera);
+                }
+            }
+            finally{Object.Destroy(go);Object.Destroy(fill);}
         }
         void CaptureGrip(string directory,string weapon,TrooperVisual visual,Camera source)
         {
