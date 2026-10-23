@@ -1,5 +1,7 @@
 # star-tournament — рабочие правила
 
+- Перед созданием worktree и сохранением QA-данных читай `docs/WORKTREE_STORAGE.md`: выборочный checkout, временные данные в `.local/`, постоянные evidence в общем planning-store.
+
 ## Working boundaries
 
 - Preserve scope, product contracts and others' files/processes. Questions/reviews are read-only; create an owned code worktree only before authorized edits when isolation is needed.
