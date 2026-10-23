@@ -1,5 +1,0 @@
-FOCUSED PlayMode: ShotOriginTests;NativeSeatLayoutTests.SharedTimerAndPerSeatHud;DesignLabWorkspaceTests — iteration only, NOT a full gate
-Evidence: /Users/eaafonasev/Projects/star-tournament-test-speed/unity/../.local/unity-evidence/focused-playmode.EvjzyG
-unity-run: waiting exclusive; project=/Users/eaafonasev/Projects/star-tournament-test-speed/unity
-unity-run: started exclusive; guardian=2306 pid=2307
-unity-run: finished pid=2307 exit=0; capacity released

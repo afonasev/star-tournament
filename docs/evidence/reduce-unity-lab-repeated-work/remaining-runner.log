@@ -1,7 +1,0 @@
-unity-run: waiting exclusive; project=/Users/eaafonasev/Projects/star-tournament-test-speed/unity
-unity-run: started exclusive; guardian=23436 pid=29107
-RUN after-play
-after-play Passed 3 duration=43.2713349
-RUN after-fingerprint
-after-fingerprint Passed 4 duration=113.2031356
-unity-run: finished pid=29107 exit=0; capacity released

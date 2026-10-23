@@ -1,5 +1,0 @@
-FOCUSED PlayMode: LunarLaboratoryPhysicsTests — iteration only, NOT a full gate
-Evidence: /Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity/../.local/unity-evidence/focused-playmode.ep1YYg
-unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-door-frame/unity
-unity-run: started shared:1; guardian=94252 pid=94253
-unity-run: finished pid=94253 exit=0; capacity released

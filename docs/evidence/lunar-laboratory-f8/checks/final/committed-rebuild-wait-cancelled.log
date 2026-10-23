@@ -1,3 +1,0 @@
-./unity/tools.sh build
-unity-run: waiting shared; project=/Users/eaafonasev/Projects/star-tournament-lunar-light-overlap/unity
-make: *** [build] Error 130

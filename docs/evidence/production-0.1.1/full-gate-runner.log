@@ -1,5 +1,0 @@
-./unity/tools.sh test-edit
-unity-run: waiting shared; project=/Users/eaafonasev/.codex/worktrees/production-0-1-1/star-tournament/unity
-unity-run: started shared:2; guardian=21793 pid=21794
-unity-run: finished pid=21794 exit=-2; capacity released
-make: *** [test-edit] Error 130
