@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "fbba4dc6a2f988241c85a966bf0248ac4ab89c18f2634d45bc32dc0caac5be2d",
+      "sha256": "ad453f4bea8508fce1ed4b378f39cb46f6b2c6b7e6ed7a4eb62974280c8e28cf",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Accepted VECTOR F16; offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; editable high-poly source retained"
+      "source": "VECTOR F17 assault (concept 1); offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; F16 anatomy retained"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "7628e586ec0687c1308a0b0696ec6e22be667fadffca9acb1b3916cedca5f543",
+      "sha256": "b83a28fcc3294642dcfcb6d6d692020234d378312cd21ae0cf70f4bd9fe810c9",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Accepted VECTOR F16; offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; editable high-poly source retained"
+      "source": "VECTOR F17 assault (concept 1); offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; F16 anatomy retained"
     },
     {
       "key": "speed-pickup",
