@@ -28,16 +28,47 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             pads=new[]{InputSystem.AddDevice<Gamepad>()};ground.StartCombatReview(pads,ensureOpponent:true);
             typeof(ProvingGround).GetField("FullHealReviewManualTick",BindingFlags.NonPublic|BindingFlags.Instance).SetValue(ground,true);
-            audio=(NativeGameAudio)typeof(ProvingGround).GetField("gameAudio",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(ground);
-            audio.SetDiagnosticMute(false);root=ground.transform.Find("native-game-audio");
+            // Exercise the audio consumer without unlocking the game's startup mute.
+            // -noaudio and the zero listener set before scene load keep this fixture inaudible.
+            var owner=new GameObject("isolated-audio-consumer");owner.transform.SetParent(ground.transform,false);
+            audio=new NativeGameAudio(owner.transform,ground.Profile,false);audio.Bind(ground.Session,ground.Composition);
+            root=owner.transform.Find("native-game-audio");
             ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,2),0);ground.PlaceCombatReviewSeat(1,new Vector3(8,0,2),0);Clear();
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
+            audio?.Dispose();audio=null;
             if(pads!=null)foreach(var p in pads)if(p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);
             if(hadMusic)PlayerPrefs.SetInt(MusicKey,priorMusic);else PlayerPrefs.DeleteKey(MusicKey);
             AudioListener.volume=listener;if(had)PlayerPrefs.SetInt(Key,prior);else PlayerPrefs.DeleteKey(Key);PlayerPrefs.Save();
+        }
+        [UnityTest] public IEnumerator IndividualEffectLevelsSilenceOnlyTheirOwnCue()
+        {
+            foreach(var pair in new[]{(WeaponId.Rifle,"rifle"),(WeaponId.Shotgun,"shotgun"),(WeaponId.RocketLauncher,"rocket")})
+            {
+                var shot=new ShotNotice(1,0,1,0,ground.Session.Pose(0).Position,Array.Empty<PelletNotice>(),pair.Item1);
+                string path="audio.effect."+pair.Item2+"Gain";
+                EffectsProfile.Set(path,0);Invoke(audio,"Shot",shot);
+                Assert.That(Voices.Any(v=>v.clip),Is.False,path);Clear();
+                EffectsProfile.Set(path,.25f);Invoke(audio,"Shot",shot);
+                float quiet=Voices.Single(v=>v.clip).volume;Clear();
+                EffectsProfile.Set(path,.5f);Invoke(audio,"Shot",shot);
+                Assert.That(Voices.Single(v=>v.clip).volume,Is.EqualTo(quiet*2).Within(.0001),path);Clear();
+            }
+            foreach(var pair in new[]{(NativeBotPickupKind.Weapon,"weaponPickup"),(NativeBotPickupKind.Armor,"shieldPickup"),(NativeBotPickupKind.Speed,"speedPickup"),(NativeBotPickupKind.Heal,"healPickup"),(NativeBotPickupKind.Damage,"damagePickup")})
+            {
+                EffectsProfile.Set("audio.effect."+pair.Item2+"Gain",0);
+                Invoke(audio,"Pickup",0,"fixture",pair.Item1);Assert.That(Voices.Any(v=>v.clip),Is.False,pair.Item2);Clear();
+            }
+            EffectsProfile.Set("audio.effect.shieldHitGain",0);Invoke(audio,"Damage",new DamageNotice(1,1,0,5,1));
+            Assert.That(Voices.Any(v=>v.clip),Is.False);Clear();
+            Invoke(audio,"Damage",new DamageNotice(1,1,5,0,2));Assert.That(Voices.Single(v=>v.clip).clip.name,Does.StartWith("body-hit-"));Clear();
+            EffectsProfile.Set("audio.effect.menuConfirmGain",0);audio.MenuConfirm();
+            // Inspect the dedicated UI source, independent of spatial event voices.
+            var source=root.GetComponentsInChildren<AudioSource>().Single(v=>v.name=="menu-ui");
+            Assert.That(source.isPlaying,Is.False);audio.MenuBack();Assert.That(source.isPlaying,Is.True);
+            yield return null;
         }
         [UnityTest] public IEnumerator HitsDeathAndPickupUseApprovedBanksAndAudience()
         {
@@ -176,7 +207,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator SplitScreenWeaponReadyIsEmittedOnceForTheSwitchingSeat()
         {
-            foreach(var p in pads)InputSystem.RemoveDevice(p);pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);
+            foreach(var p in pads)InputSystem.RemoveDevice(p);pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);audio.Bind(ground.Session,ground.Composition);
             EquippedCombatFixture.Equip(ground.Session);Clear();RequestWeapon(2,WeaponSelection.Cutter);CompleteWeaponSwitch();
             Assert.That(Voices.Count(v=>v.clip&&v.clip.name=="weapon-ready"),Is.EqualTo(1));
             yield return null;
@@ -304,7 +335,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator SharedOutputDoesNotMultiplyShotsAndBeamUsesEndpoint()
         {
             var one=(AudioSpatialMix)Invoke(audio,"Spatial",ground.Session.Pose(0).Position,1,null);
-            foreach(var p in pads)InputSystem.RemoveDevice(p);pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);
+            foreach(var p in pads)InputSystem.RemoveDevice(p);pads=Enumerable.Range(0,4).Select(_=>InputSystem.AddDevice<Gamepad>()).ToArray();ground.StartCombatReview(pads);audio.Bind(ground.Session,ground.Composition);
             for(int i=0;i<4;i++)ground.PlaceCombatReviewSeat(i,new Vector3(-8,0,2),0);
             var four=(AudioSpatialMix)Invoke(audio,"Spatial",ground.Session.Pose(0).Position,7,null);Assert.That(four.Gain,Is.EqualTo(one.Gain).Within(.0001));Clear();
             Invoke(audio,"Shot",new ShotNotice(1,1,1,0,ground.Session.Pose(1).Position,Array.Empty<PelletNotice>(),WeaponId.Shotgun));

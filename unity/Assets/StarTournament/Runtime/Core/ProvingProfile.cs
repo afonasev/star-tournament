@@ -150,6 +150,42 @@ namespace StarTournament.ProvingGround
             var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path==BotBanterIntervalPath);copy.values.RemoveAll(v=>v.Path==BotBanterIntervalPath);
             return copy;
         }
+        // Neutral per-cue multipliers preserve the mix of historical profiles.
+        internal static float EffectAudioGain(ProvingProfile profile,string cue)
+        {
+            string path="audio.effect."+cue+"Gain";
+            return profile.Descriptor(path)==null?1f:profile.Get(path);
+        }
+        internal ProvingProfile BeforeIndividualEffectGains()
+        {
+            if(id!=DefaultId||Descriptor("audio.effect.rifleGain")==null)return this;
+            var copy=DetachedCopy();
+            copy.descriptors.RemoveAll(d=>d.Path.StartsWith("audio.effect.",StringComparison.Ordinal));
+            copy.values.RemoveAll(v=>v.Path.StartsWith("audio.effect.",StringComparison.Ordinal));
+            return copy;
+        }
+        void AddIndividualEffectGains()
+        {
+            Add("audio.effect.rifleGain","audio","Выстрел винтовки","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.shotgunGain","audio","Выстрел дробовика","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.rocketGain","audio","Выстрел ракетницы","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.cutterGain","audio","Непрерывный резак","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.rocketFlightGain","audio","Полёт ракеты","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.explosionGain","audio","Взрыв ракеты","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.shieldHitGain","audio","Попадание в броню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.bodyHitGain","audio","Попадание в тело","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.weaponPickupGain","audio","Подбор оружия","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.shieldPickupGain","audio","Подбор брони","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.damagePickupGain","audio","Подбор бонуса урона — собравший","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.speedPickupGain","audio","Подбор скорости","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.healPickupGain","audio","Подбор лечения","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.menuMoveGain","audio","Переход фокуса меню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.menuConfirmGain","audio","Подтверждение меню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.menuBackGain","audio","Возврат в меню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.botReactionGain","audio","Голосовые реплики ботов","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.killTripleGain","audio","Голос тройного убийства","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.killQuadrupleGain","audio","Голос четверного убийства","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+        }
         internal const float DefaultWeaponAudioGain=2f;
         internal static float WeaponAudioGain(ProvingProfile profile)=>profile.Descriptor("audio.weaponGain")==null?DefaultWeaponAudioGain:profile.Get("audio.weaponGain");
         internal ProvingProfile BeforeCombatAudioMix()
@@ -486,6 +522,7 @@ namespace StarTournament.ProvingGround
         {
             var profile = new ProvingProfile();
             profile.AddRoundMusicDescriptors();
+            profile.AddIndividualEffectGains();
             profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения.", "percent", 0f, 100f, 5f, 70f);
             profile.Add("audio.effectsDefaultPercent", "audio", "Эффекты по умолчанию", "Начальная общая громкость звуков меню и боя до пользовательского изменения.", "percent", 0f, 100f, 5f, 80f);
             profile.Add("audio.damageBonusSpawnGain", "audio", "Сигнал появления бонуса урона", "Громкость общего сигнала независимо от расстояния до бонуса.", "ratio", 0f, 1f, .05f, .8f);

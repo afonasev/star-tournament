@@ -140,6 +140,30 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{if(File.Exists(path))File.Delete(path);}
         }
+        [Test] public void IndividualEffectMigrationPreservesHistoricalHashAndExistingAudioControls()
+        {
+            var shipped=DesignLabHistoryTests.Shipped();
+            var method=typeof(ProvingProfile).GetMethod("BeforeIndividualEffectGains",BindingFlags.NonPublic|BindingFlags.Instance);
+            var before=new LabBundle{Profiles=shipped.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            string path=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,before);history.Create("Saved death mix predecessor");
+                var draft=history.Selected.Snapshot;draft.Set("audio.remoteGain",.3f);draft.Set("audio.effectsDefaultPercent",45);history.Save(draft);
+                string hash=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,shipped);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get("audio.effect.rifleGain"),Is.EqualTo(1));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.remoteGain"),Is.EqualTo(.3f));
+                Assert.That(migrated.Selected.Snapshot.Get("audio.effectsDefaultPercent"),Is.EqualTo(45));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
+                var descriptor=migrated.Selected.Snapshot.Descriptors.Single(d=>d.Path=="audio.effect.rifleGain");
+                Assert.That(descriptor.Validate(out _),Is.True);Assert.That(descriptor.Maximum,Is.EqualTo(4));
+                var changed=migrated.Selected.Snapshot;changed.Set("audio.effect.rifleGain",1.5f);migrated.Save(changed);
+                var reopened=new DesignLabHistory(path,shipped);Assert.That(reopened.StorageError,Is.Null);
+                Assert.That(reopened.Selected.Snapshot.Get("audio.effect.rifleGain"),Is.EqualTo(1.5f));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void DeathGainMigrationPreservesHistoricalHashAndExistingAudioControls()
         {
             var shipped=DesignLabHistoryTests.Shipped();
