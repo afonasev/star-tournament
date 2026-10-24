@@ -49,6 +49,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             while(stack.Count>0){var b=stack.Pop();if(b==null||!seen.Add(b))continue;var n=b.navigation;foreach(var next in new[]{n.selectOnUp,n.selectOnDown,n.selectOnLeft,n.selectOnRight})if(next!=null)stack.Push(next);}
             return new HashSet<string>(seen.Select(b=>b.name));
         }
+        [UnityTest] public IEnumerator EmptySlotsUseAtomicBotFlowAndRemainReachable()
+        {
+            Assert.That(ground.GetComponentsInChildren<Button>().Count(b=>b.name.StartsWith("roster-empty-")),Is.EqualTo(7));
+            Assert.That(Reachable(),Does.Contain("roster-empty-6"));
+            var empty=B("roster-empty-0");EventSystem.current.SetSelectedGameObject(empty.gameObject);
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {MenuSelectorOverlayTests.AssertPointerTarget(empty,true);yield return null;yield return null;}
+            Assert.That(ground.SetupBotCount,Is.Zero);yield return Press(GamepadButton.East);
+            Assert.That(EventSystem.current.currentSelectedGameObject,Is.SameAs(empty.gameObject));
+            yield return Press(GamepadButton.South);yield return Click("lobby-add-difficulty-1");Assert.That(ground.SetupBotCount,Is.EqualTo(1));
+            yield return Click("lobby-mode");yield return Click("lobby-teams");yield return Capture("17-empty-team-slots");
+            EventSystem.current.SetSelectedGameObject(B("roster-empty-0").gameObject);yield return Press(GamepadButton.South);yield return Click("lobby-add-difficulty-2");
+            Assert.That(ground.SetupBotCount,Is.EqualTo(1));yield return Press(GamepadButton.East);yield return Press(GamepadButton.East);
+            Assert.That(ground.SetupBotCount,Is.EqualTo(1));
+            while(ground.SetupBotCount<7)ground.AddBot();yield return null;
+            Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("roster-empty-")),Is.False);
+        }
         [UnityTest] public IEnumerator DefaultsFooterAndSessionDraftSurviveMenuReturn()
         {
             Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(3));Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2000));Assert.That(ground.SetupBotCount,Is.Zero);

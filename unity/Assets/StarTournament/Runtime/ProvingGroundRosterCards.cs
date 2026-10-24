@@ -13,6 +13,9 @@ namespace StarTournament.ProvingGround
         // Authored uGUI layout in the existing Full HD canvas; these sizes do not tune gameplay/readability profiles.
         readonly Button[] rosterCards=new Button[NativeMatchRoster.MaximumParticipants];
         readonly Text[] rosterNames=new Text[NativeMatchRoster.MaximumParticipants],rosterDetails=new Text[NativeMatchRoster.MaximumParticipants],rosterViews=new Text[NativeMatchRoster.MaximumParticipants],rosterIcons=new Text[NativeMatchRoster.MaximumParticipants];
+        readonly Button[] rosterEmpty=new Button[8];
+        Button[][] lobbyRosterGroups;
+        int rosterEmptyUsed;
         readonly Image[] rosterStripes=new Image[NativeMatchRoster.MaximumParticipants];
         GameObject rosterEditor,rosterPicker;
         Toggle rosterBotView;
@@ -80,7 +83,7 @@ namespace StarTournament.ProvingGround
             rosterPageTitle=Label(setupScreen.transform,"roster-page-title","СОБЕРИТЕ УЧАСТНИКОВ",40,new Vector2(.05f,.865f),new Vector2(.95f,.92f),TextAnchor.MiddleLeft,Color.white);
             rosterPageTitle.fontStyle=FontStyle.Bold;
             var startColors=start.colors;startColors.normalColor=startColors.highlightedColor=startColors.selectedColor=Color.white;startColors.disabledColor=new Color(.45f,.50f,.55f);start.colors=startColors;
-            Label(setupPlayersPage.transform,"players-title","СОСТАВ МАТЧА",30,new Vector2(.017f,.88f),new Vector2(.62f,.98f),TextAnchor.MiddleLeft,Color.white).fontStyle=FontStyle.Bold;
+
             RoundRosterPanel(setupPlayersPage);RoundRosterPanel(setupSummary.transform.parent.gameObject);
             rosterAddHuman=RosterButton(setupPlayersPage.transform,"roster-add-human","+ ИГРОК",new Vector2(.70f,.865f),new Vector2(.835f,.97f),AddRosterHuman);
             rosterAddBot=RosterButton(setupPlayersPage.transform,"roster-add-bot","+ БОТ",new Vector2(.845f,.865f),new Vector2(.98f,.97f),()=>{int p=LocalSeatCount+botSetup.Count;AddBot();if(LocalSeatCount+botSetup.Count>p){OpenRosterEditor(p);Select(rosterDone);}});
@@ -115,6 +118,14 @@ namespace StarTournament.ProvingGround
                 Label(b.transform,"open","›",32,new Vector2(.87f,.16f),new Vector2(.96f,.46f),TextAnchor.MiddleCenter,RosterMuted);
                 foreach(var graphic in b.GetComponentsInChildren<Graphic>())if(graphic.gameObject!=b.gameObject)graphic.raycastTarget=false;
                 b.GetComponent<RosterFocus>().UseScroll=()=>SetupMode==NativeMatchMode.Teams? (RosterTeamAt(p)==NativeTeam.TeamA?rosterBlueScroll:rosterRedScroll):rosterFfaScroll;
+            }
+            for(int i=0;i<rosterEmpty.Length;i++)
+            {
+                var empty=RosterButton(rosterFfa,"roster-empty-"+i,"+",Vector2.zero,Vector2.one,BeginLobbyBot);
+                rosterEmpty[i]=empty;empty.GetComponent<MenuPresentation>().Compact=false;
+                empty.GetComponentInChildren<Text>().fontSize=52;
+                empty.GetComponent<RosterFocus>().UseScroll=()=>empty.GetComponentInParent<ScrollRect>();
+                empty.gameObject.SetActive(false);
             }
             rosterEditor=Panel(parent,"roster-editor",Vector2.zero,Vector2.one,new Color32(4,12,19,215));
             var card=Panel(rosterEditor.transform,"roster-editor-card",new Vector2(.305f,.16f),new Vector2(.695f,.84f),new Color32(24,38,54,255));
@@ -165,16 +176,23 @@ namespace StarTournament.ProvingGround
         int RosterDifficultyAt(int p)=>p<LocalSeatCount?botSetup.SeatDifficulty(p):botSetup.At(p-LocalSeatCount).Difficulty;
         string RosterTeamName(NativeTeam team)=>(team==NativeTeam.TeamA)^swappedTeamColors?"Синяя":"Красная";
         Color RosterTeamColor(NativeTeam team)=>(team==NativeTeam.TeamA)^swappedTeamColors?RosterBlue:RosterRed;
-        void LayoutRosterGrid(Transform content,int[] participants,int columns,float height)
+        Button[] LayoutRosterGrid(Transform content,int[] participants,int slots,int columns,float height)
         {
-            var rect=(RectTransform)content;int rows=Math.Max(2,Mathf.CeilToInt(participants.Length/(float)columns));
-            rect.sizeDelta=new Vector2(0,rows*height);
-            for(int i=0;i<participants.Length;i++)
+            var cards=participants.Select(i=>rosterCards[i]).ToList();
+            while(cards.Count<slots){var empty=rosterEmpty[rosterEmptyUsed++];empty.gameObject.SetActive(true);cards.Add(empty);}
+            var rect=(RectTransform)content;int rows=Math.Max(1,Mathf.CeilToInt(cards.Count/(float)columns));
+            float available=((RectTransform)content.parent).rect.height;
+            float rowHeight=Mathf.Min(height,available/2f),gridHeight=rows*rowHeight;
+            float inset=Mathf.Max(0,(available-gridHeight)*.5f);
+            rect.sizeDelta=new Vector2(0,Mathf.Max(available,gridHeight));
+            for(int i=0;i<cards.Count;i++)
             {
-                var card=rosterCards[participants[i]];card.transform.SetParent(content,false);
-                var r=(RectTransform)card.transform;r.anchorMin=new Vector2((i%columns)/(float)columns,1);r.anchorMax=new Vector2((i%columns+1)/(float)columns,1);r.pivot=new Vector2(.5f,1);
-                r.offsetMin=new Vector2(7,-(i/columns+1)*height+8);r.offsetMax=new Vector2(-7,-(i/columns)*height-8);
+                var card=cards[i];card.transform.SetParent(content,false);
+                float rowInset=(columns-Math.Min(columns,cards.Count-(i/columns)*columns))*.5f;
+                var r=(RectTransform)card.transform;r.anchorMin=new Vector2((rowInset+i%columns)/columns,1);r.anchorMax=new Vector2((rowInset+i%columns+1)/columns,1);r.pivot=new Vector2(.5f,1);
+                r.offsetMin=new Vector2(8,-inset-(i/columns+1)*rowHeight+8);r.offsetMax=new Vector2(-8,-inset-(i/columns)*rowHeight-8);
             }
+            return cards.ToArray();
         }
         void RefreshRosterUi()
         {
@@ -192,13 +210,16 @@ namespace StarTournament.ProvingGround
                 rosterIcons[i].text=bot?"Б":"И";var color=teams?RosterTeamColor(RosterTeamAt(i)):(Color)MenuGold;
                 rosterIcons[i].color=color;rosterStripes[i].color=color;
             }
+            foreach(var empty in rosterEmpty)empty.gameObject.SetActive(false);rosterEmptyUsed=0;
+            Canvas.ForceUpdateCanvases();
             var all=Enumerable.Range(0,RosterTotal).ToArray();
             if(teams)
             {
                 var blue=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamA).ToArray();var red=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamB).ToArray();
-                LayoutRosterGrid(rosterBlue,blue,2,185);LayoutRosterGrid(rosterRed,red,2,185);
+                int blueSlots=Mathf.Clamp(4,blue.Length,8-red.Length);
+                lobbyRosterGroups=new[]{LayoutRosterGrid(rosterBlue,blue,blueSlots,2,190),LayoutRosterGrid(rosterRed,red,8-blueSlots,2,190)};
             }
-            else LayoutRosterGrid(rosterFfa,all,4,215);
+            else lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,8,4,190)};
             rosterAddHuman.interactable=RosterTotal<8 && LocalSeatCount<4;rosterAddBot.interactable=RosterTotal<8;
             rosterAddHuman.GetComponentInChildren<Text>().color=rosterAddHuman.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterAddBot.GetComponentInChildren<Text>().color=rosterAddBot.interactable?Color.white:(Color)new Color32(127,153,165,255);
