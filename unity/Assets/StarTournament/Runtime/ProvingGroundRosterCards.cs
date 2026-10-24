@@ -19,8 +19,7 @@ namespace StarTournament.ProvingGround
         Transform rosterFfa,rosterBlue,rosterRed,rosterPickerContent;
         ScrollRect rosterFfaScroll,rosterBlueScroll,rosterRedScroll,rosterChoiceScroll;
         GameObject rosterBluePanel,rosterRedPanel;
-        Text rosterPageTitle,rosterCount,rosterFull,rosterEditorName,rosterEditorSubtitle,rosterEditorHelp,rosterPickerHeading;
-        Text rosterBlueHeading,rosterRedHeading,rosterBlueCount,rosterRedCount;
+        Text rosterPageTitle,rosterFull,rosterEditorName,rosterEditorSubtitle,rosterEditorHelp,rosterPickerHeading;
         Button rosterAddHuman,rosterAddBot,rosterIdentity,rosterDevice,rosterTeam,rosterRemove,rosterDone,rosterPickerBack;
         Text rosterIdentityLabel,rosterDeviceLabel,rosterTeamLabel;
         int rosterEditing=-1;
@@ -83,19 +82,18 @@ namespace StarTournament.ProvingGround
             var startColors=start.colors;startColors.normalColor=startColors.highlightedColor=startColors.selectedColor=Color.white;startColors.disabledColor=new Color(.45f,.50f,.55f);start.colors=startColors;
             Label(setupPlayersPage.transform,"players-title","СОСТАВ МАТЧА",30,new Vector2(.017f,.88f),new Vector2(.62f,.98f),TextAnchor.MiddleLeft,Color.white).fontStyle=FontStyle.Bold;
             RoundRosterPanel(setupPlayersPage);RoundRosterPanel(setupSummary.transform.parent.gameObject);
-            rosterCount=Label(setupPlayersPage.transform,"roster-count","",24,new Vector2(.017f,.80f),new Vector2(.65f,.89f),TextAnchor.MiddleLeft,RosterMuted);
             rosterAddHuman=RosterButton(setupPlayersPage.transform,"roster-add-human","+ ИГРОК",new Vector2(.70f,.865f),new Vector2(.835f,.97f),AddRosterHuman);
             rosterAddBot=RosterButton(setupPlayersPage.transform,"roster-add-bot","+ БОТ",new Vector2(.845f,.865f),new Vector2(.98f,.97f),()=>{int p=LocalSeatCount+botSetup.Count;AddBot();if(LocalSeatCount+botSetup.Count>p){OpenRosterEditor(p);Select(rosterDone);}});
             rosterFull=Label(setupPlayersPage.transform,"roster-full","",20,new Vector2(.68f,.795f),new Vector2(.98f,.862f),TextAnchor.MiddleCenter,RosterMuted);
             rosterFfa=RosterScroll(setupPlayersPage.transform,"roster-ffa",new Vector2(.017f,.025f),new Vector2(.98f,.77f),out rosterFfaScroll);
             rosterBluePanel=Panel(setupPlayersPage.transform,"roster-team-blue",new Vector2(.017f,.025f),new Vector2(.49f,.77f),new Color32(23,37,52,255));
             rosterRedPanel=Panel(setupPlayersPage.transform,"roster-team-red",new Vector2(.51f,.025f),new Vector2(.98f,.77f),new Color32(23,37,52,255));
-            rosterBlueHeading=Label(rosterBluePanel.transform,"team-blue-name","",26,new Vector2(.02f,.88f),new Vector2(.76f,1),TextAnchor.MiddleLeft,RosterBlue);
-            rosterRedHeading=Label(rosterRedPanel.transform,"team-red-name","",26,new Vector2(.02f,.88f),new Vector2(.76f,1),TextAnchor.MiddleLeft,RosterRed);
-            rosterBlueCount=Label(rosterBluePanel.transform,"team-blue-count","",22,new Vector2(.76f,.88f),new Vector2(.98f,1),TextAnchor.MiddleRight,RosterMuted);
-            rosterRedCount=Label(rosterRedPanel.transform,"team-red-count","",22,new Vector2(.76f,.88f),new Vector2(.98f,1),TextAnchor.MiddleRight,RosterMuted);
-            rosterBlue=RosterScroll(rosterBluePanel.transform,"team-blue-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.88f),out rosterBlueScroll);
-            rosterRed=RosterScroll(rosterRedPanel.transform,"team-red-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.88f),out rosterRedScroll);
+            rosterBlue=RosterScroll(rosterBluePanel.transform,"team-blue-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.98f),out rosterBlueScroll);
+            rosterRed=RosterScroll(rosterRedPanel.transform,"team-red-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.98f),out rosterRedScroll);
+            rosterBluePanel.GetComponent<Image>().color=new Color32(24,64,86,255);
+            rosterRedPanel.GetComponent<Image>().color=new Color32(83,35,47,255);
+            rosterBlueScroll.GetComponent<Image>().color=Color.clear;
+            rosterRedScroll.GetComponent<Image>().color=Color.clear;
             for(int i=0;i<rosterCards.Length;i++)
             {
                 int p=i;var b=RosterButton(rosterFfa,"roster-card-"+i,"",Vector2.zero,Vector2.one,()=>OpenRosterEditor(p));rosterCards[i]=b;b.GetComponent<MenuPresentation>().Compact=false;
@@ -199,13 +197,8 @@ namespace StarTournament.ProvingGround
             {
                 var blue=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamA).ToArray();var red=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamB).ToArray();
                 LayoutRosterGrid(rosterBlue,blue,2,185);LayoutRosterGrid(rosterRed,red,2,185);
-                rosterBlueHeading.text=RosterTeamName(NativeTeam.TeamA).ToUpperInvariant()+" КОМАНДА";rosterRedHeading.text=RosterTeamName(NativeTeam.TeamB).ToUpperInvariant()+" КОМАНДА";
-                rosterBlueHeading.color=RosterTeamColor(NativeTeam.TeamA);rosterRedHeading.color=RosterTeamColor(NativeTeam.TeamB);
-                rosterBlueCount.text=blue.Length+" игр.";rosterRedCount.text=red.Length+" игр.";
             }
             else LayoutRosterGrid(rosterFfa,all,4,215);
-            int humans=botSetup.HumanCount(LocalSeatCount);
-            rosterCount.text=humans+" чел.  ·  "+(RosterTotal-humans)+" ботов  ·  "+RosterTotal+"/8 участников  ·  "+LocalSeatCount+" экр.";
             rosterAddHuman.interactable=RosterTotal<8 && LocalSeatCount<4;rosterAddBot.interactable=RosterTotal<8;
             rosterAddHuman.GetComponentInChildren<Text>().color=rosterAddHuman.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterAddBot.GetComponentInChildren<Text>().color=rosterAddBot.interactable?Color.white:(Color)new Color32(127,153,165,255);

@@ -66,7 +66,6 @@ namespace StarTournament.ProvingGround
             Layout(setupMessage.rectTransform,new Vector2(.05f,.14f),new Vector2(.95f,.19f));
             Layout((RectTransform)setupPlayersPage.transform.parent,new Vector2(.05f,.20f),new Vector2(.95f,.65f));
             Layout((RectTransform)setupPlayersPage.transform,Vector2.zero,Vector2.one);
-            Layout(rosterCount.rectTransform,new Vector2(.59f,.88f),new Vector2(.98f,.99f));rosterCount.alignment=TextAnchor.MiddleRight;
             rosterFull.gameObject.SetActive(false);
             Layout((RectTransform)rosterFfaScroll.transform,new Vector2(.01f,.015f),new Vector2(.99f,.88f));
             Layout((RectTransform)rosterBluePanel.transform,new Vector2(.01f,.015f),new Vector2(.49f,.88f));
