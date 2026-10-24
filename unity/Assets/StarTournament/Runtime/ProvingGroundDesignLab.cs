@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround
             labSavedPresentation="Баланс матча: "+selection.SelectedProfileName+"\nВерсия "+saved.Number+" · "+date;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile,LobbyProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
         void PrepareLabRegistry()
         {
@@ -181,6 +181,8 @@ namespace StarTournament.ProvingGround
             foreach(var profile in CurrentLabBundle().Profiles)
                 foreach(var descriptor in profile.Descriptors)profile.Set(descriptor.Path,saved.Get(descriptor.Path));
         }
+        // Translate presentation only; historical descriptor bytes and Lab hashes remain unchanged.
+        static string LabText(string text)=>text.Replace("Салага","Рекрут");
         static string GroupLabel(string group)
         {
             if(group=="visual-polish")return "Графика → Свет и эффекты";
@@ -197,7 +199,7 @@ namespace StarTournament.ProvingGround
                 case "death":return "Смерть → Тело";case "spawn":return "Смерть → Возрождение";case "killcam":return "Камера → Killcam";
                 case "bot-banter":return "Боты → Реплики";
                 case "bot-evaluation":return "Боты → Контрольная оценка (read-only)";case "bots":return "Боты → Восприятие";case "bot-navigation":return "Боты → Навигация";case "bot-behavior":return "Боты → Поведение";
-                case "match":return "Матч → Правила";case "score":return "Матч → Очки";case "teams":return "Матч → Команды";
+                case "lobby":return "Матч → Лобби";case "match":return "Матч → Правила";case "score":return "Матч → Очки";case "teams":return "Матч → Команды";
                 case "damage-policy":return "Оружие → Урон союзникам и себе";case "hit-zones":return "Игрок → Зоны попадания";case "presentation":return "Оформление → Сцена";case "shot-feedback":return "Оформление → Выстрел";case "audio":return "Оформление → Звук";case "music":return "Оформление → Музыка";
                 case "vector-shot-feedback":return "Оформление → Vector";case "simulation":return "Матч → Симуляция";
                 default:return GroupDisplayNames.TryGetValue(group,out var label)?label:"Оформление → "+group;
@@ -375,7 +377,7 @@ namespace StarTournament.ProvingGround
             }
             ((RectTransform)labTree).sizeDelta=new Vector2(0,i*LabTreeRowHeight);
             var fields=LabDescriptors().Where(d=>labAllChanges?Changed(d):labQuery.Length>0?
-                (GroupLabel(LabGroup(d))+" "+d.Group+" "+d.Label+" "+d.Description+" "+d.Path).IndexOf(labQuery,StringComparison.OrdinalIgnoreCase)>=0:LabGroup(d)==labGroup).ToArray();
+                (GroupLabel(LabGroup(d))+" "+d.Group+" "+LabText(d.Label)+" "+LabText(d.Description)+" "+d.Path).IndexOf(labQuery,StringComparison.OrdinalIgnoreCase)>=0:LabGroup(d)==labGroup).ToArray();
             labFieldsTitle.text=labAllChanges?"Все изменения":labQuery.Length>0?"Результаты поиска · "+fields.Length:GroupLabel(labGroup);
             i=0;foreach(var d in fields)BuildLabField(d,i++);
             if(fields.Length==0)Label(labFields,"empty",labAllChanges?"Нет изменений":"Ничего не найдено",23,new Vector2(0,.7f),Vector2.one,TextAnchor.MiddleCenter,Color.white);
@@ -387,8 +389,8 @@ namespace StarTournament.ProvingGround
         void BuildLabField(NumericDescriptor d,int index)
         {
             var row=Panel(labFields,"field-"+d.Path,Vector2.zero,Vector2.one,MenuCard);PlaceLabRow((RectTransform)row.transform,index,LabFieldRowHeight);
-            Label(row.transform,"label",d.Label,18,new Vector2(.02f,.76f),new Vector2(.56f,.98f),TextAnchor.MiddleLeft,Color.white);
-            Label(row.transform,"description",GroupLabel(LabGroup(d))+" · "+d.Description,14,new Vector2(.02f,.36f),new Vector2(.56f,.75f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
+            Label(row.transform,"label",LabText(d.Label),18,new Vector2(.02f,.76f),new Vector2(.56f,.98f),TextAnchor.MiddleLeft,Color.white);
+            Label(row.transform,"description",GroupLabel(LabGroup(d))+" · "+LabText(d.Description),14,new Vector2(.02f,.36f),new Vector2(.56f,.75f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
             bool boolean=d.Kind==LabParameterKind.Boolean;
             InputField input=null;Button down=null,up=null,booleanSwitch=null;
             if(boolean)
@@ -412,12 +414,12 @@ namespace StarTournament.ProvingGround
             string kind=d.Kind==LabParameterKind.Boolean?"Переключатель":d.Kind==LabParameterKind.Integer?"Целое число":"Дробное число";
             string releaseDefault=labParameterDefaults!=null?LabNumber(labParameterDefaults.Get(d.Path)):"недоступен · "+labParameterDefaultsError;
             string access=labHistory.SelectedProfileReadOnly?"Только чтение · профиль пакета · создайте копию":!editable?"Только чтение":labDraft.Domain(d.Path);
-            string hint=access+" · "+d.Description+"\n"+d.Path+" · "+kind+" · "+d.Unit+" · "+LabNumber(d.Minimum)+"…"+LabNumber(d.Maximum)+" · шаг "+LabNumber(d.Step)+" · Релизный Default: "+releaseDefault+
+            string hint=access+" · "+LabText(d.Description)+"\n"+d.Path+" · "+kind+" · "+d.Unit+" · "+LabNumber(d.Minimum)+"…"+LabNumber(d.Maximum)+" · шаг "+LabNumber(d.Step)+" · Релизный Default: "+releaseDefault+
                 "\nПрименение: "+LabApplicationLabel(d.Application)+(d.IsPreferenceDefault?" · личные настройки имеют приоритет":"");
             foreach(var control in new Selectable[]{input,down,up,booleanSwitch})if(control)Hint(control.gameObject,hint);
             Hint(reset.gameObject,hint+"\nВернуть значение выбранной сохранённой версии: "+LabNumber(labBaseline.Get(d.Path))+". Релизный Default не подставляется.");
             if(!editable){var info=LabButton(row.transform,"info-"+d.Path,"Описание",new Vector2(.80f,.02f),new Vector2(.98f,.20f),()=>labHint.text=hint);Hint(info.gameObject,hint);}
-            if(labAllChanges){var jump=LabButton(row.transform,"jump-"+d.Path,"Открыть поле",new Vector2(.75f,.035f),new Vector2(.98f,.32f),()=>{labAllChanges=false;labGroup=LabGroup(d);RefreshLabWorkspace();SelectLabControl(labViews[d.Path].Focus);});Hint(jump.gameObject,"Открыть "+GroupLabel(LabGroup(d))+" и выбрать поле "+d.Label);}
+            if(labAllChanges){var jump=LabButton(row.transform,"jump-"+d.Path,"Открыть поле",new Vector2(.75f,.035f),new Vector2(.98f,.32f),()=>{labAllChanges=false;labGroup=LabGroup(d);RefreshLabWorkspace();SelectLabControl(labViews[d.Path].Focus);});Hint(jump.gameObject,"Открыть "+GroupLabel(LabGroup(d))+" и выбрать поле "+LabText(d.Label));}
         }
         static string LabApplicationLabel(LabParameterApplication application)
         {
@@ -540,7 +542,7 @@ namespace StarTournament.ProvingGround
             {
                 var row=LabButton(list,"discard-change-"+descriptor.Path,"",Vector2.zero,Vector2.one,()=>{});
                 PlaceLabRow((RectTransform)row.transform,index++,76);
-                Label(row.transform,"field",GroupLabel(LabGroup(descriptor))+" · "+descriptor.Label,20,
+                Label(row.transform,"field",GroupLabel(LabGroup(descriptor))+" · "+LabText(descriptor.Label),20,
                     new Vector2(.02f,.04f),new Vector2(.64f,.96f),TextAnchor.MiddleLeft,Color.white);
                 string value=labRaw.TryGetValue(descriptor.Path,out var raw)?raw:LabNumber(labDraft.Get(descriptor.Path));
                 var values=Label(row.transform,"values",LabNumber(labBaseline.Get(descriptor.Path))+" → "+value+" "+descriptor.Unit,20,

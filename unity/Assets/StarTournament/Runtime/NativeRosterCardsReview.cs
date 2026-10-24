@@ -167,7 +167,7 @@ namespace StarTournament.ProvingGround
             yield return Capture("11-view-demoted");
             InputSystem.DisableDevice(pad);yield return null;yield return null;
             Check(!Button("Начать — четыре игрока").interactable,"Disconnected device did not block start");
-            Click("roster-card-1");Check(Text("editor-name").text=="Гость","Disconnect lost identity");Click("roster-done");
+            Click("roster-card-1");Check(Text("editor-name").text=="Без профиля","Disconnect lost identity");Click("roster-done");
             yield return Capture("12-device-lost-identity-kept");
             InputSystem.EnableDevice(pad);yield return null;yield return null;
             Check(Button("Начать — четыре игрока").interactable,"Reconnect did not restore readiness");

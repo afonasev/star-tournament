@@ -11,6 +11,7 @@ namespace StarTournament.ProvingGround
     {
         public string Id;
         public string Name;
+        public int SelectionCount;
         public float MouseDegreesPerPixel;
         public bool ShowFps;
         public int GamepadLookVersion;
@@ -44,6 +45,8 @@ namespace StarTournament.ProvingGround
                 document.Profiles.Select(p => p.Id).Distinct().Count() != document.Profiles.Count)
                 throw new InvalidDataException("Invalid player profiles document");
         }
+        public PlayerProfileRecord[] ByUsage()=>document.Profiles.OrderByDescending(p=>p.SelectionCount).ThenBy(p=>p.Name,StringComparer.OrdinalIgnoreCase).ThenBy(p=>p.Id,StringComparer.Ordinal).ToArray();
+        public void RecordSelection(string id) {var p=Find(id);if(p==null)return;if(p.SelectionCount<int.MaxValue)p.SelectionCount++;Save();}
         public PlayerProfileRecord Find(string id) => document.Profiles.FirstOrDefault(p => p.Id == id);
         public PlayerProfileRecord Create(string name, float mouseSensitivity, bool showFps)
         {
@@ -110,6 +113,7 @@ namespace StarTournament.ProvingGround
         public sealed class Guest
         {
             public readonly string Id = Guid.NewGuid().ToString("N");
+            public int Number;
             public float MouseDegreesPerPixel;
             public bool ShowFps;
             public GamepadLookSettings? GamepadLook;
@@ -151,6 +155,7 @@ namespace StarTournament.ProvingGround
         public bool ChooseProfile(int seat, int deviceId, string id, PlayerProfileCatalog catalog)
         {
             if(catalog.Find(id)==null || InUse(id,seat)) return false;
+            if(seatProfile[seat]!=id)catalog.RecordSelection(id);
             seatProfile[seat]=id; seatGuest[seat]=null; preferredProfileByDevice[deviceId]=id; return true;
         }
         public Guest ChooseGuest(int seat, int deviceId, float defaultSensitivity, bool defaultShowFps)
@@ -160,6 +165,8 @@ namespace StarTournament.ProvingGround
                 guest = new Guest { MouseDegreesPerPixel = defaultSensitivity, ShowFps = defaultShowFps };
                 guestByDevice[deviceId]=guest;
             }
+            if(guest.Number<1||seatGuest.Where((g,i)=>i!=seat).Any(g=>g!=null&&g.Number==guest.Number))
+                guest.Number=Enumerable.Range(1,4).First(n=>!seatGuest.Where((g,i)=>i!=seat).Any(g=>g!=null&&g.Number==n));
             seatProfile[seat]=null; seatGuest[seat]=guest; preferredProfileByDevice.Remove(deviceId); return guest;
         }
         public void ResetGuestPreferences(ProvingProfile defaults)

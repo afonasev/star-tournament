@@ -188,7 +188,7 @@ namespace StarTournament.ProvingGround
                         Rect(cells[r,0].rectTransform,new Vector2(.08f,0),new Vector2(Mathf.Max(.10f,iconX-iconWidth*.6f/Mathf.Max(1,row.rect.width)),1));
                         Rect(details[i].rectTransform,new Vector2(iconX+iconWidth*.7f/Mathf.Max(1,row.rect.width),0),new Vector2(nameEnd,1));
                         details[i].fontSize=Mathf.Max(8,Mathf.RoundToInt(fontSize*.55f*factor));details[i].color=Muted;
-                        details[i].text=kind==NativeParticipantKind.Bot?new[]{"Салага","Боец","Ветеран"}[Mathf.Clamp(info?.Difficulty??0,0,2)]:"FIXTURE";Fit(details[i]);
+                        details[i].text=kind==NativeParticipantKind.Bot?new[]{"Рекрут","Боец","Ветеран"}[Mathf.Clamp(info?.Difficulty??0,0,2)]:"FIXTURE";Fit(details[i]);
                     }
                     if(dead){float opacity=tuning.Get("ui.standingsDeadOpacity");cells[r,0].color=Color.Lerp(Base,identity,opacity);for(int c=1;c<8;c++)cells[r,c].color=Color.Lerp(Base,Ink,opacity);}
                 }

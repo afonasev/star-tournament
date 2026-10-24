@@ -48,7 +48,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         IEnumerator Capture(string name)
         {
             var path=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");if(string.IsNullOrEmpty(path))yield break;
-            Directory.CreateDirectory(path);yield return EditorUiCapture.Capture(ground,Path.Combine(path,name+".png"),1920,1080);
+            Directory.CreateDirectory(path);yield return new WaitForSecondsRealtime(.12f);yield return EditorUiCapture.Capture(ground,Path.Combine(path,name+".png"),1920,1080);
         }
         [UnityTest] public IEnumerator ResolutionChoicesOverlayLatePageControlsAndBlockBackgroundClicks()
         {
@@ -84,18 +84,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             using(EditorUiCapture.FixedViewport(ground,1920,1080))
             {
                 availablePad=InputSystem.AddDevice<Gamepad>();yield return null;
-                Click("main-action-0");NativeSetupFixture.UnboundHumans(ground);ground.SetMatchMode(NativeMatchMode.Teams);Click("setup-next");Click("setup-next");Click("roster-card-0");yield return null;
-                var popup=Popup("roster-picker");
+                Click("main-action-0");ground.SetMatchMode(NativeMatchMode.Teams);Click("roster-card-0");yield return null;
                 foreach(var source in new[]{"roster-identity","roster-device","roster-team"})
                 {
-                    popup.transform.SetAsFirstSibling();Click(source);yield return null;
+                    Click(source);yield return null;yield return null;
+                    var popup=Popup(source=="roster-team"?"roster-picker":"lobby-dialog");
                     Assert.That(popup.transform.GetSiblingIndex(),Is.EqualTo(popup.transform.parent.childCount-1));
-                    var choice=source=="roster-identity"?B("roster-choice-guest"):popup.GetComponentsInChildren<Button>().First(b=>b.interactable&&b.name.StartsWith("roster-choice-"));
+                    var choice=source=="roster-identity"?B("lobby-profile-none"):source=="roster-device"?B("lobby-screen-0"):popup.GetComponentsInChildren<Button>().First(b=>b.interactable&&b.name.StartsWith("roster-choice-"));
                     EventSystem.current.SetSelectedGameObject(choice.gameObject);yield return null;AssertPointerTarget(choice);
                     yield return Capture(source+"-foreground");AssertPointerTarget(choice,true);yield return null;Assert.That(popup.activeSelf,Is.False);
                 }
-                Click("roster-done");Click("roster-add-bot");popup.transform.SetAsFirstSibling();Click("roster-identity");yield return null;
-                var difficulty=B("roster-choice-difficulty-0");AssertPointerTarget(difficulty);yield return Capture("difficulty-foreground");AssertPointerTarget(difficulty,true);Assert.That(popup.activeSelf,Is.False);
+                Click("roster-done");Click("roster-add-bot");yield return null;yield return null;
+                AssertPointerTarget(B("lobby-add-difficulty-1"),true);yield return null;yield return null;
+                AssertPointerTarget(B("lobby-add-team-"+(int)NativeTeam.TeamB),true);yield return null;
+                Click("roster-card-1");yield return null;Click("roster-identity");yield return null;
+                var difficultyPopup=Popup("roster-picker");
+                var difficulty=B("roster-choice-difficulty-0");AssertPointerTarget(difficulty);yield return Capture("difficulty-foreground");AssertPointerTarget(difficulty,true);Assert.That(difficultyPopup.activeSelf,Is.False);
             }
         }
         [UnityTest] public IEnumerator LabProfileAndRevisionSelectorsReceivePointerAboveWorkspace()

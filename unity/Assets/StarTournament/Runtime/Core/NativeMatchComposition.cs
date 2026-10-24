@@ -16,7 +16,7 @@ namespace StarTournament.ProvingGround
         public int Difficulty;
         public NativeParticipantInfo(NativeParticipantKind kind,string name,Color color,int difficulty=-1)
         { Kind=kind;Name=name;Color=color;Difficulty=difficulty; }
-        public string Label => Kind==NativeParticipantKind.Bot ? Name+" · "+new[]{"Салага","Боец","Ветеран"}[Difficulty] :
+        public string Label => Kind==NativeParticipantKind.Bot ? Name+" · "+new[]{"Рекрут","Боец","Ветеран"}[Difficulty] :
             Name+(Kind==NativeParticipantKind.LocalHuman?" · ИГРОК":" · FIXTURE");
     }
 

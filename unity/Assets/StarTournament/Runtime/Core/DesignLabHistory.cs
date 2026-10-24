@@ -379,6 +379,9 @@ namespace StarTournament.ProvingGround
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=this.shipped;
+            // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
+            if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
             // Reconstruct exact trusted pre-unification metadata before older additive transforms.
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
                 ((p.Id=="orbital-league-v1"||p.Id=="orbital-league-ring-v1")&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??11)<11)||

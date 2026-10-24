@@ -92,7 +92,7 @@ namespace StarTournament.ProvingGround
         public void SetSeatDifficulty(int seat,int difficulty)
         {
             if(phase!=Phase.Setup)return;
-            botSetup.SetSeatDifficulty(seat,difficulty);lastBotDifficulty=difficulty;RefreshInterface();
+            botSetup.SetSeatDifficulty(seat,difficulty);RefreshInterface();
         }
         void SyncHumanSeats()
         {
@@ -101,13 +101,13 @@ namespace StarTournament.ProvingGround
         public NativeMatchComposition SetupComposition()=>botSetup.Build(LocalSeatCount,SetupMode,teamAssignments,swappedTeamColors);
         public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;var team=SmallerRosterTeam(LocalSeatCount);botSetup.Add(LocalSeatCount);if(SetupMode==NativeMatchMode.Teams)botSetup.SetTeam(botSetup.Count-1,team);botSetup.SetDifficulty(botSetup.Count-1,lastBotDifficulty);setupError=null;RefreshInterface();}
         public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();if(setupStep==2)FocusRosterCard(LocalSeatCount+Math.Min(index,botSetup.Count-1));else Select(setupNext);}
-        public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);lastBotDifficulty=value;RefreshInterface();}
+        public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);RefreshInterface();}
         public void SetBotTeam(int index,NativeTeam value){if(phase!=Phase.Setup)return;botSetup.SetTeam(index,value);setupError=null;RefreshInterface();}
         public void SetMatchMode(NativeMatchMode mode)
         {
             if(phase!=Phase.Setup) return;
             if(mode!=NativeMatchMode.Ffa && mode!=NativeMatchMode.Teams) throw new ArgumentException("Invalid mode");
-            bool changed=SetupMode!=mode;SetupMode=mode;if(changed)ApplyModeTarget();setupError=null;RefreshInterface();
+            SetupMode=mode;setupError=null;RefreshInterface();
         }
         public void SetTeam(int seat,NativeTeam team)
         {
@@ -524,7 +524,7 @@ namespace StarTournament.ProvingGround
             UpdateRosterInput();
             if (phase == Phase.Setup)
             {
-                PollRosterShortcuts();if(setupStep==2)input.PollSetup();PollSetupStart();
+                input.RefreshConnections();PollRosterShortcuts();PollSetupStart();
             }
             else if (phase == Phase.Running && !diagnostic)
             {
@@ -888,7 +888,7 @@ namespace StarTournament.ProvingGround
                 if(viewportRoots[i]) viewportRoots[i].gameObject.SetActive(active);
                 standings[i]?.Root.SetActive(false);
                 if(!active || !cameras[i]) continue;
-                var r=LocalSeatLayout.Viewport(renderedCount,i); cameras[i].rect=r;
+                var r=LocalSeatLayout.Viewport(renderedCount,LobbyPosition(i,renderedCount)); cameras[i].rect=r;
                 if(viewportRoots[i]) Layout(viewportRoots[i],new Vector2(r.xMin,r.yMin),new Vector2(r.xMax,r.yMax));
                 if(standings[i]!=null) Layout((RectTransform)standings[i].Root.transform,
                     new Vector2(r.xMin,r.yMin+r.height*.12f),new Vector2(r.xMax,r.yMin+r.height*.88f));
@@ -1421,7 +1421,7 @@ namespace StarTournament.ProvingGround
                     seatKinds[i].transform.parent.gameObject.SetActive(i<LocalSeatCount);
                     seatKinds[i].GetComponentInChildren<Text>().text="Экран "+(i+1)+" · "+(botSetup.IsAi(i)?"AI":"Человек")+"  ›";
                     seatDifficulties[i].gameObject.SetActive(botSetup.IsAi(i));
-                    seatDifficulties[i].GetComponentInChildren<Text>().text=new[]{"Салага","Боец","Ветеран"}[botSetup.SeatDifficulty(i)]+"  ›";
+                    seatDifficulties[i].GetComponentInChildren<Text>().text=new[]{"Рекрут","Боец","Ветеран"}[botSetup.SeatDifficulty(i)]+"  ›";
                 }
             }
             if(botPanel)
@@ -1430,7 +1430,7 @@ namespace StarTournament.ProvingGround
                 for(int i=0;i<botRows.Length;i++)
                 {
                     botRows[i].SetActive(i<botSetup.Count);if(i>=botSetup.Count)continue;
-                    var bot=botSetup.At(i);botDifficulty[i].GetComponentInChildren<Text>().text=bot.Name+" · "+new[]{"Салага","Боец","Ветеран"}[bot.Difficulty]+"  ›";
+                    var bot=botSetup.At(i);botDifficulty[i].GetComponentInChildren<Text>().text=bot.Name+" · "+new[]{"Рекрут","Боец","Ветеран"}[bot.Difficulty]+"  ›";
                     botTeams[i].gameObject.SetActive(SetupMode==NativeMatchMode.Teams);
                     botTeams[i].GetComponentInChildren<Text>().text=NativeStandingsView.TeamName(bot.Team);
                     botTeams[i].GetComponent<Image>().color=NativeStandingsView.TeamColor(bot.Team,swappedTeamColors);

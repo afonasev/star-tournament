@@ -53,6 +53,21 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(frozen.SeatOf(1),Is.EqualTo(1));Assert.That(draft.HumanCount(3),Is.EqualTo(1));
             Assert.Throws<ArgumentOutOfRangeException>(()=>draft.IsAi(4));Assert.Throws<ArgumentException>(()=>draft.SetSeatDifficulty(0,3));
         }
+        [Test] public void BotTransfersPreserveIdentityNameDifficultyTeamAndUniqueAllocation()
+        {
+            var draft=new NativeBotSetup();draft.Add(1);draft.SetDifficulty(0,2);draft.SetTeam(0,NativeTeam.TeamB);
+            var original=draft.At(0);draft.Remove(0);draft.SetSeatBot(1,original);
+            draft.Add(2);Assert.That(draft.At(0).Name,Is.Not.EqualTo(original.Name));
+            var incoming=draft.At(0);var outgoing=draft.SeatBot(1,NativeTeam.TeamB);
+            draft.SetSeatBot(1,incoming);draft.ReplaceBot(0,outgoing);
+            Assert.That(draft.At(0),Is.EqualTo(original));Assert.That(draft.SeatBot(1,incoming.Team),Is.EqualTo(incoming));
+            draft.RemoveSeat(1,2);draft.AddExisting(1,incoming);
+            Assert.That(draft.At(1),Is.EqualTo(incoming));
+            Assert.That(draft.Build(1,NativeMatchMode.Teams,teams,false).Participant(1).Name,Is.EqualTo(original.Name));
+            draft.Remove(0);draft.SetSeatBot(0,original);
+            while(draft.Count<7)draft.Add(1);
+            Assert.That(draft.Build(1,NativeMatchMode.Ffa,teams,false).Read().Participants.Select(p=>p.Name).Distinct().Count(),Is.EqualTo(8));
+        }
         [Test] public void AllAiViewsRestoreWithEightDistinctBotsAndFrozenDifficulty()
         {
             for(int views=1;views<=4;views++)

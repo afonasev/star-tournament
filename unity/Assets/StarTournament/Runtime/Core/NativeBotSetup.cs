@@ -7,13 +7,14 @@ namespace StarTournament.ProvingGround
     /// <summary>Editable setup data; Build returns a detached, validated session composition.</summary>
     public sealed class NativeBotSetup
     {
-        public struct Bot { public string Name; public int Difficulty; public NativeTeam Team; }
+        public struct Bot { public string Id; public string Name; public int Difficulty; public NativeTeam Team; }
         readonly List<Bot> bots=new List<Bot>();
         // View ownership is authored separately from the additional bot roster.
         // A view may be bot-driven, but it never becomes a diagnostic fixture.
+        readonly Bot[] seatBots=new Bot[NativeMatchComposition.MaximumLocalSeats];
         readonly bool[] aiSeats=new bool[NativeMatchComposition.MaximumLocalSeats];
         readonly int[] seatDifficulties=Enumerable.Repeat((int)NativeBotDifficulty.Normal,NativeMatchComposition.MaximumLocalSeats).ToArray();
-        static readonly string[] Names={"Vega","Orion","Nova","Atlas","Lyra","Sirius","Rigel"};
+        static readonly string[] Names={"Vega","Orion","Nova","Atlas","Lyra","Sirius","Rigel","Altair"};
         public int Count=>bots.Count;
         public Bot At(int index)=>bots[index];
         public bool IsAi(int seat)
@@ -22,14 +23,23 @@ namespace StarTournament.ProvingGround
         }
         public void SetAi(int seat,bool value)
         {
-            RequireSeat(seat);aiSeats[seat]=value;
+            RequireSeat(seat);
+            if(value&&!aiSeats[seat])
+            {
+                string preferred="Бот "+(seat+1);
+                string name=seatBots.Any(b=>b.Name==preferred)||bots.Any(b=>b.Name==preferred)
+                    ?Enumerable.Range(1,8).Select(n=>"Бот "+n).First(n=>seatBots.All(b=>b.Name!=n)&&bots.All(b=>b.Name!=n)):preferred;
+                seatBots[seat]=new Bot{Id=Guid.NewGuid().ToString("N"),Name=name};
+            }
+            if(!value)seatBots[seat]=default;
+            aiSeats[seat]=value;
         }
         public void RemoveSeat(int seat,int views)
         {
             RequireSeat(seat);
             if(views<=1 || views>NativeMatchComposition.MaximumLocalSeats || seat>=views)throw new ArgumentOutOfRangeException(nameof(views));
-            for(int i=seat;i<views-1;i++){aiSeats[i]=aiSeats[i+1];seatDifficulties[i]=seatDifficulties[i+1];}
-            aiSeats[views-1]=false;seatDifficulties[views-1]=(int)NativeBotDifficulty.Normal;
+            for(int i=seat;i<views-1;i++){aiSeats[i]=aiSeats[i+1];seatDifficulties[i]=seatDifficulties[i+1];seatBots[i]=seatBots[i+1];}
+            seatBots[views-1]=default;aiSeats[views-1]=false;seatDifficulties[views-1]=(int)NativeBotDifficulty.Normal;
         }
         public int SeatDifficulty(int seat)
         {
@@ -54,8 +64,23 @@ namespace StarTournament.ProvingGround
         public void Add(int views)
         {
             if(!CanAdd(views))throw new ArgumentException("Participant limit reached");
-            string name=Names.First(n=>bots.All(b=>b.Name!=n));
-            bots.Add(new Bot{Name=name,Difficulty=(int)NativeBotDifficulty.Normal,Team=(views+Count)%2==0?NativeTeam.TeamA:NativeTeam.TeamB});
+            string name=Names.First(n=>bots.All(b=>b.Name!=n)&&seatBots.All(b=>b.Name!=n));
+            bots.Add(new Bot{Id=Guid.NewGuid().ToString("N"),Name=name,Difficulty=(int)NativeBotDifficulty.Normal,Team=(views+Count)%2==0?NativeTeam.TeamA:NativeTeam.TeamB});
+        }
+        public Bot SeatBot(int seat,NativeTeam team)
+        {
+            RequireSeat(seat);if(!aiSeats[seat])throw new InvalidOperationException("Seat is human");
+            var bot=seatBots[seat];bot.Difficulty=seatDifficulties[seat];bot.Team=team;return bot;
+        }
+        public void SetSeatBot(int seat,Bot bot)
+        {
+            SetAi(seat,true);SetSeatDifficulty(seat,bot.Difficulty);seatBots[seat]=bot;
+        }
+        public void ReplaceBot(int index,Bot bot)=>bots[index]=bot;
+        public void AddExisting(int views,Bot bot)
+        {
+            if(!CanAdd(views))throw new ArgumentException("Participant limit reached");
+            bots.Add(bot);
         }
         public void Remove(int index)=>bots.RemoveAt(index);
         public void SetDifficulty(int index,int difficulty)
@@ -81,7 +106,7 @@ namespace StarTournament.ProvingGround
                 {
                     bool ai=aiSeats[p];
                     return new NativeParticipantInfo(ai?NativeParticipantKind.Bot:NativeParticipantKind.LocalHuman,
-                        ai?"Бот "+(p+1):"Игрок "+(p+1),NativeStandingsView.Identity(snapshot,p,swapped),ai?seatDifficulties[p]:-1);
+                        ai?seatBots[p].Name:"Игрок "+(p+1),NativeStandingsView.Identity(snapshot,p,swapped),ai?seatDifficulties[p]:-1);
                 }
                 var bot=bots[p-views];
                 return new NativeParticipantInfo(NativeParticipantKind.Bot,bot.Name,NativeStandingsView.Identity(snapshot,p,swapped),bot.Difficulty);

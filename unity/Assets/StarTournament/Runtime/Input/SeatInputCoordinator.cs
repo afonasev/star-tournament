@@ -97,9 +97,10 @@ namespace StarTournament.ProvingGround
             }
             JoinRejected?.Invoke(device);
         }
+        public void RefreshConnections(){if(HasKeyboard&&(pairedMouse==null||!pairedMouse.added)&&Mouse.current!=null)pairedMouse=Mouse.current;}
         public void PollSetup()
         {
-            if(HasKeyboard && (pairedMouse == null || !pairedMouse.added) && Mouse.current != null) pairedMouse=Mouse.current;
+            RefreshConnections();
             if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame && Mouse.current != null) Join(Keyboard.current);
             foreach (var pad in Gamepad.all) if (pad.buttonNorth.wasPressedThisFrame) Join(pad);
         }
