@@ -22,11 +22,11 @@ namespace StarTournament.ProvingGround.Tests
             NativeVisualPresentation visual=null;
             try
             {
-                arena.Build(AuthoredArenaCatalog.Freeze(WellArenaCatalog.Id,movement),movement,art);yield return null;
+                arena.Build(ArenaFreezeSnapshot.Create(WellArenaRevisionFour.Build(),movement),movement,art);yield return null;
                 visual=root.AddComponent<NativeVisualPresentation>();visual.Bind(movement,arena.transform,light,new[]{camera});yield return null;yield return null;
                 var skin=arena.GetComponentInChildren<WellArenaPresentation>();var filters=skin.GetComponentsInChildren<MeshFilter>();
-                Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())));
-                // Compare to durable pre-garden bytes, rather than just rebuilding the new authoring twice.
+                Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaRevisionFour.Build())));
+                // Keep the original pre-garden revision-4 contract exact; revision 5 adds weapon pickups intentionally.
                 var baseline=JsonUtility.FromJson<ArenaDefinition>(File.ReadAllText(Path.GetFullPath(Path.Combine(Application.dataPath,"StarTournament/Tests/EditMode/Fixtures/well-daylight-arena.json"))));
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(baseline)));
                 Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);

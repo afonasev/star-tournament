@@ -104,7 +104,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator ArrowsChooseMapAEditsRulesStartAdvancesAndBPreservesDraft()
         {
             yield return Load();Assert.That(Focus,Is.EqualTo("arena-choice-0"));
-            Assert.That(Reachable(),Is.EquivalentTo(new[]{"arena-choice-0","arena-choice-1","arena-choice-2"}));
+            Assert.That(Reachable(),Is.EquivalentTo(new[]{"arena-choice-0","arena-choice-1","arena-choice-2","arena-choice-3"}));
             yield return Press(GamepadButton.DpadDown);
             Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));Assert.That(Focus,Is.EqualTo("arena-choice-1"));
             Assert.That(B("arena-choice-1").GetComponent<Image>().color,Is.Not.EqualTo(B("arena-choice-0").GetComponent<Image>().color));

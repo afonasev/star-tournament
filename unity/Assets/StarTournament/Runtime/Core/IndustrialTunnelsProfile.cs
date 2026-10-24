@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateIndustrialTunnelsPresentation()
         {
-            var p=new ProvingProfile{id=TunnelsArtId,version=2};
+            var p=new ProvingProfile{id=TunnelsArtId,version=4};
             void V(string key,string group,string label,string unit,float min,float max,float step,float value)
                 =>p.Add("tunnels."+key,group,label,"Технические тоннели: "+label+". Управляет оформлением, не меняет collision или предметы.",unit,min,max,step,value);
             V("light.fill","tunnel-light","Рассеянный свет","ratio",.05f,.8f,.01f,.32f);
@@ -37,12 +37,13 @@ namespace StarTournament.ProvingGround
             V("wayfinding.signHeight","tunnel-wayfinding","Высота указателя выхода","m",.35f,.75f,.05f,.55f);
             V("wayfinding.approach","tunnel-wayfinding","Продолжение краски в тоннель","m",1,4,.5f,3);
             V("wayfinding.ringRadius","tunnel-wayfinding","Радиус маркировки центра","m",1.5f,3,.1f,2.2f);
+            AddPickupMarkings(p,"tunnels.",1.35f,2,.012f);
             return p;
         }
         internal ProvingProfile BeforeTunnelWayfinding()
         {
             if(Id!=TunnelsArtId||Version<2)return this;
-            var previous=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));previous.version=1;
+            var previous=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(BeforeArenaPickupMarkings()));previous.version=1;
             previous.descriptors.RemoveAll(d=>d.Path.StartsWith("tunnels.wayfinding.",System.StringComparison.Ordinal));
             previous.values.RemoveAll(v=>v.Path.StartsWith("tunnels.wayfinding.",System.StringComparison.Ordinal));
             return previous;

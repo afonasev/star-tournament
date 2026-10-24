@@ -261,12 +261,14 @@ namespace StarTournament.ProvingGround
         }
         void PickupSigns(ArenaDefinition d)
         {
+            var markingSettings=p.Version>=6?p:ProvingProfile.CreateLunarPresentation();
+            var paint=Mat("Lunar white pickup paint",Color.white,null,0,true);
+            owned.Add(ArenaPickupMarkings.Build(transform,d,paint,markingSettings.Get("lunar.pickupRingRadius"),markingSettings.Get("lunar.pickupRingWidth"),item=>markingSettings.Get("lunar.pickupRingHeight")+(item.Anchor.y==0?.054f:0)));
             foreach(var item in d.Pickups)
             {
                 // Yard deposits reach 0.053 m; the plate extends down to the real floor.
                 float pavingLift=item.Anchor.y==0?.054f:0;
                 var c=item.Anchor+Vector3.up*(.004f+pavingLift);
-                Ring(item.Kind==ArenaPickupKind.Cutter?ochre:white,c,.78f,Vector3.up,.008f);
                 var centre=c+new Vector3(0,0,-.9f);
                 // A flush plate also supports the complete glyph on an open balcony grating.
                 Box(graphite,centre-Vector3.up*(pavingLift*.5f),new Vector3(1.2f,.008f+pavingLift,.48f));

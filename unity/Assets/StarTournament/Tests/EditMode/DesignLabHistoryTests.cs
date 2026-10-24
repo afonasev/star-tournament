@@ -348,6 +348,18 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TestCase("BeforeBloodIntensityIncrease")]
         [TestCase("BeforeFootstepMix")]
         [TestCase("BeforeEquipmentReadability")]
+        [TestCase("BeforeVectorFighter")]
+        [TestCase("BeforeArticulatedFingerGrips")]
+        [TestCase("BeforeRefinedHandAnatomy")]
+        [TestCase("BeforeStableSupportGrip")]
+        [TestCase("BeforeAlignedSupportWrist")]
+        [TestCase("BeforeClosedVerticalGrips")]
+        [TestCase("BeforePlantedSteps")]
+        [TestCase("BeforeVerticalSupportGrips")]
+        [TestCase("BeforeAnatomicalGrips")]
+        [TestCase("BeforeWeaponGripFits")]
+        [TestCase("BeforePrimaryGripFit")]
+        [TestCase("BeforeDiffuseEquipmentFill")]
         [TestCase("BeforeMediumWeaponSwitch")]
         public void OwnHistoryKeepsEveryCompatibleSavedValueAcrossFactoryRetunes(string legacyMethod)
         {

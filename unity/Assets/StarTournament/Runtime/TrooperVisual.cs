@@ -15,11 +15,15 @@ namespace StarTournament.ProvingGround
         AnimationClipPlayable[] playable;
         ProvingProfile profile;
         OrbitalGripPose equipmentGrip;
+        VectorAirbornePose airborne;
+        VectorGroundedGait gait;
         readonly double[] starts=new double[7]; // Fixed clip contract, not tunable gameplay data.
         readonly float[] weights=new float[7], transitionFrom=new float[7];
         double transitionAt,walkClock,walkPhase;
         float walkWeight;
         public Vector3 WalkOffset {get;private set;}
+        // Keep the existing ground-step contract independent from the additive airborne pose.
+        public Vector3 ViewOffset => WalkOffset+(airborne?.ViewOffset??Vector3.zero);
 
         int active=-1, life=-1;
         float health;
@@ -60,8 +64,10 @@ namespace StarTournament.ProvingGround
         public ProvingProfile Tuning => profile;
         public DeathRagdoll Ragdoll {get;internal set;}
         public string State => Ragdoll!=null?"ragdoll":active<0?"uninitialized":ClipNames[active];
+        public string AirborneState => airborne?.State??"grounded";
         public double SampleTime { get; private set; }
         public bool GraphValid => graph.IsValid();
+        public WeaponId EquippedWeapon {get;set;}=WeaponId.Rifle;
         public int PoseRevision { get; private set; }
         public void Initialize(AnimationClip[] clips,ProvingProfile tuning,bool view=false)
         {
@@ -75,6 +81,8 @@ namespace StarTournament.ProvingGround
             animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
             animator.Rebind();
             equipmentGrip=new OrbitalGripPose(animator.transform);
+            airborne=new VectorAirbornePose(animator.transform,transform,profile,firstPerson);
+            gait=firstPerson?null:new VectorGroundedGait(animator.transform,transform,profile);
             graph=PlayableGraph.Create("trooper-presentation"); graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
             mixer=AnimationMixerPlayable.Create(graph,clips.Length);
             playable=new AnimationClipPlayable[clips.Length];
@@ -92,7 +100,7 @@ namespace StarTournament.ProvingGround
         {
             corpse=false; life=-1; active=-1; health=0;
             firedAt=hitAt=double.NegativeInfinity;
-            ClearHit();
+            ClearHit();airborne?.Reset(clock);gait?.Reset(clock);
             walkClock=clock;walkPhase=0;walkWeight=0;WalkOffset=Vector3.zero;
             Array.Clear(weights,0,weights.Length); Array.Clear(starts,0,starts.Length);
             Sample(firstPerson?3:0,clock,true);
@@ -101,7 +109,7 @@ namespace StarTournament.ProvingGround
         public void BeginDeath(double clock)
         {
             corpse=true; active=-1; Array.Clear(weights,0,weights.Length); Sample(6,clock,true);
-            ClearHit();WalkOffset=Vector3.zero;
+            ClearHit();airborne?.Reset(clock);gait?.Reset(clock);WalkOffset=Vector3.zero;
         }
         public void Render(double clock,Vector3 velocity,float currentHealth,int currentLife,bool grounded=true)
         {
@@ -111,8 +119,11 @@ namespace StarTournament.ProvingGround
             if(currentHealth<health&&(firstPerson||hitProfile==null)) { hitAt=clock; starts[5]=clock; }
             health=currentHealth;
             float speed=new Vector2(velocity.x,velocity.z).magnitude;
+            airborne.Update(clock,velocity,grounded);
+            gait?.Update(clock,grounded);
             if(firstPerson)UpdateWalk(clock,speed,grounded);
-            int next=firstPerson?3:speed<profile.Get("animation.walkThreshold")?0:speed<profile.Get("animation.runThreshold")?1:2;
+            // Body motion has no art-tuned idle dead zone; this epsilon rejects only numeric noise.
+            int next=firstPerson?3:!grounded||speed<.00001f?0:speed<profile.Get("animation.runThreshold")?1:2;
             if(clock-firedAt<profile.Get("animation.aimHoldSeconds")) next=3;
             if(clock-firedAt<Clips[4].length) next=4;
             if(clock-hitAt<Clips[5].length) next=5;
@@ -151,6 +162,7 @@ namespace StarTournament.ProvingGround
                 if(i==active) SampleTime=time;
             }
             if(immediate) Array.Copy(weights,transitionFrom,weights.Length);
+            equipmentGrip?.RestorePrimary();
             graph.Evaluate(0);
             if(!corpse&&chest&&hitProfile!=null)
             {
@@ -160,11 +172,12 @@ namespace StarTournament.ProvingGround
                 var actorToParent=Quaternion.Inverse(chest.parent.rotation)*transform.rotation;
                 chest.localRotation=(actorToParent*impulse*Quaternion.Inverse(actorToParent))*chest.localRotation;
             }
-            if(!corpse)equipmentGrip?.Apply(profile);
+            if(!corpse){airborne?.Apply();gait?.Apply(clock);equipmentGrip?.Apply(profile,EquippedWeapon);}
             PoseRevision++;
         }
         public void Release()
         {
+            equipmentGrip?.RestorePrimary();
             if(graph.IsValid()) graph.Destroy();
             active=-1;
         }

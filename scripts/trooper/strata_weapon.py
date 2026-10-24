@@ -30,9 +30,9 @@ def build(api):
     box('Strata continuous chassis', (0, -.47, .115), (.194, 1.08, .23), navy, .022)
     box('Strata raised receiver', (0, -.35, .275), (.19, .86, .16), navy, .017)
     box('Strata grip bridge', (0, -.025, -.030), (.148, .29, .20), navy, .020)
-    # The preserved right palm is offset to the receiver's left side. This
-    # continuous rubber swell fills the palm, while fingers close below it.
-    box('Strata primary palm grip', (-.086, -.07, -.185), (.153, .28, .22), rubber, .026)
+    # Compact palm swell leaves room for the fixed VECTOR fingers to flex
+    # naturally around the central grip (approved F14 clearance correction).
+    box('Strata primary palm grip', (-.03225, -.005, -.185), (.0455, .15, .22), rubber, .026)
     box('Strata foregrip bridge', (0, -.60, -.023), (.165, .58, .145), navy, .017)
     axial_shell('Strata grip', [(.045,-.26,.050,.045),(.017,-.22,.063,.065),(-.023,-.14,.065,.10),(-.058,-.07,.052,.07)], rubber)
     box('Strata trigger well', (0, -.19, -.125), (.115, .15, .095), dark, .012)

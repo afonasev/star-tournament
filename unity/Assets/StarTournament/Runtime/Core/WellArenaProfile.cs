@@ -2,8 +2,9 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
-        internal void SetIdentityForWell(int revision=4)
+        internal void SetIdentityForWell(int revision=5)
         {id="well-authoring-v1";version=revision;foreach(var d in descriptors){d.Path="well.map."+d.Path;d.Description="Колодец, "+(revision==1?"планировка 02":"структура 03")+": immutable геометрия; изменения требуют новой ревизии и QA.";}foreach(var v in values)v.Path="well.map."+v.Path;}
+        internal ProvingProfile BeforeWellSecondFloorWeapons()=>id=="well-authoring-v1"?WellArenaRevisionFour.AuthoringProfile():this;
         internal ProvingProfile BeforeWellFurniture()=>id=="well-authoring-v1"?WellArenaRevisionTwo.AuthoringProfile():this;
         internal ProvingProfile BeforeWellCorridorCover()=>id=="well-authoring-v1"?WellArenaRevisionThree.AuthoringProfile():this;
         internal ProvingProfile BeforeWellStructure()=>id=="well-authoring-v1"?WellArenaRevisionOne.AuthoringProfile():this;
@@ -61,7 +62,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateWellDefault()
         {
-            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=5};
+            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=6};
             void V(string key,string group,string label,string desc,string unit,float min,float max,float step,float value)=>p.Add("well."+key,group,label,desc,unit,min,max,step,value);
             V("liftSpeed","well-lifts","Скорость лифта","Быстрый рейс; влияет на окно выхода на втором этаже.","m/s",1,8,.1f,4);
             V("idleDepartureSeconds","well-lifts","Автоотправка пустого лифта","Игровое время простоя пустой платформы до рейса к противоположному крайнему этажу; посадка сбрасывает таймер.","s",1,120,1,15);
@@ -92,16 +93,28 @@ namespace StarTournament.ProvingGround
             V("fittingDepth","well-art","Объём приборов","Масштаб глубины корпуса: от почти плоской панели до объёмного прибора; детали выступают не более 20 см, только на сплошной стене.","m",.06f,.16f,.01f,.14f);
             V("contactShade","well-light","Объём стыков","Затенение рассеянного света в реальных углах: ноль отключает, единица даёт полный контактный объём.","ratio",0,1,.05f,.9f);
             WellDaylightDescriptors(p);
+            // Maximum outer radius fits the narrowest existing H bridge without moving any pickup.
+            V("pickupRingRadius","well-pickups","Радиус круга предмета","Белая напольная разметка всех точек, в стиле Combat Bowl; ограничена шириной Н-моста.","m",.5f,1.4f,.05f,1.35f);
+            V("pickupRingWidth","well-pickups","Толщина круга предмета","Ширина постоянной белой линии, не влияет на радиус подбора.","m",.02f,.15f,.01f,.06f);
+            V("pickupRingHeight","well-pickups","Высота краски над полом","Устраняет мерцание и скрытие разметки под плитняком сада, без коллизии.","m",.035f,.06f,.005f,.04f);
             return p;
         }
 
         internal static readonly string[] WellDaylightChanged={"well.daylight","well.innerAngle","well.fill","well.lamp","well.lampRange","well.daylightShadow"};
         internal static readonly float[] WellDaylightPrevious={.8f,100,.42f,7,12,.45f};
         static readonly string[] WellDaylightAdded={"sunPitch","sunYaw","sunRed","sunGreen","sunBlue","fillRed","fillGreen","fillBlue","lampShadow","localLightScale","gradingExposure","bloomScale"};
+        internal ProvingProfile BeforeWellPickupMarkings()
+        {
+            if(id!="well-gameplay-presentation-v1"||version<6)return this;
+            var copy=DetachedCopy();copy.version=5;
+            foreach(var path in new[]{"well.pickupRingRadius","well.pickupRingWidth","well.pickupRingHeight"})
+            {copy.descriptors.RemoveAll(d=>d.Path==path);copy.values.RemoveAll(v=>v.Path==path);}
+            return copy;
+        }
         internal ProvingProfile BeforeWellDaylight()
         {
             if(id!="well-gameplay-presentation-v1"||version<5)return this;
-            var copy=DetachedCopy();copy.version=4;
+            var copy=BeforeWellPickupMarkings().DetachedCopy();copy.version=4;
             foreach(var path in WellDaylightAdded){copy.descriptors.RemoveAll(d=>d.Path=="well."+path);copy.values.RemoveAll(v=>v.Path=="well."+path);}
             for(int i=0;i<WellDaylightChanged.Length;i++){copy.FindDescriptor(WellDaylightChanged[i]).DefaultValue=WellDaylightPrevious[i];copy.Set(WellDaylightChanged[i],WellDaylightPrevious[i]);}
             copy.FindDescriptor("well.fill").Step=.05f;copy.FindDescriptor("well.lamp").Maximum=50;

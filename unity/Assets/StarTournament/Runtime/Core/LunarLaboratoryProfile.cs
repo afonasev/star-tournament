@@ -18,8 +18,8 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeLunarOpenCentre()=>Id=="lunar-laboratory-authoring-v1"?LunarLaboratoryCatalog.BeforeOpenCentreAuthoring():this;
         internal ProvingProfile BeforeLunarLighting()
         {
-            if(Id!="lunar-laboratory-presentation-v1"||Version!=4)return this;
-            var old=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            if(Id!="lunar-laboratory-presentation-v1"||Version<4)return this;
+            var old=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforeArenaPickupMarkings()));
             var added=new[]{"lunar.officeSpotRange","lunar.officeFillRange","lunar.officeInnerAngle","lunar.stairLamp","lunar.stairFill"};
             old.descriptors.RemoveAll(d=>added.Contains(d.Path));old.values.RemoveAll(v=>added.Contains(v.Path));
             old.version=3;old.Set("lunar.officeLamp",18);old.Set("lunar.officeFill",2.5f);
@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateLunarPresentation()
         {
-            var p=new ProvingProfile{id="lunar-laboratory-presentation-v1",version=4};
+            var p=new ProvingProfile{id="lunar-laboratory-presentation-v1",version=6};
             void V(string key,string label,string unit,float min,float max,float step,float value)=>p.Add("lunar."+key,"lunar-presentation",label,"Лунная лаборатория: "+label+"; оформление не меняет физические контракты.",unit,min,max,step,value);
             V("navigationClearance","Запас маршрута от стен","m",.05f,.4f,.01f,.15f);
             V("fill","Рассеянный свет","ratio",.05f,1,.01f,.17f);V("sun","Солнечный свет","intensity",0,3,.05f,.3f);
@@ -63,6 +63,7 @@ namespace StarTournament.ProvingGround
             V("tile","Размер панели","m",.5f,8,.1f,2);V("skyDistance","Глубина фона","m",80,180,1,150);
             V("mountainHeight","Высота дальних гор","m",5,50,1,22);V("earthRadius","Видимый радиус Земли","m",2,15,.5f,8);
             V("sunRadius","Видимый радиус Солнца","m",.5f,5,.1f,1.8f);
+            AddPickupMarkings(p,"lunar.",1.35f,1.4f,.012f);
             return p;
         }
     }

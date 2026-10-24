@@ -117,6 +117,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             file.Profiles.Add(new LabHistoryProfile{Id="legacy-light",Name="Прежний свет",Revisions={bad,new LabRevision{Number=9,Date="20261017",Hash=baseline.Hash(),Snapshot=baseline.Clone()}}});
             file.Profiles.Add(new LabHistoryProfile{Id="legacy-only",Name="Только прежняя версия",Revisions={bad.Clone()}});
             File.WriteAllText(historyPath,JsonUtility.ToJson(file));
+            // Probe a future incompatible grid; today's finer Well grid accepts the old .8 value.
+            Loader.SetValue(null,new Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory>((source,current,releases,token)=>{
+                var future=current.Clone();future.Profile("well.fill").Descriptor("well.fill").Step=.05f;
+                return new DesignLabHistory(source,future,releases:releases,authoring:true,persistMigration:false,cancellationToken:token);
+            }));
             yield return LoadAuthor();Click("main-action-2");yield return null;
             Click("lab-profile-select");yield return null;Click("profile-"+local);
             float deadline=Time.realtimeSinceStartup+120;while(ground.LabSelectionPending){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}yield return null;
@@ -425,11 +430,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var h=Open(false);Assert.That(h.StorageError,Is.Null);
             int release=h.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Where(r=>h.Compatible(r)).Max(r=>r.Number);
             h.Select(DesignLabHistory.ReleaseId,release);h.MarkSelectedForRelease(true);
-            h.Select(id,h.LatestAvailableRevision(id));h.MarkSelectedForRelease(true);int saved=h.Selected.Number;
+            h.Select(id,h.LatestAvailableRevision(id));h.Save(h.Selected.Snapshot);h.MarkSelectedForRelease(true);int saved=h.Selected.Number;
             float interval=h.Selected.Snapshot.Get("presentation.botBanterIntervalSeconds");
             h.Select(DesignLabHistory.ReleaseId,release);var draft=h.Selected.Snapshot;
             draft.Set("presentation.botBanterIntervalSeconds",interval+10);h.Save(draft);h.MarkSelectedForRelease(true);
             h.Select(id,saved);
+            // Rebuild disposable caches after the complete saved source: their technical keys
+            // must outrank it, while profile selection still chooses the saved public version.
+            var stored=(LabHistoryFile)typeof(DesignLabHistory).GetMethod("ReadStorage",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(h,new object[]{File.ReadAllText(historyPath)});
+            foreach(var profile in stored.Profiles)profile.Revisions.RemoveAll(r=>r.CompatibilitySourceNumber>0);
+            File.WriteAllText(historyPath,JsonUtility.ToJson(stored));
             yield return LoadAuthor();Click("main-action-2");yield return null;
             var loaded=Field<DesignLabHistory>("labHistory");
             Assert.That(loaded.Profiles.Single(p=>p.Id==id).Revisions.Max(r=>r.Number),Is.GreaterThan(saved),"Fixture contains a newer technical view");

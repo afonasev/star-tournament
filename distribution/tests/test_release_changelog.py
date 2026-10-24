@@ -146,6 +146,9 @@ class ReleaseNotes(unittest.TestCase):
             filename='Star-Tournament-2.0.0-Windows-x64-Setup.exe' if runtime=='win-x64' else 'Star-Tournament-2.0.0-macOS-arm64.dmg'
             setup=releases/filename;setup.write_bytes(b'installer')
             items=[publisher.identity(full),publisher.identity(setup)]
+            if runtime=='osx-arm64':
+                compatibility=releases/'Star-Tournament-2.0.0-macOS-arm64.pkg';compatibility.write_bytes(b'compatibility pkg')
+                items.append(publisher.identity(compatibility))
             (base/'2.0.0.identity.json').write_text(json.dumps(dict(version='2.0.0',date='2026-10-16',runtime=runtime,channel='production',revision=self.first,packages=items)))
             asset=dict(FileName=full.name,Size=items[0]['size'],SHA256=items[0]['sha256'],PackageId=config['appId'])
             packages.append((dict(config,channel='production',feed={'Assets':[asset]}),asset))

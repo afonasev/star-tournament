@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Structure 03; north = +Z. Dimensions are immutable map authoring, not editable balance.</summary>
     public static class WellArenaCatalog
     {
-        public const string Id="well-laboratory-v1", Revision="4", Identity=Id+"@"+Revision;
+        public const string Id="well-laboratory-v1", Revision="5", Identity=Id+"@"+Revision;
         public const float Storey=7.2f, Slab=.8f, ClearHeight=Storey-Slab, Edge=24.8f, Pit=9.6f;
         const float DoorHeight=3.2f, DoorHalf=1.6f, Wall=.3f;
         public static string Support(int floor)=>"support:well-"+floor;
@@ -133,6 +133,8 @@ namespace StarTournament.ProvingGround
             Item("damage-garden",ArenaPickupKind.Damage,0,0,0);
             Item("armor-01",ArenaPickupKind.Armor,0,21,0);Item("shotgun-01",ArenaPickupKind.Shotgun,0,-21,0);
             Item("rocket-02",ArenaPickupKind.Pulse,0,0,1);
+            // Immutable revision-5 anchors, exposed in Well authoring Lab; offset from corner spawns.
+            Item("shotgun-02",ArenaPickupKind.Shotgun,-18,-20,1);Item("cutter-02",ArenaPickupKind.Cutter,18,20,1);
             Item("armor-02",ArenaPickupKind.Armor,-12.8f,6.4f,1);Item("speed-02",ArenaPickupKind.Speed,12.8f,-6.4f,1);
             Item("heal-H",ArenaPickupKind.FullHeal,0,0,2);
             Item("cutter-03",ArenaPickupKind.Cutter,21,21,2);Item("armor-03",ArenaPickupKind.Armor,-21,-21,2);

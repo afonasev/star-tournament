@@ -814,8 +814,78 @@ MonoBehaviour:
       Value: 1.4
   TrooperProfile:
     id: unity-trooper-presentation-v1
-    version: 6
+    version: 12
     descriptors:
+    - Path: animation.airResponseSeconds
+      Group: trooper-animation
+      Label: "\u041F\u0435\u0440\u0435\u0445\u043E\u0434 \u0432 \u043F\u0440\u044B\u0436\u043E\u043A"
+      Description: "\u041F\u043B\u0430\u0432\u043D\u043E\u0441\u0442\u044C \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u043E\u0439
+        \u043F\u043E\u0437\u044B \u043F\u0440\u0438 \u043E\u0442\u0440\u044B\u0432\u0435
+        \u0438 \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0435\u043D\u0438\u0438
+        \u043D\u0430 \u043E\u043F\u043E\u0440\u0443."
+      Unit: seconds
+      Minimum: 0.03
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.12
+    - Path: animation.airHipDegrees
+      Group: trooper-animation
+      Label: "\u041F\u043E\u0434\u044A\u0451\u043C \u0431\u0435\u0434\u0440\u0430
+        \u0432 \u0432\u043E\u0437\u0434\u0443\u0445\u0435"
+      Description: "\u041D\u0430\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0431\u043E\u0435\u0446
+        \u043F\u043E\u0434\u043D\u0438\u043C\u0430\u0435\u0442 \u0431\u0435\u0434\u0440\u043E
+        \u0432 \u043F\u0440\u044B\u0436\u043A\u0435."
+      Unit: degrees
+      Minimum: 0
+      Maximum: 65
+      Step: 1
+      DefaultValue: 30
+    - Path: animation.airKneeDegrees
+      Group: trooper-animation
+      Label: "\u0421\u0433\u0438\u0431 \u043A\u043E\u043B\u0435\u043D\u0430 \u0432
+        \u0432\u043E\u0437\u0434\u0443\u0445\u0435"
+      Description: "\u041D\u0430\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0431\u043E\u0435\u0446
+        \u043F\u043E\u0434\u0436\u0438\u043C\u0430\u0435\u0442 \u043D\u043E\u0433\u0438
+        \u0432 \u043F\u0440\u044B\u0436\u043A\u0435."
+      Unit: degrees
+      Minimum: 0
+      Maximum: 100
+      Step: 1
+      DefaultValue: 55
+    - Path: animation.landSeconds
+      Group: trooper-animation
+      Label: "\u0412\u043E\u0437\u0432\u0440\u0430\u0442 \u043F\u043E\u0441\u043B\u0435
+        \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u044F"
+      Description: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u043E\u0433\u043E \u043F\u043E\u0433\u043B\u043E\u0449\u0435\u043D\u0438\u044F
+        \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u044F."
+      Unit: seconds
+      Minimum: 0.1
+      Maximum: 0.8
+      Step: 0.01
+      DefaultValue: 0.28
+    - Path: animation.landDegrees
+      Group: trooper-animation
+      Label: "\u0410\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u044F"
+      Description: "\u0421\u0433\u0438\u0431 \u043D\u043E\u0433 \u043F\u0440\u0438
+        \u043A\u0430\u0441\u0430\u043D\u0438\u0438 \u043E\u043F\u043E\u0440\u044B."
+      Unit: degrees
+      Minimum: 0
+      Maximum: 35
+      Step: 1
+      DefaultValue: 14
+    - Path: view.airMeters
+      Group: trooper-view
+      Label: "\u0425\u043E\u0434 \u0440\u0443\u043A \u0432 \u043F\u0440\u044B\u0436\u043A\u0435"
+      Description: "\u041C\u044F\u0433\u043A\u043E\u0435 \u043E\u043F\u0443\u0441\u043A\u0430\u043D\u0438\u0435
+        \u0440\u0443\u043A \u0432 \u043F\u0440\u044B\u0436\u043A\u0435 \u0438 \u043F\u0440\u0438
+        \u043F\u0440\u0438\u0437\u0435\u043C\u043B\u0435\u043D\u0438\u0438; \u043A\u0430\u043C\u0435\u0440\u0430
+        \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0439."
+      Unit: meters
+      Minimum: 0
+      Maximum: 0.08
+      Step: 0.001
+      DefaultValue: 0.025
     - Path: animation.walkThreshold
       Group: trooper-animation
       Label: "\u041F\u043E\u0440\u043E\u0433 \u0448\u0430\u0433\u0430"
@@ -861,6 +931,57 @@ MonoBehaviour:
       Maximum: 5
       Step: 0.1
       DefaultValue: 1.6
+    - Path: view.walkCycleSeconds
+      Group: trooper-view
+      Label: "\u0420\u0438\u0442\u043C \u043F\u043E\u043A\u0430\u0447\u0438\u0432\u0430\u043D\u0438\u044F"
+      Description: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u043F\u043E\u043B\u043D\u043E\u0433\u043E \u043F\u043B\u0430\u0432\u043D\u043E\u0433\u043E
+        \u0446\u0438\u043A\u043B\u0430 \u0432\u043B\u0435\u0432\u043E-\u0432\u043F\u0440\u0430\u0432\u043E;
+        \u0434\u0432\u0430 \u043C\u044F\u0433\u043A\u0438\u0445 \u0448\u0430\u0433\u0430
+        \u0437\u0430 \u0446\u0438\u043A\u043B, \u043D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E
+        \u043E\u0442 \u043A\u043B\u0438\u043F\u043E\u0432 \u0442\u0435\u043B\u0430."
+      Unit: seconds
+      Minimum: 0.8
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.3
+    - Path: view.walkHorizontalMeters
+      Group: trooper-view
+      Label: "\u0428\u0438\u0440\u0438\u043D\u0430 \u043F\u043E\u043A\u0430\u0447\u0438\u0432\u0430\u043D\u0438\u044F"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        \u0441\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u0440\u0443\u043A \u0438
+        \u043E\u0440\u0443\u0436\u0438\u044F \u0432 \u0441\u0442\u043E\u0440\u043E\u043D\u0443
+        \u043F\u0440\u0438 \u043D\u0430\u0437\u0435\u043C\u043D\u043E\u043C \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0438."
+      Unit: meters
+      Minimum: 0
+      Maximum: 0.03
+      Step: 0.001
+      DefaultValue: 0.008
+    - Path: view.walkVerticalMeters
+      Group: trooper-view
+      Label: "\u0412\u044B\u0441\u043E\u0442\u0430 \u043F\u043E\u043A\u0430\u0447\u0438\u0432\u0430\u043D\u0438\u044F"
+      Description: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435
+        \u043C\u044F\u0433\u043A\u043E\u0435 \u0432\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u044C\u043D\u043E\u0435
+        \u0441\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u0440\u0443\u043A \u0438
+        \u043E\u0440\u0443\u0436\u0438\u044F \u043F\u0440\u0438 \u0448\u0430\u0433\u0435."
+      Unit: meters
+      Minimum: 0
+      Maximum: 0.02
+      Step: 0.001
+      DefaultValue: 0.005
+    - Path: view.walkResponseSeconds
+      Group: trooper-view
+      Label: "\u041F\u043B\u0430\u0432\u043D\u043E\u0441\u0442\u044C \u0448\u0430\u0433\u0430"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u043E\u0442\u043A\u043B\u0438\u043A\u0430
+        \u0438\u043D\u0442\u0435\u043D\u0441\u0438\u0432\u043D\u043E\u0441\u0442\u0438
+        \u043F\u043E\u043A\u0430\u0447\u0438\u0432\u0430\u043D\u0438\u044F \u043D\u0430
+        \u043D\u0430\u0447\u0430\u043B\u043E, \u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0443
+        \u0438 \u043E\u0442\u0440\u044B\u0432 \u043E\u0442 \u0437\u0435\u043C\u043B\u0438."
+      Unit: seconds
+      Minimum: 0.05
+      Maximum: 0.8
+      Step: 0.01
+      DefaultValue: 0.2
     - Path: view.x
       Group: trooper-view
       Label: "\u0420\u0443\u043A\u0438 \u043F\u043E \u0433\u043E\u0440\u0438\u0437\u043E\u043D\u0442\u0430\u043B\u0438"
@@ -927,6 +1048,19 @@ MonoBehaviour:
       Maximum: 1
       Step: 0.01
       DefaultValue: 0.05
+    - Path: grip.primaryWristYaw
+      Group: trooper-grip
+      Label: "\u041F\u043E\u0434\u0432\u043E\u0434 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u043A \u0440\u0443\u043A\u043E\u044F\u0442\u0438"
+      Description: "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u043A\u0438\u0441\u0442\u0438 \u0432\u043E\u043A\u0440\u0443\u0433 \u0432\u0435\u0440\u0442\u0438\u043A\u0430\u043B\u0438
+        \u043E\u0440\u0443\u0436\u0438\u044F \u0431\u0435\u0437 \u0441\u043C\u0435\u0449\u0435\u043D\u0438\u044F
+        \u0441\u0430\u043C\u043E\u0433\u043E \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -25
+      Maximum: 25
+      Step: 1
+      DefaultValue: -12
     - Path: grip.supportRoll
       Group: trooper-grip
       Label: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043E\u043F\u043E\u0440\u043D\u043E\u0439
@@ -1029,7 +1163,21 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 4
       Step: 0.05
-      DefaultValue: 0.05
+      DefaultValue: 0.35
+    - Path: view.fillBackMeters
+      Group: trooper-view
+      Label: "\u0423\u0434\u0430\u043B\u0435\u043D\u0438\u0435 \u043F\u043E\u0434\u0441\u0432\u0435\u0442\u043A\u0438"
+      Description: "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435
+        \u0441\u0432\u0435\u0442\u0430 \u0437\u0430 \u043A\u0430\u043C\u0435\u0440\u043E\u0439:
+        \u0443\u0431\u0438\u0440\u0430\u0435\u0442 \u0440\u0435\u0437\u043A\u0438\u0439
+        \u043F\u0435\u0440\u0435\u0441\u0432\u0435\u0442 \u0431\u043B\u0438\u0436\u043D\u0435\u0433\u043E
+        \u0440\u0443\u043A\u0430\u0432\u0430, \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044F
+        \u043F\u043E\u0434\u0441\u0432\u0435\u0442\u043A\u0443 \u043E\u0431\u043E\u0440\u0443\u0434\u043E\u0432\u0430\u043D\u0438\u044F."
+      Unit: meters
+      Minimum: 0
+      Maximum: 1.5
+      Step: 0.05
+      DefaultValue: 0.25
     - Path: view.fillRange
       Group: trooper-view
       Label: "\u0414\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043F\u043E\u0434\u0441\u0432\u0435\u0442\u043A\u0438"
@@ -1042,7 +1190,567 @@ MonoBehaviour:
       Maximum: 3
       Step: 0.1
       DefaultValue: 2
+    - Path: grip.supportProximalBias
+      Group: trooper-grip
+      Label: "\u041E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u044F \u043E\u043F\u043E\u0440\u043D\u044B\u0445
+        \u043F\u0430\u043B\u044C\u0446\u0435\u0432"
+      Description: "\u0420\u0430\u0437\u0433\u0438\u0431 \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439
+        \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u0434\u043B\u044F \u043E\u043F\u043E\u0440\u044B
+        \u0441\u043D\u0438\u0437\u0443 \u0446\u0435\u0432\u044C\u044F."
+      Unit: degrees
+      Minimum: -60
+      Maximum: 60
+      Step: 1
+      DefaultValue: -25
+    - Path: grip.supportIntermediateBias
+      Group: trooper-grip
+      Label: "\u0421\u0440\u0435\u0434\u043D\u0438\u0435 \u043E\u043F\u043E\u0440\u043D\u044B\u0435
+        \u0444\u0430\u043B\u0430\u043D\u0433\u0438"
+      Description: "\u0421\u0433\u0438\u0431 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u0433\u0440\u0430\u043D\u0438
+        \u0446\u0435\u0432\u044C\u044F."
+      Unit: degrees
+      Minimum: -60
+      Maximum: 60
+      Step: 1
+      DefaultValue: 25
+    - Path: grip.supportDistalBias
+      Group: trooper-grip
+      Label: "\u041A\u043E\u043D\u0447\u0438\u043A\u0438 \u043E\u043F\u043E\u0440\u043D\u044B\u0445
+        \u043F\u0430\u043B\u044C\u0446\u0435\u0432"
+      Description: "\u0417\u0430\u043C\u044B\u043A\u0430\u043D\u0438\u0435 \u0445\u0432\u0430\u0442\u0430
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0431\u043E\u043A\u043E\u0432\u043E\u0439
+        \u0433\u0440\u0430\u043D\u0438."
+      Unit: degrees
+      Minimum: -60
+      Maximum: 60
+      Step: 1
+      DefaultValue: 10
+    - Path: grip.Rifle.primaryYaw
+      Group: trooper-grip-Rifle
+      Label: "\u0414\u043E\u0432\u043E\u0440\u043E\u0442 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u043A\u0438\u0441\u0442\u0438"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u0441 \u0440\u0443\u043A\u043E\u044F\u0442\u044C\u044E \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u043E\u0440\u0443\u0436\u0438\u0435
+        \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u043D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u044B\u043C."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.Rifle.primaryCurl
+      Group: trooper-grip-Rifle
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0440\u0443\u043A\u043E\u044F\u0442\u0438"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u0440\u0443\u043A\u0438 \u043F\u043E\u0434 \u0442\u043E\u043B\u0449\u0438\u043D\u0443
+        \u0440\u0443\u043A\u043E\u044F\u0442\u0438."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.Rifle.supportRoll
+      Group: trooper-grip-Rifle
+      Label: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043F\u043E\u043F\u0435\u0440\u0451\u043A
+        \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0440\u0430\u0437\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0435\u0451 \u043F\u0440\u043E\u0434\u043E\u043B\u044C\u043D\u043E\u0439
+        \u043E\u0441\u0438."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: -55
+    - Path: grip.Rifle.supportYaw
+      Group: trooper-grip-Rifle
+      Label: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0442\u043E\u0447\u043A\u0438 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043D\u0430 \u0446\u0435\u0432\u044C\u0435."
+      Unit: degrees
+      Minimum: -100
+      Maximum: 100
+      Step: 1
+      DefaultValue: 80
+    - Path: grip.Rifle.supportCurl
+      Group: trooper-grip-Rifle
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0441\u0433\u0438\u0431\u0430
+        \u043E\u043F\u043E\u0440\u043D\u044B\u0445 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441 \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 90
+      Step: 1
+      DefaultValue: 20
+    - Path: grip.Rifle.supportThumb
+      Group: trooper-grip-Rifle
+      Label: "\u041E\u043F\u043E\u0440\u043D\u044B\u0439 \u0431\u043E\u043B\u044C\u0448\u043E\u0439
+        \u043F\u0430\u043B\u0435\u0446"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441
+        \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 60
+      Step: 1
+      DefaultValue: -5
+    - Path: grip.Rifle.thumbOpposition
+      Group: trooper-grip-Rifle
+      Label: "\u041E\u043F\u043F\u043E\u0437\u0438\u0446\u0438\u044F \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u043F\u043E\u043F\u0435\u0440\u0435\u0447\u043D\u043E\u0433\u043E \u0441\u0435\u0447\u0435\u043D\u0438\u044F
+        \u0446\u0435\u0432\u044C\u044F."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: 75
+    - Path: grip.Rifle.supportX
+      Group: trooper-grip-Rifle
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        X"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.06
+    - Path: grip.Rifle.supportY
+      Group: trooper-grip-Rifle
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Y"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: -0.12
+    - Path: grip.Rifle.supportZ
+      Group: trooper-grip-Rifle
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Z"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.3
+    - Path: grip.Shotgun.primaryYaw
+      Group: trooper-grip-Shotgun
+      Label: "\u0414\u043E\u0432\u043E\u0440\u043E\u0442 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u043A\u0438\u0441\u0442\u0438"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u0441 \u0440\u0443\u043A\u043E\u044F\u0442\u044C\u044E \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u043E\u0440\u0443\u0436\u0438\u0435
+        \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u043D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u044B\u043C."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.Shotgun.primaryCurl
+      Group: trooper-grip-Shotgun
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0440\u0443\u043A\u043E\u044F\u0442\u0438"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u0440\u0443\u043A\u0438 \u043F\u043E\u0434 \u0442\u043E\u043B\u0449\u0438\u043D\u0443
+        \u0440\u0443\u043A\u043E\u044F\u0442\u0438."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.Shotgun.supportRoll
+      Group: trooper-grip-Shotgun
+      Label: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043F\u043E\u043F\u0435\u0440\u0451\u043A
+        \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0440\u0430\u0437\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0435\u0451 \u043F\u0440\u043E\u0434\u043E\u043B\u044C\u043D\u043E\u0439
+        \u043E\u0441\u0438."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: -55
+    - Path: grip.Shotgun.supportYaw
+      Group: trooper-grip-Shotgun
+      Label: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0442\u043E\u0447\u043A\u0438 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043D\u0430 \u0446\u0435\u0432\u044C\u0435."
+      Unit: degrees
+      Minimum: -100
+      Maximum: 100
+      Step: 1
+      DefaultValue: 80
+    - Path: grip.Shotgun.supportCurl
+      Group: trooper-grip-Shotgun
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0441\u0433\u0438\u0431\u0430
+        \u043E\u043F\u043E\u0440\u043D\u044B\u0445 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441 \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 90
+      Step: 1
+      DefaultValue: 20
+    - Path: grip.Shotgun.supportThumb
+      Group: trooper-grip-Shotgun
+      Label: "\u041E\u043F\u043E\u0440\u043D\u044B\u0439 \u0431\u043E\u043B\u044C\u0448\u043E\u0439
+        \u043F\u0430\u043B\u0435\u0446"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441
+        \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 60
+      Step: 1
+      DefaultValue: -5
+    - Path: grip.Shotgun.thumbOpposition
+      Group: trooper-grip-Shotgun
+      Label: "\u041E\u043F\u043F\u043E\u0437\u0438\u0446\u0438\u044F \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u043F\u043E\u043F\u0435\u0440\u0435\u0447\u043D\u043E\u0433\u043E \u0441\u0435\u0447\u0435\u043D\u0438\u044F
+        \u0446\u0435\u0432\u044C\u044F."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: 75
+    - Path: grip.Shotgun.supportX
+      Group: trooper-grip-Shotgun
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        X"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.06
+    - Path: grip.Shotgun.supportY
+      Group: trooper-grip-Shotgun
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Y"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: -0.15
+    - Path: grip.Shotgun.supportZ
+      Group: trooper-grip-Shotgun
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Z"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.42
+    - Path: grip.RocketLauncher.primaryYaw
+      Group: trooper-grip-RocketLauncher
+      Label: "\u0414\u043E\u0432\u043E\u0440\u043E\u0442 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u043A\u0438\u0441\u0442\u0438"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u0441 \u0440\u0443\u043A\u043E\u044F\u0442\u044C\u044E \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u043E\u0440\u0443\u0436\u0438\u0435
+        \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u043D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u044B\u043C."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.RocketLauncher.primaryCurl
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0440\u0443\u043A\u043E\u044F\u0442\u0438"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u0440\u0443\u043A\u0438 \u043F\u043E\u0434 \u0442\u043E\u043B\u0449\u0438\u043D\u0443
+        \u0440\u0443\u043A\u043E\u044F\u0442\u0438."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.RocketLauncher.supportRoll
+      Group: trooper-grip-RocketLauncher
+      Label: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043F\u043E\u043F\u0435\u0440\u0451\u043A
+        \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0440\u0430\u0437\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0435\u0451 \u043F\u0440\u043E\u0434\u043E\u043B\u044C\u043D\u043E\u0439
+        \u043E\u0441\u0438."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: -55
+    - Path: grip.RocketLauncher.supportYaw
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0442\u043E\u0447\u043A\u0438 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043D\u0430 \u0446\u0435\u0432\u044C\u0435."
+      Unit: degrees
+      Minimum: -100
+      Maximum: 100
+      Step: 1
+      DefaultValue: 80
+    - Path: grip.RocketLauncher.supportCurl
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0441\u0433\u0438\u0431\u0430
+        \u043E\u043F\u043E\u0440\u043D\u044B\u0445 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441 \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 90
+      Step: 1
+      DefaultValue: 15
+    - Path: grip.RocketLauncher.supportThumb
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041E\u043F\u043E\u0440\u043D\u044B\u0439 \u0431\u043E\u043B\u044C\u0448\u043E\u0439
+        \u043F\u0430\u043B\u0435\u0446"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441
+        \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 60
+      Step: 1
+      DefaultValue: -5
+    - Path: grip.RocketLauncher.thumbOpposition
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041E\u043F\u043F\u043E\u0437\u0438\u0446\u0438\u044F \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u043F\u043E\u043F\u0435\u0440\u0435\u0447\u043D\u043E\u0433\u043E \u0441\u0435\u0447\u0435\u043D\u0438\u044F
+        \u0446\u0435\u0432\u044C\u044F."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: 90
+    - Path: grip.RocketLauncher.supportX
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        X"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.08
+    - Path: grip.RocketLauncher.supportY
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Y"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: -0.2
+    - Path: grip.RocketLauncher.supportZ
+      Group: trooper-grip-RocketLauncher
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Z"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.4
+    - Path: grip.Cutter.primaryYaw
+      Group: trooper-grip-Cutter
+      Label: "\u0414\u043E\u0432\u043E\u0440\u043E\u0442 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u043A\u0438\u0441\u0442\u0438"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u0441 \u0440\u0443\u043A\u043E\u044F\u0442\u044C\u044E \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u0433\u043E
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u043E\u0440\u0443\u0436\u0438\u0435
+        \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u043D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u044B\u043C."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.Cutter.primaryCurl
+      Group: trooper-grip-Cutter
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0440\u0443\u043A\u043E\u044F\u0442\u0438"
+      Description: "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0441\u0433\u0438\u0431 \u043F\u0430\u043B\u044C\u0446\u0435\u0432 \u043F\u0440\u0430\u0432\u043E\u0439
+        \u0440\u0443\u043A\u0438 \u043F\u043E\u0434 \u0442\u043E\u043B\u0449\u0438\u043D\u0443
+        \u0440\u0443\u043A\u043E\u044F\u0442\u0438."
+      Unit: degrees
+      Minimum: -20
+      Maximum: 20
+      Step: 1
+      DefaultValue: 0
+    - Path: grip.Cutter.supportRoll
+      Group: trooper-grip-Cutter
+      Label: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043F\u043E\u043F\u0435\u0440\u0451\u043A
+        \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0440\u0430\u0437\u0432\u043E\u0440\u043E\u0442\u0430
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0435\u0451 \u043F\u0440\u043E\u0434\u043E\u043B\u044C\u043D\u043E\u0439
+        \u043E\u0441\u0438."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: -55
+    - Path: grip.Cutter.supportYaw
+      Group: trooper-grip-Cutter
+      Label: "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u043E\u043F\u043E\u0440\u043D\u043E\u0439 \u043B\u0430\u0434\u043E\u043D\u0438"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u043B\u0430\u0434\u043E\u043D\u0438
+        \u0432\u043E\u043A\u0440\u0443\u0433 \u0442\u043E\u0447\u043A\u0438 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043D\u0430 \u0446\u0435\u0432\u044C\u0435."
+      Unit: degrees
+      Minimum: -100
+      Maximum: 100
+      Step: 1
+      DefaultValue: 80
+    - Path: grip.Cutter.supportCurl
+      Group: trooper-grip-Cutter
+      Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0446\u0435\u0432\u044C\u044F"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0441\u0433\u0438\u0431\u0430
+        \u043E\u043F\u043E\u0440\u043D\u044B\u0445 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441 \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 90
+      Step: 1
+      DefaultValue: 15
+    - Path: grip.Cutter.supportThumb
+      Group: trooper-grip-Cutter
+      Label: "\u041E\u043F\u043E\u0440\u043D\u044B\u0439 \u0431\u043E\u043B\u044C\u0448\u043E\u0439
+        \u043F\u0430\u043B\u0435\u0446"
+      Description: "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u043F\u043E\u0434 \u043A\u043E\u0440\u043F\u0443\u0441
+        \u043E\u0440\u0443\u0436\u0438\u044F."
+      Unit: degrees
+      Minimum: -30
+      Maximum: 60
+      Step: 1
+      DefaultValue: -5
+    - Path: grip.Cutter.thumbOpposition
+      Group: trooper-grip-Cutter
+      Label: "\u041E\u043F\u043F\u043E\u0437\u0438\u0446\u0438\u044F \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430"
+      Description: "\u0420\u0430\u0437\u0432\u043E\u0440\u043E\u0442 \u0431\u043E\u043B\u044C\u0448\u043E\u0433\u043E
+        \u043F\u0430\u043B\u044C\u0446\u0430 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u043F\u043E\u043F\u0435\u0440\u0435\u0447\u043D\u043E\u0433\u043E \u0441\u0435\u0447\u0435\u043D\u0438\u044F
+        \u0446\u0435\u0432\u044C\u044F."
+      Unit: degrees
+      Minimum: -90
+      Maximum: 90
+      Step: 1
+      DefaultValue: 90
+    - Path: grip.Cutter.supportX
+      Group: trooper-grip-Cutter
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        X"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.08
+    - Path: grip.Cutter.supportY
+      Group: trooper-grip-Cutter
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Y"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: -0.2
+    - Path: grip.Cutter.supportZ
+      Group: trooper-grip-Cutter
+      Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
+        Z"
+      Description: "\u0422\u043E\u0447\u043A\u0430 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430
+        \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0439 \u043F\u0430\u043B\u044C\u0446\u0435\u0432
+        \u0432 \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442\u0430\u0445
+        \u043E\u0440\u0443\u0436\u0438\u044F; \u0434\u043B\u0438\u043D\u044B \u043A\u043E\u0441\u0442\u0435\u0439
+        \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F."
+      Unit: rig-units
+      Minimum: -0.8
+      Maximum: 0.8
+      Step: 0.005
+      DefaultValue: 0.4
     values:
+    - Path: animation.airResponseSeconds
+      Value: 0.12
+    - Path: animation.airHipDegrees
+      Value: 30
+    - Path: animation.airKneeDegrees
+      Value: 55
+    - Path: animation.landSeconds
+      Value: 0.28
+    - Path: animation.landDegrees
+      Value: 14
+    - Path: view.airMeters
+      Value: 0.025
     - Path: animation.walkThreshold
       Value: 0.1
     - Path: animation.runThreshold
@@ -1051,6 +1759,14 @@ MonoBehaviour:
       Value: 0.12
     - Path: animation.aimHoldSeconds
       Value: 1.6
+    - Path: view.walkCycleSeconds
+      Value: 1.3
+    - Path: view.walkHorizontalMeters
+      Value: 0.008
+    - Path: view.walkVerticalMeters
+      Value: 0.005
+    - Path: view.walkResponseSeconds
+      Value: 0.2
     - Path: view.x
       Value: 0.2
     - Path: view.y
@@ -1061,6 +1777,8 @@ MonoBehaviour:
       Value: 0
     - Path: view.z
       Value: 0.05
+    - Path: grip.primaryWristYaw
+      Value: -12
     - Path: grip.supportRoll
       Value: 55
     - Path: grip.supportFingerCurl
@@ -1076,9 +1794,97 @@ MonoBehaviour:
     - Path: grip.primaryThumbFactor
       Value: 0.5
     - Path: view.fillIntensity
-      Value: 0.05
+      Value: 0.35
+    - Path: view.fillBackMeters
+      Value: 0.25
     - Path: view.fillRange
       Value: 2
+    - Path: grip.supportProximalBias
+      Value: -25
+    - Path: grip.supportIntermediateBias
+      Value: 25
+    - Path: grip.supportDistalBias
+      Value: 10
+    - Path: grip.Rifle.primaryYaw
+      Value: 0
+    - Path: grip.Rifle.primaryCurl
+      Value: 0
+    - Path: grip.Rifle.supportRoll
+      Value: -55
+    - Path: grip.Rifle.supportYaw
+      Value: 80
+    - Path: grip.Rifle.supportCurl
+      Value: 20
+    - Path: grip.Rifle.supportThumb
+      Value: -5
+    - Path: grip.Rifle.thumbOpposition
+      Value: 75
+    - Path: grip.Rifle.supportX
+      Value: 0.06
+    - Path: grip.Rifle.supportY
+      Value: -0.12
+    - Path: grip.Rifle.supportZ
+      Value: 0.3
+    - Path: grip.Shotgun.primaryYaw
+      Value: 0
+    - Path: grip.Shotgun.primaryCurl
+      Value: 0
+    - Path: grip.Shotgun.supportRoll
+      Value: -55
+    - Path: grip.Shotgun.supportYaw
+      Value: 80
+    - Path: grip.Shotgun.supportCurl
+      Value: 20
+    - Path: grip.Shotgun.supportThumb
+      Value: -5
+    - Path: grip.Shotgun.thumbOpposition
+      Value: 75
+    - Path: grip.Shotgun.supportX
+      Value: 0.06
+    - Path: grip.Shotgun.supportY
+      Value: -0.15
+    - Path: grip.Shotgun.supportZ
+      Value: 0.42
+    - Path: grip.RocketLauncher.primaryYaw
+      Value: 0
+    - Path: grip.RocketLauncher.primaryCurl
+      Value: 0
+    - Path: grip.RocketLauncher.supportRoll
+      Value: -55
+    - Path: grip.RocketLauncher.supportYaw
+      Value: 80
+    - Path: grip.RocketLauncher.supportCurl
+      Value: 15
+    - Path: grip.RocketLauncher.supportThumb
+      Value: -5
+    - Path: grip.RocketLauncher.thumbOpposition
+      Value: 90
+    - Path: grip.RocketLauncher.supportX
+      Value: 0.08
+    - Path: grip.RocketLauncher.supportY
+      Value: -0.2
+    - Path: grip.RocketLauncher.supportZ
+      Value: 0.4
+    - Path: grip.Cutter.primaryYaw
+      Value: 0
+    - Path: grip.Cutter.primaryCurl
+      Value: 0
+    - Path: grip.Cutter.supportRoll
+      Value: -55
+    - Path: grip.Cutter.supportYaw
+      Value: 80
+    - Path: grip.Cutter.supportCurl
+      Value: 15
+    - Path: grip.Cutter.supportThumb
+      Value: -5
+    - Path: grip.Cutter.thumbOpposition
+      Value: 90
+    - Path: grip.Cutter.supportX
+      Value: 0.08
+    - Path: grip.Cutter.supportY
+      Value: -0.2
+    - Path: grip.Cutter.supportZ
+      Value: 0.4
   Profile:
     id: unity-proving-ground-v1
     version: 13

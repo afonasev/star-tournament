@@ -379,11 +379,47 @@ namespace StarTournament.ProvingGround
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=this.shipped;
+            // Reconstruct exact trusted pre-unification metadata before older additive transforms.
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                ((p.Id=="orbital-league-v1"||p.Id=="orbital-league-ring-v1")&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??11)<11)||
+                (p.Id==ProvingProfile.TunnelsArtId&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??4)<4)||
+                (p.Id=="lunar-laboratory-presentation-v1"&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??6)<6)
+                ?p.BeforeUniformPickupRadii():p).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="visual.bowlLocalLightScale"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeArenaHarmonization()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??20)<20)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeArticulatedFingerGrips()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??19)<19)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeRefinedHandAnatomy()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??18)<18)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeStableSupportGrip()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??17)<17)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeAlignedSupportWrist()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??16)<16)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeClosedVerticalGrips()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??15)<15)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePlantedSteps()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??14)<14)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVerticalSupportGrips()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??13)<13)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeAnatomicalGrips()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??12)<12)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWeaponGripFits()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??11)<11)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePrimaryGripFit()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??10)<10)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeDiffuseEquipmentFill()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??9)<9)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVectorFighter()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeEquipmentReadability()).ToList()};
 
+            if((sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.TunnelsArtId)?.Version??3)<3)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id==ProvingProfile.TunnelsArtId?p.BeforeArenaPickupMarkings():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="lunar-laboratory-presentation-v1")?.Version??5)<5)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id=="lunar-laboratory-presentation-v1"?p.BeforeArenaPickupMarkings():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??6)<6)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellPickupMarkings()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??5)<5)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDaylight()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??4)<4)
@@ -393,6 +429,8 @@ namespace StarTournament.ProvingGround
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??2)<2)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellDetail()).ToList()};
 
+            if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==4)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellSecondFloorWeapons()).ToList()};
             if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==3)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellCorridorCover()).ToList()};
             if(sought.Profiles.FirstOrDefault(p=>p.Id=="well-authoring-v1")?.Version==2)
@@ -747,6 +785,7 @@ namespace StarTournament.ProvingGround
                     // values and the immutable source revision unchanged.
                     if(d.Path=="blood.drops"&&snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                         value=currentDescriptor.DefaultValue;
+                    if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeArenaVisualValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 }

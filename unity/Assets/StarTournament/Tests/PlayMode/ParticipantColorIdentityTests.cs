@@ -19,7 +19,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<renderer.sharedMaterials.Length;i++)
                 {
                     var mat=renderer.sharedMaterials[i];
-                    if(mat&&mat.name=="pants")Assert.That(mat.GetFloat("_IdentityMode"),Is.Zero,"cloth stays neutral");
+                    if(mat&&(mat.name=="pants"||mat.name.StartsWith("vector-fighter-")&&!mat.name.StartsWith("vector-fighter-identity")))
+                        Assert.That(mat.GetFloat("_IdentityMode"),Is.Zero,"cloth, visor and neutral hardware stay neutral");
                     if(!mat||!TrooperIdentityPresentation.IsBodyZone(mat))continue;
                     var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);
                     foreach(string property in mat.HasProperty("_IdentityColor")?new[]{"_IdentityColor"}:new[]{"_BaseColor","baseColorFactor"})if(mat.HasProperty(property))Assert.That(block.GetColor(property),Is.EqualTo(ground.Composition.Participant(participant).Color),renderer.name+"/"+mat.name);
@@ -37,8 +38,36 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     if(mat.name=="TECI_helmet")helmets++;if(renderer.name.Contains("UpperLeg")&&mat.GetFloat("_IdentityMode")==2)thighs++;
                     slots++;
                 }
-            Assert.That(slots,Is.GreaterThan(3));
-            Assert.That(helmets,Is.GreaterThan(0));Assert.That(thighs,Is.GreaterThan(0));
+            bool vectorSuit=root.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials)
+                .Any(m=>m&&m.name.StartsWith("vector-fighter-identity"));
+            if(vectorSuit)
+            {
+                // VECTOR batches multiple plates into shared meshes. Verify the actual
+                // painted geometry for every region instead of counting old atlas slots.
+                var paintedBones=new System.Collections.Generic.HashSet<string>();
+                foreach(var skin in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    var mesh=skin.sharedMesh;if(!mesh)continue;var weights=mesh.boneWeights;
+                    for(int slot=0;slot<skin.sharedMaterials.Length;slot++)
+                    {
+                        var material=skin.sharedMaterials[slot];
+                        if(!material||!material.name.StartsWith("vector-fighter-identity"))continue;
+                        foreach(int index in mesh.GetIndices(slot))
+                        {
+                            var weight=weights[index];
+                            if(weight.weight0>.5f)paintedBones.Add(skin.bones[weight.boneIndex0].name);
+                        }
+                    }
+                }
+                foreach(var bone in new[]{"Head","Chest","Spine","LeftUpperArm","RightUpperArm","LeftLowerArm","RightLowerArm",
+                    "LeftUpperLeg","RightUpperLeg","LeftLowerLeg","RightLowerLeg","LeftFoot","RightFoot"})
+                    Assert.That(paintedBones,Does.Contain(bone),"VECTOR must retain a real colored armor zone on "+bone);
+            }
+            else
+            {
+                Assert.That(slots,Is.GreaterThan(3));
+                Assert.That(helmets,Is.GreaterThan(0));Assert.That(thighs,Is.GreaterThan(0));
+            }
             foreach(var renderer in root.GetComponentsInChildren<Renderer>(true).Where(r=>r.name=="weapon:joined"||r.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter")))
                 foreach(var material in renderer.sharedMaterials)
                     Assert.That(material.shader.name,Is.Not.EqualTo("StarTournament/TrooperIdentity"),"equipment keeps its authored shader through start/boost/respawn/repeat");
@@ -48,23 +77,25 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var root=ground.transform.Find("seat-camera-"+(seat+1)+"/trooper-view");Assert.That(root,Is.Not.Null);
             var renderer=root.GetComponentsInChildren<Renderer>(true).Single(r=>r.name=="vector-armored-hands");
             var expected=ground.Composition.Participant(ground.Composition.ParticipantAt(seat)).Color;
-            int panels=0,neutral=0;
+            int panels=0,vectorPanels=0,neutral=0;
             foreach(var mat in renderer.sharedMaterials)
             {
                 Assert.That(mat.HasProperty("_IdentityMode"),Is.True);
-                if(mat.name.StartsWith("vector-ceramic"))
+                if(mat.name.StartsWith("vector-ceramic")||mat.name.StartsWith("vector-fighter-identity"))
                 {
                     int slot=System.Array.IndexOf(renderer.sharedMaterials,mat);var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,slot);
-                    Assert.That(mat.GetFloat("_IdentityMode"),Is.EqualTo(2),"forearm panel");
+                    Assert.That(mat.GetFloat("_IdentityMode"),Is.EqualTo(mat.name.StartsWith("vector-fighter-identity")?1:2),"forearm panel");
                     Assert.That(mat.GetColor("_IdentityColor"),Is.EqualTo(expected),"mapped participant material");
                     Assert.That(block.GetColor("_IdentityColor"),Is.EqualTo(expected),"mapped participant slot");
                     var source=ground.TrooperArmsPrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).First(m=>m&&m.name==mat.name);
                     foreach(var map in new[]{"baseColorTexture","normalTexture","metallicRoughnessTexture"})Assert.That(mat.GetTexture(map),Is.EqualTo(source.GetTexture(map)),"keep view maps");
-                    panels++;
+                    if(mat.name.StartsWith("vector-fighter-identity"))vectorPanels++;else panels++;
                 }
                 else{Assert.That(mat.GetFloat("_IdentityMode"),Is.Zero,"neutral glove/fabric/mechanics "+mat.name);neutral++;}
             }
             Assert.That(panels,Is.EqualTo(1));Assert.That(neutral,Is.GreaterThanOrEqualTo(4));
+            if(renderer.sharedMaterials.Any(m=>m.name.StartsWith("vector-fighter-identity")))
+                Assert.That(vectorPanels,Is.EqualTo(1),"one shared VECTOR forearm paint slot in addition to retained glove ceramic");
         }
         [UnityTest] public IEnumerator OrdinaryEightAiStartBoostPauseRespawnRepeatAndUiUseFrozenColors()
         {

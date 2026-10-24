@@ -4,7 +4,7 @@ using UnityEngine;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Bright white laboratory skin. All decoration is collider-free; authored solids own obstruction.</summary>
-    public sealed class WellArenaPresentation:MonoBehaviour
+    public sealed partial class WellArenaPresentation:MonoBehaviour
     {
         readonly List<Object> owned=new List<Object>();readonly Dictionary<Material,List<Bounds>> batches=new Dictionary<Material,List<Bounds>>();
         UnityEngine.Rendering.AmbientMode oldMode;Color oldAmbient;
@@ -231,6 +231,7 @@ namespace StarTournament.ProvingGround
                 Box(white,centre+Vector3.up*.15f,new Vector3(3,.3f,3));Box(soil,centre+Vector3.up*.31f,new Vector3(2.8f,.05f,2.8f));
                 detail.Plants(centre);
             }
+            BuildPickupMarkings(definition);
             detail.Garden();
             detail.Finish();
             var surfaceOwners=new List<Bounds>();

@@ -478,6 +478,7 @@ namespace StarTournament.ProvingGround
             view.AddComponent<WeaponModelPresentation>().Initialize(RiflePrefab,movement,PulsePrefab,CutterPrefab,frozenCutter??CutterProfile);
             view.transform.localPosition=new Vector3(trooper.Get("view.x"),trooper.Get("view.y"),trooper.Get("view.z"));
             var fillObject=new GameObject("equipment-fill");fillObject.transform.SetParent(cameraObject.transform,false);
+            fillObject.transform.localPosition=Vector3.back*trooper.Get("view.fillBackMeters");
             var fill=fillObject.AddComponent<Light>();fill.type=LightType.Point;
             fill.intensity=trooper.Get("view.fillIntensity");fill.range=trooper.Get("view.fillRange");
             fill.cullingMask=1<<(15+index);fill.shadows=LightShadows.None;

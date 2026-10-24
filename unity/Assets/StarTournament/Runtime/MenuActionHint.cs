@@ -22,7 +22,7 @@ namespace StarTournament.ProvingGround
             {
                 var node=new GameObject("gamepad-action-hint",typeof(RectTransform),typeof(CanvasRenderer),typeof(Text));node.transform.SetParent(target.transform,false);
                 glyph=node.GetComponent<Text>();glyph.raycastTarget=false;glyph.alignment=TextAnchor.MiddleRight;glyph.supportRichText=false;
-                var rect=glyph.rectTransform;rect.anchorMin=new Vector2(1,0);rect.anchorMax=Vector2.one;rect.offsetMax=new Vector2(-8,0);
+                var rect=glyph.rectTransform;rect.anchorMin=new Vector2(1,0);rect.anchorMax=Vector2.one;rect.offsetMin=new Vector2(-8,0);rect.offsetMax=new Vector2(-8,0);
             }
             glyph.enabled=false;
         }

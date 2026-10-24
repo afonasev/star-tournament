@@ -111,6 +111,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             baseline=new LabBundle{Profiles=baseline.Clone().Profiles.Concat(new[]{ProvingProfile.CreateWellDefault()}).ToList()};
             var method=typeof(ProvingProfile).GetMethod("BeforeWellDetail",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
             var previous=new LabBundle{Profiles=baseline.Clone().Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList()};
+            // Current Well accepts .8; constrain the future grid to exercise refusal, not factory retuning.
+            baseline.Profile("well.fill").Descriptor("well.fill").Step=.05f;
             var old=new DesignLabHistory(path,previous,releases:LabReleaseCatalog.Factory(previous),authoring:true);
             old.Rename("Author Default");string original=old.Selected.Hash;
             var file=DesignLabHistoryTests.ReadFixture(path,previous);

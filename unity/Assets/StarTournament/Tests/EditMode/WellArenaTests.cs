@@ -10,9 +10,9 @@ namespace StarTournament.ProvingGround.Tests
         {
             var d=WellArenaCatalog.Build();Assert.That(ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).IsValid,Is.True,ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).ToString());
             Assert.That(AuthoredArenaCatalog.Name(d.MapId),Is.EqualTo("Колодец"));Assert.That(AuthoredArenaCatalog.Maximum(d.MapId),Is.EqualTo(8));
-            Assert.That(d.Revision,Is.EqualTo("4"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(9));
+            Assert.That(d.Revision,Is.EqualTo("5"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(11));
             Assert.That(d.Pickups.Count(p=>p.Kind==ArenaPickupKind.Armor),Is.EqualTo(3));
-            foreach(var kind in new[]{ArenaPickupKind.Speed,ArenaPickupKind.Shotgun,ArenaPickupKind.Pulse,ArenaPickupKind.Cutter,ArenaPickupKind.Damage,ArenaPickupKind.FullHeal})
+            foreach(var kind in new[]{ArenaPickupKind.Speed,ArenaPickupKind.Pulse,ArenaPickupKind.Damage,ArenaPickupKind.FullHeal})
                 Assert.That(d.Pickups.Count(p=>p.Kind==kind),Is.EqualTo(1),kind.ToString());
             Assert.That(d.DamagePickupAnchor,Is.EqualTo(Vector3.zero));
             Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.Pulse).Anchor,Is.EqualTo(new Vector3(0,WellArenaCatalog.Storey,0)));
@@ -23,13 +23,37 @@ namespace StarTournament.ProvingGround.Tests
             var profile=WellArenaCatalog.AuthoringProfile();Assert.That(profile.Validate(),Is.Empty);Assert.That(ProvingProfile.CreateWellDefault().Validate(),Is.Empty);
             Assert.That(JsonUtility.ToJson(AuthoredArenaCatalog.Freeze(d.MapId,ProvingProfile.CreateDefault()).Definition),Is.EqualTo(JsonUtility.ToJson(d)));
         }
+        [Test] public void SecondFloorWeaponsPreserveRevisionFourAndStayClearOfSpawns()
+        {
+            var current=WellArenaCatalog.Build();var previous=WellArenaRevisionFour.Build();
+            var saved=JsonUtility.FromJson<ArenaDefinition>(System.IO.File.ReadAllText(System.IO.Path.Combine(Application.dataPath,"StarTournament/Tests/EditMode/Fixtures/well-daylight-arena.json")));
+            Assert.That(JsonUtility.ToJson(previous),Is.EqualTo(JsonUtility.ToJson(saved)),"Historical v4 stays byte exact");
+            Assert.That(JsonUtility.ToJson(AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"4")),Is.EqualTo(JsonUtility.ToJson(previous)));
+            Assert.That(current.Spawns,Is.EqualTo(previous.Spawns));
+            Assert.That(current.SpawnRegions.Select(JsonUtility.ToJson),Is.EqualTo(previous.SpawnRegions.Select(JsonUtility.ToJson)));
+            Assert.That(current.Solids.Select(JsonUtility.ToJson),Is.EqualTo(previous.Solids.Select(JsonUtility.ToJson)));
+            Assert.That(current.Transitions.Select(JsonUtility.ToJson),Is.EqualTo(previous.Transitions.Select(JsonUtility.ToJson)));
+            Assert.That(current.Lifts.Select(JsonUtility.ToJson),Is.EqualTo(previous.Lifts.Select(JsonUtility.ToJson)));
+            Assert.That(current.RouteAnchors,Is.EqualTo(previous.RouteAnchors));
+            Assert.That(current.Pickups.Where(p=>p.Id!="shotgun-02"&&p.Id!="cutter-02").Select(JsonUtility.ToJson),Is.EqualTo(previous.Pickups.Select(JsonUtility.ToJson)));
+            foreach(var kind in new[]{ArenaPickupKind.Shotgun,ArenaPickupKind.Cutter})Assert.That(current.Pickups.Count(p=>p.Kind==kind),Is.EqualTo(2));
+            foreach(var id in new[]{"shotgun-02","cutter-02"})
+            {
+                var pickup=current.Pickups.Single(p=>p.Id==id);int side=id=="shotgun-02"?-1:1;
+                Assert.That(pickup.Kind,Is.EqualTo(side<0?ArenaPickupKind.Shotgun:ArenaPickupKind.Cutter));
+                Assert.That(pickup.Anchor,Is.EqualTo(new Vector3(side*18,WellArenaCatalog.Storey,side*20)));
+                Assert.That(pickup.Support,Is.EqualTo(WellArenaCatalog.Support(1)));
+                foreach(var spawn in current.Spawns.Where(p=>p.y==pickup.Anchor.y))Assert.That(Vector3.Distance(spawn,pickup.Anchor),Is.GreaterThan(ProvingProfile.CreateCombatDefault().Get("weaponPickup.radius")));
+                Assert.That(WellArenaCatalog.AuthoringProfile().Descriptors.Any(d=>d.Path=="well.map."+id+".anchor.x"),Is.True);
+            }
+        }
         [Test] public void ApprovedRoomsSpawnsAndPickupSectorsAreExplicit()
         {
             var d=WellArenaCatalog.Build();
             for(int f=0;f<3;f++)
             {
                 float y=f*WellArenaCatalog.Storey;
-                Assert.That(d.Pickups.Count(p=>p.Anchor.y==y),Is.EqualTo(3));
+                Assert.That(d.Pickups.Count(p=>p.Anchor.y==y),Is.EqualTo(f==1?5:3));
                 foreach(int x in new[]{-1,1})foreach(int z in new[]{-1,1})
                     Assert.That(d.Spawns.Contains(new Vector3(x*21,y,z*21)),Is.EqualTo(!(f==2&&x==z)),"corner "+f+"/"+x+"/"+z);
                 foreach(var deck in d.Solids.Where(q=>q.Id.StartsWith("f"+f+"-")&&q.Material=="floor"&&q.Surface!="well-grate"))
@@ -51,7 +75,7 @@ namespace StarTournament.ProvingGround.Tests
         }
         [Test] public void FurnitureIsFixedSparseAndPreservesEveryExistingAuthoredElement()
         {
-            var current=WellArenaCatalog.Build();var previous=WellArenaRevisionTwo.Build();
+            var current=WellArenaRevisionFour.Build();var previous=WellArenaRevisionTwo.Build();
             var furniture=current.Solids.Where(WellFurniturePlan.IsFurniture).ToArray();
             Assert.That(furniture.Length,Is.EqualTo(56));Assert.That(furniture.Count(s=>s.Id.Contains("gallery-cover")),Is.EqualTo(6));
             Assert.That(current.Solids.Where(s=>!WellFurniturePlan.IsFurniture(s)).Select(JsonUtility.ToJson),Is.EqualTo(previous.Solids.Select(JsonUtility.ToJson)),"Every old structural solid stays exact");
@@ -66,11 +90,11 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(bounds.SqrDistance(pos+Vector3.up*.7f),Is.GreaterThan(1),item.Id+" obstructs "+pos);
                 if(item.Id.Contains("gallery-cover"))Assert.That(Mathf.Abs(item.Position.z)-item.Size.z/2-WellArenaCatalog.Pit,Is.GreaterThan(3),"wide gallery bypass");
             }
-            Assert.That(JsonUtility.ToJson(current),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"No randomized layout");
+            Assert.That(JsonUtility.ToJson(current),Is.EqualTo(JsonUtility.ToJson(WellArenaRevisionFour.Build())),"No randomized layout");
         }
         [Test] public void CorridorZonesAreSparseGroupedAndPreserveRevisionThreeExactly()
         {
-            var current=WellArenaCatalog.Build();var old=WellArenaRevisionThree.Build();
+            var current=WellArenaRevisionFour.Build();var old=WellArenaRevisionThree.Build();
             var added=current.Solids.Where(s=>s.Id.Contains("-corridor-")).ToArray();Assert.That(added.Length,Is.EqualTo(12));
             Assert.That(current.Solids.Where(s=>!s.Id.Contains("-corridor-")).Select(JsonUtility.ToJson),Is.EqualTo(old.Solids.Select(JsonUtility.ToJson)));
             var saved=JsonUtility.FromJson<ArenaDefinition>(System.IO.File.ReadAllText(System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"StarTournament/Tests/EditMode/Fixtures/well-furniture-arena.json"))));
@@ -188,7 +212,40 @@ namespace StarTournament.ProvingGround.Tests
                     System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
                 }
                 var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
-                Assert.That(migrated.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(4));
+                Assert.That(migrated.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(5));
+                Assert.That(migrated.Selected.Snapshot.Get("well.idleDepartureSeconds"),Is.EqualTo(21));
+                var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
+                Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
+                Assert.That(preserved.Snapshot.Get("well.map.lift-north.top"),Is.EqualTo(2*WellArenaCatalog.Storey));
+                Assert.That(migrated.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
+                Assert.That(migrated.Selected.Snapshot.Get("well.map.lift-north.top"),Is.EqualTo(2*WellArenaCatalog.Storey));
+                var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);
+                Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
+                Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber).Hash,Is.EqualTo(priorHash));
+            }
+            finally
+            {
+                if(System.IO.File.Exists(path))System.IO.File.Delete(path);
+                if(System.IO.File.Exists(path+".schema1-backup.json"))System.IO.File.Delete(path+".schema1-backup.json");
+            }
+        }
+        [TestCase(false)][TestCase(true)] public void PreviousWellWeaponsLoadWithoutChangingSavedHashes(bool compact)
+        {
+            var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"well-revision-"+Guid.NewGuid()+".json");
+            try
+            {
+                var current=StarTournament.ProvingGround.Tests.EditMode.DesignLabHistoryTests.Shipped();
+                var method=typeof(ProvingProfile).GetMethod("BeforeWellSecondFloorWeapons",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)method.Invoke(p,null)).ToList();
+                var history=new DesignLabHistory(path,old);history.Create("Колодец до нового оружия");var draft=history.Selected.Snapshot;draft.Set("well.liftSpeed",5);draft.Set("well.idleDepartureSeconds",21);history.Save(draft);
+                var prior=history.Selected;string priorHash=prior.Hash;int priorNumber=prior.Number;
+                if(!compact)
+                {
+                    var file=typeof(DesignLabHistory).GetField("data",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(history);
+                    System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
+                }
+                var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(5));
                 Assert.That(migrated.Selected.Snapshot.Get("well.idleDepartureSeconds"),Is.EqualTo(21));
                 var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
                 Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));

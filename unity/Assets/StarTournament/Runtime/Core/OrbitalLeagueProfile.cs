@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     {
         public static ProvingProfile CreateOrbitalLeagueDefault()
         {
-            var p=new ProvingProfile{id="orbital-league-v1",version=10};
+            var p=new ProvingProfile{id="orbital-league-v1",version=11};
             void V(string key,string group,string label,string description,string unit,float min,float max,float step,float value)
                 =>p.Add(key,group,label,description,unit,min,max,step,value);
             V("surface.tile","surfaces","Размер панели","Повтор металлических панелей и стыков.","m",.5f,4,.1f,2);
@@ -53,7 +53,7 @@ namespace StarTournament.ProvingGround
             V("detail.ventElevation","details","Положение решётки","Высота центра решётки над основанием стены.","m",.3f,.8f,.05f,.5f);
             V("detail.columnStripHeight","details","Полоса колонны","Высота голубой вставки колонны.","m",1,3,.1f,2.1f);
             V("detail.columnStripWidth","details","Ширина вставки","Ширина голубой вставки колонны.","m",.03f,.15f,.01f,.07f);
-            V("detail.ringRadius","details","Круг бонуса","Общий радиус белой напольной разметки точек бонусов.","m",1,2,.05f,1.65f);
+            V("detail.ringRadius","details","Круг бонуса","Общий радиус белой напольной разметки точек бонусов.","m",1,2,.05f,1.35f);
             V("light.fixtureFrame","lighting","Рамка панели","Толщина рамки светового модуля.","m",.05f,.3f,.01f,.18f);
             V("light.fixtureDepth","lighting","Глубина панели","Выступ потолочного модуля вниз.","m",.03f,.15f,.01f,.08f);
             // Layout coordinates are authoring controls only; collider and pickup positions remain immutable.
@@ -86,7 +86,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCombatBowlRingPresentationDefault()
         {
-            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=10;
+            var p=CreateOrbitalLeagueDefault();p.id="orbital-league-ring-v1";p.version=11;
             p.descriptors.RemoveAll(d=>d.Path=="ring.windowFramePitch");p.values.RemoveAll(v=>v.Path=="ring.windowFramePitch");
             var frame=p.Descriptor("ring.windowFrameWidth");frame.Minimum=.05f;frame.Maximum=1;frame.Step=.01f;frame.DefaultValue=.18f;p.Set(frame.Path,frame.DefaultValue);
             void Position(string key,Vector3 value)
@@ -190,7 +190,13 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=10;
+            if(version<11&&FindDescriptor("detail.ringRadius")!=null)
+            {
+                var radius=FindDescriptor("detail.ringRadius");
+                radius.DefaultValue=current.Get("detail.ringRadius");
+                Set(radius.Path,UpgradeUniformPickupRadius(radius.Path,version,Get(radius.Path),radius));
+            }
+            version=11;
             valueIndex=null; // Descriptor migration invalidates the runtime lookup cache.
         }
         static void BroadcastDescriptors(ProvingProfile p)

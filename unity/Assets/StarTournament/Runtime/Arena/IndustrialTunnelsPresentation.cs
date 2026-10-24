@@ -52,6 +52,11 @@ namespace StarTournament.ProvingGround
             foreach(float z in new[]{-6f,0,6f})foreach(int side in new[]{-1,1})Fixture(new Vector3(side*23,3.8f,z),false,false);
             foreach(int sx in new[]{-1,1})foreach(int sz in new[]{-1,1}){Fixture(new Vector3(sx*10,3.8f,sz*13),false,false);Fixture(new Vector3(sx*5,3.8f,sz*8),false,false);}
             yield return null;Wayfinding();yield return null;
+            var paint=new UnityEngine.Material(Shader.Find("Universal Render Pipeline/Unlit")){name="Tunnel white pickup paint",color=Color.white};owned.Add(paint);
+            var markingSettings=p.Version>=4?p:ProvingProfile.CreateIndustrialTunnelsPresentation();
+            // The centre already has the user-selected yellow sector ring; do not duplicate it in white.
+            owned.Add(ArenaPickupMarkings.Build(transform,definition,paint,markingSettings.Get("tunnels.pickupRingRadius"),markingSettings.Get("tunnels.pickupRingWidth"),item=>markingSettings.Get("tunnels.pickupRingHeight"),item=>item.Id!="tunnels-damage-central"));
+
             foreach(var entry in batches)
             {
                 var go=new GameObject(entry.Key.name);go.transform.SetParent(transform,false);var mesh=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(entry.Value.ToArray());owned.Add(mesh);
