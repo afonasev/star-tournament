@@ -117,7 +117,7 @@ namespace StarTournament.ProvingGround
             {
                 Text Hint(Transform row,string text,Vector2 min,Vector2 max,float left=0,float right=0)
                 {
-                    var hint=Label(row,"setting-explanation",text,17,min,max,TextAnchor.MiddleLeft,new Color32(170,190,202,255));
+                    var hint=Label(row,"setting-explanation",text,17,min,max,TextAnchor.UpperLeft,new Color32(170,190,202,255));
                     hint.raycastTarget=false;hint.resizeTextForBestFit=true;hint.resizeTextMinSize=14;hint.resizeTextMaxSize=17;
                     hint.rectTransform.offsetMin=new Vector2(left,0);hint.rectTransform.offsetMax=new Vector2(right,0);
                     return hint;
@@ -125,19 +125,23 @@ namespace StarTournament.ProvingGround
                 void Numeric(Slider slider,string text)
                 {
                     var row=slider.transform.parent;
-                    Layout(row.Find("value").GetComponent<RectTransform>(),new Vector2(.04f,.68f),new Vector2(.96f,.98f));
+                    var title=row.Find("value").GetComponent<Text>();
+                    title.alignment=TextAnchor.LowerLeft;
+                    Layout(title.rectTransform,new Vector2(.04f,.68f),new Vector2(.96f,.98f));
                     Layout((RectTransform)slider.transform,new Vector2(.05f,.10f),new Vector2(.95f,.29f));
                     Hint(row,text,new Vector2(.04f,.32f),new Vector2(.96f,.67f));
                 }
                 void Boolean(Toggle toggle,string text)
                 {
                     var caption=toggle.GetComponentsInChildren<Text>(true).Single(t=>t.name.EndsWith("label")).rectTransform;
+                    caption.GetComponent<Text>().alignment=TextAnchor.LowerLeft;
                     Layout(caption,new Vector2(0,.51f),new Vector2(1,.96f));
                     caption.offsetMin=new Vector2(60,0);caption.offsetMax=new Vector2(-12,0);
                     Hint(toggle.transform,text,new Vector2(0,.04f),new Vector2(1,.50f),60,-12);
                 }
                 void Caption(Text title,string text)
                 {
+                    title.alignment=TextAnchor.LowerLeft;
                     var r=title.rectTransform;var min=r.anchorMin;var max=r.anchorMax;float middle=(min.y+max.y)*.5f;
                     Layout(r,new Vector2(min.x,middle),max);
                     Hint(r.parent,text,min,new Vector2(max.x,middle));
@@ -170,6 +174,7 @@ namespace StarTournament.ProvingGround
                 void Action(Button button,string text)
                 {
                     var title=button.GetComponentInChildren<Text>();
+                    title.alignment=TextAnchor.LowerLeft;
                     Layout(title.rectTransform,new Vector2(.04f,.46f),new Vector2(.96f,.96f));
                     Hint(button.transform,text,new Vector2(.04f,.04f),new Vector2(.96f,.45f));
                 }
