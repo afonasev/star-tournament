@@ -10,13 +10,15 @@ import importlib.util
 import json
 from pathlib import Path
 import shutil
+import struct
 import sys
 
 import bpy
 from mathutils.bvhtree import BVHTree
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / 'scripts/vector_fighter/f16-orbital-hands.blend'
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+SOURCE = ROOT / 'scripts/vector_fighter/f17-assault.blend'
 ART = ROOT / 'unity/Assets/StarTournament/Art'
 # Export resolutions are offline technical choices, never simulation or camera tuning.
 RATIOS = {
@@ -84,14 +86,42 @@ def join(items, name, mesh_name):
     return obj
 
 
+def persist_assault_factors(path):
+    # Blender's exporter drops a linked MixRGB constant. Write the equivalent
+    # standard glTF baseColorFactor, sharing the original image bytes/maps.
+    from author_assault import ARMOR_TINT
+    raw = path.read_bytes()
+    size = struct.unpack_from('<I', raw, 12)[0]
+    document = json.loads(raw[20:20+size])
+    for material in document['materials']:
+        if material['name'].startswith('vector-assault-armor'):
+            material['pbrMetallicRoughness']['baseColorFactor'] = list(ARMOR_TINT)
+    payload = json.dumps(document, separators=(',', ':')).encode()
+    payload += b' ' * (-len(payload) % 4)
+    tail = raw[20+size:]
+    path.write_bytes(struct.pack('<4sII', b'glTF', 2, 20+len(payload)+len(tail))+
+                     struct.pack('<I4s', len(payload), b'JSON')+payload+tail)
+
+
 def export(kind, variant, output):
-    bpy.ops.wm.open_mainfile(filepath=str(SOURCE))
+    import author_assault
+    if kind == 'view':
+        # The selected silhouette concerns the world body. First-person camera,
+        # sleeves, hands and weapon retain the accepted F16 contact geometry.
+        bpy.ops.wm.open_mainfile(filepath=str(author_assault.SOURCE))
+    else:
+        bpy.ops.wm.open_mainfile(filepath=str(SOURCE))
     rig = next(obj for obj in bpy.context.scene.objects if obj.type == 'ARMATURE')
     rig.data.pose_position = 'REST'
     meshes = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH' and obj.name != 'weapon:joined']
     arms = [obj for obj in meshes if arm_part(obj)]
     selected = meshes if kind == 'world' else arms
     rows = [optimize(obj, RATIOS[variant][kind][role(obj)]) for obj in selected]
+    # Paint boundaries are final geometry. Cutting them before collapse lets
+    # that reducer drag colored edges into a saw-tooth pattern.
+    author_assault.palette()
+    for row, obj in zip(rows, selected):
+        row['after'] = triangles(obj)
     equipment = [obj for obj in bpy.context.scene.objects if obj.type != 'MESH' or obj.name == 'weapon:joined']
     arm_mesh = join(arms, 'VECTOR world forearms' if kind == 'world' else 'vector-armored-hands', 'vector-'+kind+'-arms-runtime')
     objects = equipment + [arm_mesh]
@@ -106,6 +136,7 @@ def export(kind, variant, output):
     spec.loader.exec_module(builder)
     builder.rig = rig
     builder.export(output, objects)
+    persist_assault_factors(output)
     return rows
 
 
@@ -122,7 +153,8 @@ def main():
     report = {'variant': args.variant, 'source': str(SOURCE.relative_to(ROOT)),
               'source_sha256': hashlib.sha256(SOURCE.read_bytes()).hexdigest(), 'objects': rows,
               'skin_triangles': {kind: {'before': sum(r['before'] for r in values), 'after': sum(r['after'] for r in values)} for kind, values in rows.items()},
-              'first_person_glove_geometry': 'unchanged', 'weapons_materials_textures_rig_clips': 'unchanged'}
+              'first_person_glove_geometry': 'unchanged', 'weapons_textures_rig_clips': 'unchanged',
+              'materials': 'F17 neutral armor plus assigned identity marks'}
     (output/'optimization.json').write_text(json.dumps(report, indent=2)+'\n')
     if args.promote:
         files = {'player-body': ('body', 'candidate-body.glb'), 'player-hands': ('arms', 'candidate-arms.glb')}
@@ -134,7 +166,7 @@ def main():
             digest = hashlib.sha256(target.read_bytes()).hexdigest()
             entry = next(e for e in manifest['entries'] if e['key'] == key)
             entry['sha256'] = digest
-            entry['source'] = 'Accepted VECTOR F16; offline '+args.variant+' runtime mesh; scripts/vector_fighter/optimize_runtime.py; editable high-poly source retained'
+            entry['source'] = 'VECTOR F17 assault (concept 1); offline '+args.variant+' runtime mesh; scripts/vector_fighter/optimize_runtime.py; F16 anatomy retained'
             mounts[kind]['sha256'] = digest
         (ART/'asset-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
         (ART/'trooper-mounts.json').write_text(json.dumps(mounts, indent=2)+'\n')

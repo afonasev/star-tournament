@@ -19,7 +19,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<renderer.sharedMaterials.Length;i++)
                 {
                     var mat=renderer.sharedMaterials[i];
-                    if(mat&&(mat.name=="pants"||mat.name.StartsWith("vector-fighter-")&&!mat.name.StartsWith("vector-fighter-identity")))
+                    if(mat&&(mat.name=="pants"||mat.name.StartsWith("vector-assault-armor")||mat.name.StartsWith("vector-fighter-")&&!mat.name.StartsWith("vector-fighter-identity")))
                         Assert.That(mat.GetFloat("_IdentityMode"),Is.Zero,"cloth, visor and neutral hardware stay neutral");
                     if(!mat||!TrooperIdentityPresentation.IsBodyZone(mat))continue;
                     var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);

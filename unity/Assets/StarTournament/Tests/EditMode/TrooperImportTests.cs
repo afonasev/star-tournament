@@ -64,5 +64,26 @@ namespace StarTournament.ProvingGround.Tests
             string license=File.ReadAllText("Assets/StreamingAssets/trooper-ATTRIBUTION.txt");
             Assert.That(license,Does.Contain("ART_LOLL"));Assert.That(license,Does.Contain("creativecommons.org/licenses/by/4.0/"));
         }
+        [Test] public void AssaultArmorKeepsNeutralMajorityAndRealIdentityMarks()
+        {
+            var body=AssetDatabase.LoadAssetAtPath<GameObject>(Root+"TrooperBody.prefab");
+            float neutral=0,painted=0;
+            foreach(var skin in body.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                var mesh=skin.sharedMesh;var vertices=mesh.vertices;
+                for(int slot=0;slot<skin.sharedMaterials.Length;slot++)
+                {
+                    string name=skin.sharedMaterials[slot].name;
+                    bool armor=name.StartsWith("vector-assault-armor");
+                    if(!armor&&!name.StartsWith("vector-fighter-identity"))continue;
+                    var indices=mesh.GetIndices(slot);float area=0;
+                    for(int i=0;i<indices.Length;i+=3)
+                        area+=Vector3.Cross(vertices[indices[i+1]]-vertices[indices[i]],vertices[indices[i+2]]-vertices[indices[i]]).magnitude*.5f;
+                    if(armor)neutral+=area;else painted+=area;
+                }
+            }
+            Assert.That(painted,Is.GreaterThan(.01f),"Identity marks must have real surface coverage");
+            Assert.That(neutral,Is.GreaterThan(painted*2),"Selected assault armor is mostly neutral rather than full-body participant color");
+        }
     }
 }

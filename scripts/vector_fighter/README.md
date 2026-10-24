@@ -1,3 +1,19 @@
+# Current F17 assault model
+
+Selected direction: concept 1, 2026-10-24. `f17-assault.blend` is the editable world source, reproducibly derived from immutable F16:
+
+```sh
+blender -b -noaudio --python scripts/vector_fighter/author_assault.py
+blender -b -noaudio --python scripts/vector_fighter/optimize_runtime.py -- --variant balanced --promote
+python3 scripts/vector_fighter/audit_assault.py --output .local/vector-assault/audit.json
+```
+
+First-person geometry still starts from F16; only the neutral/identity material partition changes. Glove anatomy, named skeleton, weapon and image bytes are exact. Offline asset dimensions in author_assault.py are the selected sculpt proportions, not new gameplay/Balance Lab controls. The exporter writes the authored neutral glTF baseColorFactor explicitly because Blender drops the linked MixRGB constant; it shares the original texture bytes instead of baking new maps. Paint seams are cut again after mesh collapse so the final color boundaries follow continuous edges. This adds a small amount of topology within the original world/view caps.
+
+The historical audit_runtime.py proves the old optimization-only contract at its original source revision. It deliberately retains material/source assertions; use audit_assault.py for F17, which permits only the two specified neutral material additions with exact maps/factors and retains strict compatibility/geometry budgets.
+
+Historical source notes follow; early builders do not rebuild F17.
+
 # VECTOR fighter — editable sources and runtime meshes
 
 The accepted visual source is `f16-orbital-hands.blend`; current runtime assets are
@@ -112,7 +128,7 @@ gates are recorded in `docs/evidence/vector-fighter/f8/`.
 ## Runtime mesh optimization (2026-10-24)
 
 The accepted F16 source is `f16-orbital-hands.blend`. Keep this editable high-poly
-source intact. `optimize_runtime.py` derives independent world and first-person
+source intact. The original optimization derived independent world and first-person
 meshes from it; the original glove vertices are retained in first-person. This
 avoids using the expensive first-person sleeves/gloves on every bot. Materials,
 embedded textures, bind skeleton, weapon meshes and Unity's persisted clips remain
