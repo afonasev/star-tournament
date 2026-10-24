@@ -213,7 +213,7 @@ namespace StarTournament.ProvingGround
         void OpenRosterEditor(int p)
         {
             if(phase!=Phase.Setup||setupStep!=2||p<0||p>=RosterTotal)return;
-            pendingSeat=-1;rosterEditing=p;rosterPicker.SetActive(false);RefreshInterface();Select(rosterIdentity);
+            pendingSeat=-1;rosterEditing=p;rosterPicker.SetActive(false);RefreshInterface();rosterEditor.transform.SetAsLastSibling();Select(rosterIdentity);
         }
         void CloseRosterEditor()
         {
@@ -247,7 +247,7 @@ namespace StarTournament.ProvingGround
             rosterChoiceRowHeight=compact?42:70;
             rosterPickerReturn=source;rosterPickerHeading.text=title;rosterChoices.Clear();
             foreach(Transform child in rosterPickerContent){child.gameObject.SetActive(false);child.name="retired-"+child.name;Destroy(child.gameObject);}
-            rosterPicker.SetActive(true);
+            rosterPicker.transform.SetAsLastSibling();rosterPicker.SetActive(true);
             var sourceRect=(RectTransform)source.transform;var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds((RectTransform)rosterPicker.transform.parent,sourceRect);
             var popup=(RectTransform)rosterPicker.transform;popup.anchorMin=popup.anchorMax=new Vector2(.5f,.5f);popup.pivot=new Vector2(.5f,1);popup.anchoredPosition=new Vector2(bounds.center.x,bounds.min.y);popup.sizeDelta=new Vector2(bounds.size.x,compact?336:230);
             rosterPickerHeading.gameObject.SetActive(false);rosterPickerBack.gameObject.SetActive(false);Layout((RectTransform)rosterChoiceScroll.transform,new Vector2(0,0),new Vector2(1,1));

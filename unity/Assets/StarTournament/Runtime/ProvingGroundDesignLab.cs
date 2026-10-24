@@ -520,6 +520,7 @@ namespace StarTournament.ProvingGround
             CloseLabDialog();labDialogReturn=previous;
             foreach(var control in labScreen.GetComponentsInChildren<Selectable>()){labDialogControls[control]=control.interactable;control.interactable=false;}
             labDialog=Panel(labScreen.transform,"lab-dialog",Vector2.zero,Vector2.one,new Color32(4,10,17,250));
+            labDialog.transform.SetAsLastSibling();
             var card=Panel(labDialog.transform,"dialog-card",new Vector2(.22f,.27f),new Vector2(.78f,.73f),MenuCard);
             Label(card.transform,"title",title,20,new Vector2(.05f,.76f),new Vector2(.95f,.96f),TextAnchor.MiddleLeft,MenuGold);return card.transform;
         }

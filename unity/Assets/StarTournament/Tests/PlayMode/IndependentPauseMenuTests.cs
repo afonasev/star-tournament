@@ -55,6 +55,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.Save();
         }
+        [UnityTest] public IEnumerator ResolutionPopupsStayAboveTheirOwnSeatAndPreserveOtherSeats()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+            for(int seat=0;seat<2;seat++)Button("seat-settings-"+seat+"-settings-resolution").onClick.Invoke();
+            yield return null;Canvas.ForceUpdateCanvases();
+            double clock=ground.Session.Time;
+            for(int seat=0;seat<2;seat++)
+            {
+                var popup=Object("seat-settings-"+seat+"-resolution-picker");
+                Assert.That(popup.transform.parent.name,Is.EqualTo("seat-settings-"+seat+"-settings-screen"));
+                Assert.That(popup.transform.GetSiblingIndex(),Is.EqualTo(popup.transform.parent.childCount-1));
+                var rect=(RectTransform)popup.transform;var parent=(RectTransform)popup.transform.parent;
+                Assert.That(rect.rect.size,Is.EqualTo(parent.rect.size),"Backdrop is confined to its owner's viewport");
+                Assert.That(popup.GetComponentInParent<CanvasGroup>().blocksRaycasts,Is.False,"Gamepad-owned views reject a foreign mouse");
+                yield return Press(seat,GamepadButton.East);
+                Assert.That(popup.activeSelf,Is.False);
+                if(seat==0)Assert.That(Object("seat-settings-1-resolution-picker").activeSelf,Is.True);
+            }
+            Assert.That(ground.Session.Time,Is.EqualTo(clock));
+        }
         [UnityTest] public IEnumerator PauseShowsTheFrozenSavedBalanceWithoutChangingMatch()
         {
             yield return Load();

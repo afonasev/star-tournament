@@ -348,7 +348,7 @@ namespace StarTournament.ProvingGround
         {
             if(phase!=Phase.Setup || !input.IsHumanSeat(seat))return;
             if(setupStep==2){OpenRosterEditor(seat);return;}
-            pendingSeat=seat;RefreshIdentityOptions();RefreshInterface();
+            pendingSeat=seat;RefreshIdentityOptions();RefreshInterface();identityScreen.transform.SetAsLastSibling();
         }
         void RefreshIdentityOptions()
         {
