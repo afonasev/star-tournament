@@ -89,7 +89,7 @@ def palette():
                 # Both shoulder caps wrap front/side/back. Chest, back and helmet
                 # marks provide a second visible zone when the weapon occludes one.
                 shoulder = 'UpperArm contoured' in obj.name and center.z > 1.415
-                chest = 'costal shell' in obj.name and 1.235 < center.z < 1.28
+                chest = 'pectoral shell' in obj.name or ('costal shell' in obj.name and 1.235 < center.z < 1.28)
                 back = 'scapular shell' in obj.name and center.z > 1.39
                 helmet = 'rear helmet panel' in obj.name or ('helmet inner' in obj.name and abs(center.x) < .035)
                 forearm = 'LowerArm' in obj.name and center.z > 1.18
