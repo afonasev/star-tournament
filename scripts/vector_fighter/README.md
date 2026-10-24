@@ -1,6 +1,6 @@
 # Current F17 assault model
 
-Selected direction: concept 1, 2026-10-24. `f17-assault.blend` is the editable world source, reproducibly derived from immutable F16:
+Selected direction: concept 1, 2026-10-24; subsequent user refinement paints the complete pectoral chest plate in participant/team color. `f17-assault.blend` is the editable world source, reproducibly derived from immutable F16:
 
 ```sh
 blender -b -noaudio --python scripts/vector_fighter/author_assault.py
