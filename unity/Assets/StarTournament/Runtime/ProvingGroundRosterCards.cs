@@ -141,10 +141,12 @@ namespace StarTournament.ProvingGround
             rosterDone=RosterButton(card.transform,"roster-done","ГОТОВО",new Vector2(.055f,.06f),new Vector2(.945f,.14f),CloseRosterEditor);
             BindMenuShortcut(rosterDone,MenuPadButton.East,()=>phase==Phase.Setup&&rosterEditing>=0&&!rosterPicker.activeSelf);
             rosterDone.GetComponent<Image>().color=MenuGold;rosterDone.GetComponentInChildren<Text>().color=MenuInk;
-            rosterPicker=Panel(card.transform,"roster-picker",Vector2.zero,Vector2.one,new Color32(24,38,54,255));
-            rosterPickerHeading=Label(rosterPicker.transform,"picker-title","",28,new Vector2(.30f,.85f),new Vector2(.945f,.97f),TextAnchor.MiddleLeft,MenuGold);
-            rosterPickerContent=RosterScroll(rosterPicker.transform,"roster-picker-scroll",new Vector2(.055f,.16f),new Vector2(.945f,.83f),out rosterChoiceScroll);
-            rosterPickerBack=RosterButton(rosterPicker.transform,"roster-picker-back","‹ НАЗАД",new Vector2(.055f,.86f),new Vector2(.28f,.95f),CloseRosterPicker);
+            rosterPicker=Panel(rosterEditor.transform,"roster-picker",Vector2.zero,Vector2.one,SelectorBackdrop);
+            var pickerCard=Panel(rosterPicker.transform,"roster-picker-card",new Vector2(.30f,.18f),new Vector2(.70f,.82f),MenuCard);StyleSelectorCard(pickerCard);
+            rosterPickerHeading=Label(pickerCard.transform,"picker-title","",28,new Vector2(.055f,.85f),new Vector2(.945f,.98f),TextAnchor.MiddleCenter,MenuGold);
+            rosterPickerContent=RosterScroll(pickerCard.transform,"roster-picker-scroll",new Vector2(.055f,.19f),new Vector2(.945f,.82f),out rosterChoiceScroll);
+            rosterPickerBack=RosterButton(pickerCard.transform,"roster-picker-back","‹ НАЗАД",new Vector2(.055f,.04f),new Vector2(.945f,.14f),CloseRosterPicker);
+            rosterPickerBack.GetComponentInChildren<Text>().fontSize=22;rosterPickerBack.GetComponentInChildren<Text>().fontStyle=FontStyle.Normal;
             BindMenuShortcut(rosterPickerBack,MenuPadButton.East,()=>phase==Phase.Setup&&rosterEditing>=0&&rosterPicker.activeSelf);
             rosterPicker.SetActive(false);rosterEditor.SetActive(false);
         }
@@ -248,9 +250,6 @@ namespace StarTournament.ProvingGround
             rosterPickerReturn=source;rosterPickerHeading.text=title;rosterChoices.Clear();
             foreach(Transform child in rosterPickerContent){child.gameObject.SetActive(false);child.name="retired-"+child.name;Destroy(child.gameObject);}
             rosterPicker.transform.SetAsLastSibling();rosterPicker.SetActive(true);
-            var sourceRect=(RectTransform)source.transform;var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds((RectTransform)rosterPicker.transform.parent,sourceRect);
-            var popup=(RectTransform)rosterPicker.transform;popup.anchorMin=popup.anchorMax=new Vector2(.5f,.5f);popup.pivot=new Vector2(.5f,1);popup.anchoredPosition=new Vector2(bounds.center.x,bounds.min.y);popup.sizeDelta=new Vector2(bounds.size.x,compact?336:230);
-            rosterPickerHeading.gameObject.SetActive(false);rosterPickerBack.gameObject.SetActive(false);Layout((RectTransform)rosterChoiceScroll.transform,new Vector2(0,0),new Vector2(1,1));
             rosterChoiceScroll.verticalNormalizedPosition=1;
         }
         void AddRosterChoice(string name,string title,UnityEngine.Events.UnityAction choose,bool enabled=true)
@@ -258,6 +257,7 @@ namespace StarTournament.ProvingGround
             int row=rosterChoices.Count;var b=RosterButton(rosterPickerContent,name,title,Vector2.zero,Vector2.one,()=>{choose();CloseRosterPicker();});
             var r=(RectTransform)b.transform;r.anchorMin=new Vector2(0,1);r.anchorMax=Vector2.one;r.pivot=new Vector2(.5f,1);float gap=rosterChoiceRowHeight<70?3:7;r.offsetMin=new Vector2(6,-(row+1)*rosterChoiceRowHeight+gap);r.offsetMax=new Vector2(-6,-row*rosterChoiceRowHeight-gap);
             if(rosterChoiceRowHeight<70){var caption=b.GetComponentInChildren<Text>();caption.fontSize=22;caption.fontStyle=FontStyle.Normal;}
+            b.GetComponent<MenuPresentation>().FilledFocus=true;
             b.interactable=enabled;rosterChoices.Add(b);b.GetComponent<RosterFocus>().UseScroll=()=>rosterChoiceScroll;
         }
         void FinishRosterPicker()
@@ -360,7 +360,7 @@ namespace StarTournament.ProvingGround
             if(phase!=Phase.Setup)return;
             if(rosterEditing>=0)
             {
-                if(rosterPicker.activeSelf)RosterVerticalNavigation(rosterChoices.Where(b=>b.interactable).Cast<Selectable>().ToArray());
+                if(rosterPicker.activeSelf)RosterVerticalNavigation(rosterChoices.Where(b=>b.interactable).Cast<Selectable>().Concat(new Selectable[]{rosterPickerBack}).ToArray());
                 else RosterVerticalNavigation(new Selectable[]{rosterIdentity,rosterTeam,rosterDevice,rosterBotView,rosterRemove,rosterDone}.Where(b=>b.gameObject.activeSelf&&b.interactable).ToArray());
                 return;
             }

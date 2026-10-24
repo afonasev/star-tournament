@@ -61,6 +61,20 @@ namespace StarTournament.ProvingGround
             button.interactable=enabled;
             return button;
         }
+        // Approved selector composition in Canvas design pixels; presentation only, never gameplay tuning.
+        static readonly Color32 SelectorBackdrop=new Color32(4,10,17,190);
+        void StyleSelectorCard(GameObject card,bool separators=true)
+        {
+            card.GetComponent<Image>().color=new Color32(27,44,61,255);RoundRosterPanel(card);
+            var outline=card.GetComponent<Outline>()??card.AddComponent<Outline>();
+            outline.effectColor=MenuGold;outline.effectDistance=new Vector2(1,-1);outline.useGraphicAlpha=true;
+            if(!separators)return;
+            foreach(float y in new[]{.84f,.17f})
+            {
+                var rule=Panel(card.transform,"selector-rule",new Vector2(.04f,y),new Vector2(.96f,y),new Color32(66,92,112,255));
+                ((RectTransform)rule.transform).sizeDelta=new Vector2(0,1);rule.GetComponent<Image>().raycastTarget=false;
+            }
+        }
         Text menuCreditFooter;
         void CreateModernMenuUi(Transform parent)
         {
@@ -121,6 +135,7 @@ namespace StarTournament.ProvingGround
 
             identityScreen=Panel(parent,"identity-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,248));
             var identityCard=Panel(identityScreen.transform,"identity-card",new Vector2(.17f,.12f),new Vector2(.83f,.88f),new Color32(20,33,48,245));
+            StyleSelectorCard(identityCard);
             identityHeading=Label(identityCard.transform,"identity-heading","КТО ИГРАЕТ?",35,new Vector2(.06f,.85f),new Vector2(.94f,.97f),TextAnchor.MiddleLeft,MenuGold);
             var options=Panel(identityCard.transform,"identity-options",new Vector2(.06f,.19f),new Vector2(.94f,.82f),new Color32(20,33,48,245));identityList=options.transform;
             var identityCancel=MenuButton(identityScreen.transform,"identity-cancel","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),CloseIdentityPicker);

@@ -10,6 +10,8 @@ namespace StarTournament.ProvingGround
     {
         public const float ButtonHeight = 46;
         public bool Compact = true;
+        public bool FilledFocus;
+        Text optionCaption;
         public float Height = ButtonHeight;
         Outline border;
         Button button;
@@ -37,6 +39,13 @@ namespace StarTournament.ProvingGround
             if(!border)return;
             bool enabledButton=button && button.interactable;
             bool focus=enabledButton && selected;
+            if(FilledFocus && button)
+            {
+                bool highlighted=enabledButton&&(selected||hover);
+                button.GetComponent<Image>().color=highlighted?Gold:new Color32(34,55,74,255);
+                if(!optionCaption)optionCaption=GetComponentInChildren<Text>();
+                if(optionCaption)optionCaption.color=highlighted?new Color32(20,35,49,255):new Color32(242,244,246,255);
+            }
             if(focusFrame && focusFrame.activeSelf!=focus)focusFrame.SetActive(focus);
             border.effectColor=enabledButton&&hover?Gold:Line;
             border.effectDistance=enabledButton&&hover?new Vector2(2,-2):new Vector2(1,-1);

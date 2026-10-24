@@ -62,6 +62,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int seat=0;seat<2;seat++)Button("seat-settings-"+seat+"-settings-resolution").onClick.Invoke();
             yield return null;Canvas.ForceUpdateCanvases();
             double clock=ground.Session.Time;
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");
+            if(!string.IsNullOrEmpty(output)){System.IO.Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"two-seat-resolution-modals.png"));}
             for(int seat=0;seat<2;seat++)
             {
                 var popup=Object("seat-settings-"+seat+"-resolution-picker");
