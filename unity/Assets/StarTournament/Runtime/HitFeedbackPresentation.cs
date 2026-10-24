@@ -31,6 +31,7 @@ namespace StarTournament.ProvingGround
             bool shield=notice.ArmorLost>0&&notice.Time-lastShield[p]>=profile.Get("hit.shieldInterval");
             if(!stain&&!shield)return;
             // Rate-limit the shot, not each pellet: one shot may create several bounded patches.
+            var projection=new SkinnedContactPatch.Projection(bodies[p]);
             bool placed=false;
             if(notice.Contacts!=null&&notice.Contacts.Count>0)
             {
@@ -43,7 +44,7 @@ namespace StarTournament.ProvingGround
             bool Place(FatalImpact impact)
             {
                 if(!impact.Valid)return false;
-                var contact=SkinnedContactPatch.Find(bodies[p],impact.Point,impact.Direction);
+                var contact=projection.Find(impact.Point,impact.Direction);
                 if(contact==null)return false;
                 if(stain)Add(contact,notice,false);
                 if(shield)Add(contact,notice,true);
