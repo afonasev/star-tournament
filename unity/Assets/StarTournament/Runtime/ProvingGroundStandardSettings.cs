@@ -42,7 +42,7 @@ namespace StarTournament.ProvingGround
             void CreateStandardSettings(Transform content)
             {
                 for(int i=0;i<StandardSectionOrder.Length;i++)
-                {float top=.91f-i*.16f;Layout((RectTransform)settingsSectionButtons[StandardSectionOrder[i]].transform,new Vector2(.06f,top-.11f),new Vector2(.94f,top));}
+                {float top=.89f-i*.08f;Layout((RectTransform)settingsSectionButtons[StandardSectionOrder[i]].transform,new Vector2(.06f,top-.07f),new Vector2(.94f,top));}
                 settingsGraphicsPage=Panel(content,StandardName("settings-graphics"),new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 var viewport=graphicsScroll.viewport;var list=graphicsScroll.content;
                 viewport.SetParent(settingsGraphicsPage.transform,false);
