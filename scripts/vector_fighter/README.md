@@ -1,8 +1,13 @@
-# VECTOR fighter — work in progress
+# VECTOR fighter — editable sources and runtime meshes
 
-The selected visual target is `docs/evidence/vector-fighter/approved-vector-concept.png`.
-The current mesh is a rough implementation, not accepted art. See the verification
-record in that directory for the remaining shape, detail and gameplay gates.
+The accepted visual source is `f16-orbital-hands.blend`; current runtime assets are
+derived by `optimize_runtime.py` as documented below. Retain this detailed source
+and the established rig, gloves and grips. The original visual target is
+`docs/evidence/vector-fighter/approved-vector-concept.png`.
+
+The early builders and F1–F15 notes below are historical studies. Their rough or
+unaccepted status does not describe the accepted F16 source. Do not replace the
+shipping model by rerunning an early builder alone.
 
 This local Blender pipeline preserves the existing compatible skeleton, authored
 clips, weapon mount hierarchy and articulated glove derivative. The suit and closed
@@ -20,7 +25,7 @@ Candidate mode writes only `.local/vector-fighter/`. Without `--candidate`, the
 builder replaces the two Unity GLBs and updates their manifest hashes. Do not run
 that export while Unity is using this worktree.
 
-The checked-in `vector-fighter.blend` is the editable snapshot. The builder saves `.local/vector-fighter/vector-fighter.blend` with separate armor
+The checked-in `vector-fighter.blend` is the earlier editable snapshot. The builder saves `.local/vector-fighter/vector-fighter.blend` with separate armor
 objects, skin weights, materials and the compatible animation rig before batching
 render meshes. `--source-only` saves this editable source without changing GLBs.
 All original source inputs are pinned Git blobs from
@@ -103,3 +108,48 @@ parameters automatically. Trooper @16 supplies separately authored closed
 RocketLauncher/Cutter grips; `BeforeClosedVerticalGrips` preserves exact @15
 factory defaults for saved history. Actual Unity evidence and remaining visual
 gates are recorded in `docs/evidence/vector-fighter/f8/`.
+
+## Runtime mesh optimization (2026-10-24)
+
+The accepted F16 source is `f16-orbital-hands.blend`. Keep this editable high-poly
+source intact. `optimize_runtime.py` derives independent world and first-person
+meshes from it; the original glove vertices are retained in first-person. This
+avoids using the expensive first-person sleeves/gloves on every bot. Materials,
+embedded textures, bind skeleton, weapon meshes and Unity's persisted clips remain
+unchanged. No distance-based LOD or runtime camera/quality setting is introduced.
+
+```sh
+blender -b -noaudio --python scripts/vector_fighter/optimize_runtime.py -- --variant conservative
+blender -b -noaudio --python scripts/vector_fighter/optimize_runtime.py -- --variant balanced
+# Only after reviewing the generated candidates:
+blender -b -noaudio --python scripts/vector_fighter/optimize_runtime.py -- --variant balanced --promote
+```
+
+Candidates and per-object surface-error/count reports go to
+`.local/vector-runtime/<variant>/`. `--promote` updates shipping GLBs and their
+manifest hashes; it does not publish a release. After promotion run
+`TrooperPreparation.RefreshExistingScene` through the Unity wrapper to regenerate
+only the two persisted prefabs while retaining the accepted animation clips.
+World and view meshes deliberately have distinct mesh names and resolutions;
+sharing unequal same-name skins is forbidden.
+
+For the optional `VectorMeshOptimizationReviewTests` graphical comparison, copy
+each generated candidate pair to `Assets/StarTournament/Art/RuntimeMeshReview/`
+as `<variant>-body.glb` and `<variant>-arms.glb`. Use an owned worktree, set an
+absolute `STAR_TOURNAMENT_MESH_EVIDENCE`, run the explicit review through unity-run
+with graphics and `-noaudio -muted`, and choose exclusive for timings. Remove
+these temporary review imports after preserving the report/images. The fixture
+remaps per-slot identity property blocks with the material roles; merely swapping
+meshes can otherwise produce misleading colors. Frozen timing is diagnostic;
+Windows Player/human acceptance remains separate.
+
+`python3 scripts/vector_fighter/audit_runtime.py --output .local/vector-runtime/audit.json`
+checks the actual exports without Unity: budgets, manifest hashes, named bind
+matrices, normalized weights, material/texture identity, untouched weapon and
+unchanged first-person glove triangles with UVs/normals/named skin weights. The
+reference defaults to the last pre-optimization source commit. It also verifies
+that the editable high-poly source remains byte-identical to that revision.
+
+Set `STAR_TOURNAMENT_MESH_SHIPPING_ONLY=1` for a graphical capture of the actual
+current prefabs without candidate imports or timing loops. That mode supports
+unity-run shared; measured multi-variant comparison uses exclusive.

@@ -44,6 +44,19 @@ namespace StarTournament.ProvingGround.Tests
                         Assert.That(w.weight0+w.weight1+w.weight2+w.weight3,Is.EqualTo(1).Within(.0001));
                 }
         }
+        [Test] public void WorldMeshBudgetDoesNotReuseFirstPersonResolution()
+        {
+            var world=AssetDatabase.LoadAssetAtPath<GameObject>(Root+"TrooperBody.prefab").GetComponentsInChildren<SkinnedMeshRenderer>();
+            var view=AssetDatabase.LoadAssetAtPath<GameObject>(Root+"TrooperArms.prefab").GetComponentsInChildren<SkinnedMeshRenderer>();
+            // Asset resource budgets only: the world cap is the measured v0.1.8 skin
+            // count. They are not gameplay/balance or camera configuration values.
+            Assert.That(world.Sum(s=>s.sharedMesh.triangles.Length/3),Is.LessThanOrEqualTo(32989));
+            Assert.That(view.Sum(s=>s.sharedMesh.triangles.Length/3),Is.LessThanOrEqualTo(45000));
+            var forearms=world.Single(s=>s.name=="VECTOR world forearms").sharedMesh;
+            var hands=view.Single(s=>s.name=="vector-armored-hands").sharedMesh;
+            Assert.That(forearms,Is.Not.SameAs(hands));
+            Assert.That(forearms.triangles.Length,Is.LessThan(hands.triangles.Length));
+        }
         [Test] public void ProfileAndAttributionAreComplete()
         {
             var profile=ProvingProfile.CreateTrooperDefault();Assert.That(profile.Validate(),Is.Empty);

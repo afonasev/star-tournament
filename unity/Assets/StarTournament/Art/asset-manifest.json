@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "5a0b66fa130960dbe9795905f66919406f97b4dbf2592045855862891710d32c",
+      "sha256": "fbba4dc6a2f988241c85a966bf0248ac4ab89c18f2634d45bc32dc0caac5be2d",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
+      "source": "Accepted VECTOR F16; offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; editable high-poly source retained"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "4e5cfd05c8145ebf5fadf1e16d7e534b93bffa3d6ab9e34591cf34633216a377",
+      "sha256": "7628e586ec0687c1308a0b0696ec6e22be667fadffca9acb1b3916cedca5f543",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
+      "source": "Accepted VECTOR F16; offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; editable high-poly source retained"
     },
     {
       "key": "speed-pickup",
