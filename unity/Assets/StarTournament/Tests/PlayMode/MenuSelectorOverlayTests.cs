@@ -50,6 +50,25 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var path=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");if(string.IsNullOrEmpty(path))yield break;
             Directory.CreateDirectory(path);yield return new WaitForSecondsRealtime(.12f);yield return EditorUiCapture.Capture(ground,Path.Combine(path,name+".png"),1920,1080);
         }
+        [UnityTest] public IEnumerator ConfirmationDialogsKeepPointerActionsAboveTheirWorkspace()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                Click("main-action-4");yield return null;Click("settings-reset-all");yield return null;
+                AssertPointerTarget(B("settings-reset-cancel"));yield return Capture("settings-reset-modal");
+                AssertPointerTarget(B("settings-reset-cancel"),true);yield return null;
+                Assert.That(Popup("settings-reset-dialog").activeSelf,Is.False);
+                Click("settings-back");yield return NativeLoadingTestScene.WaitLabHistory(ground);Click("main-action-2");yield return null;
+                Click("lab-create");yield return null;yield return Capture("lab-create-modal");
+                ground.GetComponentsInChildren<InputField>().Single(i=>i.name=="lab-profile-name").text="Modal QA";
+                AssertPointerTarget(B("submit"),true);yield return null;
+                Click("lab-rename");yield return null;AssertPointerTarget(B("cancel"));yield return Capture("lab-rename-modal");AssertPointerTarget(B("cancel"),true);yield return null;
+                Click("lab-delete");yield return null;AssertPointerTarget(B("cancel"));yield return Capture("lab-delete-modal");AssertPointerTarget(B("cancel"),true);yield return null;
+                typeof(ProvingGround).GetMethod("ShowLabErrors",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(ground,null);
+                yield return null;yield return Capture("lab-errors-modal");AssertPointerTarget(B("cancel"),true);yield return null;
+                Assert.That(B("lab-create").interactable,Is.True);
+            }
+        }
         [UnityTest] public IEnumerator ResolutionChoicesOverlayLatePageControlsAndBlockBackgroundClicks()
         {
             using(EditorUiCapture.FixedViewport(ground,1920,1080))

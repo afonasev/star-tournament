@@ -99,8 +99,8 @@ namespace StarTournament.ProvingGround
                 settingsWriteError=Label(settingsScreen.transform,StandardName("settings-save-error"),"",17,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(255,218,184,255));
                 var backContext=Label(settingsScreen.transform,StandardName("settings-back-context"),"",18,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
                 backContext.gameObject.AddComponent<MenuContextHint>().Value=BackContextCaption;
-                resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,new Color32(4,10,17,250));
-                var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);
+                resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,SelectorBackdrop);
+                var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);owner.StyleSelectorCard(card,false);
                 Label(card.transform,"title","Сбросить все настройки?",30,new Vector2(.06f,.76f),new Vector2(.94f,.94f),TextAnchor.MiddleLeft,MenuGold);
                 Label(card.transform,"body","Экран, графика, звук, управление и интерфейс, включая личные предпочтения, вернутся к исходным значениям.\n\nПрофили, прогресс, история и лаборатория сохранятся. Согласие на статистику не изменится.",22,new Vector2(.06f,.30f),new Vector2(.94f,.75f),TextAnchor.UpperLeft,Color.white);
                 resetCancel=MenuButton(card.transform,StandardName("settings-reset-cancel"),"Отмена",new Vector2(.06f,.10f),new Vector2(.48f,.24f),CloseReset);

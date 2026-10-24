@@ -28,17 +28,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
-            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
-            while(ground.LocalSeatCount>2)Button("seats-minus").onClick.Invoke();
-            Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
+            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,2);
+            var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
             for(int seat=0;seat<2;seat++)
             {
-                pads[seat]=InputSystem.AddDevice<Gamepad>();
-                InputSystem.QueueStateEvent(pads[seat],new GamepadState().WithButton(GamepadButton.North));
-                yield return null;yield return null;
-                InputSystem.QueueStateEvent(pads[seat],new GamepadState());yield return null;
-                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();
-                Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
+                pads[seat]=InputSystem.AddDevice<Gamepad>();Assert.That(input.Assign(seat,pads[seat]),Is.True);
+                yield return null;
+                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();yield return null;
+                ground.GetComponentsInChildren<Button>().Single(b=>b.name=="lobby-profile-none").onClick.Invoke();yield return null;
+                Button("roster-done").onClick.Invoke();yield return null;
             }
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
@@ -308,11 +306,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("seat-settings-0-settings-back").onClick.Invoke();Button("seat-settings-1-settings-back").onClick.Invoke();
             Button("pause-action-1-3").onClick.Invoke();
             Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
+            var modalOutput=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");
+            if(!string.IsNullOrEmpty(modalOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(modalOutput,"pause-exit-modal.png"));
             Button("pause-exit-no-1").onClick.Invoke();
             Assert.That(Object("pause-action-0-0").activeInHierarchy,Is.True);
             Assert.That(ground.Running,Is.False);
             var original=ground.Session;
-            Button("pause-action-1-2").onClick.Invoke();Button("pause-repeat-yes-1").onClick.Invoke();yield return new WaitForFixedUpdate();
+            Button("pause-action-1-2").onClick.Invoke();
+            if(!string.IsNullOrEmpty(modalOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(modalOutput,"pause-restart-modal.png"));
+            Button("pause-repeat-yes-1").onClick.Invoke();yield return new WaitForFixedUpdate();
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(original));
             Assert.That(Object("seat-pause-0").activeSelf,Is.False);
         }

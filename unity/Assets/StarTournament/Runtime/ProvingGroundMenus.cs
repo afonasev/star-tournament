@@ -61,7 +61,7 @@ namespace StarTournament.ProvingGround
             button.interactable=enabled;
             return button;
         }
-        // Approved selector composition in Canvas design pixels; presentation only, never gameplay tuning.
+        // Approved modal composition in Canvas design pixels; presentation only, never gameplay tuning.
         static readonly Color32 SelectorBackdrop=new Color32(4,10,17,190);
         void StyleSelectorCard(GameObject card,bool separators=true)
         {

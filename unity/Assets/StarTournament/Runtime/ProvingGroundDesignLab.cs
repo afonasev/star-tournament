@@ -521,10 +521,10 @@ namespace StarTournament.ProvingGround
             var previous=labDialog!=null?labDialogReturn:(EventSystem.current?EventSystem.current.currentSelectedGameObject:null);
             CloseLabDialog();labDialogReturn=previous;
             foreach(var control in labScreen.GetComponentsInChildren<Selectable>()){labDialogControls[control]=control.interactable;control.interactable=false;}
-            labDialog=Panel(labScreen.transform,"lab-dialog",Vector2.zero,Vector2.one,new Color32(4,10,17,250));
+            labDialog=Panel(labScreen.transform,"lab-dialog",Vector2.zero,Vector2.one,SelectorBackdrop);
             labDialog.transform.SetAsLastSibling();
-            var card=Panel(labDialog.transform,"dialog-card",new Vector2(.22f,.27f),new Vector2(.78f,.73f),MenuCard);
-            Label(card.transform,"title",title,20,new Vector2(.05f,.76f),new Vector2(.95f,.96f),TextAnchor.MiddleLeft,MenuGold);return card.transform;
+            var card=Panel(labDialog.transform,"dialog-card",new Vector2(.22f,.27f),new Vector2(.78f,.73f),MenuCard);StyleSelectorCard(card,false);
+            Label(card.transform,"title",title,28,new Vector2(.05f,.76f),new Vector2(.95f,.96f),TextAnchor.MiddleLeft,MenuGold);return card.transform;
         }
         void LabConfirm(string title,string confirm,Action action)
         {var card=LabDialog(title);var cancel=LabCancelButton(card,"cancel","Продолжить редактирование",new Vector2(.05f,.10f),new Vector2(.55f,.185f),CloseLabDialog);LabButton(card,"confirm",confirm,new Vector2(.60f,.10f),new Vector2(.95f,.185f),()=>action());Select(cancel);}

@@ -286,8 +286,8 @@ namespace StarTournament.ProvingGround
                     button.gameObject.AddComponent<MenuScrollFocus>().Scroll=resolutionScroll;
                 }
                 resolutionCancelButton=MenuButton(pickerCard.transform,"resolution-cancel","‹ НАЗАД",new Vector2(.06f,.04f),new Vector2(.94f,.14f),CloseResolutionPicker);
-                settingsConfirmation=Panel(settingsScreen.transform,"display-confirmation",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
-                var confirmCard=Panel(settingsConfirmation.transform,"confirmation-card",new Vector2(.12f,.24f),new Vector2(.88f,.76f),MenuCard);
+                settingsConfirmation=Panel(settingsScreen.transform,"display-confirmation",Vector2.zero,Vector2.one,SelectorBackdrop);
+                var confirmCard=Panel(settingsConfirmation.transform,"confirmation-card",new Vector2(.12f,.24f),new Vector2(.88f,.76f),MenuCard);owner.StyleSelectorCard(confirmCard,false);
                 settingsConfirmationText=Label(confirmCard.transform,"confirmation-text","",29,new Vector2(.07f,.37f),new Vector2(.93f,.88f),TextAnchor.MiddleCenter,Color.white);
                 settingsConfirmButton=MenuButton(confirmCard.transform,"settings-confirm","СОХРАНИТЬ",new Vector2(.07f,.10f),new Vector2(.47f,.29f),ConfirmDisplay);
                 settingsRevertButton=MenuButton(confirmCard.transform,"settings-revert","ВЕРНУТЬ",new Vector2(.53f,.10f),new Vector2(.93f,.29f),RollbackDisplay);

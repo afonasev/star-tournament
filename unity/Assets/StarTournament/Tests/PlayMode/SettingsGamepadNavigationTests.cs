@@ -513,6 +513,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-display-mode"));
             yield return Press(GamepadButton.South);
             Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="display-confirmation").gameObject.activeInHierarchy,Is.True);
+            var modalOutput=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");
+            if(!string.IsNullOrEmpty(modalOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(modalOutput,"display-confirmation-modal.png"));
             yield return Press(GamepadButton.East);
             Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="display-confirmation").gameObject.activeInHierarchy,Is.False);
             Assert.That(Focus,Is.EqualTo("settings-display-mode"));

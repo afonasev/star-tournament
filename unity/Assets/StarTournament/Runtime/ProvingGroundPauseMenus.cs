@@ -40,11 +40,12 @@ namespace StarTournament.ProvingGround
                 var root=Panel(viewportRoots[seat],"seat-pause-"+seat,Vector2.zero,Vector2.one,Color.clear);
                 root.GetComponent<Image>().raycastTarget=false;
                 seatPauseRoots[seat]=root;
-                var dim=Panel(root.transform,"dim",Vector2.zero,Vector2.one,new Color32(4,12,21,175));
+                var dim=Panel(root.transform,"dim",Vector2.zero,Vector2.one,SelectorBackdrop);
                 dim.GetComponent<Image>().raycastTarget=false;
                 var wait=Label(root.transform,"pause-wait","МАТЧ НА ПАУЗЕ",24,new Vector2(.08f,.42f),new Vector2(.92f,.58f),TextAnchor.MiddleCenter,Color.white);
                 seatPauseWaiting[seat]=wait.gameObject;
                 var card=Panel(root.transform,"pause-card",new Vector2(.11f,.09f),new Vector2(.89f,.91f),new Color32(20,33,48,248));
+                StyleSelectorCard(card,false);
                 seatPauseCards[seat]=card;
                 card.AddComponent<CanvasGroup>();
                 seatPauseActions[seat]=PausePage(card.transform,"actions");

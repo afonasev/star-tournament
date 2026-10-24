@@ -871,3 +871,5 @@ Factory trooper presentation @18 keeps the support forearm approximately aligned
 
 ### VECTOR F13 hand anatomy
 The neutral glove shell uses a continuous anatomical palm/thenar/finger volume with adjacent-joint skin blending. Factory trooper @19 revises right-thumb articulation while preserving F12 arm/wrist placement, left support contacts and weapon/camera transforms. Exact @18 and earlier Lab snapshots are retained. Editable source and native four-weapon review: `scripts/vector_fighter/f13-hand-anatomy.blend`, `docs/evidence/vector-fighter/f13-result/`.
+
+2026-10-25: выбранное оформление модальных селекторов (вариант 2: золотая внешняя рамка, непрозрачная тёмная карточка и затемнение) применяется также к подтверждению сброса настроек и экранного режима, общим диалогам лаборатории и внешней карточке личной паузы. Подтверждения перезапуска/выхода используют ту же карточку паузы без второй вложенной рамки; владение вводом и последствия действий сохраняются.
