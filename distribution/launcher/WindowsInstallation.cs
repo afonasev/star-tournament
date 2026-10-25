@@ -20,7 +20,8 @@ public static class WindowsInstallation
         if (!data.RootElement.TryGetProperty("metadataReader", out var reader)) return 1;
         var protocol = reader.GetInt32();
         if (protocol < 1) throw new IOException("Invalid metadata reader capability");
-        return Math.Min(protocol, ReleaseCompatibility.ReaderProtocol);
+        // Reader3 introduces only the macOS Resources bundle layout.
+        return Math.Min(protocol, 2);
     }
 
     public static string? MarkedRoot(IVelopackLocator locator)

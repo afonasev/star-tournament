@@ -238,6 +238,18 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             {
                 using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
                 var entries = archive.Entries.Where(e => e.Name == "release.json").ToArray();
+                if (config.Platform == "osx" && requirements.MinimumUpdaterProtocol >= 3)
+                {
+                    var links = entries.Where(e => e.FullName == "lib/app/Contents/MacOS/release.json" &&
+                        ((e.ExternalAttributes >> 16) & 0xf000) == 0xa000).ToArray();
+                    if (entries.Length != 2 || links.Length != 1 || links[0].Length > 128)
+                        throw new CryptographicException("Exact reader3 config link required");
+                    using var link = new StreamReader(links[0].Open());
+                    if (await link.ReadToEndAsync(token) != "../Resources/payload/release.json")
+                        throw new CryptographicException("Invalid reader3 config link");
+                    entries = entries.Where(e => e.FullName == "lib/app/Contents/Resources/payload/release.json" &&
+                        ((e.ExternalAttributes >> 16) & 0xf000) != 0xa000).ToArray();
+                }
                 if (entries.Length != 1 || entries[0].Length > 65536) throw new CryptographicException("Unique bounded payload config required");
                 using var input = entries[0].Open(); using var content = new MemoryStream();
                 var buffer = new byte[8192]; int count;

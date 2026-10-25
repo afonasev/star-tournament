@@ -96,6 +96,30 @@ def from_portable(archive, output, runtime, version):
         return build(Path(directory)/APP_NAME, output, runtime, version)
 
 
+def prepare_bundle(stage, output, config, icon):
+    """Keep code in MacOS and non-code in Resources, without xattr signatures.
+
+    Directory/file links retain launcher/recovery paths. Reader3 validates the
+    one resource config plus its exact link; older readers fail closed.
+    """
+    app = Path(output)/APP_NAME
+    macos = app/'Contents/MacOS'
+    resources = app/'Contents/Resources'
+    payload = resources/'payload'
+    macos.mkdir(parents=True)
+    payload.mkdir(parents=True)
+    (app/'Contents/Info.plist').write_bytes(plistlib.dumps(outer_plist(config)))
+    shutil.copyfile(icon, resources/'app-icon.icns')
+    for path in Path(stage).iterdir():
+        # .NET native libraries/apphost already have embedded ad-hoc signatures.
+        if path.is_file() and (path.name == 'StarTournamentLauncher' or path.suffix == '.dylib'):
+            path.rename(macos/path.name)
+        else:
+            path.rename(payload/path.name)
+            (macos/path.name).symlink_to('../Resources/payload/'+path.name, target_is_directory=(payload/path.name).is_dir())
+    return app
+
+
 def verify_signature(app):
     """Integrity only: ad-hoc signing is not Developer ID or notarization."""
     subprocess.run(['/usr/bin/codesign', '--verify', '--deep', '--strict',

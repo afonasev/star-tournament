@@ -9,7 +9,7 @@ public sealed record ReleaseRequirements(string MinimumOsVersion, int MinimumUpd
 
 public static class ReleaseCompatibility
 {
-    public const int ReaderProtocol = 2;
+    public const int ReaderProtocol = 3;
     public const string PayloadFormat = "velopack-full-v1", DataPolicy = "profiles2-lab3-prefs1";
     public static ReleaseRequirements Legacy(string platform) => new(PlatformRequirements.MinimumVersion(platform).ToString(), 1, PayloadFormat, "legacy-preserved-v1");
 

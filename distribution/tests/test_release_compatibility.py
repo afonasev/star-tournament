@@ -37,7 +37,9 @@ class ReleaseCompatibility(unittest.TestCase):
 
     def write_package(self, config=None, duplicate=False):
         with zipfile.ZipFile(self.package, 'w') as archive:
-            archive.writestr('lib/osx/release.json', json.dumps(config or self.config))
+            archive.writestr('lib/app/Contents/Resources/payload/release.json', json.dumps(config or self.config))
+            link=zipfile.ZipInfo('lib/app/Contents/MacOS/release.json');link.create_system=3;link.external_attr=0o120777<<16
+            archive.writestr(link,'../Resources/payload/release.json')
             if duplicate: archive.writestr('other/release.json', json.dumps(self.config))
 
     def test_producer_uses_actual_mac_floor_and_emits_schema2(self):
@@ -46,6 +48,9 @@ class ReleaseCompatibility(unittest.TestCase):
         self.assertEqual(self.descriptor['schema'], 2)
         self.assertEqual(self.descriptor['compatibility'], self.config['compatibility'])
         compatibility.verify_payload(self.package, self.descriptor)
+
+    def test_mac_resources_require_reader3(self):
+        self.assertEqual(self.requirements['minimumUpdaterProtocol'], 3)
 
     def test_windows_floor_and_reader_are_explicit(self):
         result = compatibility.current('win-x64', self.root)
@@ -65,7 +70,7 @@ class ReleaseCompatibility(unittest.TestCase):
                 with self.assertRaises(ValueError): compatibility.current('osx-arm64', self.player)
 
     def test_unsupported_contract_never_emitted(self):
-        for field, value in (('minimumUpdaterProtocol', 3), ('minimumUpdaterProtocol', True), ('payloadFormat', 'future'), ('userDataPolicy', 'destructive'), ('minimumOsVersion', '11.0')):
+        for field, value in (('minimumUpdaterProtocol', 4), ('minimumUpdaterProtocol', True), ('payloadFormat', 'future'), ('userDataPolicy', 'destructive'), ('minimumOsVersion', '11.0')):
             with self.subTest(field=field, value=value):
                 changed = dict(self.requirements, **{field: value})
                 with self.assertRaises(ValueError): compatibility.manifest(dict(self.config, compatibility=changed), self.asset, 'now')
@@ -99,7 +104,7 @@ class ReleaseCompatibility(unittest.TestCase):
             sign(self.descriptor)
             data, asset = publisher.verify_manifest(envelope, '1.1.0', 'osx-arm64', 'production')
             self.assertEqual(data['compatibility'], self.requirements)
-            for field, value in (('schema', 1), ('compatibility', None), ('compatibility', dict(self.requirements, minimumUpdaterProtocol=3))):
+            for field, value in (('schema', 1), ('compatibility', None), ('compatibility', dict(self.requirements, minimumUpdaterProtocol=4))):
                 with self.subTest(field=field):
                     sign(dict(self.descriptor, **{field: value}))
                     with self.assertRaises(ValueError): publisher.verify_manifest(envelope, '1.1.0', 'osx-arm64', 'production')
