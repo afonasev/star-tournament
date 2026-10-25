@@ -36,6 +36,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{Directory.Delete(directory,true);}
         }
+        [Test] public void AuthoringDefaultMatchesRuntimeWithoutChangingHistoricalOrNamedProfiles()
+        {
+            string directory=Path.Combine(Path.GetTempPath(),"author-circles-"+Guid.NewGuid());Directory.CreateDirectory(directory);string path=Path.Combine(directory,"history.json");
+            try
+            {
+                var current=DesignLabHistoryTests.Shipped();var old=current.Clone();old.Profiles=old.Profiles.Select(Before).ToList();var catalog=LabReleaseCatalog.Factory(old);
+                var history=new DesignLabHistory(path,old,releases:catalog,authoring:true);var original=history.Selected;string originalJson=JsonUtility.ToJson(original.Snapshot);
+                history.Create("Custom rings");string customId=history.SelectedProfileId;var draft=history.Selected.Snapshot;draft.Set("tunnels.pickupRingRadius",1.12f);history.Save(draft);var custom=history.Selected;
+                var next=new DesignLabHistory(path,current,releases:catalog,authoring:true,persistMigration:false);
+                Assert.That(next.StorageError,Is.Null);Assert.That(next.ReleaseError,Is.Null);
+                Assert.That(next.Selected.Snapshot.Get("detail.ringRadius"),Is.EqualTo(1.65f));Assert.That(next.Selected.Snapshot.Get("tunnels.pickupRingRadius"),Is.EqualTo(1.12f));
+                var savedCustom=next.Profiles.Single(p=>p.Id==customId).Revisions.Single(r=>r.Number==custom.Number);Assert.That(savedCustom.Hash,Is.EqualTo(custom.Hash));Assert.That(savedCustom.Snapshot.Hash(),Is.EqualTo(custom.Hash));
+                var factory=next.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId);var saved=factory.Revisions.Single(r=>r.Number==original.Number);
+                Assert.That(saved.Hash,Is.EqualTo(original.Hash));Assert.That(JsonUtility.ToJson(saved.Snapshot),Is.EqualTo(originalJson));
+                var effective=factory.Revisions.OrderByDescending(r=>r.Number).First().Snapshot;
+                foreach(var key in new[]{"detail.ringRadius","tunnels.pickupRingRadius","lunar.pickupRingRadius"})Assert.That(effective.Get(key),Is.EqualTo(1.35f),key);
+                var output=next.BuildReleaseCatalog();Assert.That(output.Entries.Single().Hash,Is.EqualTo(catalog.Entries.Single().Hash));
+                Assert.That(DesignLabHistory.ResolvePublishedDefault(current,output).Selected.Hash,Is.EqualTo(effective.Hash()));
+            }
+            finally{Directory.Delete(directory,true);}
+        }
         [Test] public void SerializedBowlProfileAdoptsDefaultAndKeepsCustomRadius()
         {
             var old=Before(ProvingProfile.CreateCombatBowlRingPresentationDefault());old.EnsureOrbitalLeagueDescriptors();Assert.That(old.Version,Is.EqualTo(11));Assert.That(old.Get("detail.ringRadius"),Is.EqualTo(1.35f));

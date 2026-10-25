@@ -463,6 +463,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
             // Project the exact trusted predecessor before the existing legacy search.
             // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path=="presentation.shotTracerRed"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeShotgunTracerColor()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.BotBanterIntervalPath))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeBotBanterInterval()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponGain"))
@@ -803,11 +805,13 @@ namespace StarTournament.ProvingGround
                     // values and the immutable source revision unchanged.
                     if(d.Path=="blood.drops"&&snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                         value=currentDescriptor.DefaultValue;
-                    if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeArenaVisualValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 }
+                // Authoring and runtime Default share the approved radius migration.
+                // Named profiles and immutable source revisions retain their saved values.
+                if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 next.Set(d.Path,value);
             }
             // Version3 used the office controls for both floors and stair annexes.

@@ -248,9 +248,9 @@ namespace StarTournament.ProvingGround
             }
             if(traceMaterial)return traceMaterial;
             var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
-            traceMaterial=new Material(shader){color=new Color(1f,.78f,.4f,1f)};
-            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",new Color(1f,.78f,.4f,1f));
-            if(traceMaterial.HasProperty("_EmissionColor")){traceMaterial.EnableKeyword("_EMISSION");traceMaterial.SetColor("_EmissionColor",new Color(1f,.55f,.15f,1f));}
+            var traceColor=new Color(movement.Get("presentation.shotTracerRed"),movement.Get("presentation.shotTracerGreen"),movement.Get("presentation.shotTracerBlue"),1f);
+            traceMaterial=new Material(shader){color=traceColor};
+            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",traceColor);
             return traceMaterial;
         }
         void PrepareShotPose(int participant)
