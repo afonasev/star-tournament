@@ -20,8 +20,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         public IEnumerator LunarControl() { yield return Measure(new[]{LunarLaboratoryCatalog.Id}); }
         [UnityTest, Explicit("Exclusive graphical Editor diagnostic, not gameplay/device FPS")]
         public IEnumerator AllMapControls() { yield return Measure(new[]{CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id}); }
+        [UnityTest, Explicit("Exclusive Well metal-detail partition comparison; Editor diagnostics, not Player FPS")]
+        public IEnumerator WellControl() { yield return Measure(new[]{WellArenaCatalog.Id},true); }
 
-        IEnumerator Measure(string[] maps)
+        IEnumerator Measure(string[] maps,bool wellDetailPartitionControl=false)
         {
             Assert.That(SystemInfo.graphicsDeviceType, Is.Not.EqualTo(GraphicsDeviceType.Null));
             string directory = Environment.GetEnvironmentVariable("STAR_TOURNAMENT_PERF_EVIDENCE");
@@ -89,8 +91,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         yield return null;
                         var all=root.GetComponentsInChildren<MeshRenderer>();
                         File.WriteAllLines(Path.Combine(directory,map+"-inventory.csv"),new[]{"name,vertices,triangles,extent,materials,enabled"}.Concat(all.Where(r=>r.GetComponent<MeshFilter>()).Select(r=>{var m=r.GetComponent<MeshFilter>().sharedMesh;return $"{r.name.Replace(',',' ')},{m.vertexCount},{(r.isPartOfStaticBatch?(long)m.GetIndexCount(r.subMeshStartIndex)/3:Enumerable.Range(0,m.subMeshCount).Sum(i=>(long)m.GetIndexCount(i)/3))},{r.bounds.size.ToString().Replace(',',';')},{r.sharedMaterials.Length},{r.enabled}";})));
+                        if(wellDetailPartitionControl)WriteWellDetailPartitionInventory(root,directory);
                         Vector3[] eyes,looks;
-                        if(map==WellArenaCatalog.Id){eyes=new[]{new Vector3(7,1.7f,-7),new Vector3(-21,9.7f,-13)};looks=new[]{new Vector3(-5,12,5),new Vector3(-21,9.7f,13)};}
+                        if(wellDetailPartitionControl){eyes=new[]{new Vector3(7,1.7f,-7),new Vector3(-21.65f,2.25f,-14.15f),new Vector3(-14.15f,WellArenaCatalog.Storey+2.25f,-21.65f),new Vector3(20,1.7f,4.8f)};looks=new[]{new Vector3(-5,12,5),new Vector3(-24.65f,2.25f,-14.15f),new Vector3(-14.15f,WellArenaCatalog.Storey+2.25f,-24.65f),new Vector3(23.9f,1,6.4f)};}
+                        else if(map==WellArenaCatalog.Id){eyes=new[]{new Vector3(7,1.7f,-7),new Vector3(-21,9.7f,-13)};looks=new[]{new Vector3(-5,12,5),new Vector3(-21,9.7f,13)};}
                         else if(map==LunarLaboratoryCatalog.Id){eyes=new[]{new Vector3(0,1.7f,-9),new Vector3(0,1.7f,-25),new Vector3(0,1.7f,-25)};looks=new[]{new Vector3(0,1.7f,9),new Vector3(0,1.7f,0),new Vector3(0,100,-25)};}
                         else if(map==IndustrialTunnelsCatalog.Id){eyes=new[]{arena.Spawns[0]+Vector3.up*1.7f,new Vector3(-20,1.1f,16)};looks=new[]{new Vector3(-16,1.1f,13),new Vector3(-14,1.1f,16)};}
                         else {eyes=new[]{new Vector3(0,1.7f,-8),new Vector3(-20,1.7f,16)};looks=new[]{new Vector3(0,1.7f,8),Vector3.up*1.7f};}
@@ -99,7 +103,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                             cameraGo.transform.position=eyes[pose];cameraGo.transform.LookAt(looks[pose]);camera.targetTexture=target;
                             foreach(string variant in new[]{"baseline","candidate","candidate-repeat","baseline-repeat"})
                             {
-                                optimizer.UseChunks(variant.StartsWith("candidate"));
+                                if(wellDetailPartitionControl)UseWellMetalDetailChunks(root,variant.StartsWith("baseline"));
+                                else optimizer.UseChunks(variant.StartsWith("candidate"));
                                 var planes=GeometryUtility.CalculateFrustumPlanes(camera);
                                 long submitted=all.Where(r=>r.enabled&&GeometryUtility.TestPlanesAABB(planes,r.bounds)).Sum(r=>{var filter=r.GetComponent<MeshFilter>();var m=filter?filter.sharedMesh:null;return m?(r.isPartOfStaticBatch?(long)m.GetIndexCount(r.subMeshStartIndex)/3:Enumerable.Range(0,m.subMeshCount).Sum(i=>(long)m.GetIndexCount(i)/3)):0;});
                                 for(int sample=0;sample<50;sample++)
@@ -129,6 +134,37 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
             }
             finally {Time.timeScale=oldTimeScale;}
+        }
+
+        static void UseWellMetalDetailChunks(GameObject root,bool useChunks)
+        {
+            var sourceNames=new HashSet<string>{"Well details / Well satin aluminium","Well details / Well brushed metal"};
+            foreach(var source in root.GetComponentsInChildren<MeshRenderer>(true).Where(renderer=>sourceNames.Contains(renderer.gameObject.name)))
+            {
+                source.enabled=!useChunks;
+                foreach(var chunk in source.GetComponentsInChildren<MeshRenderer>(true).Where(renderer=>renderer!=source&&renderer.gameObject.name.StartsWith("render-cell ")))
+                    chunk.enabled=useChunks;
+            }
+        }
+
+        static string Csv(string value)=>"\""+(value??string.Empty).Replace("\"","\"\"")+"\"";
+        static void WriteWellDetailPartitionInventory(GameObject root,string directory)
+        {
+            var sourceNames=new HashSet<string>{"Well details / Well satin aluminium","Well details / Well brushed metal"};
+            var lines=new List<string>{"owner,renderer,enabled,static_batch,mesh_instance_id,vertices,triangles,mesh_bytes,material,metallic,smoothness,texture_count,has_normals,has_tangents,uv_channels"};
+            foreach(var owner in root.GetComponentsInChildren<MeshRenderer>(true).Where(renderer=>sourceNames.Contains(renderer.gameObject.name)))
+            foreach(var renderer in owner.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                var filter=renderer.GetComponent<MeshFilter>();if(!filter||!filter.sharedMesh)continue;
+                var mesh=filter.sharedMesh;var material=renderer.sharedMaterial;if(!material)continue;
+                long triangles=renderer.isPartOfStaticBatch?(long)mesh.GetIndexCount(renderer.subMeshStartIndex)/3:Enumerable.Range(0,mesh.subMeshCount).Sum(index=>(long)mesh.GetIndexCount(index)/3);
+                int textureCount=new[]{"_BaseMap","_BumpMap","_MetallicGlossMap","_OcclusionMap","_EmissionMap"}.Select(property=>material.HasProperty(property)?material.GetTexture(property):null).Where(texture=>texture).Distinct().Count();
+                var uv=Enumerable.Range(0,8).Where(channel=>mesh.HasVertexAttribute((VertexAttribute)((int)VertexAttribute.TexCoord0+channel))).Select(channel=>channel.ToString(CultureInfo.InvariantCulture));
+                var metallic=material.HasProperty("_Metallic")?material.GetFloat("_Metallic").ToString(CultureInfo.InvariantCulture):"NA";
+                var smoothness=material.HasProperty("_Smoothness")?material.GetFloat("_Smoothness").ToString(CultureInfo.InvariantCulture):"NA";
+                lines.Add(string.Join(",",Csv(owner.gameObject.name),Csv(renderer.gameObject.name),renderer.enabled,renderer.isPartOfStaticBatch,mesh.GetInstanceID(),mesh.vertexCount,triangles,UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(mesh),Csv(material.name),metallic,smoothness,textureCount,mesh.HasVertexAttribute(VertexAttribute.Normal),mesh.HasVertexAttribute(VertexAttribute.Tangent),Csv(string.Join("|",uv))));
+            }
+            File.WriteAllLines(Path.Combine(directory,"well-detail-partition-inventory.csv"),lines);
         }
     }
 }
