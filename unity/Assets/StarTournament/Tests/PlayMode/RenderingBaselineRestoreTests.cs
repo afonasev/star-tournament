@@ -11,13 +11,6 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene;GameObject owner;
         [UnityTearDown] public IEnumerator Cleanup(){if(owner)Object.Destroy(owner);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
-        sealed class DiagnosticMeshOwner:MonoBehaviour,IArenaMeshOwner
-        {
-            public Mesh rendered,unused;
-            public System.Collections.Generic.IEnumerable<Mesh> ReadOwnedMeshes(){yield return rendered;yield return unused;}
-            public System.Collections.Generic.IEnumerable<Mesh> ReadDiagnosticMeshes()=>System.Array.Empty<Mesh>();
-            public void ReleaseUnusedMeshes(System.Collections.Generic.HashSet<int> referenced)=>throw new InvalidOperationException("Observer must not mutate owner");
-        }
         [Test] public void AssetObserverIncludesOwnerOnlyMeshAndDoesNotReleaseIt()
         {
             owner=new GameObject("owned-observer-test");var mesh=new Mesh{name="rendered"};var unused=new Mesh{name="owner-only"};
@@ -25,12 +18,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 mesh.vertices=new[]{Vector3.zero,Vector3.right,Vector3.up};mesh.triangles=new[]{0,1,2};
                 unused.vertices=new[]{Vector3.zero,Vector3.right,Vector3.up};unused.triangles=new[]{0,1,2};
-                owner.AddComponent<MeshFilter>().sharedMesh=mesh;var source=owner.AddComponent<DiagnosticMeshOwner>();source.rendered=mesh;source.unused=unused;
+                owner.AddComponent<MeshFilter>().sharedMesh=mesh;var source=owner.AddComponent<OrbitalLeaguePresentation>();
+                var owned=(System.Collections.Generic.List<Object>)typeof(OrbitalLeaguePresentation).GetField("owned",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).GetValue(source);owned.Add(mesh);owned.Add(unused);
                 var before=NativeRenderingBaseline.ReadAssetScope(owner.transform);var after=NativeRenderingBaseline.ReadAssetScope(owner.transform);
                 Assert.AreEqual(2,before.inclusiveOwnerMeshCount);Assert.AreEqual(1,before.unreferencedOwnerMeshCount);
                 Assert.AreEqual(UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(mesh)+UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(unused),before.inclusiveOwnerMeshBytes);
                 Assert.AreEqual(UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(unused),before.unreferencedOwnerMeshBytes);
-                Assert.AreEqual(before.inclusiveOwnerMeshBytes,after.inclusiveOwnerMeshBytes);Assert.IsTrue(unused);Assert.AreSame(unused,source.unused);
+                Assert.AreEqual(before.inclusiveOwnerMeshBytes,after.inclusiveOwnerMeshBytes);Assert.IsTrue(unused);Assert.Contains(unused,owned);
+                owned.Clear();
             }
             finally{Object.DestroyImmediate(mesh);Object.DestroyImmediate(unused);}
         }
