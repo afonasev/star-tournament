@@ -96,6 +96,38 @@ def from_portable(archive, output, runtime, version):
         return build(Path(directory)/APP_NAME, output, runtime, version)
 
 
+def verify_signature(app):
+    """Integrity only: ad-hoc signing is not Developer ID or notarization."""
+    subprocess.run(['/usr/bin/codesign', '--verify', '--deep', '--strict',
+                    '--verbose=2', str(app)], check=True, capture_output=True)
+
+
+def verify_packages(output):
+    """Fail closed on extracted update, portable and compatibility installer."""
+    output = Path(output)
+    for pattern in ('*.nupkg', '*Portable.zip'):
+        archives = list(output.glob(pattern))
+        if len(archives) != 1:
+            raise ValueError('Exactly one macOS '+pattern+' required for signature verification')
+        with tempfile.TemporaryDirectory(prefix='.signature-', dir=output.parent) as temporary:
+            root = Path(temporary)
+            subprocess.run(['/usr/bin/ditto', '-x', '-k', str(archives[0]), str(root)], check=True)
+            if pattern == '*.nupkg':
+                app = root/'Verified.app'
+                (root/'lib/app').rename(app)
+            else:
+                app = root/APP_NAME
+            verify_signature(app)
+    for package in output.glob('*.pkg'):
+        with tempfile.TemporaryDirectory(prefix='.signature-', dir=output.parent) as temporary:
+            root = Path(temporary)/'expanded'
+            subprocess.run(['/usr/sbin/pkgutil', '--expand-full', str(package), str(root)], check=True)
+            apps = [p for p in root.rglob('*.app') if (p/'Contents/MacOS/release.json').is_file()]
+            if len(apps) != 1:
+                raise ValueError('Exactly one launcher bundle required in PKG')
+            verify_signature(apps[0])
+
+
 def inspect_app(app, runtime, version):
     app = Path(app)
     if runtime not in ('osx-arm64', 'osx-x64') or not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?', version):
@@ -197,6 +229,7 @@ def verify_image(image, app, *, mount_parent=None):
         target = mount/'Applications'
         if not target.is_symlink() or os.readlink(target) != '/Applications':
             raise ValueError('DMG Applications link mismatch')
+        verify_signature(installed)
         if bundle_identity(installed) != bundle_identity(app):
             raise ValueError('DMG bundle differs from complete portable input')
     finally:
@@ -216,6 +249,7 @@ def build(app, output, runtime, version, *, builder=None, verifier=None):
     if output.exists() or output.is_symlink():
         raise ValueError('Immutable DMG output already exists')
     config = inspect_app(app, runtime, version)
+    verify_signature(app)
     # Signing/notarization needs a distinct, actually verified delivery policy.
     # Both test and production channels currently use the explicitly approved
     # unsigned test distribution, so the notice must never imply Apple trust.
