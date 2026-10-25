@@ -32,7 +32,7 @@ namespace StarTournament.ProvingGround
         }
         public NativeBotPickupEvent[] Read(int receiver)=>(NativeBotPickupEvent[])observers[receiver].Known.Clone();
         static bool Finite(double n)=>!double.IsNaN(n)&&!double.IsInfinity(n);
-        static bool Valid(NativeBotPickupEvent e)=>!string.IsNullOrWhiteSpace(e.Id)&&Enum.IsDefined(typeof(NativeBotPickupKind),e.Kind)&&Finite(e.Position.x)&&Finite(e.Position.y)&&Finite(e.Position.z)&&Finite(e.OccurredAt)&&e.OccurredAt>=0&&e.Revision>0&&(e.Kind!=NativeBotPickupKind.Weapon||e.Weapon==WeaponId.Shotgun||e.Weapon==WeaponId.RocketLauncher||e.Weapon==WeaponId.Cutter);
+        static bool Valid(NativeBotPickupEvent e)=>!string.IsNullOrWhiteSpace(e.Id)&&Enum.IsDefined(typeof(NativeBotPickupKind),e.Kind)&&Finite(e.Position.x)&&Finite(e.Position.y)&&Finite(e.Position.z)&&Finite(e.OccurredAt)&&e.OccurredAt>=0&&e.Revision>0&&(e.Kind!=NativeBotPickupKind.Weapon||e.Weapon==WeaponId.Shotgun||e.Weapon==WeaponId.RocketLauncher||e.Weapon==WeaponId.Cutter||e.Weapon==WeaponId.Plasma);
         public void Sample(double time,NativeBotObservationFrame[] frames,NativeBotPickupEvent[] world)
         {
             if(!Finite(time)||time<0||time<=Time||frames==null||frames.Length!=observers.Length||world==null||world.Select(e=>e.Id).Distinct().Count()!=world.Length||world.Any(e=>string.IsNullOrWhiteSpace(e.Id)||!Finite(e.Position.x)||!Finite(e.Position.y)||!Finite(e.Position.z))||frames.Any(f=>f==null||f.OwnLife<1))throw new ArgumentException("Invalid pickup sample");

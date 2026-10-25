@@ -175,6 +175,28 @@
       "units": "sphere scaled in meters",
       "pivot": "planet center",
       "lod": "single distant sphere, 2048 texture import with mipmaps"
+    },
+    {
+      "key": "forge-lod0",
+      "path": "Assets/StarTournament/Art/forge-plasma-lod0.glb",
+      "sha256": "462780b4561c099048bef275c64d33635d2d80b025b63b7ffde7c9e1b3fdb196",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "forge-grip",
+      "source": "Original FORGE concept 01; scripts/trooper/build_forge.py; rigid material-merged mesh; no collision proxies.",
+      "lod": 0
+    },
+    {
+      "key": "forge-lod1",
+      "path": "Assets/StarTournament/Art/forge-plasma-lod1.glb",
+      "sha256": "67a5bd8dc82f28621b2ce612951fd36c14aa42bbbfa3c9722ef668f42492bba7",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "forge-grip",
+      "source": "Original FORGE concept 01; scripts/trooper/build_forge.py; rigid material-merged mesh; no collision proxies.",
+      "lod": 1
     }
   ]
 }

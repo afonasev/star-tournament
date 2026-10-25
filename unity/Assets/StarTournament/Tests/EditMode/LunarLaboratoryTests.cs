@@ -128,7 +128,7 @@ namespace StarTournament.ProvingGround.Tests
         [Test] public void ApprovedV4Contract()
         {
             var d=LunarLaboratoryCatalog.Build();var result=ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault());Assert.That(result.IsValid,Is.True,result.ToString());
-            Assert.That(d.Spawns.Length,Is.EqualTo(8));Assert.That(d.Pickups.Length,Is.EqualTo(11));Assert.That(d.Pickups.Count(x=>x.Kind==ArenaPickupKind.Shotgun||x.Kind==ArenaPickupKind.Pulse||x.Kind==ArenaPickupKind.Cutter),Is.EqualTo(6));
+            Assert.That(d.Spawns.Length,Is.EqualTo(8));Assert.That(d.Pickups.Length,Is.EqualTo(13));Assert.That(d.Pickups.Count(x=>x.Kind==ArenaPickupKind.Shotgun||x.Kind==ArenaPickupKind.Pulse||x.Kind==ArenaPickupKind.Cutter),Is.EqualTo(6));
             Assert.That(d.Transitions.Length,Is.EqualTo(6));Assert.That(d.Pickups.Single(x=>x.Id=="H").Anchor.z,Is.GreaterThan(0));Assert.That(d.Pickups.Single(x=>x.Id=="V").Anchor.z,Is.LessThan(0));
             Assert.That(d.Pickups.Single(x=>x.Id=="D").Anchor.y,Is.EqualTo(LunarLaboratoryCatalog.Upper));
             Assert.That(AuthoredArenaCatalog.Next(IndustrialTunnelsCatalog.Id),Is.EqualTo(d.MapId));Assert.That(AuthoredArenaCatalog.Maximum(d.MapId),Is.EqualTo(8));

@@ -88,7 +88,7 @@ namespace StarTournament.ProvingGround
         {
             this.profile=profile;sessionMuted=lockMute;muted=mute||sessionMuted;
             var holder=new GameObject("native-game-audio");holder.transform.SetParent(parent,false);root=holder.transform;
-            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","cutter-start","cutter-loop","hit","death","pickup","shield-hit","explosion","rocket-flight","weapon-pickup","weapon-ready","shield-pickup","damage-pickup","speed-pickup","heal-pickup","jump","land","damage-bonus-spawn","damage-bonus-pickup","kill-triple","kill-quadruple"})
+            foreach(var name in new[]{"menu_move","menu_confirm","menu_back","rifle","shotgun","rocket","plasma","cutter-start","cutter-loop","hit","death","pickup","shield-hit","explosion","rocket-flight","weapon-pickup","weapon-ready","shield-pickup","damage-pickup","speed-pickup","heal-pickup","jump","land","damage-bonus-spawn","damage-bonus-pickup","kill-triple","kill-quadruple"})
             {
                 var clip=Resources.Load<AudioClip>("Audio/"+name);
                 if(clip==null)Debug.LogError("Missing native audio clip: "+name);
@@ -141,11 +141,13 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<count;i++){rocketSources[i]=Source("rocket-flight-"+i);rocketSources[i].clip=clips["rocket-flight"];rocketSources[i].loop=true;}
             for(int i=0;i<count;i++)voices[i]=Source("voice-"+i);
         }
+        float plasmaGain=1;
         public void Bind(NativeCombatSession next,NativeMatchComposition roster,ProvingProfile musicTuning=null)
         {
             Unbind();BuildVoicePool();session=next;composition=roster;
             musicProfile=musicTuning??profile;
             if(session==null)return;
+            plasmaGain=session.PlasmaProfile.Get("plasma.audioGain");
             lastPose=new ParticipantState[session.ParticipantCount];lastWeaponState=new CombatLifeState[session.ParticipantCount];weaponReadyPending=new bool[session.ParticipantCount];stepDistance=new float[session.ParticipantCount];lastHit=new double[session.ParticipantCount];
             for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastWeaponState[i]=session.Life(i);lastHit[i]=double.NegativeInfinity;}
             session.DamageBonusAppeared+=DamageBonusSpawn;session.ShotResolved+=Shot;session.Damaged+=Damage;session.Died+=Death;session.PickupCollected+=Pickup;session.StateRestored+=ResetMotion;session.RocketExploded+=Explosion;session.WeaponStateResolved+=WeaponState;
@@ -311,6 +313,7 @@ namespace StarTournament.ProvingGround
             {
                 case WeaponId.Rifle:PlayAt(Bank("rifle"),gain*EffectGain("rifle"),shot.Shooter,shot.Origin,combat:true);break;
                 case WeaponId.Shotgun:PlayAt(Bank("shotgun"),gain*EffectGain("shotgun"),shot.Shooter,shot.Origin,combat:true);break;
+                case WeaponId.Plasma:PlayAt(clips["plasma"],gain*plasmaGain,shot.Shooter,shot.Origin,combat:true);break;
                 case WeaponId.RocketLauncher:PlayAt(clips["rocket"],gain*EffectGain("rocket"),shot.Shooter,shot.Origin,combat:true);break;
                 // Cutter attack is the ramp of the accepted loop, not an old one-shot.
             }

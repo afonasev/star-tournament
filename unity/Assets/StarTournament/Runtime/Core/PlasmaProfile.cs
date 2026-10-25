@@ -1,0 +1,32 @@
+namespace StarTournament.ProvingGround
+{
+    public sealed partial class ProvingProfile
+    {
+        internal ProvingProfile BeforeForgePickups()
+        {
+            int previous=id=="combat-bowl-ring-r7-authoring-v1"?12:id=="industrial-tunnels-authoring-v1"?1:id=="lunar-laboratory-authoring-v1"?2:id=="well-authoring-v1"?5:0;
+            if(previous==0||version<=previous)return this;
+            var p=DetachedCopy();p.version=previous;
+            bool Added(string path)=>path.StartsWith("forge-")||path.Contains(".forge-");
+            p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));return p;
+        }
+        public static ProvingProfile CreatePlasmaDefault()
+        {
+            var p=new ProvingProfile{id="forge-plasma-v1",version=1};
+            p.Add("plasma.damage","plasma","Урон шара FORGE","Прямой урон одного шара до усиления и союзного коэффициента.","HP",0,500,1,20);
+            p.Add("plasma.cooldownSeconds","plasma","Интервал FORGE","Пауза между шарами при удержании огня.","s",.02f,2,.01f,.1f);
+            p.Add("plasma.speed","plasma","Скорость шара","Скорость прямого полёта: меньше — легче увернуться.","m/s",1,200,1,30);
+            p.Add("plasma.pickupAmmo","plasma","Заряд при подборе","Подбор пополняет запас до этого значения.","charge",1,500,1,100);
+            p.Add("plasma.modelScale","plasma-effects","Масштаб FORGE","Размер модели на существующем хвате.","ratio",.1f,3,.05f,1.4f);
+            p.Add("plasma.orbRadius","plasma-effects","Радиус видимого шара","Радиус свечения; не меняет точку gameplay контакта.","m",.01f,.5f,.01f,.09f);
+            p.Add("plasma.trailLength","plasma-effects","Длина следа","Короткий зелёный след полёта.","m",.01f,3,.01f,.45f);
+            p.Add("plasma.impactSeconds","plasma-effects","Длительность вспышки","Время визуального контакта по часам матча.","s",.02f,1,.01f,.16f);
+            p.Add("plasma.impactRadius","plasma-effects","Радиус вспышки","Только видимый размер; урона вокруг нет.","m",.01f,1,.01f,.18f);
+            p.Add("plasma.muzzleBlendDistance","plasma-effects","Выход из дула","Дистанция перехода от видимого дула к gameplay траектории.","m",.1f,10,.1f,2);
+            p.Add("plasma.orbPulseAmplitude","plasma-effects","Пульсация шара","Относительная амплитуда видимого радиуса.","ratio",0,.5f,.01f,.07f);
+            p.Add("plasma.orbPulseHz","plasma-effects","Частота пульсации","Частота движения плазмы внутри шара.","Hz",0,20,.1f,5);
+            p.Add("plasma.audioGain","plasma","Громкость FORGE","Относительная громкость энергетического выстрела.","ratio",0,4,.05f,1);
+            return p;
+        }
+    }
+}

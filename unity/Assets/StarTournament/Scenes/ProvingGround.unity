@@ -161,6 +161,8 @@ MonoBehaviour:
   PulsePrefab: {fileID: 8771091787928289351, guid: 6c03537e491940e2a99ea85b7f47e934, type: 3}
   CutterPrefab: {fileID: 8771091787928289351, guid: 1a1aec598ac8f43d3a538446134da03f, type: 3}
   RocketProjectilePrefab: {fileID: 8771091787928289351, guid: 8f337dfaf075455b84600b7711182beb, type: 3}
+  PlasmaPrefab: {fileID: 8771091787928289351, guid: 58417bc651d34cfea5947bc26a968456, type: 3}
+  PlasmaLod1Prefab: {fileID: 8771091787928289351, guid: c93f188e3e144a62aad8a35a16b8ed5e, type: 3}
   TrooperClips:
   - {fileID: 7400000, guid: fc6e3cae87e53499e8f2ae83f8fc3127, type: 2}
   - {fileID: 7400000, guid: 5cb3b159d01f84925ae4d3431763eb27, type: 2}
@@ -3983,6 +3985,182 @@ MonoBehaviour:
       Value: 4
     - Path: pulseFx.blastRadiusScale
       Value: 0.8
+  PlasmaProfile:
+    id: forge-plasma-v1
+    version: 1
+    descriptors:
+    - Path: plasma.damage
+      Group: plasma
+      Label: "\u0423\u0440\u043E\u043D \u0448\u0430\u0440\u0430 FORGE"
+      Description: "\u041F\u0440\u044F\u043C\u043E\u0439 \u0443\u0440\u043E\u043D
+        \u043E\u0434\u043D\u043E\u0433\u043E \u0448\u0430\u0440\u0430 \u0434\u043E
+        \u0443\u0441\u0438\u043B\u0435\u043D\u0438\u044F \u0438 \u0441\u043E\u044E\u0437\u043D\u043E\u0433\u043E
+        \u043A\u043E\u044D\u0444\u0444\u0438\u0446\u0438\u0435\u043D\u0442\u0430."
+      Unit: HP
+      Minimum: 0
+      Maximum: 500
+      Step: 1
+      DefaultValue: 20
+    - Path: plasma.cooldownSeconds
+      Group: plasma
+      Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B FORGE"
+      Description: "\u041F\u0430\u0443\u0437\u0430 \u043C\u0435\u0436\u0434\u0443
+        \u0448\u0430\u0440\u0430\u043C\u0438 \u043F\u0440\u0438 \u0443\u0434\u0435\u0440\u0436\u0430\u043D\u0438\u0438
+        \u043E\u0433\u043D\u044F."
+      Unit: s
+      Minimum: 0.02
+      Maximum: 2
+      Step: 0.01
+      DefaultValue: 0.1
+    - Path: plasma.speed
+      Group: plasma
+      Label: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0448\u0430\u0440\u0430"
+      Description: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043F\u0440\u044F\u043C\u043E\u0433\u043E
+        \u043F\u043E\u043B\u0451\u0442\u0430: \u043C\u0435\u043D\u044C\u0448\u0435
+        \u2014 \u043B\u0435\u0433\u0447\u0435 \u0443\u0432\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F."
+      Unit: m/s
+      Minimum: 1
+      Maximum: 200
+      Step: 1
+      DefaultValue: 30
+    - Path: plasma.pickupAmmo
+      Group: plasma
+      Label: "\u0417\u0430\u0440\u044F\u0434 \u043F\u0440\u0438 \u043F\u043E\u0434\u0431\u043E\u0440\u0435"
+      Description: "\u041F\u043E\u0434\u0431\u043E\u0440 \u043F\u043E\u043F\u043E\u043B\u043D\u044F\u0435\u0442
+        \u0437\u0430\u043F\u0430\u0441 \u0434\u043E \u044D\u0442\u043E\u0433\u043E
+        \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F."
+      Unit: charge
+      Minimum: 1
+      Maximum: 500
+      Step: 1
+      DefaultValue: 100
+    - Path: plasma.modelScale
+      Group: plasma-effects
+      Label: "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 FORGE"
+      Description: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043C\u043E\u0434\u0435\u043B\u0438
+        \u043D\u0430 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0435\u043C
+        \u0445\u0432\u0430\u0442\u0435."
+      Unit: ratio
+      Minimum: 0.1
+      Maximum: 3
+      Step: 0.05
+      DefaultValue: 1.4
+    - Path: plasma.orbRadius
+      Group: plasma-effects
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0432\u0438\u0434\u0438\u043C\u043E\u0433\u043E
+        \u0448\u0430\u0440\u0430"
+      Description: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0441\u0432\u0435\u0447\u0435\u043D\u0438\u044F;
+        \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442 \u0442\u043E\u0447\u043A\u0443
+        gameplay \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430."
+      Unit: m
+      Minimum: 0.01
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.09
+    - Path: plasma.trailLength
+      Group: plasma-effects
+      Label: "\u0414\u043B\u0438\u043D\u0430 \u0441\u043B\u0435\u0434\u0430"
+      Description: "\u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439 \u0437\u0435\u043B\u0451\u043D\u044B\u0439
+        \u0441\u043B\u0435\u0434 \u043F\u043E\u043B\u0451\u0442\u0430."
+      Unit: m
+      Minimum: 0.01
+      Maximum: 3
+      Step: 0.01
+      DefaultValue: 0.45
+    - Path: plasma.impactSeconds
+      Group: plasma-effects
+      Label: "\u0414\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C
+        \u0432\u0441\u043F\u044B\u0448\u043A\u0438"
+      Description: "\u0412\u0440\u0435\u043C\u044F \u0432\u0438\u0437\u0443\u0430\u043B\u044C\u043D\u043E\u0433\u043E
+        \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430 \u043F\u043E \u0447\u0430\u0441\u0430\u043C
+        \u043C\u0430\u0442\u0447\u0430."
+      Unit: s
+      Minimum: 0.02
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.16
+    - Path: plasma.impactRadius
+      Group: plasma-effects
+      Label: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0432\u0441\u043F\u044B\u0448\u043A\u0438"
+      Description: "\u0422\u043E\u043B\u044C\u043A\u043E \u0432\u0438\u0434\u0438\u043C\u044B\u0439
+        \u0440\u0430\u0437\u043C\u0435\u0440; \u0443\u0440\u043E\u043D\u0430 \u0432\u043E\u043A\u0440\u0443\u0433
+        \u043D\u0435\u0442."
+      Unit: m
+      Minimum: 0.01
+      Maximum: 1
+      Step: 0.01
+      DefaultValue: 0.18
+    - Path: plasma.muzzleBlendDistance
+      Group: plasma-effects
+      Label: "\u0412\u044B\u0445\u043E\u0434 \u0438\u0437 \u0434\u0443\u043B\u0430"
+      Description: "\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u0430
+        \u043E\u0442 \u0432\u0438\u0434\u0438\u043C\u043E\u0433\u043E \u0434\u0443\u043B\u0430
+        \u043A gameplay \u0442\u0440\u0430\u0435\u043A\u0442\u043E\u0440\u0438\u0438."
+      Unit: m
+      Minimum: 0.1
+      Maximum: 10
+      Step: 0.1
+      DefaultValue: 2
+    - Path: plasma.orbPulseAmplitude
+      Group: plasma-effects
+      Label: "\u041F\u0443\u043B\u044C\u0441\u0430\u0446\u0438\u044F \u0448\u0430\u0440\u0430"
+      Description: "\u041E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0430\u043C\u043F\u043B\u0438\u0442\u0443\u0434\u0430 \u0432\u0438\u0434\u0438\u043C\u043E\u0433\u043E
+        \u0440\u0430\u0434\u0438\u0443\u0441\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 0.5
+      Step: 0.01
+      DefaultValue: 0.07
+    - Path: plasma.orbPulseHz
+      Group: plasma-effects
+      Label: "\u0427\u0430\u0441\u0442\u043E\u0442\u0430 \u043F\u0443\u043B\u044C\u0441\u0430\u0446\u0438\u0438"
+      Description: "\u0427\u0430\u0441\u0442\u043E\u0442\u0430 \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F
+        \u043F\u043B\u0430\u0437\u043C\u044B \u0432\u043D\u0443\u0442\u0440\u0438
+        \u0448\u0430\u0440\u0430."
+      Unit: Hz
+      Minimum: 0
+      Maximum: 20
+      Step: 0.1
+      DefaultValue: 5
+    - Path: plasma.audioGain
+      Group: plasma
+      Label: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C FORGE"
+      Description: "\u041E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F
+        \u0433\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u044D\u043D\u0435\u0440\u0433\u0435\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0433\u043E
+        \u0432\u044B\u0441\u0442\u0440\u0435\u043B\u0430."
+      Unit: ratio
+      Minimum: 0
+      Maximum: 4
+      Step: 0.05
+      DefaultValue: 1
+    values:
+    - Path: plasma.damage
+      Value: 20
+    - Path: plasma.cooldownSeconds
+      Value: 0.1
+    - Path: plasma.speed
+      Value: 30
+    - Path: plasma.pickupAmmo
+      Value: 100
+    - Path: plasma.modelScale
+      Value: 1.4
+    - Path: plasma.orbRadius
+      Value: 0.09
+    - Path: plasma.trailLength
+      Value: 0.45
+    - Path: plasma.impactSeconds
+      Value: 0.16
+    - Path: plasma.impactRadius
+      Value: 0.18
+    - Path: plasma.muzzleBlendDistance
+      Value: 2
+    - Path: plasma.orbPulseAmplitude
+      Value: 0.07
+    - Path: plasma.orbPulseHz
+      Value: 5
+    - Path: plasma.audioGain
+      Value: 1
   CutterProfile:
     id: cutter-beam-v1
     version: 4
@@ -11458,7 +11636,7 @@ MonoBehaviour:
       Value: 90
   CombatBowlAuthoring:
     id: combat-bowl-ring-r7-authoring-v1
-    version: 12
+    version: 13
     descriptors:
     - Path: foundation-north.position.x
       Group: geometry
@@ -52560,6 +52738,66 @@ MonoBehaviour:
       Maximum: 100
       Step: 0.01
       DefaultValue: -28
+    - Path: forge-west.anchor.x
+      Group: bonuses
+      Label: forge-west.anchor / x
+      Description: Authored R7 forge-west.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: -24
+    - Path: forge-west.anchor.y
+      Group: bonuses
+      Label: forge-west.anchor / y
+      Description: Authored R7 forge-west.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4
+    - Path: forge-west.anchor.z
+      Group: bonuses
+      Label: forge-west.anchor / z
+      Description: Authored R7 forge-west.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: forge-east.anchor.x
+      Group: bonuses
+      Label: forge-east.anchor / x
+      Description: Authored R7 forge-east.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 24
+    - Path: forge-east.anchor.y
+      Group: bonuses
+      Label: forge-east.anchor / y
+      Description: Authored R7 forge-east.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 4
+    - Path: forge-east.anchor.z
+      Group: bonuses
+      Label: forge-east.anchor / z
+      Description: Authored R7 forge-east.anchor; changes require an explicit rebuild
+        and a new reviewed map revision.
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
     - Path: damage-hall.anchor.x
       Group: bonuses
       Label: damage-hall.anchor / x
@@ -60811,6 +61049,18 @@ MonoBehaviour:
       Value: 0
     - Path: cutter-south.anchor.z
       Value: -28
+    - Path: forge-west.anchor.x
+      Value: -24
+    - Path: forge-west.anchor.y
+      Value: 4
+    - Path: forge-west.anchor.z
+      Value: 0
+    - Path: forge-east.anchor.x
+      Value: 24
+    - Path: forge-east.anchor.y
+      Value: 4
+    - Path: forge-east.anchor.z
+      Value: 0
     - Path: damage-hall.anchor.x
       Value: 0
     - Path: damage-hall.anchor.y
@@ -61452,7 +61702,7 @@ MonoBehaviour:
       Value: 2.2
   TunnelsAuthoring:
     id: industrial-tunnels-authoring-v1
-    version: 1
+    version: 2
     descriptors:
     - Path: tunnels.map.deck-0.position.x
       Group: geometry
@@ -84386,6 +84636,42 @@ MonoBehaviour:
       Maximum: 100
       Step: 0.01
       DefaultValue: 0
+    - Path: tunnels.map.forge-tunnels-north.anchor.x
+      Group: bonuses
+      Label: forge-tunnels-north.anchor / x
+      Description: "\u0413\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044F \u0442\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0445
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0435\u0439; \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435
+        \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043D\u043E\u0432\u043E\u0439
+        immutable map revision."
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: tunnels.map.forge-tunnels-north.anchor.y
+      Group: bonuses
+      Label: forge-tunnels-north.anchor / y
+      Description: "\u0413\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044F \u0442\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0445
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0435\u0439; \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435
+        \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043D\u043E\u0432\u043E\u0439
+        immutable map revision."
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 0
+    - Path: tunnels.map.forge-tunnels-north.anchor.z
+      Group: bonuses
+      Label: forge-tunnels-north.anchor / z
+      Description: "\u0413\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044F \u0442\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0445
+        \u0442\u043E\u043D\u043D\u0435\u043B\u0435\u0439; \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435
+        \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043D\u043E\u0432\u043E\u0439
+        immutable map revision."
+      Unit: meters
+      Minimum: -100
+      Maximum: 100
+      Step: 0.01
+      DefaultValue: 19
     - Path: tunnels.map.tunnels-pulse-south.anchor.x
       Group: bonuses
       Label: tunnels-pulse-south.anchor / x
@@ -88245,6 +88531,12 @@ MonoBehaviour:
       Value: 0
     - Path: tunnels.map.tunnels-armor-east.anchor.z
       Value: 0
+    - Path: tunnels.map.forge-tunnels-north.anchor.x
+      Value: 0
+    - Path: tunnels.map.forge-tunnels-north.anchor.y
+      Value: 0
+    - Path: tunnels.map.forge-tunnels-north.anchor.z
+      Value: 19
     - Path: tunnels.map.tunnels-pulse-south.anchor.x
       Value: 0
     - Path: tunnels.map.tunnels-pulse-south.anchor.y

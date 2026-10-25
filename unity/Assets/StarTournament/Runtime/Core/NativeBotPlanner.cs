@@ -43,12 +43,13 @@ namespace StarTournament.ProvingGround
     {
         readonly float eye, target, maxPitch;
         public float CapsuleRadius {get;} public float CapsuleHeight {get;}
-        readonly ProvingProfile combat,cutter,life;
+        readonly ProvingProfile combat,cutter,life,plasma;
         public NativeBotWeaponEstimate Estimate {get;}
+        public float PlasmaSpeed=>plasma.Get("plasma.speed");
         public float RifleSpeed=>combat.Get("rifle.speed");
         public float RocketSpeed=>combat.Get("rocket.speed");
         public float RocketRadius=>combat.Get("rocket.radius");
-        public float Capacity(WeaponId id)=>id==WeaponId.Cutter?cutter.Get("cutter.energyCapacity"):life.Get(id==WeaponId.Rifle?"rifle.startingAmmo":id==WeaponId.Shotgun?"combat.startingAmmo":"rocket.startingAmmo");
+        public float Capacity(WeaponId id)=>id==WeaponId.Plasma?plasma.Get("plasma.pickupAmmo"):id==WeaponId.Cutter?cutter.Get("cutter.energyCapacity"):life.Get(id==WeaponId.Rifle?"rifle.startingAmmo":id==WeaponId.Shotgun?"combat.startingAmmo":"rocket.startingAmmo");
         public float DamageMultiplier=>life.Get("damageBoost.multiplier");
         public float MaximumArmor=>life.Get("armor.maximum");
         public float CutterMinimum=>cutter.Get("cutter.botMinimumDistance");
@@ -56,19 +57,20 @@ namespace StarTournament.ProvingGround
         public float EyeHeight=>eye; public float TargetHeight=>target;
         public float RocketMinimumDistance=>combat.Get("rocket.botMinimumDistance");
         public float RocketSafety=>combat.Get("rocket.radius")+combat.Get("rocket.botSafetyMargin");
-        public float RangeFor(WeaponId id)=>id==WeaponId.Rifle?float.PositiveInfinity:id==WeaponId.Cutter?cutter.Get("cutter.maxRangeMeters"):combat.Get(id==WeaponId.RocketLauncher?"rocket.range":"shot.range");
+        public float RangeFor(WeaponId id)=>(id==WeaponId.Rifle||id==WeaponId.Plasma)?float.PositiveInfinity:id==WeaponId.Cutter?cutter.Get("cutter.maxRangeMeters"):combat.Get(id==WeaponId.RocketLauncher?"rocket.range":"shot.range");
         public float Range { get; }
         public string Identity { get; }
-        public NativeShotgunPolicy(ProvingProfile movement, ProvingProfile combat, ProvingProfile cutter=null,ProvingProfile lifecycle=null)
+        public NativeShotgunPolicy(ProvingProfile movement, ProvingProfile combat, ProvingProfile cutter=null,ProvingProfile lifecycle=null,ProvingProfile plasma=null)
         {
+            this.plasma=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(plasma??ProvingProfile.CreatePlasmaDefault()));
             life=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(lifecycle??ProvingProfile.CreateCombatDefault()));
             this.cutter=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(cutter??ProvingProfile.CreateCutterDefault()));
             this.combat=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));this.combat.EnsureNativeCombatDescriptors();
-            Identity="native-loadout-cutter-v1|"+JsonUtility.ToJson(movement)+"|"+JsonUtility.ToJson(combat)+"|"+JsonUtility.ToJson(this.cutter)+"|"+JsonUtility.ToJson(life);
+            Identity="native-loadout-cutter-v1|"+JsonUtility.ToJson(movement)+"|"+JsonUtility.ToJson(combat)+"|"+JsonUtility.ToJson(this.cutter)+"|"+JsonUtility.ToJson(life)+"|"+JsonUtility.ToJson(this.plasma);
             CapsuleRadius=movement.Get("player.capsule.radius");CapsuleHeight=movement.Get("player.capsule.height");
             maxPitch=movement.Get("camera.maximumPitchDegrees");eye=movement.Get("camera.eyeHeight");target=movement.Get("player.capsule.height")*combat.Get("zone.torsoY");
             Range=combat.Get("shot.range");
-            Estimate=new NativeBotWeaponEstimate(movement,this.combat,this.life,this.cutter,this);
+            Estimate=new NativeBotWeaponEstimate(movement,this.combat,this.life,this.cutter,this,this.plasma);
         }
         public LocalAction Aim(ParticipantState own,Vector3 feet,double time,float seconds,float phase,
             float rate,float error,float period,out float residual)
@@ -297,8 +299,8 @@ namespace StarTournament.ProvingGround
             if(trackThreat&&weapon is NativeShotgunPolicy lp)
             {
                 aimPoint+=Vector3.up*lp.TargetHeight;
-                if(visible&&desired==WeaponId.Rifle)
-                    aimPoint+=memory.Value.Sighting.Velocity*(Vector3.Distance(f.Pose.Position,aimPoint)/lp.RifleSpeed)*P("leadQuality");
+                if(visible&&(desired==WeaponId.Rifle||desired==WeaponId.Plasma))
+                    aimPoint+=memory.Value.Sighting.Velocity*(Vector3.Distance(f.Pose.Position,aimPoint)/(desired==WeaponId.Plasma?lp.PlasmaSpeed:lp.RifleSpeed))*P("leadQuality");
                 if(visible&&desired==WeaponId.RocketLauncher)rocketSafe=RocketPlan(f,memory.Value.Sighting,out aimPoint);
                 aim=lp.AimPoint(f.Pose,aimPoint,time,seconds,state.AimPhase,P("aimDegreesPerSecond"),P("aimErrorDegrees"),P("aimPeriodSeconds"),out residual);
             }
@@ -365,16 +367,16 @@ namespace StarTournament.ProvingGround
                 if(!rocketSafe)RocketRejected++;
             }
             if(desired!=f.Life.SelectedWeapon&&f.Life.SwitchRemaining<=0)
-                action.SelectWeapon=desired==WeaponId.Cutter?WeaponSelection.Cutter:desired==WeaponId.Rifle?WeaponSelection.Rifle:desired==WeaponId.Shotgun?WeaponSelection.Shotgun:WeaponSelection.RocketLauncher;
+                action.SelectWeapon=desired==WeaponId.Plasma?WeaponSelection.Plasma:desired==WeaponId.Cutter?WeaponSelection.Cutter:desired==WeaponId.Rifle?WeaponSelection.Rifle:desired==WeaponId.Shotgun?WeaponSelection.Shotgun:WeaponSelection.RocketLauncher;
             int readyAmmo=CombatLife.AmmoFor(f.Life,desired);
             double readyCooldown=CombatLife.CooldownFor(f.Life,desired);
             // Older isolated planner fixtures have no loadout; keep their supplied ammo/cooldown.
             if(f.Life.SelectedWeapon==0){readyAmmo=f.Life.Ammo;readyCooldown=f.Life.CooldownRemaining;action.SelectWeapon=WeaponSelection.None;}
             // A shotgun press must be followed by a complete false tick.
             bool release=state.Pressed;state.Pressed=false;
-            if((!release||desired==WeaponId.Cutter)&&visible&&!memory.Value.Sighting.ShotBlocked&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
+            if((!release||desired==WeaponId.Cutter||desired==WeaponId.Plasma)&&visible&&!memory.Value.Sighting.ShotBlocked&&time-state.Noticed>=P("reactionSeconds")&&residual<=P("fireToleranceDegrees")&&
                 readyAmmo>0&&readyCooldown<=0&&f.Life.SwitchRemaining<=0&&action.SelectWeapon==WeaponSelection.None&&targetDistance<=weaponRange&&(desired!=WeaponId.RocketLauncher||rocketSafe)&&!AllyInLine(f,memory.Value.Sighting.Position))
-            {if(desired==WeaponId.Cutter)action.FireHeld=true;else {action.Fire=true;state.Pressed=true;}FireAttempts++;}
+            {if(desired==WeaponId.Cutter||desired==WeaponId.Plasma)action.FireHeld=true;else {action.Fire=true;state.Pressed=true;}FireAttempts++;}
             return action;
         }
         void TryCombatJump(double time,NativeBotFrame f,ref LocalAction action,Vector3 direction,bool maneuver,bool surprised)
@@ -460,7 +462,7 @@ namespace StarTournament.ProvingGround
                 (state.DesiredWeapon==WeaponId.Cutter?f.Life.CutterEnergy>0:CombatLife.AmmoFor(f.Life,state.DesiredWeapon)>0))return state.DesiredWeapon;
             float distance=Vector3.Distance(f.Pose.Position,memory.Value.Sighting.Position);
             var best=f.Life.SelectedWeapon;float bestScore=-1,currentScore=-1;
-            foreach(var id in new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter})
+            foreach(var id in new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
             {
                 if(!CombatLife.Owned(f.Life,id)||id==WeaponId.Cutter&&f.Life.CutterEnergy<=0||id!=WeaponId.Cutter&&CombatLife.AmmoFor(f.Life,id)<=0)continue;
                 if(id==WeaponId.Cutter&&(distance<lp.CutterMinimum||distance>lp.CutterPreferredRange))continue;

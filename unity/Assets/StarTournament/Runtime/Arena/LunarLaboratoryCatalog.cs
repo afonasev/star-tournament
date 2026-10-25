@@ -6,10 +6,10 @@ namespace StarTournament.ProvingGround
     /// <summary>Plan v4, north = +Z. Metres; physical geometry owns all obstructions.</summary>
     public static class LunarLaboratoryCatalog
     {
-        public const string Id="lunar-laboratory-v1", Revision="7", Identity=Id+"@"+Revision;
+        public const string Id="lunar-laboratory-v1", Revision="8", Identity=Id+"@"+Revision;
         public const float Upper=4.5f;
         public static ArenaDefinition Build()=>Draft();
-        public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft());
+        public static ProvingProfile AuthoringProfile()=>ProvingProfile.CreateLunarAuthoring(Draft(),3);
         internal static ProvingProfile BeforeOpenCentreAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(true,true,beforeBypass:true),1);
         internal static ProvingProfile BeforeInteriorAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,true,beforeBypass:true),1);
         internal static ProvingProfile BeforeFlushAuthoring()=>ProvingProfile.CreateLunarAuthoring(Draft(false,false,true,true),1);
@@ -234,6 +234,7 @@ namespace StarTournament.ProvingGround
             void Pick(string id,ArenaPickupKind kind,float x,float y,float z,string support)=>picks.Add(new ArenaPickupDefinition{Id=id,Kind=kind,Anchor=new Vector3(x,y,z),Support="support:"+(support=="yard"||support=="lower"?"ground":support=="balcony"?"upper":support)});
             Pick("W1",ArenaPickupKind.Shotgun,-9,.02f,9,"lower");Pick("W2",ArenaPickupKind.Shotgun,9,.02f,-9,"lower");
             Pick("W3",ArenaPickupKind.Pulse,28,0,-28,"yard");Pick("W4",ArenaPickupKind.Pulse,-28,0,28,"yard");
+            if(!beforeBypass){Pick("forge-yard-east",ArenaPickupKind.Plasma,26,0,10,"yard");Pick("forge-yard-west",ArenaPickupKind.Plasma,-26,0,-10,"yard");}
             Pick("W5",ArenaPickupKind.Cutter,-13.5f,Upper,13.5f,"balcony");Pick("W6",ArenaPickupKind.Cutter,13.5f,Upper,-13.5f,"balcony");
             Pick("A1",ArenaPickupKind.Armor,28,0,28,"yard");Pick("A2",ArenaPickupKind.Armor,-28,0,-28,"yard");
             Pick("H",ArenaPickupKind.FullHeal,0,.02f,1.5f,"lower");Pick("V",ArenaPickupKind.Speed,0,.02f,-1.5f,"lower");Pick("D",ArenaPickupKind.Damage,0,Upper,-7,"upper");

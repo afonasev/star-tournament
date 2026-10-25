@@ -53,6 +53,7 @@ namespace StarTournament.ProvingGround.Editor
             root.PulsePrefab=Required("pulse-lod0");
             root.RocketProjectilePrefab=Required("pulse-projectile");
             root.CutterPrefab=Required("cutter-lod0");
+            root.PlasmaPrefab=Required("forge-lod0");root.PlasmaLod1Prefab=Required("forge-lod1");
             root.ArmorPickupPrefab=Required("armor-pickup");
             root.SpeedPickupPrefab=Required("speed-pickup");
             root.DamagePickupPrefab=Required("damage-pickup");
@@ -124,7 +125,7 @@ namespace StarTournament.ProvingGround.Editor
             EditorGUILayout.HelpBox("Профиль полигона. Диапазоны и validation используют один registry. Перезапустите Play после изменения.",MessageType.Info);
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
             showBowl=EditorGUILayout.Foldout(showBowl,"Combat Bowl authoring metadata (published revision remains frozen)");
-            foreach(var profile in new[]{ground.Profile,ground.OrbitalLeagueProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.DeathProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile,ground.CutterProfile,ground.RocketEffectsProfile}.Concat(showBowl?new[]{ground.CombatBowlAuthoring}:System.Array.Empty<ProvingProfile>()))
+            foreach(var profile in new[]{ground.Profile,ground.OrbitalLeagueProfile,ground.LifeProfile,ground.CombatProfile,ground.MatchProfile,ground.TeamProfile,ground.TrooperProfile,ground.DeathProfile,ground.BotPerceptionProfile,ground.BotNavigationProfile,ground.RosterProfile,ground.BotBehaviorProfile,ground.CutterProfile,ground.PlasmaProfile,ground.RocketEffectsProfile}.Concat(showBowl?new[]{ground.CombatBowlAuthoring}:System.Array.Empty<ProvingProfile>()))
             {
             EditorGUILayout.LabelField(profile.Id+" / v"+profile.Version,EditorStyles.boldLabel);
             foreach(var descriptor in profile.Descriptors)

@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround
                 // Begin applies identity before activating world actors; equipment ownership
                 // must remain visible while their ancestors are inactive.
                 if(renderer.name=="weapon:joined"||renderer.GetComponentInParent<WeaponModelPresentation>(true)!=null&&
-                    (HasAncestor(renderer.transform,"automatic-rifle")||HasAncestor(renderer.transform,"pulse-launcher")||HasAncestor(renderer.transform,"cutter")))continue;
+                    (HasAncestor(renderer.transform,"automatic-rifle")||HasAncestor(renderer.transform,"pulse-launcher")||HasAncestor(renderer.transform,"cutter")||HasAncestor(renderer.transform,"forge-plasma")))continue;
                 var materials=renderer.sharedMaterials;
                 for(int i=0;i<materials.Length;i++)if(materials[i]&&!IsStatus(materials[i]))materials[i]=surfaces.Resolve(materials[i],renderer);
                 renderer.sharedMaterials=materials;

@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround.Tests
         {
             var d=CombatBowlCatalog.Build();var valid=ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault());
             Assert.That(valid.IsValid,Is.True,valid.ToString());
-            Assert.That(d.Identity,Is.EqualTo("combat-bowl-v1@18"));Assert.That(d.Spawns.Length,Is.EqualTo(8));Assert.That(d.Transitions.Length,Is.EqualTo(12));
+            Assert.That(d.Identity,Is.EqualTo("combat-bowl-v1@19"));Assert.That(d.Spawns.Length,Is.EqualTo(8));Assert.That(d.Transitions.Length,Is.EqualTo(12));
             Assert.That(d.Pickups.Count(x=>x.Kind==ArenaPickupKind.Armor),Is.EqualTo(2));Assert.That(d.Pickups.Count(x=>x.Kind==ArenaPickupKind.Speed),Is.EqualTo(2));
             Assert.That(d.Solids.Count(s=>s.Id.StartsWith("column-")),Is.EqualTo(4));
             Assert.That(d.Solids.Single(s=>s.Id=="armor-corridor").Size.x,Is.EqualTo(5.2f).Within(.001f));
