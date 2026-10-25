@@ -395,6 +395,8 @@ namespace StarTournament.ProvingGround
                 (p.Id==ProvingProfile.TunnelsArtId&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??4)<4)||
                 (p.Id=="lunar-laboratory-presentation-v1"&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??6)<6)
                 ?p.BeforeUniformPickupRadii():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DefaultId)?.Version??19)<19)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeRifleSteelPresentation()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="visual.bowlLocalLightScale"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeArenaHarmonization()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??20)<20)
@@ -802,6 +804,7 @@ namespace StarTournament.ProvingGround
                     if(d.Path=="blood.drops"&&snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                         value=currentDescriptor.DefaultValue;
                     if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                    value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeArenaVisualValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 }

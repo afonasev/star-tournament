@@ -77,6 +77,31 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Ticks(10);visual.Render();Assert.That(contacts,Is.EqualTo(1));
             }
         }
+        [UnityTest]public IEnumerator SteelTracerUsesSelectedLengthAndColor()
+        {
+            Setup();yield return null;
+            using(var visual=new RifleBulletPresentation(session,move,owner.transform))
+            {
+                Fire();Ticks(2);visual.Render();
+                var trace=owner.GetComponentsInChildren<LineRenderer>().Single();
+                Assert.That(Vector3.Distance(trace.GetPosition(0),trace.GetPosition(1)),Is.EqualTo(1.5f).Within(.001));
+                Assert.That(trace.startWidth,Is.EqualTo(.006f));
+                var color=trace.sharedMaterial.color;
+                Assert.That(color.r,Is.EqualTo(.56f).Within(.001));Assert.That(color.g,Is.EqualTo(.55f).Within(.001));Assert.That(color.b,Is.EqualTo(.5f).Within(.001));
+                string output=Environment.GetEnvironmentVariable("RIFLE_STEEL_CAPTURE");
+                if(!string.IsNullOrEmpty(output))
+                {
+                    var cameraObject=new GameObject("rifle review camera");cameraObject.transform.SetParent(owner.transform);
+                    var camera=cameraObject.AddComponent<Camera>();camera.transform.position=new Vector3(-5,2.1f,.5f);
+                    camera.transform.LookAt((trace.GetPosition(0)+trace.GetPosition(1))*.5f);camera.nearClipPlane=.05f;
+                    var target=new RenderTexture(1280,720,24);camera.targetTexture=target;camera.Render();
+                    var prior=RenderTexture.active;RenderTexture.active=target;
+                    var image=new Texture2D(1280,720,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();
+                    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(output));System.IO.File.WriteAllBytes(output,image.EncodeToPNG());
+                    RenderTexture.active=prior;camera.targetTexture=null;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(image);
+                }
+            }
+        }
         [UnityTest]public IEnumerator TargetCanLeaveAndAnotherTargetCanEnterFlightPath()
         {
             Setup(10);yield return null;Fire();Ticks(10);motors[1].Initialize(move,new Vector3(-4,0,6));

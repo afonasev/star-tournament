@@ -2,13 +2,30 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal static readonly string[] RifleSteelPaths={"presentation.rifleTracerLength","presentation.rifleTracerRed","presentation.rifleTracerGreen","presentation.rifleTracerBlue"};
+        static readonly float[] RifleSteelPrevious={3f,.65f,1f,.08f};
+        internal ProvingProfile BeforeRifleSteelPresentation()
+        {
+            if(id!=DefaultId||version<19)return this;
+            var copy=DetachedCopy();copy.version=18;
+            for(int i=0;i<RifleSteelPaths.Length;i++)
+            {copy.FindDescriptor(RifleSteelPaths[i]).DefaultValue=RifleSteelPrevious[i];copy.Set(RifleSteelPaths[i],RifleSteelPrevious[i]);}
+            return copy;
+        }
+        internal static float UpgradeRifleSteelValue(string path,int previousVersion,float value,NumericDescriptor current)
+        {
+            int i=System.Array.IndexOf(RifleSteelPaths,path);
+            return previousVersion<19&&i>=0&&UnityEngine.Mathf.Approximately(value,RifleSteelPrevious[i])?current.DefaultValue:value;
+        }
         internal ProvingProfile BeforeVisualPolish()
         {
+            if(id==DefaultId&&version>=19)return BeforeRifleSteelPresentation().BeforeVisualPolish();
             if(id!=DefaultId||Descriptor(NativeVisualPreferences.Path(VisualEffect.Lighting))==null)return this;
             var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path.StartsWith("visual.",System.StringComparison.Ordinal));copy.values.RemoveAll(v=>v.Path.StartsWith("visual.",System.StringComparison.Ordinal));copy.version=System.Math.Min(copy.version,15);return copy;
         }
         internal ProvingProfile BeforeNeutralColorGrading()
         {
+            if(id==DefaultId&&version>=19)return BeforeRifleSteelPresentation().BeforeNeutralColorGrading();
             if(id!=DefaultId||Descriptor(NativeVisualPreferences.Path(VisualEffect.ColorGrading))==null)return this;
             var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path.StartsWith("visual.ColorGrading",System.StringComparison.Ordinal));copy.values.RemoveAll(v=>v.Path.StartsWith("visual.ColorGrading",System.StringComparison.Ordinal));copy.version=System.Math.Min(copy.version,16);return copy;
         }
@@ -17,6 +34,7 @@ namespace StarTournament.ProvingGround
         internal static readonly float[] ArenaVisualPrevious={.75f,1.25f,.2f,.35f,.55f,.05f,.1f,.65f};
         internal ProvingProfile BeforeArenaHarmonization()
         {
+            if(id==DefaultId&&version>=19)return BeforeRifleSteelPresentation().BeforeArenaHarmonization();
             if(id!=DefaultId||version<18)return this;
             var copy=DetachedCopy();copy.version=17;
             copy.descriptors.RemoveAll(d=>d.Path=="visual.ambientLift"||d.Path.EndsWith("LocalLightScale",System.StringComparison.Ordinal));

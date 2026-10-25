@@ -1,0 +1,35 @@
+{
+  "selection": "User selected audio option 2, 2026-10-25",
+  "source_evidence": "planning/docs/evidence/strengthen-rifle-bursts/audio-review/manifest.json",
+  "source_commit": "b5b6e22ef449d75c47863bd4a6d0443b549ed05e",
+  "recipe": "tools/audio/rifle_burst_review.py at source_commit, original rifle bank at parent of source_commit; do not re-filter current bank",
+  "license": "CC0",
+  "upstream": "https://opengameart.org/node/21826",
+  "assets": [
+    {
+      "file": "rifle.wav",
+      "source": "2-mechanical-0.wav",
+      "sha256": "f31205b445b8337bffca5b5ed07718239ded0414979c7e596af9b824603561d5"
+    },
+    {
+      "file": "rifle-0.wav",
+      "source": "2-mechanical-0.wav",
+      "sha256": "f31205b445b8337bffca5b5ed07718239ded0414979c7e596af9b824603561d5"
+    },
+    {
+      "file": "rifle-1.wav",
+      "source": "2-mechanical-1.wav",
+      "sha256": "e4fcaf3019cb8c8fb7537f7067fcfc64f1e7cfb5eca5062d045f450038fbd5bf"
+    },
+    {
+      "file": "rifle-2.wav",
+      "source": "2-mechanical-2.wav",
+      "sha256": "76284f32195a26a02b3a3509cacd6eb3c559f5e42fd766394b0a5d0656d81035"
+    },
+    {
+      "file": "rifle-3.wav",
+      "source": "2-mechanical-3.wav",
+      "sha256": "691efe388d08daeb35a4b7e0d6b1650c24b90f515e0fd17628f47c44c2474af8"
+    }
+  ]
+}

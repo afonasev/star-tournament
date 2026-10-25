@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 18;
+        public const int DefaultVersion = 19;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -138,6 +138,12 @@ namespace StarTournament.ProvingGround
                 {
                     FindDescriptor(path).DefaultValue=current.Descriptor(path).DefaultValue;
                     Set(path,UpgradeArenaVisualValue(path,previousVersion,Get(path),current.Descriptor(path)));
+                }
+            if(id==DefaultId&&previousVersion<19)
+                foreach(string path in RifleSteelPaths)
+                {
+                    FindDescriptor(path).DefaultValue=current.Descriptor(path).DefaultValue;
+                    Set(path,UpgradeRifleSteelValue(path,previousVersion,Get(path),current.Descriptor(path)));
                 }
             valueIndex=null;
         }
@@ -623,10 +629,10 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.shotFlightSeconds", "shot-feedback", "Длительность дроби", "Время видимого полёта дробины до authoritative конечной точки.", "seconds", .02f, 1f, .01f, .12f);
             profile.Add("presentation.shotTracerWidth", "shot-feedback", "Толщина дроби", "Толщина читаемого presentation-only пути дробины.", "meters", .005f, .2f, .005f, .01f);
             profile.Add("presentation.rifleTracerWidth", "rifle", "Толщина трассера", "Ширина короткого трассера винтовки.", "meters", .002f, .1f, .001f, .006f);
-            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Длина видимого следа за летящей пулей и участка совмещения с дульной точкой.", "meters", .1f, 10f, .1f, 3f);
-            profile.Add("presentation.rifleTracerRed", "rifle", "Трассер · красный", "Красный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .65f);
-            profile.Add("presentation.rifleTracerGreen", "rifle", "Трассер · зелёный", "Зелёный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, 1f);
-            profile.Add("presentation.rifleTracerBlue", "rifle", "Трассер · синий", "Синий канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .08f);
+            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Длина видимого следа за летящей пулей и участка совмещения с дульной точкой.", "meters", .1f, 10f, .1f, 1.5f);
+            profile.Add("presentation.rifleTracerRed", "rifle", "Трассер · красный", "Красный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .56f);
+            profile.Add("presentation.rifleTracerGreen", "rifle", "Трассер · зелёный", "Зелёный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .55f);
+            profile.Add("presentation.rifleTracerBlue", "rifle", "Трассер · синий", "Синий канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .50f);
             profile.Add("presentation.rifleModelScale", "rifle", "Масштаб модели винтовки", "Размер на grip mount для читаемого хвата и вида от первого лица.", "ratio", .5f, 3f, .1f, 2f);
             profile.Add("presentation.shotMuzzleClearance", "shot-feedback", "Зазор от muzzle", "Начальный presentation-only зазор, отделяющий дробь от muzzle burst first-person оружия.", "meters", 0f, 3f, .05f, .1f);
             profile.Add("presentation.shotImpactSeconds", "shot-feedback", "Длительность impact", "Время видимого contact impact без persistent decal.", "seconds", .02f, 1f, .01f, .12f);
