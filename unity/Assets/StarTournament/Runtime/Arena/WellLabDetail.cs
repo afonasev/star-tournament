@@ -69,9 +69,9 @@ namespace StarTournament.ProvingGround
             int edge=Mathf.Min(x,y,TextureSize-1-x,TextureSize-1-y);
             return (edge<1?-.18f:edge<3?-.05f:0)+cloud*.015f+Grain(x,y)*(kind=="floor"?.04f:.008f);
         }
-        public static Texture2D Texture(string kind,ProvingProfile profile,bool normal=false)
+        public static Texture2D Texture(string kind,ProvingProfile profile,bool normal=false,TextureFormat format=TextureFormat.RGBA32)
         {
-            var texture=new Texture2D(TextureSize,TextureSize,TextureFormat.RGBA32,true,normal){name="Well "+kind+(normal?" relief":" texture"),wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};
+            var texture=new Texture2D(TextureSize,TextureSize,format,true,normal){name="Well "+kind+(normal?" relief":" texture"),wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};
             var pixels=new Color[TextureSize*TextureSize];
             for(int y=0;y<TextureSize;y++)for(int x=0;x<TextureSize;x++)
             {

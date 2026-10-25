@@ -35,7 +35,10 @@ namespace StarTournament.ProvingGround.Tests
                 int vertices=filters.Sum(f=>f.sharedMesh.vertexCount),renderers=skin.GetComponentsInChildren<MeshRenderer>().Length;
                 var garden=filters.Single(f=>f.name=="Well natural garden");var mesh=garden.sharedMesh;
                 Assert.That(mesh.subMeshCount,Is.EqualTo(6));
-                var grassMaterial=garden.GetComponent<MeshRenderer>().sharedMaterials[2];
+                var gardenMaterials=garden.GetComponent<MeshRenderer>().sharedMaterials;
+                var opaqueTextures=new[]{gardenMaterials[0],gardenMaterials[1],gardenMaterials[5]}.Select(m=>m.GetTexture("_BaseMap") as Texture2D).ToArray();
+                Assert.That(opaqueTextures.All(t=>t&&t.format==TextureFormat.RGB24&&!t.isReadable),Is.True,"Opaque garden albedos do not retain unused alpha or CPU-readable pixel data");
+                var grassMaterial=gardenMaterials[2];
                 Assert.That(grassMaterial.IsKeywordEnabled("_ALPHATEST_ON"),Is.True);
                 Assert.That(grassMaterial.color,Is.EqualTo(Color.white));
                 var grassTexture=(Texture2D)grassMaterial.GetTexture("_BaseMap");Assert.That(grassTexture,Is.Not.Null);

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.TestTools;
 namespace StarTournament.ProvingGround.Tests
 {
@@ -98,6 +99,12 @@ namespace StarTournament.ProvingGround.Tests
                 var inward=window.Size.x>window.Size.z?Vector3.back*Mathf.Sign(window.Position.z):Vector3.left*Mathf.Sign(window.Position.x);
                 Assert.That(Physics.Raycast(window.Position+inward*2,-inward,out var hit,4,1<<ProvingArena.WorldLayer),Is.True);Assert.That(hit.collider.transform,Is.EqualTo(pane));
             }
+            var glassRenderers=windows.Select(w=>arena.transform.Find(w.Id).GetComponent<Renderer>()).ToArray();
+            Assert.That(glassRenderers.Select(r=>r.sharedMaterial).Distinct().Count(),Is.EqualTo(1),"All windows share the identical glass material");
+            Assert.That(glassRenderers.Select(r=>r.GetComponent<MeshFilter>().sharedMesh).Distinct().Count(),Is.EqualTo(2),"Each pane orientation shares one geometry asset");
+            foreach(bool alongX in new[]{false,true})
+                Assert.That(windows.Where(w=>(w.Size.x>w.Size.z)==alongX).Select(w=>arena.transform.Find(w.Id).GetComponent<MeshFilter>().sharedMesh).Distinct().Count(),Is.EqualTo(1),"One shared pane mesh per orientation");
+            Assert.That(glassRenderers.All(r=>r.shadowCastingMode==ShadowCastingMode.Off&&r.receiveShadows),Is.True,"Glass keeps baseline shadow flags");
             var shell=arena.Definition.Solids.Single(s=>s.Id=="interior-shell-roof");
             foreach(bool alongX in new[]{false,true})foreach(int side in new[]{-1,1})
             {
@@ -115,8 +122,7 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(faces.All(r=>r.bounds.center.magnitude>100),Is.True);Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
             var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RENDER_COST_OUTPUT");if(!string.IsNullOrWhiteSpace(output))
             {
-                var windowRenderers=windows.Select(w=>arena.transform.Find(w.Id).GetComponent<Renderer>()).ToArray();
-                SecondaryRenderingCostDiagnostics.Write(output,"transparent-glass",windowRenderers);
+                SecondaryRenderingCostDiagnostics.Write(output,"transparent-glass",glassRenderers);
                 var window=windows[0];var inward=window.Size.x>window.Size.z?Vector3.back*Mathf.Sign(window.Position.z):Vector3.left*Mathf.Sign(window.Position.x);
                 var cameraGo=new GameObject("P5 transparent-glass baseline camera");cameraGo.transform.position=window.Position+inward*2;cameraGo.transform.LookAt(window.Position-inward*100);
                 var camera=cameraGo.AddComponent<Camera>();camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.farClipPlane=300;

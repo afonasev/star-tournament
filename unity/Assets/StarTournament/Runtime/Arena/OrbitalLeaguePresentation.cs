@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
         readonly List<Transform> orbits=new List<Transform>(),fans=new List<Transform>();
         readonly List<Vector3> fixturePositions=new List<Vector3>();
-        Mesh cube; Material wall,floor,ceiling,trim,cyan,media,white,sign; Font signFont; ProvingProfile p;
+        Mesh cube,windowPaneX,windowPaneZ; Material wall,floor,ceiling,trim,cyan,media,white,sign,windowGlass; Font signFont; ProvingProfile p;
         ArenaSolid[] structuralSolids;int structuralIndex;
         Color oldAmbient; AmbientMode oldMode;
         public int LocalLightCount {get;private set;}
@@ -151,14 +151,22 @@ namespace StarTournament.ProvingGround
         void Window(ArenaSolid s,Transform target)
         {
             bool alongX=s.Size.x>s.Size.z;float length=alongX?s.Size.x:s.Size.z;
-            var glass=new Material(Shader.Find("StarTournament/OrbitalGlass")){name="Transparent panoramic glazing"};owned.Add(glass);
-            var tint=Palette("cyan");tint.a=p.Get("ring.glassOpacity");glass.SetColor("_Color",tint);glass.SetFloat("_EdgeOpacity",p.Get("ring.glassEdgeOpacity"));
+            if(!windowGlass)
+            {
+                windowGlass=new Material(Shader.Find("StarTournament/OrbitalGlass")){name="Transparent panoramic glazing"};owned.Add(windowGlass);
+                var tint=Palette("cyan");tint.a=p.Get("ring.glassOpacity");windowGlass.SetColor("_Color",tint);windowGlass.SetFloat("_EdgeOpacity",p.Get("ring.glassEdgeOpacity"));
+            }
             // A single plane avoids tinting both faces of a box; the original BoxCollider remains sealed.
-            var pane=new Mesh{name=s.Id+" / transparent pane"};owned.Add(pane);
-            pane.vertices=alongX?new[]{new Vector3(-.5f,-.5f,0),new Vector3(.5f,-.5f,0),new Vector3(.5f,.5f,0),new Vector3(-.5f,.5f,0)}:
-                new[]{new Vector3(0,-.5f,-.5f),new Vector3(0,-.5f,.5f),new Vector3(0,.5f,.5f),new Vector3(0,.5f,-.5f)};
-            pane.triangles=new[]{0,1,2,0,2,3};pane.RecalculateNormals();pane.RecalculateBounds();
-            target.GetComponent<MeshFilter>().sharedMesh=pane;var renderer=target.GetComponent<Renderer>();renderer.sharedMaterial=glass;renderer.shadowCastingMode=ShadowCastingMode.Off;
+            var pane=alongX?windowPaneX:windowPaneZ;
+            if(!pane)
+            {
+                pane=new Mesh{name=alongX?"Transparent pane X orientation":"Transparent pane Z orientation"};owned.Add(pane);
+                pane.vertices=alongX?new[]{new Vector3(-.5f,-.5f,0),new Vector3(.5f,-.5f,0),new Vector3(.5f,.5f,0),new Vector3(-.5f,.5f,0)}:
+                    new[]{new Vector3(0,-.5f,-.5f),new Vector3(0,-.5f,.5f),new Vector3(0,.5f,.5f),new Vector3(0,.5f,-.5f)};
+                pane.triangles=new[]{0,1,2,0,2,3};pane.RecalculateNormals();pane.RecalculateBounds();
+                if(alongX)windowPaneX=pane;else windowPaneZ=pane;
+            }
+            target.GetComponent<MeshFilter>().sharedMesh=pane;var renderer=target.GetComponent<Renderer>();renderer.sharedMaterial=windowGlass;renderer.shadowCastingMode=ShadowCastingMode.Off;
             float frame=p.Get("ring.windowFrameWidth"),depth=alongX?s.Size.z:s.Size.x;
             foreach(int side in new[]{-1,1})
             {
