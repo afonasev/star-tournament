@@ -123,6 +123,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(EditorField<string>(second,"FocusKey"),Is.EqualTo("profile:"+profiles[8].Id),"Creation reconciles other lists without replacing their disabled selection");Assert.That(identities.ProfileId(1),Is.Null);
             }
         }
+        [UnityTest] public IEnumerator InlineRemovalKeepsNearestFocusAndLatchesUntilRelease()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                ground.AddBot();ground.AddBot();yield return null;
+                string nearestIdentity=(string)Call("LobbyColorIdentity",2);int count=ground.SetupBotCount;
+                EventSystem.current.SetSelectedGameObject(B("roster-card-1").gameObject);yield return null;yield return null;
+                float threshold=ground.LobbyProfile.Get("lobby.removeHoldSeconds");
+                InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return new WaitForSecondsRealtime(threshold+.1f);
+                Assert.That(ground.SetupBotCount,Is.EqualTo(count-1));Assert.That(EditorField<Button>(pad,"Focus"),Is.SameAs(B("roster-card-1")));
+                Assert.That((string)Call("LobbyColorIdentity",1),Is.EqualTo(nearestIdentity),"Focus follows the nearest surviving identity");
+                Assert.That(EditorField<bool>(pad,"RemovalLatched"),Is.True);
+                yield return new WaitForSecondsRealtime(threshold+.2f);
+                Assert.That(ground.SetupBotCount,Is.EqualTo(count-1),"Continued hold must not remove the next card");Assert.That(EditorField<float>(pad,"Hold"),Is.Zero);
+                yield return Capture("08-removal-latched-nearest");
+                InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return null;
+                Assert.That(EditorField<bool>(pad,"RemovalLatched"),Is.False);Assert.That(EditorField<Button>(pad,"Focus"),Is.SameAs(B("roster-card-1")));
+                InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return new WaitForSecondsRealtime(threshold+.1f);
+                Assert.That(ground.SetupBotCount,Is.EqualTo(count-2),"A new hold after release may remove one more participant");Assert.That(EditorField<Button>(pad,"Focus"),Is.SameAs(B("roster-card-0")));
+                InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return null;Assert.That(EditorField<bool>(pad,"RemovalLatched"),Is.False);
+            }
+        }
         [UnityTest] public IEnumerator InlineFourDevicesColorsHoldCancelAndMapGrid()
         {
             var third=(Gamepad)InputSystem.AddDevice("XInputController");var fourth=(Gamepad)InputSystem.AddDevice("DualShockGamepad");

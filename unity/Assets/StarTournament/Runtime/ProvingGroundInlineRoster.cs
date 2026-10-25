@@ -26,6 +26,7 @@ namespace StarTournament.ProvingGround
             public ScrollRect Scroll;
             public Vector2 Direction;
             public float RepeatAt,Hold;
+            public bool RemovalLatched;
             public int OpenedFrame=-1;
             public string HoldTarget;
         }
@@ -332,11 +333,19 @@ namespace StarTournament.ProvingGround
                 }
                 int participant=e.Page==InlinePage.Closed?Array.IndexOf(rosterCards,e.Focus):InlineParticipant(e);
                 if(participant>=RosterTotal)participant=-1;
-                if(pad.buttonWest.isPressed&&participant>=0)
+                if(!pad.buttonWest.isPressed)e.RemovalLatched=false;
+                if(pad.buttonWest.isPressed&&!e.RemovalLatched&&participant>=0)
                 {
                     string target=LobbyColorIdentity(participant);if(e.HoldTarget!=target){e.HoldTarget=target;e.Hold=0;}
                     e.Hold+=Time.unscaledDeltaTime;
-                    if(e.Hold>=LobbyProfile.Get("lobby.removeHoldSeconds")){RemoveInlineParticipant(participant);e.Hold=0;e.HoldTarget=null;e.Focus=lobbyMap;}
+                    if(e.Hold>=LobbyProfile.Get("lobby.removeHoldSeconds"))
+                    {
+                        RemoveInlineParticipant(participant);e.Hold=0;e.HoldTarget=null;e.RemovalLatched=true;
+                        // Preserve the nearest surviving card while requiring a release
+                        // before another removal can begin on its new identity.
+                        e.Focus=RosterTotal>0?rosterCards[Mathf.Clamp(participant,0,RosterTotal-1)]:lobbyMap;
+                        e.LastSharedSelection=EventSystem.current?.currentSelectedGameObject;
+                    }
                 }
                 else {e.Hold=0;e.HoldTarget=null;}
                 if(pad.buttonSouth.wasPressedThisFrame&&e.Focus&&e.Focus.IsInteractable())
