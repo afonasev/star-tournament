@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -36,6 +37,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // Actual authoritative floor sweep, safely away from participants.
             state.Rockets[0].Position=new Vector3(0,.1f,0);state.Rockets[0].Direction=Vector3.down;session.Restore(state);
             session.Tick(new LocalAction[2],.02f);session.Tick(new LocalAction[2],.08f);presentation.Render();
+        }
+        [UnityTest,Explicit("P5 actual Pulse VFX inventory and matched Editor render capture; diagnostic, not Player FPS or acceptance")]
+        public IEnumerator P5BaselineCapturesPulseEffectsCostAndFrame()
+        {
+            var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RENDER_COST_OUTPUT");Assert.That(directory,Is.Not.Null.And.Not.Empty);Directory.CreateDirectory(directory);
+            Contact(Flight());presentation.Render();
+            var systems=owner.GetComponentsInChildren<ParticleSystem>(true);var particleRenderers=systems.Select(s=>s.GetComponent<ParticleSystemRenderer>()).Where(r=>r).Cast<Renderer>().Concat(owner.GetComponentsInChildren<LineRenderer>(true)).ToArray();
+            SecondaryRenderingCostDiagnostics.Write(directory,"pulse-vfx",particleRenderers);SecondaryRenderingCostDiagnostics.WriteParticles(directory,"pulse-vfx",systems);
+            File.WriteAllLines(Path.Combine(directory,"pulse-vfx-settings.txt"),new[]{"profile="+effectsIdentity(),"active_bursts="+presentation.ActiveBursts,"pooled_bursts="+presentation.PooledBursts,"active_lights="+presentation.ActiveLights,"live_particles="+presentation.LiveParticles,"editor="+Application.unityVersion,"gpu="+SystemInfo.graphicsDeviceName,"graphics="+SystemInfo.graphicsDeviceType,"quality="+QualitySettings.names[QualitySettings.GetQualityLevel()],"resolution=1280x720 DefaultHDR","timing=NotRun; this test inventories native objects and renders one frame only"});
+            var cameraGo=new GameObject("P5 pulse VFX baseline camera");cameraGo.transform.position=new Vector3(0,2.3f,-7);cameraGo.transform.LookAt(new Vector3(0,.8f,0));var camera=cameraGo.AddComponent<Camera>();camera.enabled=false;camera.fieldOfView=55;camera.nearClipPlane=.05f;camera.farClipPlane=100;
+            SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"pulse-vfx.png"));UnityEngine.Object.Destroy(cameraGo);yield return null;
+            string effectsIdentity()=>ProvingProfile.CreateRocketEffectsDefault().Id+"@"+ProvingProfile.CreateRocketEffectsDefault().Version;
         }
         [UnityTest]public IEnumerator PauseFreezesParticlesRestoreClearsBurstAndRecreatesFlightWithoutChangingState()
         {

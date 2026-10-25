@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -112,6 +113,15 @@ namespace StarTournament.ProvingGround.Tests
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();var faces=art.GetComponentsInChildren<MeshRenderer>().Where(r=>r.name.StartsWith("Distant space cube / ")).ToArray();
             Assert.That(faces.Length,Is.EqualTo(6));Assert.That(faces.Count(r=>r.name.EndsWith("planet")),Is.EqualTo(2));Assert.That(faces.Count(r=>r.name.EndsWith("Sun")),Is.EqualTo(1));
             Assert.That(faces.All(r=>r.bounds.center.magnitude>100),Is.True);Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RENDER_COST_OUTPUT");if(!string.IsNullOrWhiteSpace(output))
+            {
+                var windowRenderers=windows.Select(w=>arena.transform.Find(w.Id).GetComponent<Renderer>()).ToArray();
+                SecondaryRenderingCostDiagnostics.Write(output,"transparent-glass",windowRenderers);
+                var window=windows[0];var inward=window.Size.x>window.Size.z?Vector3.back*Mathf.Sign(window.Position.z):Vector3.left*Mathf.Sign(window.Position.x);
+                var cameraGo=new GameObject("P5 transparent-glass baseline camera");cameraGo.transform.position=window.Position+inward*2;cameraGo.transform.LookAt(window.Position-inward*100);
+                var camera=cameraGo.AddComponent<Camera>();camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.farClipPlane=300;
+                SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(output,"transparent-glass.png"));Object.Destroy(cameraGo);
+            }
         }
         [UnityTest] public IEnumerator WayfindingUsesPlanSidesAndPanelsStayOnOpaqueWalls()
         {
