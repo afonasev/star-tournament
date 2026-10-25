@@ -812,6 +812,8 @@ namespace StarTournament.ProvingGround
                 // Authoring and runtime Default share the approved radius migration.
                 // Named profiles and immutable source revisions retain their saved values.
                 if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                if(isDefault&&preserveSavedValues)value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                if(isDefault&&preserveSavedValues&&snapshot.Profile(d.Path).Version==4)value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 next.Set(d.Path,value);
             }
             // Version3 used the office controls for both floors and stair annexes.
