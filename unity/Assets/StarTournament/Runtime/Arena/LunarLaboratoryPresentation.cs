@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Renderer-only authored kit; textures are deterministic baked-at-load assets, owned and disposed here.</summary>
-    public sealed class LunarLaboratoryPresentation:MonoBehaviour
+    public sealed class LunarLaboratoryPresentation:MonoBehaviour,IArenaMeshOwner
     {
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
@@ -402,7 +402,11 @@ namespace StarTournament.ProvingGround
         void Flush()
         {
             foreach(var pair in batches){var go=new GameObject(pair.Key.name);go.transform.SetParent(transform,false);var m=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};m.CombineMeshes(pair.Value.ToArray());owned.Add(m);go.AddComponent<MeshFilter>().sharedMesh=m;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=pair.Key;r.shadowCastingMode=pair.Key==white||pair.Key==grate?ShadowCastingMode.Off:ShadowCastingMode.On;}
+            batches.Clear();cube=null;cylinder=null;sphere=null;
         }
         void OnDestroy(){Font.textureRebuilt-=RefreshFont;RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;foreach(var item in owned)if(item)DestroyImmediate(item);}
+        IEnumerable<Mesh> IArenaMeshOwner.ReadOwnedMeshes()=>ArenaMeshResidency.OwnedMeshes(owned);
+        IEnumerable<Mesh> IArenaMeshOwner.ReadDiagnosticMeshes(){if(starMesh)yield return starMesh;}
+        void IArenaMeshOwner.ReleaseUnusedMeshes(HashSet<int> referenced)=>ArenaMeshResidency.ReleaseUnused(owned,referenced);
     }
 }

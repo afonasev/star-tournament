@@ -4,7 +4,7 @@ using UnityEngine;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Bright white laboratory skin. All decoration is collider-free; authored solids own obstruction.</summary>
-    public sealed partial class WellArenaPresentation:MonoBehaviour
+    public sealed partial class WellArenaPresentation:MonoBehaviour,IArenaMeshOwner
     {
         readonly List<Object> owned=new List<Object>();readonly Dictionary<Material,List<Bounds>> batches=new Dictionary<Material,List<Bounds>>();
         UnityEngine.Rendering.AmbientMode oldMode;Color oldAmbient;
@@ -250,8 +250,12 @@ namespace StarTournament.ProvingGround
                 else renderer.sharedMaterial=pair.Key;
                 if(pair.Key==glass)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
+            batches.Clear();
             RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=(profile.Version>=5?new Color(profile.Get("well.fillRed"),profile.Get("well.fillGreen"),profile.Get("well.fillBlue")):new Color(1,.99f,.97f))*profile.Get("well.fill");
         }
         void OnDestroy(){Font.textureRebuilt-=RefreshFont;RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;foreach(var o in owned)if(o)Destroy(o);}
+        IEnumerable<Mesh> IArenaMeshOwner.ReadOwnedMeshes()=>ArenaMeshResidency.OwnedMeshes(owned);
+        IEnumerable<Mesh> IArenaMeshOwner.ReadDiagnosticMeshes()=>detail?.ReadDiagnosticMeshes()??System.Array.Empty<Mesh>();
+        void IArenaMeshOwner.ReleaseUnusedMeshes(HashSet<int> referenced)=>ArenaMeshResidency.ReleaseUnused(owned,referenced);
     }
 }

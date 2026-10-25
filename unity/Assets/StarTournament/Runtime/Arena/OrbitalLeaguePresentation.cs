@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Renderer-only kit for immutable Combat Bowl. Never creates a physics object.</summary>
-    public sealed partial class OrbitalLeaguePresentation : MonoBehaviour
+    public sealed partial class OrbitalLeaguePresentation : MonoBehaviour,IArenaMeshOwner
     {
         // Surface epsilon avoids coplanar z-fighting; technical, not traversable geometry.
         const float Epsilon=.006f;
@@ -136,6 +136,7 @@ namespace StarTournament.ProvingGround
                 var mesh=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(entry.Value.ToArray());owned.Add(mesh);
                 go.AddComponent<MeshFilter>().sharedMesh=mesh;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=entry.Key;r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=false;
             }
+            batches.Clear();cube=null;
         }
         void Grating(ArenaSolid s,Transform target)
         {
@@ -513,5 +514,8 @@ namespace StarTournament.ProvingGround
         }
         void RefreshFont(Font font){if(font==signFont&&sign)sign.SetTexture("_MainTex",font.material.mainTexture);}
         void OnDestroy(){Font.textureRebuilt-=RefreshFont;RenderSettings.ambientLight=oldAmbient;RenderSettings.ambientMode=oldMode;foreach(var asset in owned)if(asset)DestroyImmediate(asset);}
+        IEnumerable<Mesh> IArenaMeshOwner.ReadOwnedMeshes()=>ArenaMeshResidency.OwnedMeshes(owned);
+        IEnumerable<Mesh> IArenaMeshOwner.ReadDiagnosticMeshes()=>System.Array.Empty<Mesh>();
+        void IArenaMeshOwner.ReleaseUnusedMeshes(HashSet<int> referenced)=>ArenaMeshResidency.ReleaseUnused(owned,referenced);
     }
 }
