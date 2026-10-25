@@ -8,6 +8,7 @@
 - Select minimal affected checks from recorded baseline/diff/dependencies. In game projects, full tests need separate human approval for this run, even at merge/release. In non-game applications and tooling, full tests are allowed within the authorized task under project rules without separate approval. Preserve test contracts and FAIL/NotRun; never infer human/device acceptance from QA.
 - Explicit model/effort wins. Authorized new chats: Sol 6.1/medium; bounded work/subagents: Luna/medium or higher. Astra needs a specific complex decision or explicit choice. No implied delegation/message permission.
 - Show real visual alternatives before implementation; concepts do not authorize publication.
+- Before finalizing any new or changed map object, model, or map, complete and document its applicable asset-optimization pass; preserve the approved look and gameplay/spatial contracts.
 - Before QA, delivery or finalization read `.agents/references/execution-policy.md`; it includes preservation/cleanup and reporting. Report branch + SHA and integration separately. Read `.agents/references/portability.md` on a new device or missing dependency. Other references below load only on their stated trigger.
 - Autonomous games start silent: `-muted`, Unity `-noaudio -muted`, web `?muted=1` before autoplay. Never change system volume; missing support remains an open gate.
 - Player build only by request or justified indispensable minimal QA build. Installer/release/deploy need a separate request; inspect composite commands before running.
