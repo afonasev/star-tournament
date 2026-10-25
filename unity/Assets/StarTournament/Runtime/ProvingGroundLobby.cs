@@ -49,6 +49,7 @@ namespace StarTournament.ProvingGround
             rosterPageTitle.gameObject.SetActive(false);
             lobbyMap=RosterButton(setupScreen.transform,"lobby-map","",new Vector2(.05f,.68f),new Vector2(.35f,.89f),OpenLobbyMaps);
             lobbyMap.GetComponentInChildren<Text>().alignment=TextAnchor.LowerLeft;
+            var mapHint=lobbyMap.GetComponent<MenuActionHint>().GlyphLabel;mapHint.rectTransform.anchorMin=new Vector2(1,.04f);mapHint.rectTransform.anchorMax=new Vector2(1,.27f);
             Layout(lobbyMap.GetComponentInChildren<Text>().rectTransform,new Vector2(.05f,.03f),new Vector2(.86f,.29f));
             var preview=new GameObject("lobby-map-preview",typeof(RectTransform),typeof(ArenaPreviewGraphic));preview.transform.SetParent(lobbyMap.transform,false);
             Layout((RectTransform)preview.transform,new Vector2(.02f,.29f),new Vector2(.98f,.97f));lobbyPreview=preview.GetComponent<ArenaPreviewGraphic>();lobbyPreview.raycastTarget=false;
@@ -60,6 +61,7 @@ namespace StarTournament.ProvingGround
             Label(setupScreen.transform,"lobby-time-label","ВРЕМЯ",22,new Vector2(.64f,.815f),new Vector2(.77f,.87f),TextAnchor.MiddleLeft,RosterMuted);
             Label(setupScreen.transform,"lobby-target-label","ЦЕЛЬ",22,new Vector2(.80f,.815f),new Vector2(.95f,.87f),TextAnchor.MiddleLeft,RosterMuted);
             foreach(var button in new[]{setupPrevious,rosterAddBot,rosterAddHuman,start})button.transform.SetParent(setupScreen.transform,false);
+            var footerDivider=Panel(setupScreen.transform,"lobby-footer-divider",new Vector2(.645f,.06f),new Vector2(.646f,.13f),new Color32(116,135,148,165)).GetComponent<Image>();footerDivider.raycastTarget=false;
             rosterAddBot.onClick.RemoveAllListeners();rosterAddBot.onClick.AddListener(BeginLobbyBot);
             BindMenuShortcut(rosterAddBot,MenuPadButton.West,()=>phase==Phase.Setup&&!LobbyModal);
             BindMenuShortcut(rosterAddHuman,MenuPadButton.North,()=>phase==Phase.Setup&&!LobbyModal);
@@ -76,8 +78,9 @@ namespace StarTournament.ProvingGround
         }
         void StyleLobbySurface(Button button)
         {
-            button.GetComponent<MenuPresentation>().Compact=false;
-            var image=button.GetComponent<Image>();image.color=new Color32(12,23,33,210);
+            var presentation=button.GetComponent<MenuPresentation>();presentation.Compact=false;presentation.LobbySurface=true;button.transition=Selectable.Transition.None;
+            var hint=button.GetComponent<MenuActionHint>();if(hint)hint.ColoredLobbyGlyph=true;
+            var image=button.GetComponent<Image>();image.color=new Color32(4,9,15,185);
             var outline=button.GetComponent<Outline>();if(outline)outline.effectColor=new Color32(109,130,145,180);
         }
         void StyleLobbySurfaces()
@@ -85,9 +88,10 @@ namespace StarTournament.ProvingGround
             setupPlayersPage.GetComponent<Image>().color=Color.clear;
             setupPlayersPage.transform.parent.GetComponent<Image>().color=Color.clear;
             rosterFfaScroll.GetComponent<Image>().color=Color.clear;
-            rosterBluePanel.GetComponent<Image>().color=new Color32(21,66,87,165);
-            rosterRedPanel.GetComponent<Image>().color=new Color32(86,30,43,165);
+            rosterBluePanel.GetComponent<Image>().color=new Color32(9,31,43,150);
+            rosterRedPanel.GetComponent<Image>().color=new Color32(42,15,24,150);
             foreach(var button in new[]{lobbyMap,lobbyMode,lobbyTime,lobbyTarget,setupPrevious,rosterAddBot,rosterAddHuman})StyleLobbySurface(button);
+            start.GetComponent<MenuActionHint>().ColoredLobbyGlyph=true;
             foreach(var button in rosterCards.Concat(rosterEmpty))StyleLobbySurface(button);
         }
         void RefreshSingleScreenLobby()
@@ -107,7 +111,9 @@ namespace StarTournament.ProvingGround
             lobbyTarget.GetComponentInChildren<Text>().text=(Configuration.TargetEnabled?Configuration.TargetPoints.ToString():"Без цели");
             RefreshRosterUi();StyleLobbySurfaces();
             var footer=new[]{setupPrevious,rosterAddBot,rosterAddHuman,start};var labels=new[]{"Назад","Добавить бота","Присоединиться","Начать матч"};
-            for(int i=0;i<footer.Length;i++){footer[i].gameObject.SetActive(phase==Phase.Setup);Layout((RectTransform)footer[i].transform,new Vector2(.05f+i*.23f,.055f),new Vector2(.26f+i*.23f,.13f));footer[i].GetComponent<MenuPresentation>().Compact=false;var t=footer[i].GetComponentInChildren<Text>();t.text=labels[i];t.fontSize=23;}
+            var footerMin=new[]{new Vector2(.025f,.055f),new Vector2(.18f,.055f),new Vector2(.38f,.055f),new Vector2(.695f,.055f)};
+            var footerMax=new[]{new Vector2(.16f,.13f),new Vector2(.37f,.13f),new Vector2(.60f,.13f),new Vector2(.975f,.13f)};
+            for(int i=0;i<footer.Length;i++){footer[i].gameObject.SetActive(phase==Phase.Setup);Layout((RectTransform)footer[i].transform,footerMin[i],footerMax[i]);footer[i].GetComponent<MenuPresentation>().Compact=false;var t=footer[i].GetComponentInChildren<Text>();t.text=labels[i];t.fontSize=23;}
             start.interactable=SetupBlockingReason()=="";start.GetComponent<Image>().color=MenuGold;start.GetComponentInChildren<Text>().color=MenuInk;
             setupMessage.text=setupError??SetupBlockingReason();
             if(lobbyDialog&&lobbyDialog.activeSelf)lobbyDialog.transform.SetAsLastSibling();

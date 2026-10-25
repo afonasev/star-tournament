@@ -12,11 +12,12 @@ namespace StarTournament.ProvingGround
     {
         // Authored uGUI layout in the existing Full HD canvas; these sizes do not tune gameplay/readability profiles.
         readonly Button[] rosterCards=new Button[NativeMatchRoster.MaximumParticipants];
-        readonly Text[] rosterNames=new Text[NativeMatchRoster.MaximumParticipants],rosterDetails=new Text[NativeMatchRoster.MaximumParticipants],rosterViews=new Text[NativeMatchRoster.MaximumParticipants],rosterIcons=new Text[NativeMatchRoster.MaximumParticipants];
+        readonly Text[] rosterNames=new Text[NativeMatchRoster.MaximumParticipants],rosterDetails=new Text[NativeMatchRoster.MaximumParticipants];
+        readonly GameObject[] rosterDeviceIcons=new GameObject[NativeMatchRoster.MaximumParticipants],rosterScreenIcons=new GameObject[NativeMatchRoster.MaximumParticipants];
         readonly Button[] rosterEmpty=new Button[8];
         Button[][] lobbyRosterGroups;
         int rosterEmptyUsed;
-        readonly Image[] rosterStripes=new Image[NativeMatchRoster.MaximumParticipants];
+        readonly Image[] rosterStripes=new Image[NativeMatchRoster.MaximumParticipants],rosterPortraits=new Image[NativeMatchRoster.MaximumParticipants];
         GameObject rosterEditor,rosterPicker;
         Toggle rosterBotView;
         Transform rosterFfa,rosterBlue,rosterRed,rosterPickerContent;
@@ -35,6 +36,14 @@ namespace StarTournament.ProvingGround
         static readonly Color32 RosterBlue=new Color32(106,204,239,255),RosterRed=new Color32(242,128,147,255);
 
         static Sprite rosterRounded;
+        static Sprite rosterHumanPortrait,rosterBotPortrait;
+        static Sprite Portrait(string resource,ref Sprite cached)
+        {
+            if(cached)return cached;
+            var texture=Resources.Load<Texture2D>("LobbyPortraits/"+resource);
+            if(texture)cached=Sprite.Create(texture,new Rect(0,0,texture.width,texture.height),new Vector2(.5f,.5f),100,0,SpriteMeshType.FullRect);
+            return cached;
+        }
         void RoundRosterPanel(GameObject panel)
         {
             if(rosterRounded==null)
@@ -57,6 +66,8 @@ namespace StarTournament.ProvingGround
         Button RosterButton(Transform parent,string name,string title,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action)
         {
             var b=MenuButton(parent,name,title,min,max,action);RoundRosterPanel(b.gameObject);
+            b.GetComponent<MenuPresentation>().LobbySurface=true;b.transition=Selectable.Transition.None;
+            b.GetComponent<MenuActionHint>().ColoredLobbyGlyph=true;
             var text=b.GetComponentInChildren<Text>();text.fontSize=26;text.fontStyle=FontStyle.Bold;
             var colors=b.colors;colors.highlightedColor=colors.selectedColor=Color.white;b.colors=colors;
             AddRosterFocus(b);
@@ -93,29 +104,40 @@ namespace StarTournament.ProvingGround
             rosterRedPanel=Panel(setupPlayersPage.transform,"roster-team-red",new Vector2(.51f,.025f),new Vector2(.98f,.77f),new Color32(23,37,52,255));
             rosterBlue=RosterScroll(rosterBluePanel.transform,"team-blue-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.98f),out rosterBlueScroll);
             rosterRed=RosterScroll(rosterRedPanel.transform,"team-red-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.98f),out rosterRedScroll);
-            rosterBluePanel.GetComponent<Image>().color=new Color32(24,64,86,255);
-            rosterRedPanel.GetComponent<Image>().color=new Color32(83,35,47,255);
+            rosterBluePanel.GetComponent<Image>().color=new Color32(22,53,72,190);
+            rosterRedPanel.GetComponent<Image>().color=new Color32(68,34,43,190);
             rosterBlueScroll.GetComponent<Image>().color=Color.clear;
             rosterRedScroll.GetComponent<Image>().color=Color.clear;
             for(int i=0;i<rosterCards.Length;i++)
             {
                 int p=i;var b=RosterButton(rosterFfa,"roster-card-"+i,"",Vector2.zero,Vector2.one,()=>OpenRosterEditor(p));rosterCards[i]=b;b.GetComponent<MenuPresentation>().Compact=false;
                 b.GetComponentInChildren<Text>().gameObject.SetActive(false);
-                var hint=b.GetComponent<MenuActionHint>();hint.ReservedRightInset=()=>42;
-                hint.GlyphLabel.rectTransform.anchorMin=new Vector2(1,.16f);hint.GlyphLabel.rectTransform.anchorMax=new Vector2(1,.46f);
-                b.GetComponent<Image>().color=new Color32(27,43,59,255);
-                rosterStripes[i]=Panel(b.transform,"stripe",new Vector2(.005f,.075f),new Vector2(.02f,.925f),MenuGold).GetComponent<Image>();
-                var icon=Panel(b.transform,"icon",new Vector2(.05f,.60f),new Vector2(.195f,.89f),new Color32(21,44,59,255));
-                RoundRosterPanel(icon);
-                rosterIcons[i]=Label(icon.transform,"kind","",30,Vector2.zero,Vector2.one,TextAnchor.MiddleCenter,MenuGold);
-                rosterNames[i]=Label(b.transform,"participant-name","",30,new Vector2(.235f,.70f),new Vector2(.94f,.91f),TextAnchor.MiddleLeft,Color.white);
+                var hint=b.GetComponent<MenuActionHint>();hint.ReservedRightInset=()=>38;
+                hint.GlyphLabel.rectTransform.anchorMin=new Vector2(1,.18f);hint.GlyphLabel.rectTransform.anchorMax=new Vector2(1,.40f);
+                b.GetComponent<Image>().color=new Color32(4,9,15,185);
+                rosterStripes[i]=Panel(b.transform,"stripe",new Vector2(.005f,.075f),new Vector2(.012f,.925f),MenuGold).GetComponent<Image>();
+                var portrait=Panel(b.transform,"portrait",new Vector2(.025f,.04f),new Vector2(.49f,.96f),Color.white);
+                rosterPortraits[i]=portrait.GetComponent<Image>();rosterPortraits[i].preserveAspect=true;rosterPortraits[i].raycastTarget=false;
+                rosterNames[i]=Label(b.transform,"participant-name","",28,new Vector2(.52f,.69f),new Vector2(.95f,.94f),TextAnchor.MiddleLeft,Color.white);
                 rosterNames[i].fontStyle=FontStyle.Bold;
                 rosterNames[i].resizeTextForBestFit=true;rosterNames[i].resizeTextMinSize=20;rosterNames[i].resizeTextMaxSize=30;
-                rosterDetails[i]=Label(b.transform,"participant-detail","",22,new Vector2(.235f,.54f),new Vector2(.96f,.72f),TextAnchor.MiddleLeft,RosterMuted);
-                Panel(b.transform,"rule",new Vector2(.055f,.49f),new Vector2(.945f,.495f),new Color32(62,88,102,255));
+                rosterDetails[i]=Label(b.transform,"participant-detail","",20,new Vector2(.52f,.47f),new Vector2(.95f,.65f),TextAnchor.MiddleLeft,RosterMuted);
                 rosterDetails[i].resizeTextForBestFit=true;rosterDetails[i].resizeTextMinSize=18;rosterDetails[i].resizeTextMaxSize=22;
-                rosterViews[i]=Label(b.transform,"participant-view","",23,new Vector2(.06f,.22f),new Vector2(.88f,.45f),TextAnchor.MiddleLeft,Color.white);
-                Label(b.transform,"open","›",32,new Vector2(.87f,.16f),new Vector2(.96f,.46f),TextAnchor.MiddleCenter,RosterMuted);
+                var device=new GameObject("participant-device-glyph",typeof(RectTransform),typeof(CanvasRenderer),typeof(LobbyRosterGlyph));device.transform.SetParent(b.transform,false);
+                Layout((RectTransform)device.transform,new Vector2(.52f,.47f),new Vector2(.73f,.65f));rosterDeviceIcons[i]=device;
+                var screen=new GameObject("participant-screen-slot",typeof(RectTransform));screen.transform.SetParent(b.transform,false);
+                Layout((RectTransform)screen.transform,new Vector2(.80f,.48f),new Vector2(.93f,.64f));
+                for(int slot=0;slot<4;slot++)
+                {
+                    var square=new GameObject("slot-"+slot,typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));square.transform.SetParent(screen.transform,false);
+                    int x=slot%2,y=slot/2;var squareRect=(RectTransform)square.transform;squareRect.anchorMin=squareRect.anchorMax=new Vector2(.5f,.5f);squareRect.sizeDelta=new Vector2(13,13);squareRect.anchoredPosition=new Vector2(x==0?-8:8,y==0?7:-7);
+                    var squareImage=square.GetComponent<Image>();squareImage.color=new Color32(13,27,38,245);squareImage.raycastTarget=false;
+                    var outline=square.AddComponent<Outline>();outline.effectColor=new Color32(93,220,225,230);outline.effectDistance=new Vector2(1,-1);outline.useGraphicAlpha=false;
+                }
+                rosterScreenIcons[i]=screen.gameObject;
+                var edit=Label(b.transform,"edit-context","",17,new Vector2(.52f,.18f),new Vector2(.70f,.40f),TextAnchor.MiddleRight,new Color32(170,191,204,255));
+                edit.gameObject.AddComponent<MenuContextHint>().Value=()=>EventSystem.current&&EventSystem.current.currentSelectedGameObject==b.gameObject&&menuDevice is Gamepad?"Изменить":"";
+                Label(b.transform,"open","›",26,new Vector2(.94f,.46f),new Vector2(.99f,.66f),TextAnchor.MiddleCenter,RosterMuted);
                 foreach(var graphic in b.GetComponentsInChildren<Graphic>())if(graphic.gameObject!=b.gameObject)graphic.raycastTarget=false;
                 b.GetComponent<RosterFocus>().UseScroll=()=>SetupMode==NativeMatchMode.Teams? (RosterTeamAt(p)==NativeTeam.TeamA?rosterBlueScroll:rosterRedScroll):rosterFfaScroll;
             }
@@ -203,12 +225,18 @@ namespace StarTournament.ProvingGround
             {
                 bool active=i<RosterTotal;rosterCards[i].gameObject.SetActive(active);if(!active)continue;
                 bool bot=RosterIsBot(i);rosterNames[i].text=bot?"Бот":IdentityLabel(i);
-                string deviceLabel=bot?"":input.DeviceAt(i) is Gamepad?"Геймпад #"+input.DeviceAt(i).deviceId:input.Label(i);
-                rosterDetails[i].text=bot?RosterDifficultyNames[RosterDifficultyAt(i)]:deviceLabel+(input.DeviceAt(i)!=null&&!input.IsConnected(i)?" · отключено":"");
-                rosterDetails[i].color=!bot&&!input.IsConnected(i)?new Color32(255,171,142,255):RosterMuted;
-                rosterViews[i].text=i<LocalSeatCount?"Экран "+(LobbyPosition(i,LocalSeatCount)+1):"";rosterViews[i].gameObject.SetActive(i<LocalSeatCount);
-                rosterIcons[i].text=bot?"Б":"И";var color=teams?RosterTeamColor(RosterTeamAt(i)):(Color)MenuGold;
-                rosterIcons[i].color=color;rosterStripes[i].color=color;
+                bool disconnected=!bot&&input.DeviceAt(i)!=null&&!input.IsConnected(i);
+                rosterDetails[i].text=bot?RosterDifficultyNames[RosterDifficultyAt(i)]:disconnected?"Устройство отключено":"";
+                rosterDetails[i].gameObject.SetActive(bot||disconnected);rosterDetails[i].color=disconnected?new Color32(255,171,142,255):RosterMuted;
+                rosterPortraits[i].sprite=bot?Portrait("Bot",ref rosterBotPortrait):Portrait("Human",ref rosterHumanPortrait);
+                rosterDeviceIcons[i].SetActive(!bot&&!disconnected);rosterScreenIcons[i].SetActive(i<LocalSeatCount);
+                if(i<LocalSeatCount)
+                {
+                    int slot=LobbyPosition(i,LocalSeatCount);var squares=rosterScreenIcons[i].GetComponentsInChildren<Image>(true);
+                    for(int n=0;n<squares.Length;n++)squares[n].color=n==slot?new Color32(93,220,225,255):new Color32(13,27,38,245);
+                }
+                if(!bot)rosterDeviceIcons[i].GetComponent<LobbyRosterGlyph>().Kind=input.DeviceAt(i) is Gamepad?LobbyRosterGlyph.DeviceKind.Gamepad:LobbyRosterGlyph.DeviceKind.KeyboardMouse;
+                var color=teams?RosterTeamColor(RosterTeamAt(i)):(Color)MenuGold;rosterStripes[i].color=color;
             }
             foreach(var empty in rosterEmpty)empty.gameObject.SetActive(false);rosterEmptyUsed=0;
             Canvas.ForceUpdateCanvases();

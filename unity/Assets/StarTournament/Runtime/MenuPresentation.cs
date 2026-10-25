@@ -11,6 +11,8 @@ namespace StarTournament.ProvingGround
         public const float ButtonHeight = 46;
         public bool Compact = true;
         public bool FilledFocus;
+        // Opt-in for the match-lobby visual slice; other menu families keep their current palette.
+        public bool LobbySurface;
         Text optionCaption;
         public float Height = ButtonHeight;
         Outline border;
@@ -46,8 +48,12 @@ namespace StarTournament.ProvingGround
                 if(!optionCaption)optionCaption=GetComponentInChildren<Text>();
                 if(optionCaption)optionCaption.color=highlighted?new Color32(20,35,49,255):new Color32(242,244,246,255);
             }
+            else if(LobbySurface&&button)
+            {
+                button.GetComponent<Image>().color=enabledButton?(hover?new Color32(15,30,43,205):new Color32(4,9,15,185)):new Color32(4,9,15,160);
+            }
             if(focusFrame && focusFrame.activeSelf!=focus)focusFrame.SetActive(focus);
-            border.effectColor=enabledButton&&hover?Gold:Line;
+            border.effectColor=enabledButton&&hover?Gold:LobbySurface?new Color32(84,111,132,210):Line;
             border.effectDistance=enabledButton&&hover?new Vector2(2,-2):new Vector2(1,-1);
         }
         public void SetFocused(bool value){selected=value;Paint();}
