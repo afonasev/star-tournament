@@ -63,7 +63,8 @@ def main():
     env = os.environ.copy(); env['DOTNET_ROOT'] = str(a.dotnet.resolve().parent)
     subprocess.run([str(a.dotnet.resolve()), 'publish', str(root/'launcher/Launcher.csproj'), '-c', 'Release',
                     '-r', a.runtime, '--self-contained', 'true', '-p:DebugType=None', '-o', str(stage)] +
-                   (['-p:OutputType=WinExe'] if a.runtime.startswith('win') else []), check=True, env=env)
+                   (['-p:OutputType=WinExe'] if a.runtime.startswith('win') else
+                    ['-p:PublishSingleFile=true', '-p:IncludeNativeLibrariesForSelfExtract=true']), check=True, env=env)
     if a.runtime == 'win-x64':
         validate_windows_dpi(stage/'StarTournamentLauncher.exe')
     game = stage / 'game'; game.mkdir()
