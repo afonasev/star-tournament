@@ -34,15 +34,16 @@ class MacPackageRoute(unittest.TestCase):
                 elif command[0]=='openssl' and 'pkey' in command: Path(command[command.index('-out')+1]).write_bytes(public)
                 elif 'pack' in command:
                     self.assertEqual(command[command.index('--signAppIdentity')+1], '-')
+                    self.assertIn('--signDisableDeep', command)
                     events.append('pack');(self.assertIn if update_only else self.assertNotIn)('--noInst',command)
                     info=plistlib.loads(Path(command[command.index('--plist')+1]).read_bytes())
                     self.assertEqual(info['CFBundleVersion'],version);self.assertEqual(info['CFBundleShortVersionString'],'1.6.0')
                     self.assertEqual(info['LSMinimumSystemVersion'],minimum)
                     self.assertEqual(info['CFBundleExecutable'],'StarTournamentLauncher')
                     stage=Path(command[command.index('--packDir')+1]);out=Path(command[command.index('--outputDir')+1])
-                    config=json.loads((stage/'release.json').read_text());configs.append(config)
+                    config=json.loads((stage/'Contents/MacOS/release.json').read_text());configs.append(config)
                     with zipfile.ZipFile(out/'full.nupkg','w') as archive:
-                        archive.writestr('lib/osx/Contents/MacOS/release.json',json.dumps(config))
+                        archive.writestr('lib/app/Contents/Resources/payload/release.json',json.dumps(config))
                     (out/'fixture-Portable.zip').write_bytes(b'recording portable fixture')
                     if not update_only:(out/'fixture-Setup.pkg').write_bytes(b'recording real PKG route fixture')
                     asset=dict(PackageId=config['appId'],Version=version,Type='Full',FileName='full.nupkg')
