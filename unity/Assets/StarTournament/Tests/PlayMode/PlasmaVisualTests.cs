@@ -33,6 +33,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             s.Tick(new LocalAction[s.ParticipantCount],.02f);ground.SendMessage("LateUpdate");yield return null;
             var camera=ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled&&c.targetTexture==null).OrderBy(c=>c.depth).First();
             for(int warm=0;warm<3;warm++){camera.Render();yield return null;ground.SendMessage("LateUpdate");}
+            var guns=ground.GetComponentsInChildren<Transform>(true).Where(t=>t.name=="forge-plasma").ToArray();
+            Assert.That(guns.Any(t=>t.gameObject.layer>=15),Is.True);
+            Assert.That(guns.Any(t=>t.gameObject.layer<15),Is.True);
+            foreach(var gun in guns)
+                Assert.That(gun.localScale.x,Is.EqualTo(ground.PlasmaProfile.Get("plasma.modelScale")*(gun.gameObject.layer>=15?ground.PlasmaProfile.Get("plasma.viewScale"):1)).Within(.0001f));
+            File.WriteAllLines(Path.Combine(output,"model-scales.txt"),guns.Select(t=>"layer="+t.gameObject.layer+" scale="+t.localScale));
             Capture(camera,Path.Combine(output,"01-first-person.png"));
             var actions=new LocalAction[s.ParticipantCount];actions[0].FireHeld=true;
             for(int i=0;i<10;i++){s.Tick(actions,.02f);ground.SendMessage("LateUpdate");}

@@ -10,6 +10,7 @@ namespace StarTournament.ProvingGround
         Renderer shotgun;
         GameObject rifle,pulse,cutter,plasma;
         Transform rifleMuzzle,cutterMuzzle,pulseMuzzle,plasmaMuzzle;
+        public float PlasmaViewScale { get; private set; }=1;
         public Vector3 PlasmaMuzzle=>plasmaMuzzle?plasmaMuzzle.position:transform.position;
         public Vector3 PulseMuzzle=>pulseMuzzle?pulseMuzzle.position:transform.position;
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
@@ -56,7 +57,9 @@ namespace StarTournament.ProvingGround
             {
                 plasma=Object.Instantiate(plasmaPrefab,mount);plasma.name="forge-plasma";
                 plasma.transform.localPosition=Vector3.zero;plasma.transform.localRotation=Quaternion.identity;
-                plasma.transform.localScale=Vector3.one*(plasmaProfile??ProvingProfile.CreatePlasmaDefault()).Get("plasma.modelScale");
+                var pp=plasmaProfile??ProvingProfile.CreatePlasmaDefault();
+                PlasmaViewScale=gameObject.layer>=15?pp.Get("plasma.viewScale"):1;
+                plasma.transform.localScale=Vector3.one*pp.Get("plasma.modelScale")*PlasmaViewScale;
                 plasmaMuzzle=plasma.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="forge-muzzle");
                 if(gameObject.layer<15)AddForgeLod(plasma,plasmaLod1Prefab);
                 foreach(var t in plasma.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
@@ -245,9 +248,9 @@ namespace StarTournament.ProvingGround
             }
             if(traceMaterial)return traceMaterial;
             var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
-            traceMaterial=new Material(shader){color=new Color(1f,.78f,.4f,1f)};
-            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",new Color(1f,.78f,.4f,1f));
-            if(traceMaterial.HasProperty("_EmissionColor")){traceMaterial.EnableKeyword("_EMISSION");traceMaterial.SetColor("_EmissionColor",new Color(1f,.55f,.15f,1f));}
+            var traceColor=new Color(movement.Get("presentation.shotTracerRed"),movement.Get("presentation.shotTracerGreen"),movement.Get("presentation.shotTracerBlue"),1f);
+            traceMaterial=new Material(shader){color=traceColor};
+            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",traceColor);
             return traceMaterial;
         }
         void PrepareShotPose(int participant)
