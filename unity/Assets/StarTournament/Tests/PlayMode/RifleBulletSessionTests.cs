@@ -68,7 +68,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             session.RifleBulletHit+=e=>{contacts++;contactTime=e.Time;Assert.That(e.AppliedDamage,Is.EqualTo(20));};
             using(var visual=new RifleBulletPresentation(session,move,owner.transform))
             {
-                Fire();Assert.That(launch,Is.EqualTo(1));Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(199));Assert.That(session.Life(1).Health,Is.EqualTo(100));
+                Fire();Assert.That(launch,Is.EqualTo(1));Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(239));Assert.That(session.Life(1).Health,Is.EqualTo(100));
                 Ticks(1);string before=JsonUtility.ToJson(session.Capture());visual.Render();Assert.That(JsonUtility.ToJson(session.Capture()),Is.EqualTo(before));
                 var trace=owner.GetComponentsInChildren<LineRenderer>().Single();Assert.That(trace.GetPosition(0).z,Is.EqualTo(2).Within(.001));Assert.That(trace.GetComponents<Collider>(),Is.Empty);
                 Ticks(1);Assert.That(session.Life(1).Health,Is.EqualTo(100));Ticks(1);visual.Render();

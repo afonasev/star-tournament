@@ -466,6 +466,10 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeDeathAudioGain()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??7)<7)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSmoothFirstPersonWalk()).ToList()};
+            // Project the exact pre-rifle-tuning schema before legacy compatibility search.
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<8
+                    ?p.BeforeRifleBurstParameters():p).ToList()};
             if(RegistryMatches(shipped,sought))return Remember(new[]{shipped});
             // The preceding LT registries lack only the new timing/gesture descriptors.
             // Match the trusted shipped projection first, without expanding all older schemas.
