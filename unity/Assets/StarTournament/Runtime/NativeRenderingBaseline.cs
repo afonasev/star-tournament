@@ -24,6 +24,7 @@ namespace StarTournament.ProvingGround
             if(views!=1&&views!=4)throw new ArgumentOutOfRangeException(nameof(views));
             return new NativeMatchComposition(NativeMatchRoster.Ffa(8),Enumerable.Range(0,8).Select(n=>new NativeParticipantInfo(NativeParticipantKind.Bot,"Bot "+n,NativeParticipantColors.For(n),(int)NativeBotDifficulty.Hard)).ToArray(),Enumerable.Range(0,views).ToArray());
         }
+        public static NativeMatchConfiguration Configuration(ProvingProfile profile)=>new NativeMatchConfiguration{DurationMinutes=5,TargetEnabled=false,TargetPoints=(int)profile.Get("match.ffaTargetDefault")};
         [Serializable] public sealed class Distribution
         {
             public int count;public double mean,p50,p95,p99,max;
@@ -66,7 +67,7 @@ namespace StarTournament.ProvingGround
         IEnumerator Measure(string name,int views,bool live,int duration)
         {
             UnityEngine.Random.InitState((int)Seed);ground.FullHealReviewManualTick=true;ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(map);
-            ground.ConfigureBotTacticsReview(new NativeMatchConfiguration{DurationMinutes=5,TargetEnabled=false,TargetPoints=20});ground.StartBotReview(Composition(views),Seed);
+            ground.ConfigureBotTacticsReview(Configuration(ground.MatchProfile));ground.StartBotReview(Composition(views),Seed);
             while(!ground.Running)yield return null;
             ground.FullHealReviewManualTick=!live;QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
             double warm=Time.realtimeSinceStartupAsDouble+5;while(Time.realtimeSinceStartupAsDouble<warm){FrameTimingManager.CaptureFrameTimings();yield return null;}
