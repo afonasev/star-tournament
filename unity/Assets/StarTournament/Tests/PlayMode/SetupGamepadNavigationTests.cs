@@ -64,120 +64,102 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var next in new[]{n.selectOnUp,n.selectOnDown,n.selectOnLeft,n.selectOnRight})if(next!=null)pending.Push(next);
             }
             var names=new HashSet<string>(visited.Select(s=>s.name));
-            Assert.That(names.Any(n=>n.StartsWith("setup-step-")||n=="setup-next"||n=="setup-previous"||n=="Начать — четыре игрока"),Is.False,"Tabs and footer must not be navigable");
+            Assert.That(names.Any(n=>n.StartsWith("setup-step-")||n=="setup-next"),Is.False,"Removed tabs and next-step control must not be navigable");
             return names;
         }
+        IEnumerator Click(string name){B(name).onClick.Invoke();yield return null;yield return null;}
         [UnityTest] public IEnumerator SetupShortcutHintsFollowDeviceAndEditorAvailability()
         {
-            yield return Load();
-            var next=B("setup-next");var start=B("Начать — четыре игрока");
-            Assert.That(next.GetComponentInChildren<Text>().text,Is.EqualTo("ДАЛЕЕ"),"Caption must remain independent of controller legends");
-            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
-            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Start"));
-            yield return CaptureIfRequested("04-map-start-hint");
-            keyboard=InputSystem.AddDevice<Keyboard>();
-            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.LeftShift));yield return null;yield return null;
-            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
-            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Keyboard hides pad shortcuts");
-            Assert.That(next.GetComponentInChildren<Text>().text,Is.EqualTo("ДАЛЕЕ"));
-            yield return Press(GamepadButton.Start);Assert.That(Step,Is.EqualTo(1));
-            Assert.That(next.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
-            yield return Press(GamepadButton.Start);Assert.That(Step,Is.EqualTo(2));
+            yield return Load();ground.AddBot();yield return null;
+            var start=B("Начать — четыре игрока");
             Assert.That(start.GetComponentInChildren<Text>().text,Is.EqualTo("НАЧАТЬ МАТЧ"));
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Start"));
-            Assert.That(B("roster-add-human").GetComponentInChildren<Text>().text,Is.EqualTo("+ ИГРОК"));
-            Assert.That(B("roster-add-bot").GetComponentInChildren<Text>().text,Is.EqualTo("+ БОТ"));
+            keyboard=InputSystem.AddDevice<Keyboard>();
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.LeftShift));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Keyboard hides pad shortcuts");
+            yield return Press(GamepadButton.DpadRight);
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
+            Assert.That(B("roster-add-human").GetComponentInChildren<Text>().text,Is.EqualTo("ПРИСОЕДИНИТЬСЯ"));
+            Assert.That(B("roster-add-bot").GetComponentInChildren<Text>().text,Is.EqualTo("ДОБАВИТЬ БОТА"));
             yield return CaptureIfRequested("05-roster-start-hint");
-            B("roster-card-0").onClick.Invoke();yield return null;yield return null;
+            yield return Click("roster-card-0");
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Participant editor owns input");
             yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False);
             yield return Press(GamepadButton.East);ground.RemoveBot(0);yield return null;yield return null;
-            Assert.That(start.IsInteractable(),Is.False);
-            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Invalid roster cannot promise Start");
+            Assert.That(start.IsInteractable(),Is.False);Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False);
             yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False);
-            EventSystem.current.SetSelectedGameObject(B("roster-add-bot").gameObject);
-            yield return Press(GamepadButton.South);
-            Assert.That(B("roster-done").gameObject.activeInHierarchy,Is.True,"Focused add-bot action still opens its actual participant editor");
-            Assert.That(ground.Running,Is.False);
+            EventSystem.current.SetSelectedGameObject(B("roster-add-bot").gameObject);yield return Press(GamepadButton.South);
+            Assert.That(B("lobby-add-difficulty-1").gameObject.activeInHierarchy,Is.True);
+            Assert.That(ground.SetupBotCount,Is.Zero,"Opening the flow does not commit a bot");
         }
-        [UnityTest] public IEnumerator ArrowsChooseMapAEditsRulesStartAdvancesAndBPreservesDraft()
+        [UnityTest] public IEnumerator ArrowsPreviewMapAConfirmsAndNumericBPreservesDraft()
         {
-            yield return Load();Assert.That(Focus,Is.EqualTo("arena-choice-0"));
-            Assert.That(Reachable(),Is.EquivalentTo(new[]{"arena-choice-0","arena-choice-1","arena-choice-2","arena-choice-3"}));
-            yield return Press(GamepadButton.DpadDown);
-            Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));Assert.That(Focus,Is.EqualTo("arena-choice-1"));
-            Assert.That(B("arena-choice-1").GetComponent<Image>().color,Is.Not.EqualTo(B("arena-choice-0").GetComponent<Image>().color));
-            yield return CaptureIfRequested("01-map-immediate-selection");
-            yield return Press(GamepadButton.South);Assert.That(Step,Is.EqualTo(1));Assert.That(Focus,Is.EqualTo("mode-choice-0"));
-            Assert.That(Reachable(),Is.EquivalentTo(new[]{"mode-choice-0","mode-choice-1","duration-minus","duration-plus","Цель −","Цель +"}));
-            yield return CaptureIfRequested("02-rules-first-setting");
-            yield return Press(GamepadButton.DpadRight);yield return Press(GamepadButton.South);
-            Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Teams));Assert.That(Step,Is.EqualTo(1),"A changes the setting without advancing");
-            yield return Press(GamepadButton.DpadLeft);yield return Press(GamepadButton.South);
-            Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Ffa));
-            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("duration-minus"));
-            yield return Press(GamepadButton.South); // Establish room below the duration maximum.
-            yield return Press(GamepadButton.DpadRight);float before=ground.Configuration.DurationMinutes;
-            yield return Press(GamepadButton.South);Assert.That(ground.Configuration.DurationMinutes,Is.GreaterThan(before));
-            float duration=ground.Configuration.DurationMinutes;
-            yield return HoldStart(2);Assert.That(Focus,Is.EqualTo("roster-card-0"));
-            Assert.That(Reachable(),Does.Contain("roster-card-1"));
-            yield return CaptureIfRequested("03-players-card-focus");
-            yield return Press(GamepadButton.East);Assert.That(Step,Is.EqualTo(1));Assert.That(Focus,Is.EqualTo("mode-choice-0"));
-            Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(duration));
-            yield return Press(GamepadButton.East);Assert.That(Step,Is.EqualTo(0));Assert.That(Focus,Is.EqualTo("arena-choice-1"));
-            Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));
+            yield return Load();Assert.That(Focus,Is.EqualTo("lobby-map"));
+            Assert.That(Reachable(),Is.SupersetOf(new[]{"lobby-map","lobby-mode","lobby-time","lobby-target","roster-card-0","setup-previous","roster-add-bot","roster-add-human"}));
+            yield return Press(GamepadButton.South);yield return Press(GamepadButton.DpadDown);
+            Assert.That(ground.SelectedMapId,Is.EqualTo(CombatBowlCatalog.Id),"Focus previews, confirmation commits");
+            Assert.That(Focus,Is.EqualTo("lobby-map-"+IndustrialTunnelsCatalog.Id));
+            yield return CaptureIfRequested("01-map-preview");yield return Press(GamepadButton.South);
+            Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));Assert.That(Focus,Is.EqualTo("lobby-map"));
+            yield return Press(GamepadButton.DpadRight);yield return Press(GamepadButton.South);yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.South);
+            Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Teams));Assert.That(Focus,Is.EqualTo("lobby-mode"));
+            yield return Click("lobby-time");float before=ground.Configuration.DurationMinutes;
+            yield return Press(GamepadButton.DpadRight);yield return Press(GamepadButton.East);
+            Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(before+1));Assert.That(Focus,Is.EqualTo("lobby-time"));
             yield return Press(GamepadButton.East);Assert.That(B("main-action-0").gameObject.activeInHierarchy,Is.True);
+            yield return Press(GamepadButton.South);Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(before+1));
         }
-        [UnityTest] public IEnumerator StartHoldAndSimultaneousSubmitCannotSkipSteps()
+        [UnityTest] public IEnumerator StartHoldAndSimultaneousSubmitCannotBypassModal()
         {
             yield return Load();
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.Start).WithButton(GamepadButton.South));
-            for(int i=0;i<8;i++){yield return null;if(i>1)Assert.That(Step,Is.EqualTo(1));}
+            for(int i=0;i<8;i++){yield return null;if(i>1){Assert.That(ground.Running,Is.False);Assert.That(B("lobby-map-"+CombatBowlCatalog.Id).gameObject.activeInHierarchy,Is.True);}}
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return Press(GamepadButton.East);
+            yield return Click("roster-card-0");yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False);
+            yield return Press(GamepadButton.East);yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False,"One participant cannot start");
+            ground.AddBot();InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.Start));
+            yield return null;yield return NativeLoadingTestScene.Wait(ground);
+            for(int i=0;i<8;i++){yield return null;Assert.That(ground.Running,Is.True,"Held Start cannot pause the new match");}
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
-            yield return HoldStart(2);Assert.That(ground.Running,Is.False);
-            B("roster-card-0").onClick.Invoke();yield return Press(GamepadButton.Start);Assert.That(ground.Running,Is.False,"Start does not bypass participant editing");
-            yield return Press(GamepadButton.East);ground.RemoveBot(0);yield return Press(GamepadButton.Start);
-            Assert.That(ground.Running,Is.False,"A single participant cannot start");
         }
-        [UnityTest] public IEnumerator LastPlayedMapSurvivesReentryReloadAndCancelledDraft()
+        [UnityTest] public IEnumerator MapDraftSurvivesReentryButColdReloadUsesDefaults()
         {
-            yield return Load();yield return Press(GamepadButton.DpadDown);
-            yield return Press(GamepadButton.Start);yield return Press(GamepadButton.Start);yield return Press(GamepadButton.Start);
-            yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey),Is.EqualTo(IndustrialTunnelsCatalog.Id));
+            yield return Load();yield return Click("lobby-map");yield return Click("lobby-map-"+IndustrialTunnelsCatalog.Id);
+            ground.AddBot();yield return Press(GamepadButton.Start);yield return NativeLoadingTestScene.Wait(ground);
+            Assert.That(ground.Running,Is.True);Assert.That(PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey),Is.EqualTo(IndustrialTunnelsCatalog.Id));
             typeof(ProvingGround).GetMethod("ToMainMenu",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,null);
-            yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("arena-choice-1"));
-            yield return Press(GamepadButton.DpadDown);Assert.That(ground.SelectedMapId,Is.EqualTo(LunarLaboratoryCatalog.Id));
-            yield return Press(GamepadButton.East);yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("arena-choice-1"));
+            yield return Press(GamepadButton.South);Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));
+            yield return Click("lobby-map");yield return Click("lobby-map-"+LunarLaboratoryCatalog.Id);
+            yield return Press(GamepadButton.East);yield return Press(GamepadButton.South);
+            Assert.That(ground.SelectedMapId,Is.EqualTo(LunarLaboratoryCatalog.Id));
             yield return SceneManager.UnloadSceneAsync(scene);yield return Load();
-            Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));Assert.That(Focus,Is.EqualTo("arena-choice-1"));
+            Assert.That(ground.SelectedMapId,Is.EqualTo(CombatBowlCatalog.Id));Assert.That(ground.SetupBotCount,Is.Zero);Assert.That(Focus,Is.EqualTo("lobby-map"));
         }
-        [UnityTest] public IEnumerator MissingSavedMapFallsBackAndMouseChoiceStaysOnMap()
+        [UnityTest] public IEnumerator MissingSavedMapFallsBackAndMouseChoiceReturnsToLobby()
         {
             PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,"removed-map");yield return Load();
-            Assert.That(ground.SelectedMapId,Is.EqualTo(CombatBowlCatalog.Id));Assert.That(Focus,Is.EqualTo("arena-choice-0"));
-            B("arena-choice-2").onClick.Invoke();yield return null;
-            Assert.That(Step,Is.EqualTo(0));Assert.That(ground.SelectedMapId,Is.EqualTo(LunarLaboratoryCatalog.Id));
-            EventSystem.current.SetSelectedGameObject(B("setup-step-0").gameObject);
-            yield return Press(GamepadButton.DpadUp);
-            Assert.That(Focus,Does.StartWith("arena-choice-"),"Gamepad must leave a tab selected by a mouse click");Reachable();
+            Assert.That(ground.SelectedMapId,Is.EqualTo(CombatBowlCatalog.Id));Assert.That(Focus,Is.EqualTo("lobby-map"));
+            yield return Click("lobby-map");yield return Click("lobby-map-"+LunarLaboratoryCatalog.Id);
+            Assert.That(ground.SelectedMapId,Is.EqualTo(LunarLaboratoryCatalog.Id));Assert.That(Focus,Is.EqualTo("lobby-map"));
+            yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("lobby-mode"));Reachable();
         }
-        [UnityTest] public IEnumerator KeyboardKeepsEnterTransitionsAndGamepadTakesContentFocusWithoutRebinding()
+        [UnityTest] public IEnumerator KeyboardEnterAndGamepadNavigationDoNotRebind()
         {
             keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
             pad=InputSystem.AddDevice<Gamepad>();EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);
-            for(int step=0;step<3;step++)
-            {
-                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));yield return null;yield return null;
-                InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
-                Assert.That(Step,Is.EqualTo(step));Assert.That(Focus,Is.EqualTo(step==2?"Начать — четыре игрока":"setup-next"));
-            }
-            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.DpadUp));yield return null;yield return null;
-            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
-            Reachable();Assert.That(Focus,Does.StartWith("roster-"));
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            Assert.That(Focus,Is.EqualTo("lobby-map"));
+            yield return Click("lobby-time");InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.RightArrow));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            Assert.That(Focus,Is.EqualTo("lobby-time"));Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(4));
+            yield return Press(GamepadButton.DpadDown);Reachable();Assert.That(Focus,Does.StartWith("roster-"));
             var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
             Assert.That(input.DeviceAt(0),Is.SameAs(keyboard),"Menu navigation must not rebind the human device");
         }

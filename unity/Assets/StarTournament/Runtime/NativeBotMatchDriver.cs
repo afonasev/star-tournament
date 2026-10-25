@@ -41,8 +41,14 @@ namespace StarTournament.ProvingGround
                 tactics[p]=new NativeBotTactics(arena,physics,routes,movement,combat,behavior);
                 // Stable integer seed mixing is an identity protocol, never a balance multiplier.
                 uint participantSeed=seed^((uint)(p+1)*0x9e3779b9u);if(participantSeed==0)participantSeed=1;
-                planners[p]=new NativeBotPlanner(difficulties[p],participantSeed,behavior,navigation,routes,tactics[p],new NativeShotgunPolicy(movement,combat,session.CutterProfile,life),life.Get("combat.maximumHealth"));
+                planners[p]=new NativeBotPlanner(difficulties[p],participantSeed,behavior,navigation,routes,tactics[p],new NativeShotgunPolicy(movement,combat,session.CutterProfile,life,session.PlasmaProfile),life.Get("combat.maximumHealth"));
             }
+            session.Damaged+=OnDamaged;
+        }
+        void OnDamaged(DamageNotice hit)
+        {
+            if(hit.Participant<0||hit.Participant>=planners.Length||hit.Shooter<0||hit.Shooter==hit.Participant||composition.Roster.AreAllies(hit.Participant,hit.Shooter)||!hit.Impact.Valid||hit.HealthLost+hit.ArmorLost<=0)return;
+            planners[hit.Participant]?.NoticeDamage(hit.Time,hit.Life,hit.Impact.Direction);
         }
         NativeBotPickupEvent[] ReadPickupCatalogue()
         {
@@ -60,6 +66,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<planners.Length;i++)if(planners[i]!=null&&(s.Planners[i]==null||s.Planners[i].Time!=s.Perception.Time))throw new ArgumentException("Invalid planner snapshot clock");
             if(liftRoutes.Any(x=>x!=null)){if(s.Lifts==null||s.Lifts.Length!=liftRoutes.Length)throw new ArgumentException("Missing bot lift intents");for(int i=0;i<liftRoutes.Length;i++){if(liftRoutes[i]==null&&s.Lifts[i]!=null)throw new ArgumentException("Unexpected human lift intent");liftRoutes[i]?.Validate(s.Lifts[i]);}}else if(s.Lifts!=null&&s.Lifts.Any(x=>x!=null))throw new ArgumentException("Unexpected bot lift intents");
             // Validate every owner before any write. Invalid input cannot revalidate/mutate native routes.
+            for(int i=0;i<planners.Length;i++)if(planners[i]!=null&&s.Planners[i].DamageUpdatedAt>session.Time)throw new ArgumentException("Future damage cue");
             Perception.ValidateSnapshot(s.Perception);Pickups.ValidateSnapshot(s.Pickups);
             for(int i=0;i<planners.Length;i++)planners[i]?.ValidateSnapshot(s.Planners[i]);
             for(int i=0;i<liftRoutes.Length;i++)liftRoutes[i]?.Restore(s.Lifts[i]);

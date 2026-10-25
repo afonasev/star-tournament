@@ -83,7 +83,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string DefaultId = "unity-proving-ground-v1";
-        public const int DefaultVersion = 18;
+        public const int DefaultVersion = 19;
 
         [SerializeField] private string id = DefaultId;
         [SerializeField] private int version = DefaultVersion;
@@ -139,7 +139,24 @@ namespace StarTournament.ProvingGround
                     FindDescriptor(path).DefaultValue=current.Descriptor(path).DefaultValue;
                     Set(path,UpgradeArenaVisualValue(path,previousVersion,Get(path),current.Descriptor(path)));
                 }
+            if(id==DefaultId&&previousVersion<19)
+                foreach(string path in RifleSteelPaths)
+                {
+                    FindDescriptor(path).DefaultValue=current.Descriptor(path).DefaultValue;
+                    Set(path,UpgradeRifleSteelValue(path,previousVersion,Get(path),current.Descriptor(path)));
+                }
             valueIndex=null;
+        }
+        internal ProvingProfile BeforeShotgunTracerColor()
+        {
+            if(id!=DefaultId||Descriptor("presentation.shotTracerRed")==null)return this;
+            var copy=DetachedCopy();
+            foreach(var channel in new[]{"Red","Green","Blue"})
+            {
+                string path="presentation.shotTracer"+channel;
+                copy.descriptors.RemoveAll(d=>d.Path==path);copy.values.RemoveAll(v=>v.Path==path);
+            }
+            return copy;
         }
         internal const string BotBanterIntervalPath="presentation.botBanterIntervalSeconds";
         internal const float DefaultBotBanterIntervalSeconds=10f;
@@ -149,6 +166,42 @@ namespace StarTournament.ProvingGround
             if(id!=DefaultId||Descriptor(BotBanterIntervalPath)==null)return this;
             var copy=DetachedCopy();copy.descriptors.RemoveAll(d=>d.Path==BotBanterIntervalPath);copy.values.RemoveAll(v=>v.Path==BotBanterIntervalPath);
             return copy;
+        }
+        // Neutral per-cue multipliers preserve the mix of historical profiles.
+        internal static float EffectAudioGain(ProvingProfile profile,string cue)
+        {
+            string path="audio.effect."+cue+"Gain";
+            return profile.Descriptor(path)==null?1f:profile.Get(path);
+        }
+        internal ProvingProfile BeforeIndividualEffectGains()
+        {
+            if(id!=DefaultId||Descriptor("audio.effect.rifleGain")==null)return this;
+            var copy=DetachedCopy();
+            copy.descriptors.RemoveAll(d=>d.Path.StartsWith("audio.effect.",StringComparison.Ordinal));
+            copy.values.RemoveAll(v=>v.Path.StartsWith("audio.effect.",StringComparison.Ordinal));
+            return copy;
+        }
+        void AddIndividualEffectGains()
+        {
+            Add("audio.effect.rifleGain","audio","Выстрел винтовки","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.shotgunGain","audio","Выстрел дробовика","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.rocketGain","audio","Выстрел ракетницы","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.cutterGain","audio","Непрерывный резак","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации. Дополнительно умножается на общий уровень стрельбы.","ratio",0,4,.05f,1);
+            Add("audio.effect.rocketFlightGain","audio","Полёт ракеты","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.explosionGain","audio","Взрыв ракеты","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.shieldHitGain","audio","Попадание в броню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.bodyHitGain","audio","Попадание в тело","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.weaponPickupGain","audio","Подбор оружия","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.shieldPickupGain","audio","Подбор брони","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.damagePickupGain","audio","Подбор бонуса урона — собравший","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.speedPickupGain","audio","Подбор скорости","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.healPickupGain","audio","Подбор лечения","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.menuMoveGain","audio","Переход фокуса меню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.menuConfirmGain","audio","Подтверждение меню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.menuBackGain","audio","Возврат в меню","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.botReactionGain","audio","Голосовые реплики ботов","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.killTripleGain","audio","Голос тройного убийства","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
+            Add("audio.effect.killQuadrupleGain","audio","Голос четверного убийства","Относительная громкость этого эффекта: 0 — выключен, 1 — исходный уровень; до общей нормализации.","ratio",0,4,.05f,1);
         }
         internal const float DefaultWeaponAudioGain=2f;
         internal static float WeaponAudioGain(ProvingProfile profile)=>profile.Descriptor("audio.weaponGain")==null?DefaultWeaponAudioGain:profile.Get("audio.weaponGain");
@@ -284,7 +337,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=7;
+            version=8;
         }
         internal ProvingProfile BeforeModeTargets()
         {
@@ -328,7 +381,7 @@ namespace StarTournament.ProvingGround
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="combat.emptyRefillAmmo");
             values.RemoveAll(v=>v.Path=="combat.emptyRefillAmmo");
-            version=7;
+            version=8;
             var current=CreateCombatDefault();
             var cadence=FindDescriptor("rifle.cooldownSeconds");
             if(cadence!=null)
@@ -446,7 +499,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
-            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 7 };
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 8 };
             profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
             profile.Add("armor.maximum", "armor-pickup", "Максимум брони", "Верхняя граница брони участника.", "armor", 1, 1000, 1, 100);
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
@@ -473,8 +526,8 @@ namespace StarTournament.ProvingGround
             profile.Add("speed.respawnSeconds", "speed-pickup", "Возврат ускорения", "Simulation-время от успешного подбора до следующего speed bonus.", "seconds", .1f, 120, .1f, 20);
             profile.Add("speed.pickupRadius", "speed-pickup", "Радиус подбора ускорения", "Горизонтальный authoritative радиус speed bonus.", "meters", .1f, 5, .05f, 1.2f);
             profile.Add("combat.startingAmmo", "shotgun", "Стартовый боезапас", "Количество выстрелов в начале жизни.", "ammo", 1, 200, 1, 20);
-            profile.Add("rifle.startingAmmo", "rifle", "Боезапас винтовки", "Число выстрелов до следующего возрождения.", "ammo", 1, 300, 1, 200);
-            profile.Add("rifle.cooldownSeconds", "rifle", "Скорострельность (интервал)", "Время между выстрелами при удержании огня: меньше секунд — выше скорострельность.", "seconds", .02f, 1f, .01f, .10f);
+            profile.Add("rifle.startingAmmo", "rifle", "Боезапас винтовки", "Число выстрелов до следующего возрождения.", "ammo", 1, 300, 1, 240);
+            profile.Add("rifle.cooldownSeconds", "rifle", "Скорострельность (интервал)", "Время между выстрелами при удержании огня: меньше секунд — выше скорострельность.", "seconds", .02f, 1f, 1f / 300f, .10f / 1.2f);
             profile.Add("weapon.switchSeconds", "weapon-switch", "Время смены оружия", "Время запрета стрельбы до выбора другого слота.", "seconds", .1f, 3f, .1f, .5f);
             profile.Add("combat.cooldownSeconds", "shotgun", "Интервал выстрелов", "Минимальное simulation время до следующего выстрела.", "seconds", .05f, 5, .05f, .7f);
             profile.Add("combat.killcamSeconds", "death", "Ожидание возрождения", "Simulation время смерти до готовности к выбору spawn.", "seconds", 0, 15, .1f, 3);
@@ -486,6 +539,7 @@ namespace StarTournament.ProvingGround
         {
             var profile = new ProvingProfile();
             profile.AddRoundMusicDescriptors();
+            profile.AddIndividualEffectGains();
             profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения.", "percent", 0f, 100f, 5f, 70f);
             profile.Add("audio.effectsDefaultPercent", "audio", "Эффекты по умолчанию", "Начальная общая громкость звуков меню и боя до пользовательского изменения.", "percent", 0f, 100f, 5f, 80f);
             profile.Add("audio.damageBonusSpawnGain", "audio", "Сигнал появления бонуса урона", "Громкость общего сигнала независимо от расстояния до бонуса.", "ratio", 0f, 1f, .05f, .8f);
@@ -584,12 +638,15 @@ namespace StarTournament.ProvingGround
             profile.Add("presentation.vector.sparkSeconds","vector-shot-feedback","Время искр Vector","Время жизни мелких искр.","seconds",0.01f,0.4f,0.01f,0.12f);
             profile.Add("presentation.vector.sparkConeDegrees","vector-shot-feedback","Конус искр Vector","Угол визуального разлёта, не gameplay spread.","degrees",0f,60f,1f,18f);
             profile.Add("presentation.shotFlightSeconds", "shot-feedback", "Длительность дроби", "Время видимого полёта дробины до authoritative конечной точки.", "seconds", .02f, 1f, .01f, .12f);
+            profile.Add("presentation.shotTracerRed","shot-feedback","Дробь: красный","Красный канал цвета следов дроби; не влияет на попадания.","ratio",0,1,.01f,.46f);
+            profile.Add("presentation.shotTracerGreen","shot-feedback","Дробь: зелёный","Зелёный канал цвета следов дроби; не влияет на попадания.","ratio",0,1,.01f,.30f);
+            profile.Add("presentation.shotTracerBlue","shot-feedback","Дробь: синий","Синий канал цвета следов дроби; не влияет на попадания.","ratio",0,1,.01f,.14f);
             profile.Add("presentation.shotTracerWidth", "shot-feedback", "Толщина дроби", "Толщина читаемого presentation-only пути дробины.", "meters", .005f, .2f, .005f, .01f);
             profile.Add("presentation.rifleTracerWidth", "rifle", "Толщина трассера", "Ширина короткого трассера винтовки.", "meters", .002f, .1f, .001f, .006f);
-            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Длина видимого следа за летящей пулей и участка совмещения с дульной точкой.", "meters", .1f, 10f, .1f, 3f);
-            profile.Add("presentation.rifleTracerRed", "rifle", "Трассер · красный", "Красный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .65f);
-            profile.Add("presentation.rifleTracerGreen", "rifle", "Трассер · зелёный", "Зелёный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, 1f);
-            profile.Add("presentation.rifleTracerBlue", "rifle", "Трассер · синий", "Синий канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .08f);
+            profile.Add("presentation.rifleTracerLength", "rifle", "Длина трассера", "Длина видимого следа за летящей пулей и участка совмещения с дульной точкой.", "meters", .1f, 10f, .1f, 1.5f);
+            profile.Add("presentation.rifleTracerRed", "rifle", "Трассер · красный", "Красный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .56f);
+            profile.Add("presentation.rifleTracerGreen", "rifle", "Трассер · зелёный", "Зелёный канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .55f);
+            profile.Add("presentation.rifleTracerBlue", "rifle", "Трассер · синий", "Синий канал цвета трассера винтовки.", "ratio", 0f, 1f, .01f, .50f);
             profile.Add("presentation.rifleModelScale", "rifle", "Масштаб модели винтовки", "Размер на grip mount для читаемого хвата и вида от первого лица.", "ratio", .5f, 3f, .1f, 2f);
             profile.Add("presentation.shotMuzzleClearance", "shot-feedback", "Зазор от muzzle", "Начальный presentation-only зазор, отделяющий дробь от muzzle burst first-person оружия.", "meters", 0f, 3f, .05f, .1f);
             profile.Add("presentation.shotImpactSeconds", "shot-feedback", "Длительность impact", "Время видимого contact impact без persistent decal.", "seconds", .02f, 1f, .01f, .12f);

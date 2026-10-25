@@ -28,14 +28,14 @@ namespace StarTournament.ProvingGround
         public double DistanceTravelled, SelfDamageDealt, EnemyDamageReceived;
         public int Jumps, Shots, WeaponSwitches, HealPickups, ArmorPickups, BonusPickups;
         public long FirstDeathTick;
-        public WeaponAccuracy RifleAccuracy, ShotgunAccuracy, RocketAccuracy, CutterAccuracy;
+        public WeaponAccuracy RifleAccuracy, ShotgunAccuracy, RocketAccuracy, CutterAccuracy, PlasmaAccuracy;
         public double AccuracyPercent
         {
             get
             {
                 double total=0;int count=0;
                 AddAccuracy(RifleAccuracy,ref total,ref count);AddAccuracy(ShotgunAccuracy,ref total,ref count);
-                AddAccuracy(RocketAccuracy,ref total,ref count);AddAccuracy(CutterAccuracy,ref total,ref count);
+                AddAccuracy(RocketAccuracy,ref total,ref count);AddAccuracy(CutterAccuracy,ref total,ref count);AddAccuracy(PlasmaAccuracy,ref total,ref count);
                 return count==0?0:total/count*100;
             }
         }
@@ -225,14 +225,14 @@ namespace StarTournament.ProvingGround
         public void RecordAccuracy(int participant,WeaponId weapon,double used,double successful)
         {
             if(participant<0||participant>=rows.Length)throw new ArgumentOutOfRangeException(nameof(participant));
-            if(weapon!=WeaponId.Rifle&&weapon!=WeaponId.Shotgun&&weapon!=WeaponId.RocketLauncher&&weapon!=WeaponId.Cutter)throw new ArgumentOutOfRangeException(nameof(weapon));
+            if(weapon!=WeaponId.Rifle&&weapon!=WeaponId.Shotgun&&weapon!=WeaponId.RocketLauncher&&weapon!=WeaponId.Cutter&&weapon!=WeaponId.Plasma)throw new ArgumentOutOfRangeException(nameof(weapon));
             if(!FiniteAccuracy(used)||!FiniteAccuracy(successful))throw new ArgumentException("Invalid accuracy counters");
             if(Phase==NativeMatchPhase.Finished||used==0&&successful==0)return;
             ref var row=ref rows[participant];
-            var counter=weapon==WeaponId.Rifle?row.RifleAccuracy:weapon==WeaponId.Shotgun?row.ShotgunAccuracy:weapon==WeaponId.RocketLauncher?row.RocketAccuracy:row.CutterAccuracy;
+            var counter=weapon==WeaponId.Plasma?row.PlasmaAccuracy:weapon==WeaponId.Rifle?row.RifleAccuracy:weapon==WeaponId.Shotgun?row.ShotgunAccuracy:weapon==WeaponId.RocketLauncher?row.RocketAccuracy:row.CutterAccuracy;
             counter.Used+=used;counter.Successful+=successful;
             if(!FiniteAccuracy(counter.Used)||!FiniteAccuracy(counter.Successful)||counter.Successful>counter.Used)throw new ArgumentException("Invalid accuracy counters");
-            if(weapon==WeaponId.Rifle)row.RifleAccuracy=counter;else if(weapon==WeaponId.Shotgun)row.ShotgunAccuracy=counter;else if(weapon==WeaponId.RocketLauncher)row.RocketAccuracy=counter;else row.CutterAccuracy=counter;
+            if(weapon==WeaponId.Plasma)row.PlasmaAccuracy=counter;else if(weapon==WeaponId.Rifle)row.RifleAccuracy=counter;else if(weapon==WeaponId.Shotgun)row.ShotgunAccuracy=counter;else if(weapon==WeaponId.RocketLauncher)row.RocketAccuracy=counter;else row.CutterAccuracy=counter;
         }
         public void EndTick()
         {
@@ -292,7 +292,7 @@ namespace StarTournament.ProvingGround
             foreach(var row in snapshot.Standings)
                 if(row.Kills<0 || row.Assists<0 || row.Deaths<0 || row.SelfKills<0 || row.AllyKills<0 || row.AccumulatedPenalty<0 ||
                     !FiniteDamage(row.DamageDealt) || !FiniteDamage(row.DamageReceived) || !FiniteDamage(row.AllyDamageDealt) ||
-                    !ValidAccuracy(row.RifleAccuracy)||!ValidAccuracy(row.ShotgunAccuracy)||!ValidAccuracy(row.RocketAccuracy)||!ValidAccuracy(row.CutterAccuracy)) throw new ArgumentException("Invalid match counters");
+                    !ValidAccuracy(row.RifleAccuracy)||!ValidAccuracy(row.ShotgunAccuracy)||!ValidAccuracy(row.RocketAccuracy)||!ValidAccuracy(row.CutterAccuracy)||!ValidAccuracy(row.PlasmaAccuracy)) throw new ArgumentException("Invalid match counters");
             if(snapshot.AchievementTelemetryVersion!=0&&snapshot.AchievementTelemetryVersion!=1)throw new ArgumentException("Invalid achievement telemetry version");
             if(snapshot.AchievementTelemetryVersion==1)
             {

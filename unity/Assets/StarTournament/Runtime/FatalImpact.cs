@@ -23,7 +23,7 @@ namespace StarTournament.ProvingGround
         public Vector3 Velocity(ProvingProfile profile)
         {
             if(!Valid)return Vector3.zero;
-            string path=Weapon==WeaponId.Shotgun?"shotgunSpeed":Weapon==WeaponId.Rifle?"rifleSpeed":Weapon==WeaponId.Cutter?"cutterSpeed":"rocketSpeed";
+            string path=Weapon==WeaponId.Shotgun?"shotgunSpeed":(Weapon==WeaponId.Rifle||Weapon==WeaponId.Plasma)?"rifleSpeed":Weapon==WeaponId.Cutter?"cutterSpeed":"rocketSpeed";
             float speed=profile.Get("corpse."+path);
             if(Weapon==WeaponId.RocketLauncher)speed*=Mathf.Pow(1-Mathf.Clamp01(ExplosionFraction),profile.Get("corpse.rocketFalloff"));
             return Direction*speed;

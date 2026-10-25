@@ -42,21 +42,21 @@ namespace StarTournament.ProvingGround
             void CreateStandardSettings(Transform content)
             {
                 for(int i=0;i<StandardSectionOrder.Length;i++)
-                {float top=.91f-i*.16f;Layout((RectTransform)settingsSectionButtons[StandardSectionOrder[i]].transform,new Vector2(.06f,top-.11f),new Vector2(.94f,top));}
+                {float top=.89f-i*.08f;Layout((RectTransform)settingsSectionButtons[StandardSectionOrder[i]].transform,new Vector2(.06f,top-.07f),new Vector2(.94f,top));}
                 settingsGraphicsPage=Panel(content,StandardName("settings-graphics"),new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 var viewport=graphicsScroll.viewport;var list=graphicsScroll.content;
                 viewport.SetParent(settingsGraphicsPage.transform,false);
                 var replacement=settingsGraphicsPage.AddComponent<ScrollRect>();replacement.viewport=viewport;replacement.content=list;replacement.horizontal=false;replacement.movementType=ScrollRect.MovementType.Clamped;replacement.scrollSensitivity=45;
                 UnityEngine.Object.Destroy(graphicsScroll);graphicsScroll=replacement;
                 foreach(var focus in viewport.GetComponentsInChildren<MenuScrollFocus>(true))focus.Scroll=graphicsScroll;
-                list.sizeDelta=new Vector2(0,900);
+                list.sizeDelta=new Vector2(0,1080);
                 Move(settingsDisplayMode.transform,settingsImagePage.transform,new Vector2(.02f,.79f),new Vector2(.55f,.98f));
                 Move(settingsModeButton.transform,settingsImagePage.transform,new Vector2(.60f,.81f),new Vector2(.98f,.96f));
-                Move(settingsResolution.transform,settingsImagePage.transform,new Vector2(.02f,.57f),new Vector2(.55f,.76f));
+                Move(settingsResolution.transform,settingsImagePage.transform,new Vector2(.02f,.62f),new Vector2(.55f,.78f));
                 Move(settingsResolutionButton.transform,settingsImagePage.transform,new Vector2(.60f,.63f),new Vector2(.98f,.75f));
                 settingsModeButton.GetComponent<MenuScrollFocus>().Scroll=null;settingsResolutionButton.GetComponent<MenuScrollFocus>().Scroll=null;
                 settingsAutoButton=MenuButton(settingsImagePage.transform,StandardName("settings-resolution-auto"),"Автоматически",new Vector2(.60f,.50f),new Vector2(.98f,.61f),ChooseAutoResolution);
-                Label(settingsImagePage.transform,StandardName("settings-auto-explanation"),"Автоподбор по текущему экрану",20,new Vector2(.02f,.50f),new Vector2(.56f,.61f),TextAnchor.MiddleLeft,Color.white);
+                Label(settingsImagePage.transform,StandardName("settings-auto-explanation"),"Автоподбор по текущему экрану",20,new Vector2(.02f,.47f),new Vector2(.56f,.60f),TextAnchor.MiddleLeft,Color.white);
                 Move(settingsVSyncToggle.transform,settingsImagePage.transform,new Vector2(.02f,.29f),new Vector2(.98f,.45f));
                 settingsVSyncToggle.GetComponent<MenuScrollFocus>().Scroll=null;
                 Label(settingsImagePage.transform,StandardName("settings-frame-cap-label"),"Ограничение FPS",23,new Vector2(.02f,.08f),new Vector2(.57f,.23f),TextAnchor.MiddleLeft,Color.white);
@@ -77,7 +77,7 @@ namespace StarTournament.ProvingGround
                 foreach(var slider in colorAdjustments)slider.transform.parent.gameObject.SetActive(false);
 
                 var controls=ListViewport(settingsControlPage.transform,StandardName("controls-viewport"),Vector2.zero,Vector2.one,out var body);
-                body.sizeDelta=new Vector2(0,1200);controls.scrollSensitivity=45;
+                body.sizeDelta=new Vector2(0,1400);controls.scrollSensitivity=45;
                 settingsDeadzoneSlider=owner.NumericSetting(body,StandardName("settings-deadzone"),"Мёртвая зона стика",Vector2.zero,Vector2.one,NativeUserPreferences.Deadzone(Profile),v=>SaveStandard(()=>SetMenuGamepad(4,v/100)));
                 settingsInvertX=owner.BooleanSetting(body,StandardName("settings-invert-x"),"Инверсия взгляда X",Vector2.zero,Vector2.one,v=>SaveStandard(()=>SetMenuGamepad(5,0,v)));
                 settingsInvertY=owner.BooleanSetting(body,StandardName("settings-invert-y"),"Инверсия взгляда Y",Vector2.zero,Vector2.one,v=>SaveStandard(()=>SetMenuGamepad(6,0,v)));
@@ -99,8 +99,8 @@ namespace StarTournament.ProvingGround
                 settingsWriteError=Label(settingsScreen.transform,StandardName("settings-save-error"),"",17,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(255,218,184,255));
                 var backContext=Label(settingsScreen.transform,StandardName("settings-back-context"),"",18,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
                 backContext.gameObject.AddComponent<MenuContextHint>().Value=BackContextCaption;
-                resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,new Color32(4,10,17,250));
-                var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);
+                resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,SelectorBackdrop);
+                var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);owner.StyleSelectorCard(card,false);
                 Label(card.transform,"title","Сбросить все настройки?",30,new Vector2(.06f,.76f),new Vector2(.94f,.94f),TextAnchor.MiddleLeft,MenuGold);
                 Label(card.transform,"body","Экран, графика, звук, управление и интерфейс, включая личные предпочтения, вернутся к исходным значениям.\n\nПрофили, прогресс, история и лаборатория сохранятся. Согласие на статистику не изменится.",22,new Vector2(.06f,.30f),new Vector2(.94f,.75f),TextAnchor.UpperLeft,Color.white);
                 resetCancel=MenuButton(card.transform,StandardName("settings-reset-cancel"),"Отмена",new Vector2(.06f,.10f),new Vector2(.48f,.24f),CloseReset);
@@ -108,7 +108,87 @@ namespace StarTournament.ProvingGround
                 foreach(var c in new Selectable[]{settingsQualityButton,settingsAutoButton,settingsFrameCap,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsScaleSlider,settingsContrast,resetAllButton,resetCancel,resetConfirm})AddStandardFocus(c);
                 var canvas=settingsScreen.GetComponentInParent<Canvas>();
                 if(canvas&&!canvas.GetComponent<NativeInterfacePreferences>())canvas.gameObject.AddComponent<NativeInterfacePreferences>();
+                CreateSettingsExplanations(aaLabel);
                 resetDialog.SetActive(false);
+            }
+            // Attach after the standard pages have moved the shared widgets into their final rows.
+            // Captions keep their existing names and refresh paths; explanations never take focus/input.
+            void CreateSettingsExplanations(Text aaLabel)
+            {
+                Text Hint(Transform row,string text,Vector2 min,Vector2 max,float left=0,float right=0)
+                {
+                    var hint=Label(row,"setting-explanation",text,17,min,max,TextAnchor.UpperLeft,new Color32(170,190,202,255));
+                    hint.raycastTarget=false;hint.resizeTextForBestFit=true;hint.resizeTextMinSize=14;hint.resizeTextMaxSize=17;
+                    hint.rectTransform.offsetMin=new Vector2(left,0);hint.rectTransform.offsetMax=new Vector2(right,0);
+                    return hint;
+                }
+                void Numeric(Slider slider,string text)
+                {
+                    var row=slider.transform.parent;
+                    var title=row.Find("value").GetComponent<Text>();
+                    title.alignment=TextAnchor.LowerLeft;
+                    Layout(title.rectTransform,new Vector2(.04f,.68f),new Vector2(.96f,.98f));
+                    Layout((RectTransform)slider.transform,new Vector2(.05f,.10f),new Vector2(.95f,.29f));
+                    Hint(row,text,new Vector2(.04f,.32f),new Vector2(.96f,.67f));
+                }
+                void Boolean(Toggle toggle,string text)
+                {
+                    var caption=toggle.GetComponentsInChildren<Text>(true).Single(t=>t.name.EndsWith("label")).rectTransform;
+                    caption.GetComponent<Text>().alignment=TextAnchor.LowerLeft;
+                    Layout(caption,new Vector2(0,.51f),new Vector2(1,.96f));
+                    caption.offsetMin=new Vector2(60,0);caption.offsetMax=new Vector2(-12,0);
+                    Hint(toggle.transform,text,new Vector2(0,.04f),new Vector2(1,.50f),60,-12);
+                }
+                void Caption(Text title,string text)
+                {
+                    title.alignment=TextAnchor.LowerLeft;
+                    var r=title.rectTransform;var min=r.anchorMin;var max=r.anchorMax;float middle=(min.y+max.y)*.5f;
+                    Layout(r,new Vector2(min.x,middle),max);
+                    Hint(r.parent,text,min,new Vector2(max.x,middle));
+                }
+                Text FindCaption(Transform page,string suffix)=>page.GetComponentsInChildren<Text>(true).Single(t=>t.name.EndsWith(suffix));
+                Caption(settingsDisplayMode,"Окно или полный экран. Меняет способ вывода игры.");
+                Caption(settingsResolution,"Выше — чётче картинка, но больше нагрузка на видеокарту.");
+                Caption(FindCaption(settingsImagePage.transform,"settings-auto-explanation"),"Выбирает разрешение текущего дисплея.");
+                Boolean(settingsVSyncToggle,"Убирает разрывы кадра; может увеличить задержку управления.");
+                Caption(FindCaption(settingsImagePage.transform,"settings-frame-cap-label"),"Снижает нагрузку и нагрев, ограничивая число кадров в секунду.");
+                Caption(FindCaption(settingsGraphicsPage.transform,"settings-quality-label"),"Общий уровень графики: выше — больше деталей и нагрузка.");
+                Caption(aaLabel,"Смягчает ступеньки на краях объектов; выше — больше нагрузка.");
+                Caption(settingsShadows,"Тени от объектов добавляют глубину; отключение снижает нагрузку.");
+                string[] visualHelp={
+                    "Делает освещение объёмнее и помогает различать форму объектов.",
+                    "Подчёркивает блеск и фактуру поверхностей при освещении.",
+                    "Затемняет углы и стыки, добавляя глубину; повышает нагрузку.",
+                    "Добавляет мягкий ореол вокруг ярких источников света.",
+                    "Добавляет отражения окружения на блестящих поверхностях.",
+                    "Сохраняет нейтральные оттенки без сильного цветового тонирования."};
+                for(int i=0;i<visualToggles.Length;i++)Boolean(visualToggles[i],visualHelp[i]);
+                Numeric(settingsMouseSlider,"Выше — быстрее поворот камеры при движении мыши.");
+                Numeric(settingsHorizontalSlider,"Скорость поворота камеры влево и вправо правым стиком.");
+                Numeric(settingsVerticalSlider,"Скорость поворота камеры вверх и вниз правым стиком.");
+                Numeric(settingsDeadzoneSlider,"Убирает дрейф стика; выше — слабее отклик на мелкие движения.");
+                Boolean(settingsInvertX,"Меняет местами поворот влево и вправо на геймпаде.");
+                Boolean(settingsInvertY,"Меняет местами взгляд вверх и вниз на геймпаде.");
+                Numeric(settingsReturnDelaySlider,"Пауза после правого стика перед автовыравниванием взгляда.");
+                Boolean(settingsAutoLevelToggle,"Возвращает взгляд к полу или лестнице после паузы в управлении стиком.");
+                void Action(Button button,string text)
+                {
+                    var title=button.GetComponentInChildren<Text>();
+                    title.alignment=TextAnchor.LowerLeft;
+                    Layout(title.rectTransform,new Vector2(.04f,.46f),new Vector2(.96f,.96f));
+                    Hint(button.transform,text,new Vector2(.04f,.04f),new Vector2(.96f,.45f));
+                }
+                Action(settingsHelpButton,"Схема действий клавиатуры, мыши и геймпада.");
+                Action(settingsDevicesButton,"Подключённые устройства и их назначение игрокам.");
+                Numeric(settingsScaleSlider,"Выше — крупнее меню и HUD, но меньше свободного места.");
+                Boolean(settingsContrast,"Усиливает контраст интерфейса для лучшей читаемости.");
+                Boolean(settingsFpsToggle,"Показывает число кадров в секунду для оценки плавности.");
+                Boolean(settingsBotTextToggle,"Показывает текстовые реплики ботов; общая настройка игроков.");
+                Boolean(settingsBotVoiceToggle,"Включает озвучку реплик ботов; громкость задаётся в «Речь».");
+                Numeric(settingsMasterSlider,"Меняет громкость всех звуков игры одновременно.");
+                Numeric(settingsMusicSlider,"Громкость фоновой музыки.");
+                Numeric(settingsEffectsSlider,"Громкость выстрелов, попаданий и остальных игровых эффектов.");
+                Numeric(settingsVoiceSlider,"Громкость реплик ботов и голосовых объявлений серий убийств.");
             }
             void ConfigureStandardNavigation()
             {

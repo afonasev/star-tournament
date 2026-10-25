@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Cutter));life.ConsumeCutter(30);life.Select(WeaponSelection.Previous);life.Advance(1);life.Select(WeaponSelection.Next);life.Advance(1);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Cutter),"Empty collected slot stays owned");
             life.Damage(1,100);Assert.That(life.Read().CutterOwned,Is.False);life.Advance(10);life.Respawn(1);
-            Assert.That(life.Read().RifleAmmo,Is.EqualTo(200));Assert.That(life.Read().CutterEnergy,Is.Zero);
+            Assert.That(life.Read().RifleAmmo,Is.EqualTo(240));Assert.That(life.Read().CutterEnergy,Is.Zero);
         }
         [Test]public void FractionalRefillPreservesTransitionCooldownAndHeldInput()
         {
@@ -44,10 +44,10 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var s=item.Read();s.Remaining=1;Assert.Throws<ArgumentException>(()=>item.Restore(s));
             var state=life.Read();state.SelectedWeapon=WeaponId.Cutter;Assert.Throws<ArgumentException>(()=>life.Restore(state));
         }
-        [Test]public void CombatBowlContainsSixNamedWeaponAnchorsAndCompleteMetadata()
+        [Test]public void CombatBowlContainsEightNamedWeaponAnchorsAndCompleteMetadata()
         {
-            var d=CombatBowlCatalog.Build();var weapons=d.Pickups.Where(x=>WeaponPickup.IsWeapon(x.Kind)).ToArray();Assert.That(weapons.Length,Is.EqualTo(6));
-            Assert.That(d.Identity,Is.EqualTo("combat-bowl-v1@18"));Assert.That(weapons.Single(x=>x.Id=="shotgun-west").Anchor,Is.EqualTo(new Vector3(-33,0,0)));
+            var d=CombatBowlCatalog.Build();var weapons=d.Pickups.Where(x=>WeaponPickup.IsWeapon(x.Kind)).ToArray();Assert.That(weapons.Length,Is.EqualTo(8));
+            Assert.That(d.Identity,Is.EqualTo("combat-bowl-v1@19"));Assert.That(weapons.Single(x=>x.Id=="shotgun-west").Anchor,Is.EqualTo(new Vector3(-33,0,0)));
             Assert.That(ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).IsValid,Is.True);
             foreach(var descriptor in ProvingProfile.CreateCombatDefault().Descriptors.Where(x=>x.Path.StartsWith("weaponPickup.")))
             {Assert.That(descriptor.Minimum,Is.LessThan(descriptor.Maximum));Assert.That(descriptor.Step,Is.GreaterThan(0));Assert.That(descriptor.Description,Is.Not.Empty);}

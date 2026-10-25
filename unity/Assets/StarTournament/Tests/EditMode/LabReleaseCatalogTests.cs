@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             {
                 var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
                 var catalog=LabReleaseCatalog.Load();
-                var history=new DesignLabHistory(path,ground.CaptureLabBundle(),releases:catalog,resetToLatestDefault:true);
+                var history=new DesignLabHistory(path,ground.CaptureLabAuthoringBaseline(),releases:catalog,resetToLatestDefault:true);
                 Assert.That(history.StorageError,Is.Null);
                 Assert.That(history.Compatible(history.Selected),Is.True);
                 foreach(var entry in catalog.Entries)

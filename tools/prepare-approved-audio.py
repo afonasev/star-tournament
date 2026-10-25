@@ -31,11 +31,11 @@ def main():
         'damage-bonus-spawn':'remaining/spawn-3.wav', 'damage-bonus-pickup':'damage-alert-v2/alert-3.wav',
         'jump':'remaining/jump-1.wav', 'land':'remaining/land-1.wav',
         'menu_move':'remaining/move-3.wav', 'menu_confirm':'remaining/confirm-3.wav', 'menu_back':'remaining/back-3.wav',
-        'rifle':'variant-2-0.wav', 'shotgun':'shotgun-v5/variant-1-0.wav',
+        'rifle':'variant-2-0.wav', 'shotgun':'../shotgun-heavy-2026-10-25/shotgun-0.wav',
     }
     for i in range(4): mapping[f'rifle-{i}']=f'variant-2-{i}.wav'
     for i in range(2):
-        mapping[f'shotgun-{i}']=f'shotgun-v5/variant-1-{i}.wav'
+        mapping[f'shotgun-{i}']=f'../shotgun-heavy-2026-10-25/shotgun-{i}.wav'
         mapping[f'body-hit-{i}']=f'body-hit/hit-2-{i}.wav'
     for i,n in enumerate(['2','3','fall-only']): mapping[f'death-{i}']=f'death-v2/death-{n}.wav'
     for name, file in mapping.items(): shutil.copyfile(SRC/file, DST/(name+'.wav'))

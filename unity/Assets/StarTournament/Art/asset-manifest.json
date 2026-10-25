@@ -4,7 +4,7 @@
     {
       "key": "world-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "8d51753af570ca8a477bfde1e1931ffae6b3abbba8b50713683c5d11ebadd1f8",
+      "sha256": "46a411e13385ba93b4aef413bd6e0cf42b1fc6eca765558513a94691018d49fb",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -14,7 +14,7 @@
     {
       "key": "view-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "8d51753af570ca8a477bfde1e1931ffae6b3abbba8b50713683c5d11ebadd1f8",
+      "sha256": "46a411e13385ba93b4aef413bd6e0cf42b1fc6eca765558513a94691018d49fb",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "5a0b66fa130960dbe9795905f66919406f97b4dbf2592045855862891710d32c",
+      "sha256": "87affcd8566a2721c7df10014e0d1947369c75111a4c777ba3a14316d85cfe73",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
+      "source": "VECTOR F17 assault (concept 1); offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; F16 anatomy retained"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "4e5cfd05c8145ebf5fadf1e16d7e534b93bffa3d6ab9e34591cf34633216a377",
+      "sha256": "ad952ee03fcd4b11449bdbf80be2da9631eb1873bb1d232ff4191cb7d121d62f",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR suit with retained attributed Orbital/Strata anatomical gloves; scripts/vector_fighter/restore_orbital_gloves.py; immutable inputs and seam/cuff adaptation recorded in F16 evidence"
+      "source": "VECTOR F17 assault (concept 1); offline balanced runtime mesh; scripts/vector_fighter/optimize_runtime.py; F16 anatomy retained"
     },
     {
       "key": "speed-pickup",
@@ -175,6 +175,28 @@
       "units": "sphere scaled in meters",
       "pivot": "planet center",
       "lod": "single distant sphere, 2048 texture import with mipmaps"
+    },
+    {
+      "key": "forge-lod0",
+      "path": "Assets/StarTournament/Art/forge-plasma-lod0.glb",
+      "sha256": "462780b4561c099048bef275c64d33635d2d80b025b63b7ffde7c9e1b3fdb196",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "forge-grip",
+      "source": "Original FORGE concept 01; scripts/trooper/build_forge.py; rigid material-merged mesh; no collision proxies.",
+      "lod": 0
+    },
+    {
+      "key": "forge-lod1",
+      "path": "Assets/StarTournament/Art/forge-plasma-lod1.glb",
+      "sha256": "67a5bd8dc82f28621b2ce612951fd36c14aa42bbbfa3c9722ef668f42492bba7",
+      "units": "meters",
+      "up": "+Y",
+      "forward": "+Z",
+      "pivot": "forge-grip",
+      "source": "Original FORGE concept 01; scripts/trooper/build_forge.py; rigid material-merged mesh; no collision proxies.",
+      "lod": 1
     }
   ]
 }

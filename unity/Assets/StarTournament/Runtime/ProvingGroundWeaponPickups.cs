@@ -27,7 +27,8 @@ namespace StarTournament.ProvingGround
                     model.AddComponent<MeshFilter>().sharedMesh=mesh;
                     model.AddComponent<MeshRenderer>().sharedMaterials=source.sharedMaterials;
                 }
-                else model=Instantiate(pickup.Weapon==WeaponId.Cutter?CutterPrefab:PulsePrefab,root.transform);
+                else model=Instantiate(pickup.Weapon==WeaponId.Plasma?PlasmaPrefab:pickup.Weapon==WeaponId.Cutter?CutterPrefab:PulsePrefab,root.transform);
+                if(pickup.Weapon==WeaponId.Plasma)WeaponModelPresentation.AddForgeLod(model,PlasmaLod1Prefab);
                 model.transform.localPosition=Vector3.zero;model.transform.localRotation=Quaternion.identity;model.transform.localScale=Vector3.one;
                 foreach(var collider in model.GetComponentsInChildren<Collider>())Destroy(collider);
                 var renderers=model.GetComponentsInChildren<Renderer>(true);

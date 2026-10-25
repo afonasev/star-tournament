@@ -30,3 +30,8 @@ locally authored animation clips and attributed articulated glove derivative.
 World and first-person forearms share the new costume geometry. This character
 change is distinct from the earlier Vector weapon. Original attribution and
 CC BY 4.0 obligations remain in effect for the retained derivative content.
+
+Runtime optimization (2026-10-24): `scripts/vector_fighter/optimize_runtime.py`
+derives separate world and first-person resolutions from the retained accepted
+F16 source. First-person glove anatomy, attributed textures, skeleton, clips and
+weapon geometry are retained; this derivative does not change their attribution.

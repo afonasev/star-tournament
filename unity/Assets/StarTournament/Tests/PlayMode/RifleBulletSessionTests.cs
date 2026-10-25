@@ -68,13 +68,38 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             session.RifleBulletHit+=e=>{contacts++;contactTime=e.Time;Assert.That(e.AppliedDamage,Is.EqualTo(20));};
             using(var visual=new RifleBulletPresentation(session,move,owner.transform))
             {
-                Fire();Assert.That(launch,Is.EqualTo(1));Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(199));Assert.That(session.Life(1).Health,Is.EqualTo(100));
+                Fire();Assert.That(launch,Is.EqualTo(1));Assert.That(session.Life(0).RifleAmmo,Is.EqualTo(239));Assert.That(session.Life(1).Health,Is.EqualTo(100));
                 Ticks(1);string before=JsonUtility.ToJson(session.Capture());visual.Render();Assert.That(JsonUtility.ToJson(session.Capture()),Is.EqualTo(before));
                 var trace=owner.GetComponentsInChildren<LineRenderer>().Single();Assert.That(trace.GetPosition(0).z,Is.EqualTo(2).Within(.001));Assert.That(trace.GetComponents<Collider>(),Is.Empty);
                 Ticks(1);Assert.That(session.Life(1).Health,Is.EqualTo(100));Ticks(1);visual.Render();
                 Assert.That(session.Life(1).Health,Is.EqualTo(80));Assert.That(contactTime,Is.EqualTo(damageTime));Assert.That(contacts,Is.EqualTo(1));
                 Assert.That(session.RifleBullets,Is.Empty);Assert.That(owner.GetComponentsInChildren<Transform>().Any(t=>t.name.StartsWith("Rifle contact ")),Is.True);
                 Ticks(10);visual.Render();Assert.That(contacts,Is.EqualTo(1));
+            }
+        }
+        [UnityTest]public IEnumerator SteelTracerUsesSelectedLengthAndColor()
+        {
+            Setup();yield return null;
+            using(var visual=new RifleBulletPresentation(session,move,owner.transform))
+            {
+                Fire();Ticks(2);visual.Render();
+                var trace=owner.GetComponentsInChildren<LineRenderer>().Single();
+                Assert.That(Vector3.Distance(trace.GetPosition(0),trace.GetPosition(1)),Is.EqualTo(1.5f).Within(.001));
+                Assert.That(trace.startWidth,Is.EqualTo(.006f));
+                var color=trace.sharedMaterial.color;
+                Assert.That(color.r,Is.EqualTo(.56f).Within(.001));Assert.That(color.g,Is.EqualTo(.55f).Within(.001));Assert.That(color.b,Is.EqualTo(.5f).Within(.001));
+                string output=Environment.GetEnvironmentVariable("RIFLE_STEEL_CAPTURE");
+                if(!string.IsNullOrEmpty(output))
+                {
+                    var cameraObject=new GameObject("rifle review camera");cameraObject.transform.SetParent(owner.transform);
+                    var camera=cameraObject.AddComponent<Camera>();camera.transform.position=new Vector3(-5,2.1f,.5f);
+                    camera.transform.LookAt((trace.GetPosition(0)+trace.GetPosition(1))*.5f);camera.nearClipPlane=.05f;
+                    var target=new RenderTexture(1280,720,24);camera.targetTexture=target;camera.Render();
+                    var prior=RenderTexture.active;RenderTexture.active=target;
+                    var image=new Texture2D(1280,720,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();
+                    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(output));System.IO.File.WriteAllBytes(output,image.EncodeToPNG());
+                    RenderTexture.active=prior;camera.targetTexture=null;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(image);
+                }
             }
         }
         [UnityTest]public IEnumerator TargetCanLeaveAndAnotherTargetCanEnterFlightPath()

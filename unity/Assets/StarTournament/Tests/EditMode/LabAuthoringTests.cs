@@ -21,6 +21,22 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             resetToLatestDefault:reset,persistMigration:false,authoring:true,atomicPublish:publish);
         static void SaveDamage(DesignLabHistory h,float damage){var draft=h.Selected.Snapshot;draft.Set("rifle.damage",damage);h.Save(draft);}
         static LabBundle WithBlood()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreateBloodDefault()}};
+        [Test] public void ChangedDefaultRefreshesOnlyDerivedMissingFieldsBeforeStaging()
+        {
+            var before=typeof(ProvingProfile).GetMethod("BeforeShotgunTracerColor",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var previous=new LabBundle{Profiles=baseline.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList()};
+            var originalCatalog=LabReleaseCatalog.Factory(previous);
+            var old=new DesignLabHistory(path,previous,releases:originalCatalog,authoring:true);old.PersistAuthoring();var source=old.Selected;
+            string json=UnityEngine.JsonUtility.ToJson(source.Snapshot);
+            var h=new DesignLabHistory(path,baseline,releases:originalCatalog,authoring:true,persistMigration:false);
+            var draft=h.Selected.Snapshot;draft.Set("presentation.shotTracerRed",.32f);h.Save(draft);h.MarkSelectedForRelease(true);
+            int revision=h.Selected.Number;string hash=h.Selected.Hash;
+            h.RefreshAuthoringCompatibility();
+            Assert.That(h.Selected.Number,Is.EqualTo(revision));Assert.That(h.Selected.Hash,Is.EqualTo(hash));
+            Assert.That(UnityEngine.JsonUtility.ToJson(h.SelectedProfile.Revisions.Single(r=>r.Number==source.Number).Snapshot),Is.EqualTo(json));
+            var catalog=h.BuildReleaseCatalog();Assert.That(catalog.Entries.First().Hash,Is.EqualTo(originalCatalog.Entries.First().Hash));
+            Assert.That(DesignLabHistory.ResolvePublishedDefault(baseline,catalog).Selected.Hash,Is.EqualTo(hash));
+        }
         [Test] public void AuthorCanEditAndRenamePackageProfilesButCannotDeleteDefault()
         {
             var h=Open();string original=h.Selected.Hash;

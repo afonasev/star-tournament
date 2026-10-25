@@ -378,13 +378,27 @@ namespace StarTournament.ProvingGround
                 if(historicalCache.TryGetValue(key,out var warm))
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
-            var shipped=this.shipped;
+            var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgePickupsIfNeeded(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            if(!sought.Profiles.Any(p=>p.Id=="forge-plasma-v1"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="forge-plasma-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??2)<2)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeViewScale()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="single-screen-lobby-v1")?.Version??1)<2)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeLobbyRemovalHold()).ToList()};
+            // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
+            if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??21)<21)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeGrip()).ToList()};
             // Reconstruct exact trusted pre-unification metadata before older additive transforms.
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
                 ((p.Id=="orbital-league-v1"||p.Id=="orbital-league-ring-v1")&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??11)<11)||
                 (p.Id==ProvingProfile.TunnelsArtId&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??4)<4)||
                 (p.Id=="lunar-laboratory-presentation-v1"&&(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??6)<6)
                 ?p.BeforeUniformPickupRadii():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.DefaultId)?.Version??19)<19)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeRifleSteelPresentation()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="visual.bowlLocalLightScale"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeArenaHarmonization()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??20)<20)
@@ -451,16 +465,24 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
             // Project the exact trusted predecessor before the existing legacy search.
             // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path=="presentation.shotTracerRed"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeShotgunTracerColor()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.BotBanterIntervalPath))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeBotBanterInterval()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponGain"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCombatAudioMix()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="audio.weaponReadyGain"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWeaponReadyAudioGain()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path=="audio.effect.rifleGain"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeIndividualEffectGains()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="audio.deathGain"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeDeathAudioGain()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??7)<7)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSmoothFirstPersonWalk()).ToList()};
+            // Project the exact pre-rifle-tuning schema before legacy compatibility search.
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<8
+                    ?p.BeforeRifleBurstParameters():p).ToList()};
             if(RegistryMatches(shipped,sought))return Remember(new[]{shipped});
             // The preceding LT registries lack only the new timing/gesture descriptors.
             // Match the trusted shipped projection first, without expanding all older schemas.
@@ -563,6 +585,7 @@ namespace StarTournament.ProvingGround
                 }
                 var withoutModeTargets=Cached(p=>p.BeforeModeTargets());
                 var beforeMatchAchievements=Cached(p=>p.BeforeMatchAchievements());
+                var beforeBotReactive=Cached(p=>p.BeforeBotReactiveCombat());
                 var beforeBotMovement=Cached(p=>p.BeforeBotCombatMovement());
                 var withoutEvaluation=Cached(p=>p.BeforeBotWeaponEvaluation());
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
@@ -599,6 +622,7 @@ namespace StarTournament.ProvingGround
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMenuMusic))));
                 // Blood defaults can be retuned independently of the gameplay registry upgrade.
                 // Include that exact combination without rewriting historical snapshots.
+                currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBotReactive)));
                 currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBotMovement)));
                 currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutEvaluation)));
                 var recentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBloodIntensity))).ToArray();
@@ -623,6 +647,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeBotReactive))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeBotMovement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutEvaluation))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));
@@ -785,10 +810,15 @@ namespace StarTournament.ProvingGround
                     // values and the immutable source revision unchanged.
                     if(d.Path=="blood.drops"&&snapshot.Profile(d.Path).Version==1&&Mathf.Approximately(value,10f))
                         value=currentDescriptor.DefaultValue;
-                    if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                    value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeArenaVisualValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                     value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 }
+                // Authoring and runtime Default share the approved radius migration.
+                // Named profiles and immutable source revisions retain their saved values.
+                if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                if(isDefault&&preserveSavedValues)value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
+                if(isDefault&&preserveSavedValues&&snapshot.Profile(d.Path).Version>=3&&snapshot.Profile(d.Path).Version<=4)value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 next.Set(d.Path,value);
             }
             // Version3 used the office controls for both floors and stair annexes.

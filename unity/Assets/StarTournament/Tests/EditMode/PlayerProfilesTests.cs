@@ -6,6 +6,25 @@ namespace StarTournament.ProvingGround.Tests
 {
     public sealed class PlayerProfilesTests
     {
+        [Test] public void UsageCountsOnlyChangedAssignmentsAndGuestNumbersSurviveCompaction()
+        {
+            string dir=Path.Combine(Path.GetTempPath(),"lobby-profiles-"+Guid.NewGuid().ToString("N"));
+            try
+            {
+                var catalog=new PlayerProfileCatalog(Path.Combine(dir,"profiles.json"));
+                var a=catalog.Create("А",.2f,true);var z=catalog.Create("Я",.2f,true);var session=new LocalIdentitySession();
+                Assert.That(catalog.ByUsage()[0].Id,Is.EqualTo(a.Id));
+                session.ChooseProfile(0,1,z.Id,catalog);session.ChooseProfile(0,1,z.Id,catalog);
+                Assert.That(z.SelectionCount,Is.EqualTo(1));Assert.That(catalog.ByUsage()[0].Id,Is.EqualTo(z.Id));
+                Assert.That(new PlayerProfileCatalog(Path.Combine(dir,"profiles.json")).Find(z.Id).SelectionCount,Is.EqualTo(1));
+                var first=session.ChooseGuest(0,1,.2f,true);var second=session.ChooseGuest(1,2,.2f,true);
+                Assert.That(first.Number,Is.EqualTo(1));Assert.That(second.Number,Is.EqualTo(2));
+                session.RemoveSeat(0,2);Assert.That(session.GuestAt(0),Is.SameAs(second));Assert.That(second.Number,Is.EqualTo(2));
+                Assert.That(session.ChooseGuest(1,3,.2f,true).Number,Is.EqualTo(1));
+            }
+            finally {if(Directory.Exists(dir))Directory.Delete(dir,true);}
+        }
+
         [Test]
         public void LegacyProfileReadPreservesBytesAndUsesGamepadDefaults()
         {

@@ -61,6 +61,20 @@ namespace StarTournament.ProvingGround
             button.interactable=enabled;
             return button;
         }
+        // Approved modal composition in Canvas design pixels; presentation only, never gameplay tuning.
+        static readonly Color32 SelectorBackdrop=new Color32(4,10,17,190);
+        void StyleSelectorCard(GameObject card,bool separators=true)
+        {
+            card.GetComponent<Image>().color=new Color32(27,44,61,255);RoundRosterPanel(card);
+            var outline=card.GetComponent<Outline>()??card.AddComponent<Outline>();
+            outline.effectColor=MenuGold;outline.effectDistance=new Vector2(1,-1);outline.useGraphicAlpha=true;
+            if(!separators)return;
+            foreach(float y in new[]{.84f,.17f})
+            {
+                var rule=Panel(card.transform,"selector-rule",new Vector2(.04f,y),new Vector2(.96f,y),new Color32(66,92,112,255));
+                ((RectTransform)rule.transform).sizeDelta=new Vector2(0,1);rule.GetComponent<Image>().raycastTarget=false;
+            }
+        }
         Text menuCreditFooter;
         void CreateModernMenuUi(Transform parent)
         {
@@ -121,6 +135,7 @@ namespace StarTournament.ProvingGround
 
             identityScreen=Panel(parent,"identity-picker",Vector2.zero,Vector2.one,new Color32(8,17,25,248));
             var identityCard=Panel(identityScreen.transform,"identity-card",new Vector2(.17f,.12f),new Vector2(.83f,.88f),new Color32(20,33,48,245));
+            StyleSelectorCard(identityCard);
             identityHeading=Label(identityCard.transform,"identity-heading","КТО ИГРАЕТ?",35,new Vector2(.06f,.85f),new Vector2(.94f,.97f),TextAnchor.MiddleLeft,MenuGold);
             var options=Panel(identityCard.transform,"identity-options",new Vector2(.06f,.19f),new Vector2(.94f,.82f),new Color32(20,33,48,245));identityList=options.transform;
             var identityCancel=MenuButton(identityScreen.transform,"identity-cancel","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),CloseIdentityPicker);
@@ -192,6 +207,7 @@ namespace StarTournament.ProvingGround
             MoveSetupControl(start,summary,new Vector2(.07f,.02f),new Vector2(.93f,.10f));
             CreateRosterUi(parent);
             CreateF2Setup();
+            CreateSingleScreenLobby(parent);
 
         }
         void ShowSetupStep(int step)
@@ -200,75 +216,22 @@ namespace StarTournament.ProvingGround
             rosterEditing=-1;setupStep=step;RefreshInterface();FocusSetupStep();
         }
         void NextSetupStep() { setupMaxStep=Mathf.Max(setupMaxStep,Mathf.Min(2,setupStep+1));ShowSetupStep(Mathf.Min(2,setupStep+1)); }
-        void PreviousSetupStep() { if(setupStep==0)ToMainMenu();else ShowSetupStep(setupStep-1); }
+        void PreviousSetupStep()
+        {
+            var own=InlineFor(inlineInvokingDevice??menuDevice);
+            if(own!=null&&own.Page!=InlinePage.Closed){BackInlineEditor(own);return;}
+            if(InlineAny)return;
+            ToMainMenu();
+        }
         string SetupBlockingReason()
         {
             if(LocalSeatCount+botSetup.Count>AuthoredArenaCatalog.Maximum(SelectedMapId))return "Для этой карты нужно 2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участника";
             if(!ValidSetup())return LocalSeatCount+botSetup.Count<2?"Добавьте игрока или бота":"Для команд нужны обе команды";
             if(!input.Ready)return "Подключите устройства людей";
-            if(!IdentitiesReady())return "Выберите профиль или гостя каждому человеку";
+            if(!IdentitiesReady())return "Выберите профиль каждому человеку";
             return "";
         }
-        void RefreshSetupUi()
-        {
-            if(setupScreen==null)return;
-            setupScreen.SetActive(phase==Phase.Setup && pendingSeat<0);
-            setupMapPage.SetActive(setupStep==0);setupRulesPage.SetActive(setupStep==1);setupPlayersPage.SetActive(setupStep==2);
-            for(int i=0;i<setupSteps.Length;i++)
-            {
-                setupSteps[i].interactable=i<=setupMaxStep;
-                float left=.05f+i*.305f;Layout((RectTransform)setupSteps[i].transform,new Vector2(left,setupStep==2?.745f:.78f),new Vector2(left+.29f,setupStep==2?.815f:.85f));
-                setupSteps[i].GetComponent<Image>().color=i==setupStep?MenuGold:MenuCard;
-                setupSteps[i].GetComponentInChildren<Text>().color=i==setupStep?MenuInk:Color.white;
-            }
-            setupPrevious.GetComponentInChildren<Text>().text=setupStep==0?"‹ МЕНЮ":"‹ НАЗАД";
-            setupNext.gameObject.SetActive(setupStep<2);
-            start.gameObject.SetActive(phase==Phase.Setup && setupStep==2);
-            start.interactable=input.Ready && IdentitiesReady() && ValidSetup();
-            start.GetComponentInChildren<Text>().text="НАЧАТЬ МАТЧ";
-            start.GetComponentInChildren<Text>().fontSize=26;
-            start.GetComponentInChildren<Text>().color=MenuInk;
-            start.GetComponent<Image>().color=MenuGold;
-            seatPanel.SetActive(false);botPanel.SetActive(false);
-            seatsMinus.gameObject.SetActive(false);seatsPlus.gameObject.SetActive(false);rebind.gameObject.SetActive(false);setupBack.gameObject.SetActive(false);diagnosticButton.gameObject.SetActive(false);teamRow.SetActive(false);
-            for(int i=0;i<seatIdentityButtons.Length;i++)seatIdentityButtons[i].gameObject.SetActive(
-                false);
-            setupSummary.text="КАРТА\n"+AuthoredArenaCatalog.Name(SelectedMapId)+"\n\nПРАВИЛА\n"+
-                (SetupMode==NativeMatchMode.Teams?"Команды":"Каждый сам за себя")+" · "+Configuration.DurationMinutes+" мин"+
-                (Configuration.TargetEnabled?"\nЦель: "+Configuration.TargetPoints:"\nБез цели по очкам")+"\n\nСОСТАВ\n"+
-                botSetup.HumanCount(LocalSeatCount)+" человек · "+(LocalSeatCount-botSetup.HumanCount(LocalSeatCount)+botSetup.Count)+" AI";
-            bool roster=setupStep==2;
-            var content=(RectTransform)setupPlayersPage.transform.parent;
-            Layout(content,new Vector2(.05f,roster?.185f:.12f),new Vector2(roster?.95f:.69f,roster?.73f:.76f));
-            var summary=(RectTransform)setupSummary.transform.parent;
-            Layout(summary,new Vector2(roster?.05f:.71f,roster?.05f:.12f),new Vector2(.95f,roster?.165f:.76f));
-            summary.Find("summary-title").gameObject.SetActive(!roster);
-            setupLabIdentity.gameObject.SetActive(!roster);
-            Layout(setupSummary.rectTransform,roster?new Vector2(.02f,.38f):new Vector2(.07f,.53f),roster?new Vector2(.70f,.94f):new Vector2(.93f,.83f));
-            setupSummary.fontSize=roster?24:20;
-            if(roster)setupSummary.text=AuthoredArenaCatalog.Name(SelectedMapId)+"\n"+(SetupMode==NativeMatchMode.Teams?"Две команды":"Каждый за себя")+" · "+Configuration.DurationMinutes+" мин · "+(Configuration.TargetEnabled?"Цель: "+Configuration.TargetPoints:"Без цели по очкам");
-            Layout(setupMessage.rectTransform,roster?new Vector2(.17f,.015f):new Vector2(.07f,.22f),roster?new Vector2(.70f,.36f):new Vector2(.93f,.34f));
-            Layout((RectTransform)start.transform,roster?new Vector2(.74f,.16f):new Vector2(.07f,.02f),roster?new Vector2(.98f,.84f):new Vector2(.93f,.10f));
-            Layout((RectTransform)setupPrevious.transform,new Vector2(.05f,.91f),new Vector2(.15f,.96f));
-            var brand=setupScreen.transform.Find("setup-brand").GetComponent<Text>();brand.text="ПОДГОТОВКА МАТЧА";
-            brand.fontSize=roster?25:35;brand.fontStyle=roster?FontStyle.Bold:FontStyle.Normal;
-            Layout(brand.rectTransform,new Vector2(.18f,.91f),roster?new Vector2(.95f,.965f):new Vector2(.95f,.98f));
-            rosterPageTitle.gameObject.SetActive(roster);
-            var description=setupScreen.transform.Find("setup-description").GetComponent<Text>();
-            Layout(description.rectTransform,new Vector2(.05f,.86f),new Vector2(.95f,.90f));
-            description.color=roster?RosterMuted:Color.white;
-            start.GetComponentInChildren<Text>().fontStyle=FontStyle.Bold;
-            setupScreen.transform.Find("setup-description").GetComponent<Text>().text=roster?"Выберите карточку, чтобы изменить участника.":"Выберите карту, задайте правила, соберите игроков и начните матч.";
-            setupLabIdentity.text=LabSavedIdentity;
-            RefreshRosterUi();
-            var mapCard=setupMapPage.transform.Find("selected-map");
-            mapCard.GetComponentInChildren<ArenaPreviewGraphic>().Show(SelectedMapId);
-            mapCard.Find("map-name").GetComponent<Text>().text=AuthoredArenaCatalog.Name(SelectedMapId).ToUpperInvariant();
-            mapCard.Find("map-revision").GetComponent<Text>().text=(SelectedMapId==WellArenaCatalog.Id?"Лаборатория · три этажа и колодец":SelectedMapId==LunarLaboratoryCatalog.Id?"Лунная база · два этажа и двор":SelectedMapId==IndustrialTunnelsCatalog.Id?"Промышленный ярус · кольцо и центр":"Орбитальная арена")+"\n2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участников";
-            setupMessage.text=setupError??(setupStep==2?SetupBlockingReason():"");
-            RefreshF2Setup();
-            ConfigureSetupNavigation();
-        }
+        void RefreshSetupUi() { RefreshSingleScreenLobby(); }
         InputField CreateNameInput(Transform parent)
         {
             var shell=Panel(parent,"profile-name-input",new Vector2(.08f,.67f),new Vector2(.92f,.76f),new Color32(35,51,68,255));
@@ -298,17 +261,22 @@ namespace StarTournament.ProvingGround
         void OpenSetup()
         {
             if(labProjectRoot!=null&&!authorStartupResolved){OpenDesignLab();return;}
-            ApplySavedLabRevision();Configuration=NativeMatchConfiguration.Default(MatchProfile);fps.RestoreGeneralPreference();
-            phase=Phase.Setup;SetupMode=NativeMatchMode.Ffa;ApplyModeTarget();lastBotDifficulty=(int)NativeBotDifficulty.Normal;setupStep=setupMaxStep=0;setupError=null;pendingSeat=-1;rosterEditing=-1;
-            input.Reset();input.SetActiveSeatCount(1);
-            for(int seat=0;seat<SeatInputCoordinator.SeatCount;seat++){identities.ClearSeat(seat);botSetup.SetAi(seat,false);botSetup.SetSeatDifficulty(seat,(int)NativeBotDifficulty.Normal);teamAssignments[seat]=seat%2==0?NativeTeam.TeamA:NativeTeam.TeamB;}
-            while(botSetup.Count>0)botSetup.Remove(botSetup.Count-1);
-            botSetup.Add(1);SyncHumanSeats();
-            var device=menuActivationFrame==Time.frameCount?menuActivationDevice:menuDevice;
-            if(device==null || !device.added || !device.enabled)device=(InputDevice)Keyboard.current??Gamepad.all.FirstOrDefault(p=>p.added&&p.enabled);
-            if(input.Assign(0,device) && !identities.TryRestore(0,device.deviceId,playerProfiles))
-                identities.ChooseGuest(0,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);
-            setupGamepadNavigation=device is Gamepad;RestoreLastPlayedMap();ApplyLayout(1);RefreshInterface();FocusSetupStep();
+            fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=2;setupTransitionFrame=Time.frameCount;
+            setupError=null;pendingSeat=-1;rosterEditing=-1;
+            if(!lobbyInitialized)
+            {
+                ApplySavedLabRevision();Configuration=new NativeMatchConfiguration{DurationMinutes=(int)LobbyProfile.Get("lobby.durationMinutes"),TargetEnabled=true,TargetPoints=(int)LobbyProfile.Get("lobby.targetPoints")};Configuration.Validate(MatchProfile);
+                SetupMode=NativeMatchMode.Ffa;SelectedMapId=SetupMapIds[0];lastBotDifficulty=(int)NativeBotDifficulty.Normal;
+                input.Reset();input.SetActiveSeatCount(1);
+                for(int seat=0;seat<SeatInputCoordinator.SeatCount;seat++){identities.ClearSeat(seat);botSetup.SetAi(seat,false);botSetup.SetSeatDifficulty(seat,(int)NativeBotDifficulty.Normal);teamAssignments[seat]=NativeTeam.TeamA;lobbyPositions[seat]=seat;}
+                while(botSetup.Count>0)botSetup.Remove(botSetup.Count-1);
+                SyncHumanSeats();
+                var device=menuActivationFrame==Time.frameCount?menuActivationDevice:menuDevice;
+                if(device==null||!device.added||!device.enabled)device=(InputDevice)Keyboard.current??Gamepad.all.FirstOrDefault(p=>p.added&&p.enabled);
+                if(input.Assign(0,device))identities.ChooseGuest(0,device.deviceId,MouseSensitivityPreference.Resolve(Profile),fps.Visible);
+                setupGamepadNavigation=device is Gamepad;lobbyInitialized=true;
+            }
+            ApplyLayout(LocalSeatCount);RefreshInterface();FocusSetupStep();
         }
         void ToMainMenu()
         {
@@ -348,7 +316,7 @@ namespace StarTournament.ProvingGround
         {
             if(phase!=Phase.Setup || !input.IsHumanSeat(seat))return;
             if(setupStep==2){OpenRosterEditor(seat);return;}
-            pendingSeat=seat;RefreshIdentityOptions();RefreshInterface();
+            pendingSeat=seat;RefreshIdentityOptions();RefreshInterface();identityScreen.transform.SetAsLastSibling();
         }
         void RefreshIdentityOptions()
         {
@@ -369,7 +337,7 @@ namespace StarTournament.ProvingGround
             float createTop=1f-profiles.Length/(float)rows;
             MenuButton(identityList,"identity-create","+ Создать профиль",new Vector2(0,createTop-1f/rows+.015f),new Vector2(1,createTop-.015f),CreateAndChooseProfile);
             float guestTop=createTop-1f/rows;
-            MenuButton(identityList,"identity-guest","Без профиля · гость до выхода",new Vector2(0,guestTop-1f/rows+.015f),new Vector2(1,guestTop-.015f),ChooseGuest);
+            MenuButton(identityList,"identity-guest","Без профиля",new Vector2(0,guestTop-1f/rows+.015f),new Vector2(1,guestTop-.015f),ChooseGuest);
         }
         void ChooseIdentity(string id)
         {
@@ -400,7 +368,7 @@ namespace StarTournament.ProvingGround
         {
             var id=identities.ProfileId(seat);
             if(id!=null)return playerProfiles.Find(id)?.Name??"Профиль удалён";
-            return identities.GuestAt(seat)!=null?"Гость":"выберите профиль";
+            return identities.GuestAt(seat)!=null?"Игрок "+identities.GuestAt(seat).Number:"выберите профиль";
         }
         NativeMatchComposition WithSelectedNames(NativeMatchComposition original)
         {

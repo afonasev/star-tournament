@@ -126,6 +126,19 @@ namespace StarTournament.ProvingGround
 
             var previousPosition = transform.position;
             var collisionFlags = controller.Move((horizontalVelocity + Vector3.up * verticalVelocity) * dt);
+            // A horizontal Move can briefly lose Below while following an incline. Reacquire
+            // nearby walkable support before publishing airborne state (audio/animation) or
+            // feeding the slope's measured vertical displacement into the next airborne tick.
+            // Use the existing step/skin envelope; never attach an intentional jump to ground.
+            if(groundedBeforeMove&&!AcceptedJumpThisTick&&(collisionFlags&CollisionFlags.Below)==0)
+            {
+                var skin=controller.skinWidth;
+                var origin=transform.position+controller.center-Vector3.up*(controller.height*.5f-controller.radius);
+                if(gameObject.scene.GetPhysicsScene().SphereCast(origin,controller.radius-skin,Vector3.down,out var support,
+                    controller.stepOffset+skin,(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer),QueryTriggerInteraction.Ignore)
+                    &&support.normal.y>=Mathf.Cos(controller.slopeLimit*Mathf.Deg2Rad))
+                    collisionFlags|=controller.Move(Vector3.down*(support.distance+skin));
+            }
             var actualVelocity = (transform.position - previousPosition) / dt;
             if ((collisionFlags & CollisionFlags.Above) != 0 && actualVelocity.y > 0f) actualVelocity.y = 0f;
             state.Position = transform.position;

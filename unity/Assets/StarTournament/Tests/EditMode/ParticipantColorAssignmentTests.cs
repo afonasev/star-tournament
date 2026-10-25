@@ -54,8 +54,29 @@ namespace StarTournament.ProvingGround.Tests
                 var draft=Draft(8,NativeMatchMode.Teams,swap);
                 var teams=NativeParticipantColors.FreezeNewMatch(draft,_=>throw new Exception("Team RNG"),profile);
                 var palette=NativeParticipantColors.Read(profile);
-                for(int p=0;p<8;p++)Assert.That(teams.Participant(p).Color,Is.EqualTo(palette[draft.Participant(p).Color==NativeParticipantColors.For(0)?0:1]));
+                for(int p=0;p<8;p++)Assert.That(teams.Participant(p).Color,Is.EqualTo(palette[draft.Participant(p).Color==NativeParticipantColors.For(0)?0:6]));
             }
+        }
+        [Test] public void TeamsUseVettedBlueRedWithSwapAndKeepHistoricalFrozenMagenta()
+        {
+            var profile=ProvingProfile.CreateParticipantPaletteDefault();profile.Set("participant.color.red.g",87);
+            foreach(bool swap in new[]{false,true})
+            {
+                var draft=Draft(8,NativeMatchMode.Teams,swap);
+                var frozen=NativeParticipantColors.FreezeNewMatch(draft,_=>throw new Exception("Team RNG"),profile);
+                for(int p=0;p<8;p++)
+                {
+                    var expected=NativeParticipantColors.Read(profile)[(draft.Roster.TeamOf(p)==NativeTeam.TeamA)^swap?0:6];
+                    Assert.That(frozen.Participant(p).Color,Is.EqualTo(expected));
+                    Assert.That(NativeParticipantColors.TeamColor(draft.Roster.TeamOf(p),swap,profile),Is.EqualTo(expected),"Lobby uses the same mapping as freeze");
+                }
+                var historical=draft.Read();
+                for(int p=0;p<8;p++)historical.Participants[p].Color=NativeParticipantColors.For((historical.Roster.Teams[p]==NativeTeam.TeamA)^swap?0:1);
+                var bytes=JsonUtility.ToJson(historical);
+                var restored=NativeMatchComposition.Restore(JsonUtility.FromJson<NativeCompositionSnapshot>(bytes));
+                Assert.That(JsonUtility.ToJson(restored.Read()),Is.EqualTo(bytes),"Historical Repeat/restore retains exact frozen blue/magenta");
+            }
+            Assert.That(NativeParticipantColors.For(1),Is.EqualTo((Color)new Color32(238,107,255,255)),"FFA magenta is unchanged");
         }
         [Test] public void PaletteRejectsOutOfRangeFractionalAndDuplicateColors()
         {
@@ -70,7 +91,10 @@ namespace StarTournament.ProvingGround.Tests
             foreach(bool swap in new[]{false,true})
             {
                 var teams=Draft(8,NativeMatchMode.Teams,swap);
-                Assert.That(NativeParticipantColors.FreezeNewMatch(teams,_=>throw new Exception("Team RNG draw")),Is.SameAs(teams));
+                var before=JsonUtility.ToJson(teams.Read());
+                var frozen=NativeParticipantColors.FreezeNewMatch(teams,_=>throw new Exception("Team RNG draw"));
+                Assert.That(JsonUtility.ToJson(teams.Read()),Is.EqualTo(before),"New assignment leaves the draft detached");
+                Assert.That(JsonUtility.ToJson(frozen.Read()),Is.EqualTo(before));
                 foreach(var p in Enumerable.Range(0,8))Assert.That(teams.Participant(p).Color,Is.EqualTo(NativeStandingsView.TeamColor(teams.Roster.TeamOf(p),swap)));
             }
             var state=UnityEngine.Random.state;

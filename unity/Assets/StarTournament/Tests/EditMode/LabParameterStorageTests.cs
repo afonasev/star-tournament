@@ -57,6 +57,18 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{UnityEngine.Object.DestroyImmediate(root);}
         }
+        [Test] public void LobbyMetadataPreservesHistoricalHashesAndSuppliesDefaults()
+        {
+            var old=Small();var history=new DesignLabHistory(path,old);history.Create("Старый");var prior=history.Selected;
+            var current=old.Clone();current.Profiles.Add(ProvingProfile.CreateLobbyDefault());
+            var loaded=new DesignLabHistory(path,current,persistMigration:false);
+            Assert.That(loaded.StorageError,Is.Null);Assert.That(loaded.ReleaseError,Is.Null);
+            Assert.That(loaded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number).Hash,Is.EqualTo(prior.Hash));
+            Assert.That(loaded.ReleaseParameterDefaults().Get("lobby.durationMinutes"),Is.EqualTo(3));
+            Assert.That(loaded.ReleaseParameterDefaults().Get("lobby.targetPoints"),Is.EqualTo(2000));
+            Assert.That(current.Profile("lobby.targetPoints").Descriptor("lobby.targetPoints").Step,Is.EqualTo(500));
+        }
+
         [Test] public void CompactSavesHaveOnlyParametersAndExactRestartIdentity()
         {
             var b=Small();var history=new DesignLabHistory(path,b);history.Create("Мой баланс");var draft=history.Selected.Snapshot;draft.Set("rifle.damage",31);history.Save(draft);history.MarkSelectedForRelease(true);

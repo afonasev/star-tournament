@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class MatchResult
         {
             public uint seed;public string mode,arena,profile;public double seconds;public bool finished;
-            public int[] shots=new int[4],kills=new int[4],ownedTicks=new int[4],selectedTicks=new int[4];public float[] damage=new float[4];public int deaths,respawns,pickups;
+            public int[] shots=new int[5],kills=new int[5],ownedTicks=new int[5],selectedTicks=new int[5];public float[] damage=new float[5];public int deaths,respawns,pickups;
             public NativeMatchSnapshot standings;
         }
         void Require(bool ok,string message){if(!ok)throw new InvalidOperationException(message);}
@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
             var args=Environment.GetCommandLineArgs();directory=args[Array.IndexOf(args,"-weaponBalanceReview")+1];Directory.CreateDirectory(directory);
             ground=GetComponent<ProvingGround>();AudioListener.volume=0;Application.runInBackground=true;yield return new WaitForSecondsRealtime(1);ground.enabled=false;
             Require(ground.CombatProfile.Get("rifle.damage")==10&&ground.CombatProfile.Get("shot.damage")==85&&ground.CombatProfile.Get("shot.pellets")==18,"Shipped weapon defaults stale");
-            Require(ground.LifeProfile.Get("rifle.startingAmmo")==200&&ground.LifeProfile.Get("weapon.switchSeconds")==.5f&&ground.LifeProfile.Get("damageBoost.multiplier")==1.5f,"Shipped life defaults stale");
+            Require(ground.LifeProfile.Get("rifle.startingAmmo")==240&&ground.LifeProfile.Get("weapon.switchSeconds")==.5f&&ground.LifeProfile.Get("damageBoost.multiplier")==1.5f,"Shipped life defaults stale");
             for(int run=0;run<(args.Contains("-weaponBalanceVisualOnly")?0:4);run++)
             {
                 bool teams=run>=2;uint seed=202610021u+(uint)run;
@@ -41,7 +41,7 @@ namespace StarTournament.ProvingGround
                 while(session.Time<600&&session.Match.Phase!=NativeMatchPhase.Finished)
                 {
                     Array.Clear(actions,0,actions.Length);
-                    for(int seat=0;seat<8;seat++){var state=session.Life(seat);if(state.Dead)continue;for(int slot=0;slot<4;slot++)if(CombatLife.Owned(state,(WeaponId)(slot+1)))result.ownedTicks[slot]++;result.selectedTicks[(int)state.SelectedWeapon-1]++;}
+                    for(int seat=0;seat<8;seat++){var state=session.Life(seat);if(state.Dead)continue;for(int slot=0;slot<5;slot++)if(CombatLife.Owned(state,(WeaponId)(slot+1)))result.ownedTicks[slot]++;result.selectedTicks[(int)state.SelectedWeapon-1]++;}
                     ground.BotDriver.ProduceActions(actions,dt);session.Tick(actions,dt);
                     for(int i=0;i<8;i++)Require(session.Pose(i).Position.y>-2,"Bot fell outside authored arena");
                     if(++tick%500==0)yield return null;
@@ -65,8 +65,8 @@ namespace StarTournament.ProvingGround
                 foreach(WeaponId weapon in Enum.GetValues(typeof(WeaponId)))
                 {
                     for(int i=0;i<session.ParticipantCount;i++)ground.PlaceCombatReviewSeat(i,new Vector3(i<2?0:i==2?-.9f:.9f,-1.2f,i==0?2:i==1?5:i<4?1:-2-i),i==0?13:0,i==0?0:180);
-                    var snapshot=session.Capture();snapshot.Lives[0].SelectedWeapon=weapon;snapshot.Lives[0].Ammo=weapon==WeaponId.Cutter?30:weapon==WeaponId.Rifle?200:20;snapshot.Lives[0].RifleAmmo=200;snapshot.Lives[0].ShotgunAmmo=20;snapshot.Lives[0].RocketAmmo=20;snapshot.Lives[0].CutterEnergy=30;
-                    snapshot.Lives[0].ShotgunOwned=true;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].CutterOwned=true;
+                    var snapshot=session.Capture();snapshot.Lives[0].SelectedWeapon=weapon;snapshot.Lives[0].Ammo=weapon==WeaponId.Plasma?100:weapon==WeaponId.Cutter?30:weapon==WeaponId.Rifle?200:20;snapshot.Lives[0].RifleAmmo=200;snapshot.Lives[0].ShotgunAmmo=20;snapshot.Lives[0].RocketAmmo=20;snapshot.Lives[0].CutterEnergy=30;
+                    snapshot.Lives[0].PlasmaOwned=true;snapshot.Lives[0].PlasmaAmmo=100;snapshot.Lives[0].ShotgunOwned=true;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].CutterOwned=true;
                     snapshot.Lives[1].Health=100;snapshot.Lives[1].Armor=0;session.Restore(snapshot);session.Tick(new LocalAction[session.ParticipantCount],.02f);
                     // Aim the diagnostic fixture at the actual body center after native motor placement.
                     var feet=session.Pose(0).Position;var center=session.Pose(1).Position+Vector3.up*ground.Profile.Get("player.capsule.height")*ground.CombatProfile.Get("zone.torsoY");

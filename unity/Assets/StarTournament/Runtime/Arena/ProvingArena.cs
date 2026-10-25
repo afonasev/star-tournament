@@ -73,6 +73,7 @@ namespace StarTournament.ProvingGround
         public void ClearProjection()
         {
             Lifts=null;WellProfile=null;
+            var renderChunks=GetComponent<ArenaRenderChunks>();if(renderChunks)DestroyImmediate(renderChunks);
             if (Surface) { if(Surface.navMeshData)NavMeshBuilder.Cancel(Surface.navMeshData); Surface.RemoveData(); if (Surface.navMeshData) DestroyImmediate(Surface.navMeshData); DestroyImmediate(Surface); Surface=null; }
             for(int i=transform.childCount-1;i>=0;i--) DestroyImmediate(transform.GetChild(i).gameObject);
             if(floor)DestroyImmediate(floor);if(wall)DestroyImmediate(wall);if(accent)DestroyImmediate(accent);
@@ -129,13 +130,13 @@ namespace StarTournament.ProvingGround
                 foreach(var lift in Definition.Lifts){var go=Box("lift-"+lift.Id,lift.Center+Vector3.up*(lift.InitialHeight-lift.Size.y*.5f),lift.Size,wall);supports[go.GetComponent<Collider>()]="support:lift-"+lift.Id;Lifts.Attach(lift.Id,go.GetComponent<Collider>());}
                 var decoration=new GameObject("Well laboratory presentation");decoration.transform.SetParent(transform,false);decoration.AddComponent<WellArenaPresentation>().Build(Definition,WellProfile);
             }
-            if(Definition.Identity==CombatBowlCatalog.Identity)
+            if(Definition.MapId==CombatBowlCatalog.Id)
             {
                 var decoration=new GameObject("Orbital League presentation");decoration.transform.SetParent(transform,false);
                 var steps=decoration.AddComponent<OrbitalLeaguePresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateCombatBowlRingPresentationDefault());
                 while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
-            else if(Definition.Identity==LunarLaboratoryCatalog.Identity)
+            else if(Definition.MapId==LunarLaboratoryCatalog.Id)
             {
                 var decoration=new GameObject("Lunar laboratory presentation");decoration.transform.SetParent(transform,false);
                 var steps=decoration.AddComponent<LunarLaboratoryPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateLunarPresentation());
@@ -147,6 +148,7 @@ namespace StarTournament.ProvingGround
                 var steps=decoration.AddComponent<IndustrialTunnelsPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateIndustrialTunnelsPresentation());
                 while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
+            gameObject.AddComponent<ArenaRenderChunks>().Build(transform);
         }
         public bool TryRoute(Vector3 from, Vector3 to, float sampleDistance, out NavMeshPath path)
         {

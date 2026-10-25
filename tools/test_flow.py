@@ -183,6 +183,101 @@ class Lifecycle(unittest.TestCase):
         self.f.evidence('example','merge',{'repo':str(repo),'commit':sha,'main_ref':'main'})
         with self.assertRaises(subprocess.CalledProcessError):self.f.transition('example','merged','worker')
         git('checkout','main');git('merge','--ff-only','feature');self.f.transition('example','merged','worker')
+    def merged_software(self):
+        repo=self.root/'code';repo.mkdir()
+        def git(*args):
+            return subprocess.check_output(['git','-C',str(repo),*args],stderr=subprocess.DEVNULL,text=True).strip()
+        git('init','-b','main');git('config','user.email','test@example.invalid');git('config','user.name','Test')
+        (repo/'source').write_text('verified source');git('add','.');git('commit','-m','source')
+        sha=git('rev-parse','HEAD')
+        self.new(kind='software');self.ready();self.f.claim('example','worker')
+        self.f.transition('example','implementing','worker')
+        self.f.evidence('example','verification',{'result':'pass'});self.f.evidence('example','commit',sha)
+        self.f.transition('example','verified','worker')
+        self.f.evidence('example','merge',{'repo':str(repo),'commit':sha,'main_ref':'main'})
+        self.f.transition('example','merged','worker')
+        return sha
+
+    def source_scope(self):
+        self.f.evidence('example','delivery_scope',{'result':'source',
+            'reason':'Reviewed source/Editor result; deployment is a separate request',
+            'deferred_gates':['build','player','release','deploy']})
+
+    def test_source_finalization_requires_explicit_complete_scope(self):
+        self.merged_software()
+        invalid=[None, 'source', {'result':'source'},
+            {'result':'source','reason':'   ','deferred_gates':['build','player','release','deploy']},
+            {'result':'source','reason':'No deployment','deferred_gates':['deploy']},
+            {'result':'source','reason':'No deployment','deferred_gates':[{}]}]
+        for scope in invalid:
+            with self.subTest(scope=scope):
+                p,d=self.f.get('example');d['evidence']['delivery_scope']=scope;self.f.save(p,d,'fixture')
+                with self.assertRaises(ValueError):self.f.transition('example','finalizing','worker')
+                self.assertEqual(self.f.get('example')[1]['stage'],'merged')
+
+    def test_source_acceptance_survives_restart_without_fake_deployment(self):
+        sha=self.merged_software();self.source_scope()
+        self.f.accept('example','Accepted source','user message',sha,'Source and Editor only')
+        self.f.transition('example','finalizing','worker')
+        self.f=m.Flow(self.root)
+        with self.assertRaises(ValueError):self.f.finalize('example','worker')
+        self.finalization_evidence();d=self.f.finalize('example','worker')
+        self.assertEqual(d['stage'],'accepted');self.assertIsNone(d['owner'])
+        self.assertNotIn('release',d['evidence']);self.assertNotIn('smoke',d['evidence'])
+        self.assertEqual(d['evidence']['acceptance']['scope'],'Source and Editor only')
+
+    def test_source_finalization_preserves_owner_questions_cleanup_and_review(self):
+        self.merged_software();self.source_scope()
+        with self.assertRaises(ValueError):self.f.transition('example','finalizing','other-worker')
+        self.f.transition('example','finalizing','worker');self.finalization_evidence()
+        self.f.evidence('example','cleanup_pending',{'completed':False})
+        with self.assertRaises(ValueError):self.f.finalize('example','worker')
+        self.f.evidence('example','cleanup_pending',{'completed':True})
+        self.f.question('example','Unresolved review issue',['awaiting-acceptance'])
+        with self.assertRaises(ValueError):self.f.finalize('example','worker')
+        self.f.answer('example','Q1','Resolved','user message','Updated evidence')
+        d=self.f.finalize('example','worker');self.assertEqual(d['stage'],'awaiting-acceptance')
+        with self.assertRaises(ValueError):self.f.transition('example','accepted')
+
+    def test_source_result_does_not_unlock_deployment_dependencies(self):
+        sha=self.merged_software();self.source_scope()
+        self.new('next');self.f.evidence('next','scope','agreed')
+        self.f.dependency('next','example','delivered')
+        self.f.transition('example','finalizing','worker')
+        for stage in ['finalizing','accepted']:
+            with self.subTest(stage=stage):
+                with self.assertRaises(ValueError):self.f.transition('next','ready')
+            if stage=='finalizing':
+                self.f.accept('example','Yes','user message',sha,'Source only')
+                self.finalization_evidence();self.f.finalize('example','worker')
+        p,d=self.f.get('next');d['dependencies'][0]['threshold']='accepted';self.f.save(p,d,'fixture')
+        with self.assertRaises(ValueError):self.f.transition('next','ready')
+        p,d=self.f.get('example');d['evidence'].pop('delivery_scope');self.f.save(p,d,'fixture')
+        with self.assertRaises(ValueError):self.f.transition('next','ready')
+
+    def test_deployment_route_still_requires_release_and_smoke(self):
+        self.merged_software()
+        with self.assertRaises(ValueError):self.f.transition('example','deployed','worker')
+        self.f.evidence('example','release',{'identity':'release-v1'})
+        with self.assertRaises(ValueError):self.f.transition('example','deployed','worker')
+        self.f.evidence('example','smoke',{'result':'pass'})
+        self.f.transition('example','deployed','worker')
+        self.new('next');self.f.evidence('next','scope','agreed');self.f.dependency('next','example','delivered')
+        self.f.transition('next','ready')
+        self.f.transition('example','finalizing','worker')
+        self.finalization_evidence();self.f.finalize('example','worker')
+        self.assertEqual(self.f.get('example')[1]['stage'],'awaiting-acceptance')
+
+    def test_source_scope_cannot_disappear_or_be_mislabeled_deployed(self):
+        self.merged_software();self.source_scope()
+        self.f.evidence('example','release',{'identity':'release-v1'});self.f.evidence('example','smoke','pass')
+        with self.assertRaises(ValueError):self.f.transition('example','deployed','worker')
+        self.f.transition('example','finalizing','worker');self.finalization_evidence()
+        p,d=self.f.get('example')
+        for key in ['delivery_scope','release','smoke']:d['evidence'].pop(key,None)
+        self.f.save(p,d,'fixture')
+        with self.assertRaises(ValueError):self.f.finalize('example','worker')
+
     def test_lease_ownership(self):
         self.f.lease('acquire','integration','a')
         with self.assertRaises(ValueError):self.f.lease('acquire','integration','b')

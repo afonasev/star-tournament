@@ -28,17 +28,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
-            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground);
-            while(ground.LocalSeatCount>2)Button("seats-minus").onClick.Invoke();
-            Button("setup-next").onClick.Invoke();Button("setup-next").onClick.Invoke();
+            Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,2);
+            var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
             for(int seat=0;seat<2;seat++)
             {
-                pads[seat]=InputSystem.AddDevice<Gamepad>();
-                InputSystem.QueueStateEvent(pads[seat],new GamepadState().WithButton(GamepadButton.North));
-                yield return null;yield return null;
-                InputSystem.QueueStateEvent(pads[seat],new GamepadState());yield return null;
-                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();
-                Button("roster-choice-guest").onClick.Invoke();Button("roster-done").onClick.Invoke();
+                pads[seat]=InputSystem.AddDevice<Gamepad>();Assert.That(input.Assign(seat,pads[seat]),Is.True);
+                yield return null;
+                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();yield return null;
+                ground.GetComponentsInChildren<Button>().Single(b=>b.name=="lobby-profile-none").onClick.Invoke();yield return null;
+                Button("roster-done").onClick.Invoke();yield return null;
             }
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
@@ -54,6 +52,29 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
             if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.Save();
+        }
+        [UnityTest] public IEnumerator ResolutionPopupsStayAboveTheirOwnSeatAndPreserveOtherSeats()
+        {
+            yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);
+            Button("pause-action-0-1").onClick.Invoke();Button("pause-action-1-1").onClick.Invoke();
+            for(int seat=0;seat<2;seat++)Button("seat-settings-"+seat+"-settings-resolution").onClick.Invoke();
+            yield return null;Canvas.ForceUpdateCanvases();
+            double clock=ground.Session.Time;
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");
+            if(!string.IsNullOrEmpty(output)){System.IO.Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"two-seat-resolution-modals.png"));}
+            for(int seat=0;seat<2;seat++)
+            {
+                var popup=Object("seat-settings-"+seat+"-resolution-picker");
+                Assert.That(popup.transform.parent.name,Is.EqualTo("seat-settings-"+seat+"-settings-screen"));
+                Assert.That(popup.transform.GetSiblingIndex(),Is.EqualTo(popup.transform.parent.childCount-1));
+                var rect=(RectTransform)popup.transform;var parent=(RectTransform)popup.transform.parent;
+                Assert.That(rect.rect.size,Is.EqualTo(parent.rect.size),"Backdrop is confined to its owner's viewport");
+                Assert.That(popup.GetComponentInParent<CanvasGroup>().blocksRaycasts,Is.False,"Gamepad-owned views reject a foreign mouse");
+                yield return Press(seat,GamepadButton.East);
+                Assert.That(popup.activeSelf,Is.False);
+                if(seat==0)Assert.That(Object("seat-settings-1-resolution-picker").activeSelf,Is.True);
+            }
+            Assert.That(ground.Session.Time,Is.EqualTo(clock));
         }
         [UnityTest] public IEnumerator PauseShowsTheFrozenSavedBalanceWithoutChangingMatch()
         {
@@ -285,11 +306,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Button("seat-settings-0-settings-back").onClick.Invoke();Button("seat-settings-1-settings-back").onClick.Invoke();
             Button("pause-action-1-3").onClick.Invoke();
             Assert.That(Object("pause-exit-yes-1").activeInHierarchy,Is.True);
+            var modalOutput=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");
+            if(!string.IsNullOrEmpty(modalOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(modalOutput,"pause-exit-modal.png"));
             Button("pause-exit-no-1").onClick.Invoke();
             Assert.That(Object("pause-action-0-0").activeInHierarchy,Is.True);
             Assert.That(ground.Running,Is.False);
             var original=ground.Session;
-            Button("pause-action-1-2").onClick.Invoke();Button("pause-repeat-yes-1").onClick.Invoke();yield return new WaitForFixedUpdate();
+            Button("pause-action-1-2").onClick.Invoke();
+            if(!string.IsNullOrEmpty(modalOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(modalOutput,"pause-restart-modal.png"));
+            Button("pause-repeat-yes-1").onClick.Invoke();yield return new WaitForFixedUpdate();
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Session,Is.Not.SameAs(original));
             Assert.That(Object("seat-pause-0").activeSelf,Is.False);
         }

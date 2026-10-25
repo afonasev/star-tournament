@@ -1,0 +1,20 @@
+{
+  "selected_preview": "shotgun-heavy-v5",
+  "outputs": {
+    "shotgun-0.wav": "36210ebbe7324f5fdbdd0258d3471c0c37afdee0e5956a9d4ac0a71a3b161ee3",
+    "shotgun-1.wav": "63fa5045f9ad6e6f54af4590fbb9e954d4c4052be72826bf857cbcedb79a736c",
+    "shotgun.wav": "36210ebbe7324f5fdbdd0258d3471c0c37afdee0e5956a9d4ac0a71a3b161ee3"
+  },
+  "recipe": "tools/preview-shotgun-heavy.py",
+  "dependencies": [
+    "tools/preview-shotgun-arena.py",
+    "tools/preview-shotgun-duration.py"
+  ],
+  "provenance": [
+    "docs/audio/approved-2026-10-03/shotgun/manifest.json",
+    "docs/audio/approved-2026-10-03/explosion/manifest.json"
+  ],
+  "acceptance": "Preview direction approved; exact runtime mix still pending",
+  "approved_source_directory": "docs/audio/shotgun-heavy-2026-10-25",
+  "runtime_preparation": "tools/prepare-approved-audio.py uses these immutable sources for shotgun and its two takes"
+}

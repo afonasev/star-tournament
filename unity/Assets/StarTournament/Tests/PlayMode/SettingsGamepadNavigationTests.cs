@@ -53,20 +53,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
         }
-        static void CaptureLtHelp(Canvas canvas,string filename="gamepad-lt-help.png",string variable="STAR_TOURNAMENT_LT_QA_IMAGES")
+        static void CaptureLtHelp(Canvas canvas,string filename="gamepad-lt-help.png",string variable="STAR_TOURNAMENT_LT_QA_IMAGES",int width=1920,int height=1080,bool scrollToBottom=false)
         {
             var directory=System.Environment.GetEnvironmentVariable(variable);
             if(string.IsNullOrEmpty(directory))return;
             System.IO.Directory.CreateDirectory(directory);
             var owner=new GameObject("LT help evidence camera");var camera=owner.AddComponent<Camera>();camera.enabled=false;
-            var target=new RenderTexture(1920,1080,24);target.Create();camera.targetTexture=target;
+            var target=new RenderTexture(width,height,24);target.Create();camera.targetTexture=target;
             var mode=canvas.renderMode;var previousCamera=canvas.worldCamera;float distance=canvas.planeDistance;
-            var active=RenderTexture.active;var pixels=new Texture2D(1920,1080,TextureFormat.RGB24,false);
+            var active=RenderTexture.active;var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
             try
             {
                 canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
-                Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;
-                pixels.ReadPixels(new Rect(0,0,1920,1080),0,0);pixels.Apply();
+                Canvas.ForceUpdateCanvases();
+                if(scrollToBottom)
+                {
+                    foreach(var scroll in canvas.GetComponentsInChildren<ScrollRect>().Where(x=>x.vertical&&x.content&&x.content.GetComponentsInChildren<Text>().Any(t=>t.name=="setting-explanation")))
+                        scroll.verticalNormalizedPosition=0;
+                    Canvas.ForceUpdateCanvases();
+                }
+                camera.Render();RenderTexture.active=target;
+                pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,filename),pixels.EncodeToPNG());
             }
             finally
@@ -506,6 +513,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadRight);Assert.That(Focus,Is.EqualTo("settings-display-mode"));
             yield return Press(GamepadButton.South);
             Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="display-confirmation").gameObject.activeInHierarchy,Is.True);
+            var modalOutput=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SELECTOR_QA_DIR");
+            if(!string.IsNullOrEmpty(modalOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(modalOutput,"display-confirmation-modal.png"));
             yield return Press(GamepadButton.East);
             Assert.That(ground.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="display-confirmation").gameObject.activeInHierarchy,Is.False);
             Assert.That(Focus,Is.EqualTo("settings-display-mode"));
@@ -554,7 +563,22 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var section in new[]{0,4,3,1,2})
                 {
                     Button("settings-section-"+section).onClick.Invoke();yield return null;
-                    if(!string.IsNullOrEmpty(directory))CaptureLtHelp(zone.GetComponentInParent<Canvas>(),"settings-page-"+section+".png","STAR_TOURNAMENT_SETTINGS_QA_IMAGES");
+                    var hints=ground.GetComponentsInChildren<Text>().Where(t=>t.name=="setting-explanation").ToArray();
+                    Assert.That(hints.Length,Is.GreaterThan(0),"Every section explains its settings");
+                    Assert.That(hints.All(t=>!t.raycastTarget&&t.fontSize<22),Is.True,"Secondary text must not intercept input");
+                    if(!string.IsNullOrEmpty(directory))
+                    {
+                        var canvas=zone.GetComponentInParent<Canvas>();
+                        CaptureLtHelp(canvas,"settings-page-"+section+".png","STAR_TOURNAMENT_SETTINGS_QA_IMAGES");
+                        CaptureLtHelp(canvas,"settings-page-"+section+"-720.png","STAR_TOURNAMENT_SETTINGS_QA_IMAGES",1280,720);
+                        var scroll=ground.GetComponentsInChildren<ScrollRect>().FirstOrDefault(x=>x.vertical&&x.content&&x.content.GetComponentsInChildren<Text>().Any(t=>t.name=="setting-explanation"));
+                        if(scroll)
+                        {
+                            scroll.verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();
+                            CaptureLtHelp(canvas,"settings-page-"+section+"-bottom.png","STAR_TOURNAMENT_SETTINGS_QA_IMAGES",1920,1080,true);
+                            scroll.verticalNormalizedPosition=1;
+                        }
+                    }
                 }
                 var scale=ground.GetComponentsInChildren<Slider>(true).Single(s=>s.name=="settings-ui-scale");scale.value=125;
                 var contrast=ground.GetComponentsInChildren<Toggle>(true).Single(s=>s.name=="settings-high-contrast");contrast.isOn=true;yield return null;yield return null;

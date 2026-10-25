@@ -9,6 +9,9 @@ namespace StarTournament.ProvingGround
         public static bool Supports(string id,int count)=>count>=2&&count<=Maximum(id);
         public static ArenaDefinition Resolve(string id,string revision=null)
         {
+            if(id==CombatBowlCatalog.Id&&revision=="19")return Previous(CombatBowlCatalog.Build(true),revision);
+            if(id==LunarLaboratoryCatalog.Id&&revision=="8")return Previous(LunarLaboratoryCatalog.Draft(previousForgePlacement:true),revision);
+            if(id==WellArenaCatalog.Id&&revision=="6")return Previous(WellArenaCatalog.Build(true),revision);
             if(id==WellArenaCatalog.Id&&(revision==null||revision==WellArenaCatalog.Revision))return WellArenaCatalog.Build();
             if(id==WellArenaCatalog.Id&&revision==WellArenaRevisionFour.Revision)return WellArenaRevisionFour.Build();
             if(id==WellArenaCatalog.Id&&revision==WellArenaRevisionThree.Revision)return WellArenaRevisionThree.Build();
@@ -17,6 +20,8 @@ namespace StarTournament.ProvingGround
             if(id==IndustrialTunnelsCatalog.Id&&(revision==null||revision==IndustrialTunnelsCatalog.Revision))return IndustrialTunnelsCatalog.Build();
             throw new ArgumentException("Unknown authored map "+id+"@"+revision);
         }
+        static ArenaDefinition Previous(ArenaDefinition definition,string revision)
+        {definition.Revision=revision;definition.Identity=definition.MapId+"@"+revision;definition.ProfileFingerprint="authored:"+definition.Identity;return definition;}
         public static ArenaFreezeSnapshot Freeze(string id,ProvingProfile profile)=>ArenaFreezeSnapshot.Create(Resolve(id),profile);
     }
 }

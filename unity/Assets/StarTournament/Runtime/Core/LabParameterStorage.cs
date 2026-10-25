@@ -81,14 +81,16 @@ namespace StarTournament.ProvingGround
             IEnumerable<ProvingProfile> Candidates()
             {
                 yield return current;
-                if(shape.Id=="well-authoring-v1"&&shape.Version==4)yield return current.BeforeWellSecondFloorWeapons();
-                if(shape.Id=="well-authoring-v1"&&shape.Version==3)yield return current.BeforeWellCorridorCover();
-                if(shape.Id=="well-authoring-v1"&&shape.Version==2)yield return current.BeforeWellFurniture();
-                if(shape.Id=="well-authoring-v1"&&shape.Version==1)yield return current.BeforeWellStructure();
-                if(shape.Id=="combat-bowl-ring-r7-authoring-v1")yield return current.BeforeWeaponPickups();
+                yield return current.BeforeForgePlacement(shape.Version);
+                var beforeForge=current.BeforeForgePickups();yield return beforeForge;
+                if(shape.Id=="well-authoring-v1"&&shape.Version==4)yield return beforeForge.BeforeWellSecondFloorWeapons();
+                if(shape.Id=="well-authoring-v1"&&shape.Version==3)yield return beforeForge.BeforeWellCorridorCover();
+                if(shape.Id=="well-authoring-v1"&&shape.Version==2)yield return beforeForge.BeforeWellFurniture();
+                if(shape.Id=="well-authoring-v1"&&shape.Version==1)yield return beforeForge.BeforeWellStructure();
+                if(shape.Id=="combat-bowl-ring-r7-authoring-v1")yield return beforeForge.BeforeWeaponPickups();
                 if(shape.Id=="lunar-laboratory-authoring-v1")
                 {
-                    foreach(var basis in new[]{current,current.BeforeLunarBypass(),current.BeforeLunarFlush(),current.BeforeLunarInterior(),current.BeforeLunarOpenCentre()})
+                    foreach(var basis in new[]{beforeForge,beforeForge.BeforeLunarBypass(),beforeForge.BeforeLunarFlush(),beforeForge.BeforeLunarInterior(),beforeForge.BeforeLunarOpenCentre()})
                     {yield return basis;yield return basis.BeforeLunarOffice();yield return basis.BeforeLunarRework();}
                 }
             }

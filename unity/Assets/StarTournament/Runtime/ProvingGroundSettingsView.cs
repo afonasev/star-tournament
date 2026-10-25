@@ -31,6 +31,7 @@ namespace StarTournament.ProvingGround
             ScrollRect resolutionScroll,deviceScroll; RectTransform deviceContent;
             RectTransform helpDiagram;
             bool resolutionPickerOpen;
+            RectTransform resolutionCard;
             Slider settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsReturnDelaySlider;
             Toggle settingsAutoLevelToggle,settingsFpsToggle,settingsShadowsToggle,settingsVSyncToggle,settingsBotTextToggle,settingsBotVoiceToggle;
             GameObject settingsHelpPage;
@@ -270,21 +271,23 @@ namespace StarTournament.ProvingGround
                 deviceScroll=ListViewport(settingsDevicesPage.transform,"device-list",new Vector2(.03f,.10f),new Vector2(.97f,.90f),out deviceContent);
                 settingsDevicesPageLabel=Label(settingsDevicesPage.transform,"devices-page-label","",19,new Vector2(.03f,.10f),new Vector2(.97f,.20f),TextAnchor.MiddleLeft,Color.white);
                 settingsDevicesBack=MenuButton(settingsScreen.transform,"devices-back","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),()=>SetDevices(false));
-                resolutionPicker=Panel(settingsImagePage.transform,"resolution-picker",new Vector2(.57f,.04f),new Vector2(.98f,.51f),MenuCard);
+                // The owner-wide backdrop blocks clicks to page controls and escapes their sibling/mask order.
+                resolutionPicker=Panel(settingsScreen.transform,"resolution-picker",Vector2.zero,Vector2.one,SelectorBackdrop);
                 var pickerCard=Panel(resolutionPicker.transform,"resolution-card",Vector2.zero,Vector2.one,MenuCard);
-                Label(pickerCard.transform,"resolution-title","ВЫБЕРИТЕ РАЗРЕШЕНИЕ",30,new Vector2(.06f,.84f),new Vector2(.94f,.96f),TextAnchor.MiddleLeft,MenuGold);
-                resolutionScroll=ListViewport(pickerCard.transform,"resolution-list",new Vector2(.06f,.08f),new Vector2(.94f,.78f),out var resolutionContent);
+                resolutionCard=(RectTransform)pickerCard.transform;
+                Layout(resolutionCard,new Vector2(.30f,.18f),new Vector2(.70f,.82f));owner.StyleSelectorCard(pickerCard);
+                Label(pickerCard.transform,"resolution-title","ВЫБЕРИТЕ РАЗРЕШЕНИЕ",28,new Vector2(.06f,.85f),new Vector2(.94f,.98f),TextAnchor.MiddleCenter,MenuGold);
+                resolutionScroll=ListViewport(pickerCard.transform,"resolution-list",new Vector2(.06f,.19f),new Vector2(.94f,.82f),out var resolutionContent);
                 resolutionChoices=new Button[SupportedResolutions().Count];resolutionContent.sizeDelta=new Vector2(0,resolutionChoices.Length*56);
                 for(int i=0;i<resolutionChoices.Length;i++)
                 {
-                    int row=i;var button=MenuButton(resolutionContent,"resolution-choice-"+i,"",Vector2.zero,Vector2.one,()=>ChooseResolution(row));resolutionChoices[i]=button;
+                    int row=i;var button=MenuButton(resolutionContent,"resolution-choice-"+i,"",Vector2.zero,Vector2.one,()=>ChooseResolution(row));resolutionChoices[i]=button;button.GetComponent<MenuPresentation>().FilledFocus=true;
                     var rect=(RectTransform)button.transform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=Vector2.one;rect.pivot=new Vector2(.5f,1);rect.anchoredPosition=new Vector2(0,-i*56);rect.sizeDelta=new Vector2(0,46);
                     button.gameObject.AddComponent<MenuScrollFocus>().Scroll=resolutionScroll;
                 }
-                resolutionCancelButton=MenuButton(pickerCard.transform,"resolution-cancel","‹ НАЗАД",new Vector2(.06f,.86f),new Vector2(.22f,.94f),CloseResolutionPicker);
-                Layout(pickerCard.transform.Find("resolution-title").GetComponent<RectTransform>(),new Vector2(.26f,.84f),new Vector2(.94f,.96f));
-                settingsConfirmation=Panel(settingsScreen.transform,"display-confirmation",Vector2.zero,Vector2.one,new Color32(8,17,25,246));
-                var confirmCard=Panel(settingsConfirmation.transform,"confirmation-card",new Vector2(.12f,.24f),new Vector2(.88f,.76f),MenuCard);
+                resolutionCancelButton=MenuButton(pickerCard.transform,"resolution-cancel","‹ НАЗАД",new Vector2(.06f,.04f),new Vector2(.94f,.14f),CloseResolutionPicker);
+                settingsConfirmation=Panel(settingsScreen.transform,"display-confirmation",Vector2.zero,Vector2.one,SelectorBackdrop);
+                var confirmCard=Panel(settingsConfirmation.transform,"confirmation-card",new Vector2(.12f,.24f),new Vector2(.88f,.76f),MenuCard);owner.StyleSelectorCard(confirmCard,false);
                 settingsConfirmationText=Label(confirmCard.transform,"confirmation-text","",29,new Vector2(.07f,.37f),new Vector2(.93f,.88f),TextAnchor.MiddleCenter,Color.white);
                 settingsConfirmButton=MenuButton(confirmCard.transform,"settings-confirm","СОХРАНИТЬ",new Vector2(.07f,.10f),new Vector2(.47f,.29f),ConfirmDisplay);
                 settingsRevertButton=MenuButton(confirmCard.transform,"settings-revert","ВЕРНУТЬ",new Vector2(.53f,.10f),new Vector2(.93f,.29f),RollbackDisplay);
@@ -438,6 +441,7 @@ namespace StarTournament.ProvingGround
                 settingsInterfacePage.SetActive(settingsSection==SettingsSection.Interface && !settingsHelpOpen && !settingsDevicesOpen);
                 settingsAudioPage.SetActive(settingsSection==SettingsSection.Audio && !settingsHelpOpen && !settingsDevicesOpen);
                 resolutionPicker.SetActive(resolutionPickerOpen && !displayConfirmationActive);
+                if(resolutionPicker.activeSelf)resolutionPicker.transform.SetAsLastSibling();
                 settingsConfirmation.SetActive(displayConfirmationActive);
                 for(int i=0;i<settingsSectionButtons.Length;i++)
                 {

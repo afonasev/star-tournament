@@ -13,10 +13,12 @@ namespace StarTournament.ProvingGround
         public WeaponId SelectedWeapon;
         public WeaponId PendingWeapon;
         public double SwitchRemaining;
-        public bool ShotgunOwned, RocketOwned, CutterOwned;
+        public bool ShotgunOwned, RocketOwned, CutterOwned, PlasmaOwned;
         public int RifleAmmo;
         public int ShotgunAmmo;
         public int RocketAmmo;
+        public int PlasmaAmmo;
+        public double PlasmaCooldownRemaining;
         public double CutterEnergy;
         public double RifleCooldownRemaining;
         public double ShotgunCooldownRemaining;
@@ -47,21 +49,24 @@ namespace StarTournament.ProvingGround
     {
         readonly float maximumHealth, maximumArmor;
         readonly double cutterCapacity;
-        readonly int startingAmmo, rifleStartingAmmo, rocketStartingAmmo;
-        readonly double cooldown, rifleCooldown, rocketCooldown, respawnDelay, switchSeconds;
+        readonly int startingAmmo, rifleStartingAmmo, rocketStartingAmmo, plasmaPickupAmmo;
+        readonly double cooldown, rifleCooldown, rocketCooldown, respawnDelay, switchSeconds, plasmaCooldown;
         CombatLifeState state;
         public double SwitchSeconds => switchSeconds;
         public CombatLifeState Read() => state; // Value DTO: readers cannot mutate owned state.
         public bool ReadyToRespawn => state.Dead && state.RespawnRemaining <= 0;
 
-        public CombatLife(string participantId, ProvingProfile profile, ProvingProfile cutter=null)
+        public CombatLife(string participantId, ProvingProfile profile, ProvingProfile cutter=null, ProvingProfile plasma=null)
         {
             if (string.IsNullOrWhiteSpace(participantId)) throw new ArgumentException("Participant identity required", nameof(participantId));
             if(profile==null) throw new ArgumentException("Valid unity-combat-state-v1 profile required",nameof(profile));
             profile=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(profile));
             profile.EnsureCombatDescriptors();
-            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 7 || profile.Validate().Count != 0)
+            if (profile == null || profile.Id != "unity-combat-state-v1" || profile.Version != 8 || profile.Validate().Count != 0)
                 throw new ArgumentException("Valid unity-combat-state-v1 profile required", nameof(profile));
+            plasma=plasma??ProvingProfile.CreatePlasmaDefault();
+            if(plasma.Id!="forge-plasma-v1"||plasma.Validate().Count!=0)throw new ArgumentException("Invalid FORGE profile");
+            plasmaPickupAmmo=IntegerAmmo(plasma.Get("plasma.pickupAmmo"));plasmaCooldown=plasma.Get("plasma.cooldownSeconds");
             cutterCapacity=(cutter??ProvingProfile.CreateCutterDefault()).Get("cutter.energyCapacity");
             maximumHealth = profile.Get("combat.maximumHealth");
             maximumArmor = profile.Get("armor.maximum");
@@ -97,6 +102,7 @@ namespace StarTournament.ProvingGround
         {
             if (double.IsNaN(seconds) || double.IsInfinity(seconds) || seconds < 0)
                 throw new ArgumentOutOfRangeException(nameof(seconds));
+            state.PlasmaCooldownRemaining = Countdown(state.PlasmaCooldownRemaining, seconds);
             state.RifleCooldownRemaining = Countdown(state.RifleCooldownRemaining, seconds);
             state.ShotgunCooldownRemaining = Countdown(state.ShotgunCooldownRemaining, seconds);
             state.RocketCooldownRemaining = Countdown(state.RocketCooldownRemaining, seconds);
@@ -124,6 +130,7 @@ namespace StarTournament.ProvingGround
                 case WeaponSelection.Rifle: target=WeaponId.Rifle; break;
                 case WeaponSelection.Shotgun: target=WeaponId.Shotgun; break;
                 case WeaponSelection.RocketLauncher: target=WeaponId.RocketLauncher; break;
+                case WeaponSelection.Plasma: target=WeaponId.Plasma; break;
                 case WeaponSelection.Cutter: target=WeaponId.Cutter; break;
                 case WeaponSelection.Previous: target=Cycle(-1); break;
                 case WeaponSelection.Next: target=Cycle(1); break;
@@ -133,21 +140,22 @@ namespace StarTournament.ProvingGround
             state.PendingWeapon = target;
             state.SwitchRemaining = switchSeconds;
         }
-        // Four slots are the input protocol, not a tunable balance value.
+        // Five slots are the input protocol, not a tunable balance value.
         WeaponId Cycle(int step)
         {
             var target=state.SelectedWeapon;
-            for(int i=0;i<4;i++){target=(WeaponId)(((int)target-1+step+4)%4+1);if(Owned(state,target))return target;}
+            for(int i=0;i<5;i++){target=(WeaponId)(((int)target-1+step+5)%5+1);if(Owned(state,target))return target;}
             return state.SelectedWeapon;
         }
-        public static bool Owned(CombatLifeState s,WeaponId id)=>id==WeaponId.Rifle||id==WeaponId.Shotgun&&s.ShotgunOwned||id==WeaponId.RocketLauncher&&s.RocketOwned||id==WeaponId.Cutter&&s.CutterOwned;
-        public bool NeedsWeapon(WeaponId id)=>!state.Dead&&(!Owned(state,id)||id==WeaponId.Shotgun&&state.ShotgunAmmo<startingAmmo||id==WeaponId.RocketLauncher&&state.RocketAmmo<rocketStartingAmmo||id==WeaponId.Cutter&&state.CutterEnergy<cutterCapacity);
+        public static bool Owned(CombatLifeState s,WeaponId id)=>id==WeaponId.Rifle||id==WeaponId.Shotgun&&s.ShotgunOwned||id==WeaponId.RocketLauncher&&s.RocketOwned||id==WeaponId.Cutter&&s.CutterOwned||id==WeaponId.Plasma&&s.PlasmaOwned;
+        public bool NeedsWeapon(WeaponId id)=>!state.Dead&&(!Owned(state,id)||id==WeaponId.Shotgun&&state.ShotgunAmmo<startingAmmo||id==WeaponId.RocketLauncher&&state.RocketAmmo<rocketStartingAmmo||id==WeaponId.Cutter&&state.CutterEnergy<cutterCapacity||id==WeaponId.Plasma&&state.PlasmaAmmo<plasmaPickupAmmo);
         public bool CollectWeapon(WeaponId id)
         {
             if(id==WeaponId.Rifle||!WeaponValid(id))throw new ArgumentException("Only map weapons may be collected");
             if(!NeedsWeapon(id))return false;
             if(id==WeaponId.Shotgun){state.ShotgunOwned=true;state.ShotgunAmmo=startingAmmo;}
             else if(id==WeaponId.RocketLauncher){state.RocketOwned=true;state.RocketAmmo=rocketStartingAmmo;}
+            else if(id==WeaponId.Plasma){state.PlasmaOwned=true;state.PlasmaAmmo=plasmaPickupAmmo;}
             else {state.CutterOwned=true;state.CutterEnergy=cutterCapacity;}
             state.Ammo=AmmoFor(state,state.SelectedWeapon);return true;
         }
@@ -161,16 +169,16 @@ namespace StarTournament.ProvingGround
             if(float.IsNaN(amount)||float.IsInfinity(amount)||amount<0) throw new ArgumentOutOfRangeException(nameof(amount));
             state.Armor=Math.Min(maximumArmor,state.Armor+amount);
         }
-        public static int AmmoFor(CombatLifeState s, WeaponId id) => id==WeaponId.Cutter?(int)Math.Ceiling(s.CutterEnergy):id==WeaponId.Rifle?s.RifleAmmo:id==WeaponId.Shotgun?s.ShotgunAmmo:s.RocketAmmo;
-        public static double CooldownFor(CombatLifeState s, WeaponId id) => id==WeaponId.Cutter?0:id==WeaponId.Rifle?s.RifleCooldownRemaining:id==WeaponId.Shotgun?s.ShotgunCooldownRemaining:s.RocketCooldownRemaining;
-        static bool WeaponValid(WeaponId id) => id>=WeaponId.Rifle && id<=WeaponId.Cutter;
+        public static int AmmoFor(CombatLifeState s, WeaponId id) => id==WeaponId.Plasma?s.PlasmaAmmo:id==WeaponId.Cutter?(int)Math.Ceiling(s.CutterEnergy):id==WeaponId.Rifle?s.RifleAmmo:id==WeaponId.Shotgun?s.ShotgunAmmo:s.RocketAmmo;
+        public static double CooldownFor(CombatLifeState s, WeaponId id) => id==WeaponId.Plasma?s.PlasmaCooldownRemaining:id==WeaponId.Cutter?0:id==WeaponId.Rifle?s.RifleCooldownRemaining:id==WeaponId.Shotgun?s.ShotgunCooldownRemaining:s.RocketCooldownRemaining;
+        static bool WeaponValid(WeaponId id) => id>=WeaponId.Rifle && id<=WeaponId.Plasma;
         static bool ValidTimer(double v) => !double.IsNaN(v) && !double.IsInfinity(v) && v>=0;
         public void ValidateSnapshot(CombatLifeState snapshot)
         {
-            if(!ValidTimer(snapshot.CutterEnergy)||snapshot.CutterEnergy>cutterCapacity||snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.RocketAmmo<0||!WeaponValid(snapshot.SelectedWeapon)||!ValidTimer(snapshot.RifleCooldownRemaining)||!ValidTimer(snapshot.ShotgunCooldownRemaining)||!ValidTimer(snapshot.RocketCooldownRemaining)||!ValidTimer(snapshot.SwitchRemaining)||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(!WeaponValid(snapshot.PendingWeapon)||snapshot.PendingWeapon==snapshot.SelectedWeapon))
+            if(snapshot.PlasmaAmmo<0||snapshot.PlasmaAmmo>plasmaPickupAmmo||!ValidTimer(snapshot.PlasmaCooldownRemaining)||!ValidTimer(snapshot.CutterEnergy)||snapshot.CutterEnergy>cutterCapacity||snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.RocketAmmo<0||!WeaponValid(snapshot.SelectedWeapon)||!ValidTimer(snapshot.RifleCooldownRemaining)||!ValidTimer(snapshot.ShotgunCooldownRemaining)||!ValidTimer(snapshot.RocketCooldownRemaining)||!ValidTimer(snapshot.SwitchRemaining)||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(!WeaponValid(snapshot.PendingWeapon)||snapshot.PendingWeapon==snapshot.SelectedWeapon))
                 throw new ArgumentException("Invalid combat life snapshot",nameof(snapshot));
             if(!Owned(snapshot,snapshot.SelectedWeapon)||snapshot.SwitchRemaining>0&&!Owned(snapshot,snapshot.PendingWeapon)||
-                !snapshot.ShotgunOwned&&snapshot.ShotgunAmmo!=0||!snapshot.RocketOwned&&snapshot.RocketAmmo!=0||!snapshot.CutterOwned&&snapshot.CutterEnergy!=0)
+                !snapshot.ShotgunOwned&&snapshot.ShotgunAmmo!=0||!snapshot.RocketOwned&&snapshot.RocketAmmo!=0||!snapshot.CutterOwned&&snapshot.CutterEnergy!=0||!snapshot.PlasmaOwned&&snapshot.PlasmaAmmo!=0)
                 throw new ArgumentException("Invalid weapon ownership",nameof(snapshot));
             if(snapshot.Ammo!=AmmoFor(snapshot,snapshot.SelectedWeapon))throw new ArgumentException("Selected ammo mismatch",nameof(snapshot));
         }
@@ -184,12 +192,14 @@ namespace StarTournament.ProvingGround
             bool edge = held && !state.FireHeld;
             state.FireHeld = held;
             if (!Owned(state,state.SelectedWeapon) || state.SelectedWeapon==WeaponId.Cutter || state.Dead || state.SwitchRemaining > 0 || !held || state.CooldownRemaining > 0 || state.Ammo == 0 ||
-                (state.SelectedWeapon!=WeaponId.Rifle && !edge)) return false;
+                (state.SelectedWeapon!=WeaponId.Rifle && state.SelectedWeapon!=WeaponId.Plasma && !edge)) return false;
             if(state.SelectedWeapon==WeaponId.Rifle)
             {
                 state.RifleAmmo--; state.RifleCooldownRemaining=rifleCooldown;
                 state.Ammo=state.RifleAmmo;
             }
+            else if(state.SelectedWeapon==WeaponId.Plasma)
+            {state.PlasmaAmmo--;state.PlasmaCooldownRemaining=plasmaCooldown;state.Ammo=state.PlasmaAmmo;}
             else if(state.SelectedWeapon==WeaponId.RocketLauncher)
             {
                 state.RocketAmmo--; state.RocketCooldownRemaining=rocketCooldown; state.Ammo=state.RocketAmmo;
@@ -220,7 +230,7 @@ namespace StarTournament.ProvingGround
             if (killed)
             {
                 state.Dead = true;
-                state.ShotgunOwned=state.RocketOwned=state.CutterOwned=false;
+                state.ShotgunOwned=state.RocketOwned=state.CutterOwned=state.PlasmaOwned=false;state.PlasmaAmmo=0;state.PlasmaCooldownRemaining=0;
                 state.ShotgunAmmo=state.RocketAmmo=0;state.CutterEnergy=0;
                 state.SelectedWeapon=WeaponId.Rifle;state.Ammo=state.RifleAmmo;
                 state.CooldownRemaining=state.RifleCooldownRemaining;

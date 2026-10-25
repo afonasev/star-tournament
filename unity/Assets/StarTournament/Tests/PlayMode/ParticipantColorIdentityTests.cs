@@ -19,7 +19,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int i=0;i<renderer.sharedMaterials.Length;i++)
                 {
                     var mat=renderer.sharedMaterials[i];
-                    if(mat&&(mat.name=="pants"||mat.name.StartsWith("vector-fighter-")&&!mat.name.StartsWith("vector-fighter-identity")))
+                    if(mat&&(mat.name=="pants"||mat.name.StartsWith("vector-assault-armor")||mat.name.StartsWith("vector-fighter-")&&!mat.name.StartsWith("vector-fighter-identity")))
                         Assert.That(mat.GetFloat("_IdentityMode"),Is.Zero,"cloth, visor and neutral hardware stay neutral");
                     if(!mat||!TrooperIdentityPresentation.IsBodyZone(mat))continue;
                     var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block,i);
@@ -106,8 +106,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int p=4;p<8;p++)ground.AddBot();
             var preview=JsonUtility.ToJson(ground.SetupComposition().Read());
             for(int i=0;i<5;i++)Assert.That(JsonUtility.ToJson(ground.SetupComposition().Read()),Is.EqualTo(preview));
+            // F06: edit the actual existing AI participant, then verify gameplay and Repeat use that draft color.
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            typeof(ProvingGround).GetMethod("OpenRosterEditor",flags).Invoke(ground,new object[]{0});yield return null;
+            // Full palette is occupied: retain uniqueness, then remove one bot to permit a different color choice.
+            B("roster-done").onClick.Invoke();
+            typeof(ProvingGround).GetMethod("OpenRosterEditor",flags).Invoke(ground,new object[]{7});yield return null;B("roster-remove").onClick.Invoke();yield return null;
+            typeof(ProvingGround).GetMethod("OpenRosterEditor",flags).Invoke(ground,new object[]{0});yield return null;
+            var swatch=ground.GetComponentsInChildren<Button>().First(b=>b.name.StartsWith("roster-color-")&&b.interactable&&b.GetComponentInChildren<Text>().text!="✓");
+            var editedColor=swatch.GetComponent<Image>().color;swatch.onClick.Invoke();B("roster-done").onClick.Invoke();ground.AddBot();yield return null;
             B("Начать — четыре игрока").onClick.Invoke();yield return null;
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);Assert.That(ground.Composition.Read().Participants.Select(p=>p.Color).Distinct().Count(),Is.EqualTo(8));
+            Assert.That(ground.Composition.Participant(0).Color,Is.EqualTo(editedColor),"Real gameplay receives the edited draft color");
             var frozen=JsonUtility.ToJson(ground.Composition.Read());for(int p=0;p<8;p++)AssertBody(p);for(int seat=0;seat<4;seat++)AssertView(seat);
             var snapshot=ground.Session.Capture();snapshot.DamageRemaining[0]=5;snapshot.DamageRemaining[1]=5;ground.Session.Restore(snapshot);yield return null;
             AssertBody(0);AssertBody(1);AssertView(0);AssertView(1);

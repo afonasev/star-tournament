@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
-    public enum WeaponId { Rifle = 1, Shotgun = 2, RocketLauncher = 3, Cutter = 4 }
-    public enum WeaponSelection { None, Rifle, Shotgun, Previous, Next, RocketLauncher, Cutter }
+    public enum WeaponId { Rifle = 1, Shotgun = 2, RocketLauncher = 3, Cutter = 4, Plasma = 5 }
+    public enum WeaponSelection { None, Rifle, Shotgun, Previous, Next, RocketLauncher, Cutter, Plasma }
     /// <summary>Device-independent command consumed by one local participant on one fixed tick.</summary>
     [Serializable]
     public struct LocalAction

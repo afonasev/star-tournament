@@ -6,16 +6,16 @@ namespace StarTournament.ProvingGround
     /// <summary>Structure 03; north = +Z. Dimensions are immutable map authoring, not editable balance.</summary>
     public static class WellArenaCatalog
     {
-        public const string Id="well-laboratory-v1", Revision="5", Identity=Id+"@"+Revision;
+        public const string Id="well-laboratory-v1", Revision="7", Identity=Id+"@"+Revision;
         public const float Storey=7.2f, Slab=.8f, ClearHeight=Storey-Slab, Edge=24.8f, Pit=9.6f;
         const float DoorHeight=3.2f, DoorHalf=1.6f, Wall=.3f;
         public static string Support(int floor)=>"support:well-"+floor;
-        public static ProvingProfile AuthoringProfile()
+        public static ProvingProfile AuthoringProfile(bool previousForgePlacement=false)
         {
-            var definition=Build();var p=ProvingProfile.CreateCombatBowlAuthoringDefault(definition);
-            p.SetIdentityForWell();p.AddWellLiftAuthoring(definition.Lifts);return p;
+            var definition=Build(previousForgePlacement);var p=ProvingProfile.CreateCombatBowlAuthoringDefault(definition);
+            p.SetIdentityForWell(previousForgePlacement?6:7);p.AddWellLiftAuthoring(definition.Lifts);return p;
         }
-        public static ArenaDefinition Build()
+        public static ArenaDefinition Build(bool previousForgePlacement=false)
         {
             var solids=new List<ArenaSolid>();var transitions=new List<NativeNavigationTransition>();
             var spawns=new List<Vector3>();var regions=new List<ArenaSpawnRegion>();
@@ -136,6 +136,10 @@ namespace StarTournament.ProvingGround
             // Immutable revision-5 anchors, exposed in Well authoring Lab; offset from corner spawns.
             Item("shotgun-02",ArenaPickupKind.Shotgun,-18,-20,1);Item("cutter-02",ArenaPickupKind.Cutter,18,20,1);
             Item("armor-02",ArenaPickupKind.Armor,-12.8f,6.4f,1);Item("speed-02",ArenaPickupKind.Speed,12.8f,-6.4f,1);
+            if(previousForgePlacement)Item("forge-ground",ArenaPickupKind.Plasma,21,0,0);
+            else foreach(int side in new[]{-1,1})items.Add(new ArenaPickupDefinition{
+                Id="forge-stair-"+side,Kind=ArenaPickupKind.Plasma,
+                Anchor=new Vector3(side*(25.5f+Storey/2*2.4f+1.2f),Storey*1.5f,0),Support="support:stair-"+side+"-1-mid"});
             Item("heal-H",ArenaPickupKind.FullHeal,0,0,2);
             Item("cutter-03",ArenaPickupKind.Cutter,21,21,2);Item("armor-03",ArenaPickupKind.Armor,-21,-21,2);
             return new ArenaDefinition

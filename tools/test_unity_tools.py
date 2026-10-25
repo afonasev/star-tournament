@@ -20,7 +20,7 @@ class UnityToolsTests(unittest.TestCase):
         subprocess.run(['git', 'init', '-q', str(self.root)], check=True)
         subprocess.run(['git', '-C', str(self.root), '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '--allow-empty', '-qm', 'baseline'], check=True)
         self.runner = self.root / 'runner'
-        self.runner.write_text('#!/usr/bin/env python3\nimport json,os,sys\nfrom pathlib import Path\nPath(os.environ["ARGS_FILE"]).write_text(json.dumps({"args":sys.argv[1:], "history":os.environ.get("STAR_TOURNAMENT_QA_LAB_HISTORY")}))\n')
+        self.runner.write_text('#!/usr/bin/env python3\nimport json,os,sys\nfrom pathlib import Path\nPath(os.environ["ARGS_FILE"]).write_text(json.dumps({"args":sys.argv[1:], "history":os.environ.get("STAR_TOURNAMENT_QA_LAB_HISTORY"), "stage_history":os.environ.get("STAR_TOURNAMENT_LAB_RELEASE_HISTORY")}))\n')
         self.runner.chmod(0o755)
         self.args_file = self.root / 'args.json'
 
@@ -156,6 +156,24 @@ class UnityToolsTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(json.loads(self.args_file.read_text())['history'], str(history))
             self.assertEqual(history.read_bytes(), b'user history must remain byte identical')
+
+    def test_project_staging_is_silent_and_only_routes_to_explicit_editor_source_tool(self):
+        for extra in [(), (str(self.root / 'unity/DesignLab/authoring-history-v1.json'),)]:
+            result = self.invoke('lab-stage-releases', *extra)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            receipt = json.loads(self.args_file.read_text())
+            args = receipt['args']
+            self.assertEqual(args[args.index('-executeMethod') + 1],
+                             'StarTournament.ProvingGround.Editor.LabReleaseBuild.PromoteMarked')
+            self.assertEqual(receipt['stage_history'], extra[0] if extra else '')
+            self.assertIsNone(receipt['history'])
+            self.assertIn('-noaudio', args)
+            self.assertIn('-muted', args)
+            self.assertNotIn('-runTests', args)
+            self.assertEqual(args[0], '--shared')
+        self.args_file.unlink()
+        self.assertEqual(self.invoke('lab-stage-releases', 'one', 'two').returncode, 2)
+        self.assertFalse(self.args_file.exists())
 
     def test_non_test_routes_do_not_inject_history(self):
         for command in ('prepare', 'build', 'editor'):

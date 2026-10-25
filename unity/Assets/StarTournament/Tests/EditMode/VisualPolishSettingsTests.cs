@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 int count=upgraded.SelectedProfile.Revisions.Count;Assert.That(count,Is.GreaterThan(revisions));
                 var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.SelectedProfile.Revisions.Count,Is.EqualTo(count));
                 var direct=old.Profiles[0];direct.Set("visual.fillScale",.6f);direct.EnsureDefaultDescriptors();
-                Assert.That(direct.Version,Is.EqualTo(18));Assert.That(direct.Get("visual.fillScale"),Is.EqualTo(.6f));Assert.That(direct.Get("visual.wallSmoothness"),Is.EqualTo(.08f));
+                Assert.That(direct.Version,Is.EqualTo(19));Assert.That(direct.Get("visual.fillScale"),Is.EqualTo(.6f));Assert.That(direct.Get("visual.wallSmoothness"),Is.EqualTo(.08f));
                 foreach(var d in direct.Descriptors)Assert.That(d.Validate(out var reason),Is.True,reason);
             }
             finally{System.IO.Directory.Delete(directory,true);}

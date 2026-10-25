@@ -12,15 +12,18 @@ namespace StarTournament.ProvingGround
     {
         // Authored uGUI layout in the existing Full HD canvas; these sizes do not tune gameplay/readability profiles.
         readonly Button[] rosterCards=new Button[NativeMatchRoster.MaximumParticipants];
-        readonly Text[] rosterNames=new Text[NativeMatchRoster.MaximumParticipants],rosterDetails=new Text[NativeMatchRoster.MaximumParticipants],rosterViews=new Text[NativeMatchRoster.MaximumParticipants],rosterIcons=new Text[NativeMatchRoster.MaximumParticipants];
-        readonly Image[] rosterStripes=new Image[NativeMatchRoster.MaximumParticipants];
+        readonly Text[] rosterNames=new Text[NativeMatchRoster.MaximumParticipants],rosterDetails=new Text[NativeMatchRoster.MaximumParticipants];
+        readonly GameObject[] rosterDeviceIcons=new GameObject[NativeMatchRoster.MaximumParticipants],rosterScreenIcons=new GameObject[NativeMatchRoster.MaximumParticipants];
+        readonly Button[] rosterEmpty=new Button[8];
+        Button[][] lobbyRosterGroups;
+        int rosterEmptyUsed;
+        readonly Image[] rosterPortraits=new Image[NativeMatchRoster.MaximumParticipants];
         GameObject rosterEditor,rosterPicker;
         Toggle rosterBotView;
         Transform rosterFfa,rosterBlue,rosterRed,rosterPickerContent;
         ScrollRect rosterFfaScroll,rosterBlueScroll,rosterRedScroll,rosterChoiceScroll;
         GameObject rosterBluePanel,rosterRedPanel;
-        Text rosterPageTitle,rosterCount,rosterFull,rosterEditorName,rosterEditorSubtitle,rosterEditorHelp,rosterPickerHeading;
-        Text rosterBlueHeading,rosterRedHeading,rosterBlueCount,rosterRedCount;
+        Text rosterPageTitle,rosterFull,rosterEditorName,rosterEditorSubtitle,rosterEditorHelp,rosterPickerHeading;
         Button rosterAddHuman,rosterAddBot,rosterIdentity,rosterDevice,rosterTeam,rosterRemove,rosterDone,rosterPickerBack;
         Text rosterIdentityLabel,rosterDeviceLabel,rosterTeamLabel;
         int rosterEditing=-1;
@@ -28,11 +31,55 @@ namespace StarTournament.ProvingGround
         readonly List<Button> rosterChoices=new List<Button>();
         string rosterLastBlocking;
         float rosterChoiceRowHeight=70;
-        static readonly string[] RosterDifficultyNames={"Новичок","Боец","Ветеран"};
+        static readonly string[] RosterDifficultyNames={"Рекрут","Боец","Ветеран"};
         static readonly Color32 RosterMuted=new Color32(153,173,187,255);
         static readonly Color32 RosterBlue=new Color32(106,204,239,255),RosterRed=new Color32(242,128,147,255);
 
+        readonly Dictionary<string,int> lobbyColors=new Dictionary<string,int>();
+        readonly System.Random lobbyColorRandom=new System.Random();
+        readonly Button[] rosterColorSwatches=new Button[8];
+        GameObject rosterColorRow;Text rosterColorLabel;
+        string LobbyColorIdentity(int p)=>RosterIsBot(p)?"bot:"+(p<LocalSeatCount?botSetup.SeatBot(p,teamAssignments[p]).Id:botSetup.At(p-LocalSeatCount).Id):"human:"+(input.DeviceAt(p)?.deviceId.ToString()??identities.GuestAt(p)?.Id??("seat:"+p));
+        void EnsureLobbyColors()
+        {
+            var keys=Enumerable.Range(0,RosterTotal).Select(LobbyColorIdentity).ToArray();
+            foreach(var key in lobbyColors.Keys.Except(keys).ToArray())lobbyColors.Remove(key);
+            foreach(var key in keys)if(!lobbyColors.ContainsKey(key))
+            {
+                var free=Enumerable.Range(0,8).Except(lobbyColors.Values).ToArray();lobbyColors[key]=free[lobbyColorRandom.Next(free.Length)];
+            }
+        }
+        Color LobbyColor(int p)
+        {
+            if(SetupMode==NativeMatchMode.Teams)return RosterTeamColor(RosterTeamAt(p));
+            EnsureLobbyColors();return NativeParticipantColors.Read(ParticipantPaletteProfile)[lobbyColors[LobbyColorIdentity(p)]];
+        }
+        void ChooseLobbyColor(int index)
+        {
+            if(rosterEditing<0||SetupMode!=NativeMatchMode.Ffa||!rosterColorSwatches[index].interactable)return;
+            lobbyColors[LobbyColorIdentity(rosterEditing)]=index;RefreshInterface();
+        }
+        NativeMatchComposition FreezeLobbyColors(NativeMatchComposition draft)
+        {
+            if(draft.Roster.Mode!=NativeMatchMode.Ffa)return NativeParticipantColors.FreezeNewMatch(draft,profile:ParticipantPaletteProfile);
+            EnsureLobbyColors();var snapshot=draft.Read();
+            for(int p=0;p<snapshot.Participants.Length;p++)snapshot.Participants[p].Color=LobbyColor(p);
+            return NativeMatchComposition.Restore(snapshot);
+        }
         static Sprite rosterRounded;
+        static Sprite rosterHumanPortrait,rosterBotPortrait;
+        static Sprite Portrait(string resource,ref Sprite cached)
+        {
+            if(cached)return cached;
+            var texture=Resources.Load<Texture2D>("LobbyPortraits/"+resource);
+            if(texture)
+            {
+                // Bilinear samples at the transparent top must not wrap to the opaque bottom edge.
+                texture.wrapMode=TextureWrapMode.Clamp;
+                cached=Sprite.Create(texture,new Rect(0,0,texture.width,texture.height),new Vector2(.5f,.5f),100,0,SpriteMeshType.FullRect);
+            }
+            return cached;
+        }
         void RoundRosterPanel(GameObject panel)
         {
             if(rosterRounded==null)
@@ -55,6 +102,8 @@ namespace StarTournament.ProvingGround
         Button RosterButton(Transform parent,string name,string title,Vector2 min,Vector2 max,UnityEngine.Events.UnityAction action)
         {
             var b=MenuButton(parent,name,title,min,max,action);RoundRosterPanel(b.gameObject);
+            b.GetComponent<MenuPresentation>().LobbySurface=true;b.transition=Selectable.Transition.None;
+            b.GetComponent<MenuActionHint>().ColoredLobbyGlyph=true;
             var text=b.GetComponentInChildren<Text>();text.fontSize=26;text.fontStyle=FontStyle.Bold;
             var colors=b.colors;colors.highlightedColor=colors.selectedColor=Color.white;b.colors=colors;
             AddRosterFocus(b);
@@ -81,40 +130,59 @@ namespace StarTournament.ProvingGround
             rosterPageTitle=Label(setupScreen.transform,"roster-page-title","СОБЕРИТЕ УЧАСТНИКОВ",40,new Vector2(.05f,.865f),new Vector2(.95f,.92f),TextAnchor.MiddleLeft,Color.white);
             rosterPageTitle.fontStyle=FontStyle.Bold;
             var startColors=start.colors;startColors.normalColor=startColors.highlightedColor=startColors.selectedColor=Color.white;startColors.disabledColor=new Color(.45f,.50f,.55f);start.colors=startColors;
-            Label(setupPlayersPage.transform,"players-title","СОСТАВ МАТЧА",30,new Vector2(.017f,.88f),new Vector2(.62f,.98f),TextAnchor.MiddleLeft,Color.white).fontStyle=FontStyle.Bold;
+
             RoundRosterPanel(setupPlayersPage);RoundRosterPanel(setupSummary.transform.parent.gameObject);
-            rosterCount=Label(setupPlayersPage.transform,"roster-count","",24,new Vector2(.017f,.80f),new Vector2(.65f,.89f),TextAnchor.MiddleLeft,RosterMuted);
             rosterAddHuman=RosterButton(setupPlayersPage.transform,"roster-add-human","+ ИГРОК",new Vector2(.70f,.865f),new Vector2(.835f,.97f),AddRosterHuman);
-            rosterAddBot=RosterButton(setupPlayersPage.transform,"roster-add-bot","+ БОТ",new Vector2(.845f,.865f),new Vector2(.98f,.97f),()=>{int p=LocalSeatCount+botSetup.Count;AddBot();if(LocalSeatCount+botSetup.Count>p){OpenRosterEditor(p);Select(rosterDone);}});
+            rosterAddBot=RosterButton(setupPlayersPage.transform,"roster-add-bot","+ БОТ",new Vector2(.845f,.865f),new Vector2(.98f,.97f),()=>{int p=LocalSeatCount+botSetup.Count;AddBot();if(LocalSeatCount+botSetup.Count>p){OpenRosterEditor(p);}});
             rosterFull=Label(setupPlayersPage.transform,"roster-full","",20,new Vector2(.68f,.795f),new Vector2(.98f,.862f),TextAnchor.MiddleCenter,RosterMuted);
             rosterFfa=RosterScroll(setupPlayersPage.transform,"roster-ffa",new Vector2(.017f,.025f),new Vector2(.98f,.77f),out rosterFfaScroll);
             rosterBluePanel=Panel(setupPlayersPage.transform,"roster-team-blue",new Vector2(.017f,.025f),new Vector2(.49f,.77f),new Color32(23,37,52,255));
             rosterRedPanel=Panel(setupPlayersPage.transform,"roster-team-red",new Vector2(.51f,.025f),new Vector2(.98f,.77f),new Color32(23,37,52,255));
-            rosterBlueHeading=Label(rosterBluePanel.transform,"team-blue-name","",26,new Vector2(.02f,.88f),new Vector2(.76f,1),TextAnchor.MiddleLeft,RosterBlue);
-            rosterRedHeading=Label(rosterRedPanel.transform,"team-red-name","",26,new Vector2(.02f,.88f),new Vector2(.76f,1),TextAnchor.MiddleLeft,RosterRed);
-            rosterBlueCount=Label(rosterBluePanel.transform,"team-blue-count","",22,new Vector2(.76f,.88f),new Vector2(.98f,1),TextAnchor.MiddleRight,RosterMuted);
-            rosterRedCount=Label(rosterRedPanel.transform,"team-red-count","",22,new Vector2(.76f,.88f),new Vector2(.98f,1),TextAnchor.MiddleRight,RosterMuted);
-            rosterBlue=RosterScroll(rosterBluePanel.transform,"team-blue-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.88f),out rosterBlueScroll);
-            rosterRed=RosterScroll(rosterRedPanel.transform,"team-red-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.88f),out rosterRedScroll);
+            rosterBlue=RosterScroll(rosterBluePanel.transform,"team-blue-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.98f),out rosterBlueScroll);
+            rosterRed=RosterScroll(rosterRedPanel.transform,"team-red-scroll",new Vector2(.02f,.02f),new Vector2(.98f,.98f),out rosterRedScroll);
+            rosterBluePanel.GetComponent<Image>().color=new Color32(22,53,72,190);
+            rosterRedPanel.GetComponent<Image>().color=new Color32(68,34,43,190);
+            rosterBlueScroll.GetComponent<Image>().color=Color.clear;
+            rosterRedScroll.GetComponent<Image>().color=Color.clear;
             for(int i=0;i<rosterCards.Length;i++)
             {
                 int p=i;var b=RosterButton(rosterFfa,"roster-card-"+i,"",Vector2.zero,Vector2.one,()=>OpenRosterEditor(p));rosterCards[i]=b;b.GetComponent<MenuPresentation>().Compact=false;
                 b.GetComponentInChildren<Text>().gameObject.SetActive(false);
-                b.GetComponent<Image>().color=new Color32(27,43,59,255);
-                rosterStripes[i]=Panel(b.transform,"stripe",new Vector2(.005f,.075f),new Vector2(.02f,.925f),MenuGold).GetComponent<Image>();
-                var icon=Panel(b.transform,"icon",new Vector2(.05f,.60f),new Vector2(.195f,.89f),new Color32(21,44,59,255));
-                RoundRosterPanel(icon);
-                rosterIcons[i]=Label(icon.transform,"kind","",30,Vector2.zero,Vector2.one,TextAnchor.MiddleCenter,MenuGold);
-                rosterNames[i]=Label(b.transform,"participant-name","",30,new Vector2(.235f,.70f),new Vector2(.94f,.91f),TextAnchor.MiddleLeft,Color.white);
+                var hint=b.GetComponent<MenuActionHint>();hint.ReservedRightInset=()=>24;
+                hint.GlyphLabel.rectTransform.anchorMin=new Vector2(1,.18f);hint.GlyphLabel.rectTransform.anchorMax=new Vector2(1,.40f);
+                b.GetComponent<Image>().color=new Color32(4,9,15,185);
+                var portrait=Panel(b.transform,"portrait",new Vector2(.025f,.04f),new Vector2(.49f,.96f),Color.white);
+                rosterPortraits[i]=portrait.GetComponent<Image>();rosterPortraits[i].preserveAspect=true;rosterPortraits[i].raycastTarget=false;
+                rosterNames[i]=Label(b.transform,"participant-name","",28,new Vector2(.52f,.69f),new Vector2(.95f,.94f),TextAnchor.MiddleLeft,Color.white);
+                hint.CaptionOverride=rosterNames[i];
+                hint.CardHint=true;
                 rosterNames[i].fontStyle=FontStyle.Bold;
                 rosterNames[i].resizeTextForBestFit=true;rosterNames[i].resizeTextMinSize=20;rosterNames[i].resizeTextMaxSize=30;
-                rosterDetails[i]=Label(b.transform,"participant-detail","",22,new Vector2(.235f,.54f),new Vector2(.96f,.72f),TextAnchor.MiddleLeft,RosterMuted);
-                Panel(b.transform,"rule",new Vector2(.055f,.49f),new Vector2(.945f,.495f),new Color32(62,88,102,255));
+                rosterDetails[i]=Label(b.transform,"participant-detail","",20,new Vector2(.52f,.47f),new Vector2(.95f,.65f),TextAnchor.MiddleLeft,RosterMuted);
                 rosterDetails[i].resizeTextForBestFit=true;rosterDetails[i].resizeTextMinSize=18;rosterDetails[i].resizeTextMaxSize=22;
-                rosterViews[i]=Label(b.transform,"participant-view","",23,new Vector2(.06f,.22f),new Vector2(.88f,.45f),TextAnchor.MiddleLeft,Color.white);
-                Label(b.transform,"open","›",32,new Vector2(.87f,.16f),new Vector2(.96f,.46f),TextAnchor.MiddleCenter,RosterMuted);
+                var device=new GameObject("participant-device-glyph",typeof(RectTransform),typeof(CanvasRenderer),typeof(LobbyRosterGlyph));device.transform.SetParent(b.transform,false);
+                Layout((RectTransform)device.transform,new Vector2(.52f,.44f),new Vector2(.76f,.66f));rosterDeviceIcons[i]=device;
+                var screen=new GameObject("participant-screen-slot",typeof(RectTransform));screen.transform.SetParent(b.transform,false);
+                Layout((RectTransform)screen.transform,new Vector2(.79f,.44f),new Vector2(.93f,.66f));
+                for(int slot=0;slot<4;slot++)
+                {
+                    var square=new GameObject("slot-"+slot,typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));square.transform.SetParent(screen.transform,false);
+                    int x=slot%2,y=slot/2;var squareRect=(RectTransform)square.transform;squareRect.anchorMin=squareRect.anchorMax=new Vector2(.5f,.5f);squareRect.sizeDelta=new Vector2(15,15);squareRect.anchoredPosition=new Vector2(x==0?-10:10,y==0?10:-10);
+                    var squareImage=square.GetComponent<Image>();squareImage.sprite=LobbyVisualAssets.ScreenCell(false);squareImage.color=new Color32(93,220,225,255);squareImage.raycastTarget=false;
+                }
+                rosterScreenIcons[i]=screen.gameObject;
                 foreach(var graphic in b.GetComponentsInChildren<Graphic>())if(graphic.gameObject!=b.gameObject)graphic.raycastTarget=false;
                 b.GetComponent<RosterFocus>().UseScroll=()=>SetupMode==NativeMatchMode.Teams? (RosterTeamAt(p)==NativeTeam.TeamA?rosterBlueScroll:rosterRedScroll):rosterFfaScroll;
+            }
+            for(int i=0;i<rosterEmpty.Length;i++)
+            {
+                var empty=RosterButton(rosterFfa,"roster-empty-"+i,"+",Vector2.zero,Vector2.one,BeginLobbyBot);
+                rosterEmpty[i]=empty;empty.GetComponent<MenuPresentation>().Compact=false;
+                empty.GetComponentInChildren<Text>().fontSize=52;
+                var ring=Panel(empty.transform,"empty-slot-ring",new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Color32(112,151,171,155)).GetComponent<Image>();
+                ring.sprite=LobbyVisualAssets.EmptySlot;ring.raycastTarget=false;ring.rectTransform.sizeDelta=new Vector2(96,96);ring.transform.SetAsFirstSibling();
+                empty.GetComponent<RosterFocus>().UseScroll=()=>empty.GetComponentInParent<ScrollRect>();
+                empty.gameObject.SetActive(false);
             }
             rosterEditor=Panel(parent,"roster-editor",Vector2.zero,Vector2.one,new Color32(4,12,19,215));
             var card=Panel(rosterEditor.transform,"roster-editor-card",new Vector2(.305f,.16f),new Vector2(.695f,.84f),new Color32(24,38,54,255));
@@ -136,15 +204,27 @@ namespace StarTournament.ProvingGround
                 field.GetComponent<MenuActionHint>().ReservedRightInset=()=>-value.rectTransform.offsetMax.x;
                 Label(field.transform,"dropdown-arrow","▾",26,new Vector2(.90f,0),new Vector2(.98f,1),TextAnchor.MiddleCenter,RosterMuted);
             }
+            rosterColorLabel=Label(card.transform,"editor-color-label","Цвет",23,new Vector2(.055f,.375f),new Vector2(.945f,.43f),TextAnchor.MiddleLeft,RosterMuted);
+            rosterColorRow=Panel(card.transform,"editor-colors",new Vector2(.055f,.29f),new Vector2(.945f,.37f),Color.clear);
+            for(int n=0;n<8;n++)
+            {
+                int index=n;var swatch=RosterButton(rosterColorRow.transform,"roster-color-"+n,"",new Vector2(n/8f,0),new Vector2((n+1)/8f,1),()=>ChooseLobbyColor(index));
+                var rect=(RectTransform)swatch.transform;rect.anchorMin=rect.anchorMax=new Vector2(.5f,.5f);rect.sizeDelta=new Vector2(46,46);rect.anchoredPosition=new Vector2((n-3.5f)*60,0);
+                swatch.GetComponent<MenuPresentation>().LobbySurface=false;swatch.transition=Selectable.Transition.ColorTint;
+                swatch.GetComponent<MenuActionHint>().enabled=false;rosterColorSwatches[n]=swatch;
+            }
             rosterEditorHelp=Label(card.transform,"editor-help","",21,new Vector2(.055f,.19f),new Vector2(.945f,.285f),TextAnchor.MiddleLeft,RosterMuted);
             rosterRemove=RosterButton(card.transform,"roster-remove","УДАЛИТЬ ИЗ МАТЧА",new Vector2(.055f,.16f),new Vector2(.945f,.23f),RemoveRosterParticipant);
             rosterDone=RosterButton(card.transform,"roster-done","ГОТОВО",new Vector2(.055f,.06f),new Vector2(.945f,.14f),CloseRosterEditor);
-            BindMenuShortcut(rosterDone,MenuPadButton.East,()=>phase==Phase.Setup&&rosterEditing>=0&&!rosterPicker.activeSelf);
+            BindMenuShortcut(rosterDone,MenuPadButton.East,()=>phase==Phase.Setup&&rosterEditing>=0&&!rosterPicker.activeSelf&&!(lobbyDialog&&lobbyDialog.activeSelf));
+            rosterDone.GetComponent<MenuPresentation>().LobbySurface=false;
             rosterDone.GetComponent<Image>().color=MenuGold;rosterDone.GetComponentInChildren<Text>().color=MenuInk;
-            rosterPicker=Panel(card.transform,"roster-picker",Vector2.zero,Vector2.one,new Color32(24,38,54,255));
-            rosterPickerHeading=Label(rosterPicker.transform,"picker-title","",28,new Vector2(.30f,.85f),new Vector2(.945f,.97f),TextAnchor.MiddleLeft,MenuGold);
-            rosterPickerContent=RosterScroll(rosterPicker.transform,"roster-picker-scroll",new Vector2(.055f,.16f),new Vector2(.945f,.83f),out rosterChoiceScroll);
-            rosterPickerBack=RosterButton(rosterPicker.transform,"roster-picker-back","‹ НАЗАД",new Vector2(.055f,.86f),new Vector2(.28f,.95f),CloseRosterPicker);
+            rosterPicker=Panel(rosterEditor.transform,"roster-picker",Vector2.zero,Vector2.one,SelectorBackdrop);
+            var pickerCard=Panel(rosterPicker.transform,"roster-picker-card",new Vector2(.30f,.18f),new Vector2(.70f,.82f),MenuCard);StyleSelectorCard(pickerCard);
+            rosterPickerHeading=Label(pickerCard.transform,"picker-title","",28,new Vector2(.055f,.85f),new Vector2(.945f,.98f),TextAnchor.MiddleCenter,MenuGold);
+            rosterPickerContent=RosterScroll(pickerCard.transform,"roster-picker-scroll",new Vector2(.055f,.19f),new Vector2(.945f,.82f),out rosterChoiceScroll);
+            rosterPickerBack=RosterButton(pickerCard.transform,"roster-picker-back","‹ НАЗАД",new Vector2(.055f,.04f),new Vector2(.945f,.14f),CloseRosterPicker);
+            rosterPickerBack.GetComponentInChildren<Text>().fontSize=22;rosterPickerBack.GetComponentInChildren<Text>().fontStyle=FontStyle.Normal;
             BindMenuShortcut(rosterPickerBack,MenuPadButton.East,()=>phase==Phase.Setup&&rosterEditing>=0&&rosterPicker.activeSelf);
             rosterPicker.SetActive(false);rosterEditor.SetActive(false);
         }
@@ -162,17 +242,24 @@ namespace StarTournament.ProvingGround
         NativeTeam RosterTeamAt(int p)=>p<LocalSeatCount?teamAssignments[p]:botSetup.At(p-LocalSeatCount).Team;
         int RosterDifficultyAt(int p)=>p<LocalSeatCount?botSetup.SeatDifficulty(p):botSetup.At(p-LocalSeatCount).Difficulty;
         string RosterTeamName(NativeTeam team)=>(team==NativeTeam.TeamA)^swappedTeamColors?"Синяя":"Красная";
-        Color RosterTeamColor(NativeTeam team)=>(team==NativeTeam.TeamA)^swappedTeamColors?RosterBlue:RosterRed;
-        void LayoutRosterGrid(Transform content,int[] participants,int columns,float height)
+        Color RosterTeamColor(NativeTeam team)=>NativeParticipantColors.TeamColor(team,swappedTeamColors,ParticipantPaletteProfile);
+        Button[] LayoutRosterGrid(Transform content,int[] participants,int slots,int columns,float height)
         {
-            var rect=(RectTransform)content;int rows=Math.Max(2,Mathf.CeilToInt(participants.Length/(float)columns));
-            rect.sizeDelta=new Vector2(0,rows*height);
-            for(int i=0;i<participants.Length;i++)
+            var cards=participants.Select(i=>rosterCards[i]).ToList();
+            while(cards.Count<slots){var empty=rosterEmpty[rosterEmptyUsed++];empty.gameObject.SetActive(true);cards.Add(empty);}
+            var rect=(RectTransform)content;int rows=Math.Max(1,Mathf.CeilToInt(cards.Count/(float)columns));
+            float available=((RectTransform)content.parent).rect.height;
+            float rowHeight=Mathf.Min(height,available/2f),gridHeight=rows*rowHeight;
+            float inset=Mathf.Max(0,(available-gridHeight)*.5f);
+            rect.sizeDelta=new Vector2(0,Mathf.Max(available,gridHeight));
+            for(int i=0;i<cards.Count;i++)
             {
-                var card=rosterCards[participants[i]];card.transform.SetParent(content,false);
-                var r=(RectTransform)card.transform;r.anchorMin=new Vector2((i%columns)/(float)columns,1);r.anchorMax=new Vector2((i%columns+1)/(float)columns,1);r.pivot=new Vector2(.5f,1);
-                r.offsetMin=new Vector2(7,-(i/columns+1)*height+8);r.offsetMax=new Vector2(-7,-(i/columns)*height-8);
+                var card=cards[i];card.transform.SetParent(content,false);
+                float rowInset=(columns-Math.Min(columns,cards.Count-(i/columns)*columns))*.5f;
+                var r=(RectTransform)card.transform;r.anchorMin=new Vector2((rowInset+i%columns)/columns,1);r.anchorMax=new Vector2((rowInset+i%columns+1)/columns,1);r.pivot=new Vector2(.5f,1);
+                r.offsetMin=new Vector2(8,-inset-(i/columns+1)*rowHeight+8);r.offsetMax=new Vector2(-8,-inset-(i/columns)*rowHeight-8);
             }
+            return cards.ToArray();
         }
         void RefreshRosterUi()
         {
@@ -183,37 +270,47 @@ namespace StarTournament.ProvingGround
             {
                 bool active=i<RosterTotal;rosterCards[i].gameObject.SetActive(active);if(!active)continue;
                 bool bot=RosterIsBot(i);rosterNames[i].text=bot?"Бот":IdentityLabel(i);
-                string deviceLabel=bot?"":input.DeviceAt(i) is Gamepad?"Геймпад #"+input.DeviceAt(i).deviceId:input.Label(i);
-                rosterDetails[i].text=bot?RosterDifficultyNames[RosterDifficultyAt(i)]:deviceLabel+(input.DeviceAt(i)!=null&&!input.IsConnected(i)?" · отключено":"");
-                rosterDetails[i].color=!bot&&!input.IsConnected(i)?new Color32(255,171,142,255):RosterMuted;
-                rosterViews[i].text=i<LocalSeatCount?"Экран "+(i+1):"";rosterViews[i].gameObject.SetActive(i<LocalSeatCount);
-                rosterIcons[i].text=bot?"Б":"И";var color=teams?RosterTeamColor(RosterTeamAt(i)):(Color)MenuGold;
-                rosterIcons[i].color=color;rosterStripes[i].color=color;
+                bool disconnected=!bot&&input.DeviceAt(i)!=null&&!input.IsConnected(i);
+                rosterDetails[i].text=bot?RosterDifficultyNames[RosterDifficultyAt(i)]:disconnected?"Устройство отключено":"";
+                rosterDetails[i].gameObject.SetActive(bot||disconnected);rosterDetails[i].color=disconnected?new Color32(255,171,142,255):RosterMuted;
+                rosterPortraits[i].sprite=bot?Portrait("Bot",ref rosterBotPortrait):Portrait("Human",ref rosterHumanPortrait);
+                rosterDeviceIcons[i].SetActive(!bot);rosterScreenIcons[i].SetActive(i<LocalSeatCount);
+                rosterDeviceIcons[i].GetComponent<LobbyRosterGlyph>().color=disconnected?new Color(.5f,.5f,.5f,1):Color.white;
+                Layout(rosterDetails[i].rectTransform,new Vector2(.52f,disconnected?.10f:.47f),new Vector2(.95f,disconnected?.42f:.65f));
+                if(i<LocalSeatCount)
+                {
+                    int slot=LobbyPosition(i,LocalSeatCount);var squares=rosterScreenIcons[i].GetComponentsInChildren<Image>(true);
+                    for(int n=0;n<squares.Length;n++)squares[n].sprite=LobbyVisualAssets.ScreenCell(n==slot);
+                }
+                if(!bot)rosterDeviceIcons[i].GetComponent<LobbyRosterGlyph>().Kind=input.DeviceAt(i) is Gamepad?LobbyRosterGlyph.DeviceKind.Gamepad:LobbyRosterGlyph.DeviceKind.KeyboardMouse;
+                rosterCards[i].GetComponent<MenuPresentation>().SurfaceTint=LobbyColor(i);
             }
+            foreach(var empty in rosterEmpty)empty.gameObject.SetActive(false);rosterEmptyUsed=0;
+            Canvas.ForceUpdateCanvases();
             var all=Enumerable.Range(0,RosterTotal).ToArray();
             if(teams)
             {
                 var blue=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamA).ToArray();var red=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamB).ToArray();
-                LayoutRosterGrid(rosterBlue,blue,2,185);LayoutRosterGrid(rosterRed,red,2,185);
-                rosterBlueHeading.text=RosterTeamName(NativeTeam.TeamA).ToUpperInvariant()+" КОМАНДА";rosterRedHeading.text=RosterTeamName(NativeTeam.TeamB).ToUpperInvariant()+" КОМАНДА";
-                rosterBlueHeading.color=RosterTeamColor(NativeTeam.TeamA);rosterRedHeading.color=RosterTeamColor(NativeTeam.TeamB);
-                rosterBlueCount.text=blue.Length+" игр.";rosterRedCount.text=red.Length+" игр.";
+                int blueSlots=Mathf.Clamp(4,blue.Length,8-red.Length);
+                lobbyRosterGroups=new[]{LayoutRosterGrid(rosterBlue,blue,blueSlots,2,250),LayoutRosterGrid(rosterRed,red,8-blueSlots,2,250)};
             }
-            else LayoutRosterGrid(rosterFfa,all,4,215);
-            int humans=botSetup.HumanCount(LocalSeatCount);
-            rosterCount.text=humans+" чел.  ·  "+(RosterTotal-humans)+" ботов  ·  "+RosterTotal+"/8 участников  ·  "+LocalSeatCount+" экр.";
+            else lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,8,4,250)};
+            // Reparenting between FFA/team grids can disable a card without a new
+            // EventSystem selection event. Restore the shared visual focus explicitly.
+            foreach(var card in rosterCards.Concat(rosterEmpty))card.GetComponent<MenuPresentation>().SetFocused(EventSystem.current&&EventSystem.current.currentSelectedGameObject==card.gameObject);
             rosterAddHuman.interactable=RosterTotal<8 && LocalSeatCount<4;rosterAddBot.interactable=RosterTotal<8;
             rosterAddHuman.GetComponentInChildren<Text>().color=rosterAddHuman.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterAddBot.GetComponentInChildren<Text>().color=rosterAddBot.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterFull.text=RosterTotal==8?"Состав заполнен":LocalSeatCount==4?"Все 4 экрана назначены":"";
             rosterEditor.SetActive(phase==Phase.Setup&&setupStep==2&&rosterEditing>=0);
             if(rosterEditing>=0 && rosterEditing<RosterTotal)RefreshRosterEditor();
+            RefreshInlineCards();
             ConfigureRosterNavigation();
         }
         void OpenRosterEditor(int p)
         {
             if(phase!=Phase.Setup||setupStep!=2||p<0||p>=RosterTotal)return;
-            pendingSeat=-1;rosterEditing=p;rosterPicker.SetActive(false);RefreshInterface();Select(rosterIdentity);
+            OpenInlineEditor(p);
         }
         void CloseRosterEditor()
         {
@@ -224,33 +321,38 @@ namespace StarTournament.ProvingGround
         {
             int p=rosterEditing;bool bot=RosterIsBot(p),teams=SetupMode==NativeMatchMode.Teams;
             rosterEditorName.text=bot?"Бот":IdentityLabel(p);
-            rosterEditorSubtitle.text=teams?RosterTeamName(RosterTeamAt(p))+" команда":"Каждый за себя";
-            rosterIdentityLabel.text=bot?"Сложность":"Профиль / гость";
-            rosterIdentity.GetComponentInChildren<Text>().text=(bot?RosterDifficultyNames[RosterDifficultyAt(p)]:IdentityLabel(p));
+            rosterEditorSubtitle.text=bot?"":input.Label(p);
+            rosterIdentityLabel.text=bot?"Сложность":"Профиль";
+            rosterIdentity.GetComponentInChildren<Text>().text=bot?RosterDifficultyNames[RosterDifficultyAt(p)]:identities.ProfileId(p)==null?"Без профиля":IdentityLabel(p);
+            rosterColorRow.SetActive(!teams);rosterColorLabel.gameObject.SetActive(!teams);
+            if(!teams)
+            {
+                var palette=NativeParticipantColors.Read(ParticipantPaletteProfile);EnsureLobbyColors();
+                var selected=LobbyColor(p);
+                for(int n=0;n<8;n++)
+                {
+                    var swatch=rosterColorSwatches[n];swatch.GetComponent<Image>().color=palette[n];
+                    swatch.interactable=!Enumerable.Range(0,RosterTotal).Any(i=>i!=p&&LobbyColor(i)==palette[n]);
+                    swatch.GetComponentInChildren<Text>().text=selected==palette[n]?"✓":"";
+                }
+            }
             rosterTeam.gameObject.SetActive(teams);rosterTeamLabel.gameObject.SetActive(teams);
             rosterTeam.GetComponentInChildren<Text>().text=RosterTeamName(RosterTeamAt(p));
-            rosterDevice.gameObject.SetActive(!bot);rosterBotView.gameObject.SetActive(bot);RefreshToggle(rosterBotView,p<LocalSeatCount);
-            rosterBotView.interactable=p<LocalSeatCount?LocalSeatCount>1:LocalSeatCount<4;
-            rosterDeviceLabel.text=bot?"":"Устройство";
-            rosterDevice.GetComponentInChildren<Text>().text=(bot?(p<LocalSeatCount?"Вкл · Экран "+(p+1):"Выкл"):input.Label(p));
-            rosterEditorHelp.text=bot?"Экран бота занимает одну из 4 частей split-screen.":input.IsConnected(p)?"Профиль сохраняется при смене устройства.":"Подключите устройство или выберите другое.";
+            rosterDevice.gameObject.SetActive(true);rosterBotView.gameObject.SetActive(false);
+            Layout(rosterDeviceLabel.rectTransform,new Vector2(.055f,teams?.375f:.515f),new Vector2(.945f,teams?.43f:.57f));
+            Layout((RectTransform)rosterDevice.transform,new Vector2(.055f,teams?.29f:.43f),new Vector2(.945f,teams?.37f:.51f));
+            rosterDeviceLabel.text="Экран";rosterDevice.GetComponentInChildren<Text>().text=p<LocalSeatCount?"Экран "+(LobbyPosition(p,LocalSeatCount)+1):"Без экрана";
+            rosterEditorHelp.text=!bot&&!input.IsConnected(p)?"Устройство отключено. Верните его или удалите участника.":"";
             rosterRemove.interactable=RosterTotal>1&&(p>=LocalSeatCount||LocalSeatCount>1||botSetup.Count>0);
             if(!rosterRemove.interactable)rosterEditorHelp.text="Нужен хотя бы один участник с экраном.";
         }
-        void AddRosterHuman()
-        {
-            if(phase!=Phase.Setup||RosterTotal>=8||LocalSeatCount>=4)return;
-            int seat=LocalSeatCount;botSetup.SetAi(seat,false);identities.ClearSeat(seat);SetSeatCount(seat+1);OpenRosterEditor(seat);
-        }
+        void AddRosterHuman() { BeginLobbyDevices(); }
         void BeginRosterPicker(string title,Button source,bool compact=false)
         {
             rosterChoiceRowHeight=compact?42:70;
             rosterPickerReturn=source;rosterPickerHeading.text=title;rosterChoices.Clear();
             foreach(Transform child in rosterPickerContent){child.gameObject.SetActive(false);child.name="retired-"+child.name;Destroy(child.gameObject);}
-            rosterPicker.SetActive(true);
-            var sourceRect=(RectTransform)source.transform;var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds((RectTransform)rosterPicker.transform.parent,sourceRect);
-            var popup=(RectTransform)rosterPicker.transform;popup.anchorMin=popup.anchorMax=new Vector2(.5f,.5f);popup.pivot=new Vector2(.5f,1);popup.anchoredPosition=new Vector2(bounds.center.x,bounds.min.y);popup.sizeDelta=new Vector2(bounds.size.x,compact?336:230);
-            rosterPickerHeading.gameObject.SetActive(false);rosterPickerBack.gameObject.SetActive(false);Layout((RectTransform)rosterChoiceScroll.transform,new Vector2(0,0),new Vector2(1,1));
+            rosterPicker.transform.SetAsLastSibling();rosterPicker.SetActive(true);
             rosterChoiceScroll.verticalNormalizedPosition=1;
         }
         void AddRosterChoice(string name,string title,UnityEngine.Events.UnityAction choose,bool enabled=true)
@@ -258,6 +360,7 @@ namespace StarTournament.ProvingGround
             int row=rosterChoices.Count;var b=RosterButton(rosterPickerContent,name,title,Vector2.zero,Vector2.one,()=>{choose();CloseRosterPicker();});
             var r=(RectTransform)b.transform;r.anchorMin=new Vector2(0,1);r.anchorMax=Vector2.one;r.pivot=new Vector2(.5f,1);float gap=rosterChoiceRowHeight<70?3:7;r.offsetMin=new Vector2(6,-(row+1)*rosterChoiceRowHeight+gap);r.offsetMax=new Vector2(-6,-row*rosterChoiceRowHeight-gap);
             if(rosterChoiceRowHeight<70){var caption=b.GetComponentInChildren<Text>();caption.fontSize=22;caption.fontStyle=FontStyle.Normal;}
+            b.GetComponent<MenuPresentation>().FilledFocus=true;
             b.interactable=enabled;rosterChoices.Add(b);b.GetComponent<RosterFocus>().UseScroll=()=>rosterChoiceScroll;
         }
         void FinishRosterPicker()
@@ -271,22 +374,10 @@ namespace StarTournament.ProvingGround
         }
         void OpenRosterIdentityChoices()
         {
-            if(rosterEditing<0)return;int p=rosterEditing;bool bot=RosterIsBot(p);
-            BeginRosterPicker(bot?"СЛОЖНОСТЬ":"ПРОФИЛЬ / ГОСТЬ",rosterIdentity,!bot);
-            if(bot)for(int d=0;d<3;d++)
-            {
-                int difficulty=d;AddRosterChoice("roster-choice-difficulty-"+d,RosterDifficultyNames[d],()=>{if(p<LocalSeatCount)SetSeatDifficulty(p,difficulty);else SetBotDifficulty(p-LocalSeatCount,difficulty);});
-            }
-            else
-            {
-                foreach(var profile in playerProfiles.Profiles)
-                {
-                    var id=profile.Id;bool busy=identities.InUse(id,p);
-                    AddRosterChoice("roster-choice-profile-"+id,profile.Name+(busy?" · занят":""),()=>ChooseRosterProfile(p,id),!busy);
-                }
-                AddRosterChoice("roster-choice-guest","Гость",()=>{identities.ChooseGuest(p,input.DeviceAt(p)?.deviceId??(-100-p),MouseSensitivityPreference.Resolve(Profile),fps.Visible);setupError=null;});
-                AddRosterChoice("roster-choice-create-profile","+ Создать профиль",()=>{var profile=CreateProfileWithGeneralSettings("Игрок "+(playerProfiles.Profiles.Count+1));ChooseRosterProfile(p,profile.Id);});
-            }
+            if(rosterEditing<0)return;int p=rosterEditing;
+            if(!RosterIsBot(p)){ShowLobbyProfiles(id=>{if(id==null)identities.ChooseGuest(p,input.DeviceAt(p)?.deviceId??(-100-p),MouseSensitivityPreference.Resolve(Profile),fps.Visible);else ChooseRosterProfile(p,id);CloseLobbyDialog();RefreshInterface();},()=>{CloseLobbyDialog();Select(rosterIdentity);});return;}
+            BeginRosterPicker("СЛОЖНОСТЬ",rosterIdentity);
+            for(int d=0;d<3;d++){int difficulty=d;AddRosterChoice("roster-choice-difficulty-"+d,RosterDifficultyNames[d],()=>{if(p<LocalSeatCount)SetSeatDifficulty(p,difficulty);else SetBotDifficulty(p-LocalSeatCount,difficulty);});}
             FinishRosterPicker();
         }
         void ChooseRosterProfile(int seat,string id){identities.ChooseProfile(seat,input.DeviceAt(seat)?.deviceId??(-100-seat),id,playerProfiles);setupError=null;}
@@ -297,39 +388,17 @@ namespace StarTournament.ProvingGround
             { var choice=team;AddRosterChoice("roster-choice-team-"+(int)team,RosterTeamName(team),()=>{if(p<LocalSeatCount)SetTeam(p,choice);else SetBotTeam(p-LocalSeatCount,choice);}); }
             FinishRosterPicker();
         }
-        void OpenRosterDeviceChoices()
-        {
-            if(rosterEditing<0)return;int p=rosterEditing;bool bot=RosterIsBot(p);BeginRosterPicker(bot?"СОБСТВЕННЫЙ ЭКРАН":"УСТРОЙСТВО",rosterDevice);
-            if(bot)
-            {
-                AddRosterChoice("roster-choice-view-off","Выкл"+(p<LocalSeatCount&&LocalSeatCount==1?" · нужен хотя бы один экран":""),()=>SetRosterBotView(false),p>=LocalSeatCount||LocalSeatCount>1);
-                AddRosterChoice("roster-choice-view-on","Вкл"+(p>=LocalSeatCount&&LocalSeatCount==4?" · все 4 экрана заняты":""),()=>SetRosterBotView(true),p<LocalSeatCount||LocalSeatCount<4);
-            }
-            else
-            {
-                foreach(var device in GamepadCompatibility.ListedDevices())
-                {
-                    var choice=device;bool busy=Enumerable.Range(0,LocalSeatCount).Any(s=>s!=p&&input.DeviceAt(s)==device);
-                    bool usable=GamepadCompatibility.CanAssign(device)&&!busy;
-                    string label=GamepadCompatibility.Name(device)+" #"+device.deviceId;
-                    string status=busy?"Занято":device is Joystick && !(device is Gamepad)?"Нужен XInput или профиль":GamepadCompatibility.Status(device);
-                    AddRosterChoice("roster-choice-device-"+device.deviceId,label+"\n"+status,()=>{if(input.Replace(p,choice)){identities.RememberBinding(p,choice.deviceId);setupError=null;}},usable);
-                    var caption=rosterChoices[rosterChoices.Count-1].GetComponentInChildren<Text>();caption.fontSize=19;caption.horizontalOverflow=HorizontalWrapMode.Wrap;
-                }
-                if(rosterChoices.Count==0)AddRosterChoice("roster-choice-no-device","Подключите клавиатуру или геймпад",()=>{},false);
-            }
-            FinishRosterPicker();
-        }
+        void OpenRosterDeviceChoices() { OpenLobbyScreens(); }
         void CompactRosterSeat(int seat)
         {
-            int count=LocalSeatCount;identities.RemoveSeat(seat,count);botSetup.RemoveSeat(seat,count);
+            int count=LocalSeatCount;RemoveLobbyPosition(seat,count);identities.RemoveSeat(seat,count);botSetup.RemoveSeat(seat,count);
             for(int i=seat;i<count-1;i++)teamAssignments[i]=teamAssignments[i+1];
             input.RemoveSeat(seat);ApplyLayout(LocalSeatCount);
         }
         void PromoteRosterBot(int index)
         {
             var bot=botSetup.At(index);int seat=LocalSeatCount;botSetup.Remove(index);
-            input.SetActiveSeatCount(seat+1);botSetup.SetAi(seat,true);botSetup.SetSeatDifficulty(seat,bot.Difficulty);teamAssignments[seat]=bot.Team;identities.ClearSeat(seat);SyncHumanSeats();ApplyLayout(LocalSeatCount);rosterEditing=seat;
+            lobbyPositions[seat]=seat;input.SetActiveSeatCount(seat+1);botSetup.SetSeatBot(seat,bot);teamAssignments[seat]=bot.Team;identities.ClearSeat(seat);SyncHumanSeats();ApplyLayout(LocalSeatCount);rosterEditing=seat;
         }
         void SetRosterBotView(bool ownView)
         {
@@ -337,8 +406,8 @@ namespace StarTournament.ProvingGround
             if(ownView && p>=LocalSeatCount && LocalSeatCount<4)PromoteRosterBot(p-LocalSeatCount);
             else if(!ownView && p<LocalSeatCount && LocalSeatCount>1)
             {
-                int difficulty=botSetup.SeatDifficulty(p);var team=teamAssignments[p];CompactRosterSeat(p);botSetup.Add(LocalSeatCount);
-                int index=botSetup.Count-1;botSetup.SetDifficulty(index,difficulty);botSetup.SetTeam(index,team);rosterEditing=LocalSeatCount+index;
+                var bot=botSetup.SeatBot(p,teamAssignments[p]);CompactRosterSeat(p);botSetup.AddExisting(LocalSeatCount,bot);
+                int index=botSetup.Count-1;rosterEditing=LocalSeatCount+index;
             }
             setupError=null;RefreshInterface();
         }
@@ -360,42 +429,21 @@ namespace StarTournament.ProvingGround
             if(phase!=Phase.Setup)return;
             if(rosterEditing>=0)
             {
-                if(rosterPicker.activeSelf)RosterVerticalNavigation(rosterChoices.Where(b=>b.interactable).Cast<Selectable>().ToArray());
-                else RosterVerticalNavigation(new Selectable[]{rosterIdentity,rosterTeam,rosterDevice,rosterBotView,rosterRemove,rosterDone}.Where(b=>b.gameObject.activeSelf&&b.interactable).ToArray());
-                return;
-            }
-            if(setupStep!=2)return;
-            var cards=Enumerable.Range(0,RosterTotal).Select(p=>rosterCards[p]).ToArray();
-            var top=new[]{rosterAddHuman,rosterAddBot}.Where(b=>b.interactable).ToArray();
-            if(!setupGamepadNavigation)
-            {
-                var steps=setupSteps.Where(b=>b.interactable).ToArray();
-                for(int i=0;i<steps.Length;i++)steps[i].navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=steps[Math.Max(0,i-1)],selectOnRight=steps[Math.Min(steps.Length-1,i+1)],selectOnDown=top.FirstOrDefault()??cards[0]};
-            }
-            for(int i=0;i<top.Length;i++)
-            {var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnLeft=top[System.Math.Max(0,i-1)],selectOnRight=top[System.Math.Min(top.Length-1,i+1)],selectOnUp=setupGamepadNavigation?top[i]:setupSteps[2],selectOnDown=cards[0]};top[i].navigation=n;}
-            // Authored grid coordinates keep offscreen cards reachable; select scrolls their rect into view.
-            int[] a=Enumerable.Range(0,RosterTotal).Where(p=>SetupMode!=NativeMatchMode.Teams||RosterTeamAt(p)==NativeTeam.TeamA).ToArray();
-            int[] bteam=Enumerable.Range(0,RosterTotal).Where(p=>SetupMode==NativeMatchMode.Teams&&RosterTeamAt(p)==NativeTeam.TeamB).ToArray();
-            foreach(var group in new[]{a,bteam})for(int i=0;i<group.Length;i++)
-            {
-                int cols=SetupMode==NativeMatchMode.Teams?2:4;
-                var n=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=i>=cols?rosterCards[group[i-cols]]:top.FirstOrDefault()??(setupGamepadNavigation?rosterCards[group[i]]:setupSteps[2]),selectOnDown=i+cols<group.Length?rosterCards[group[i+cols]]:setupGamepadNavigation?rosterCards[group[i]]:start.interactable?start:setupPrevious,
-                    selectOnLeft=i%cols>0?rosterCards[group[i-1]]:rosterCards[group[i]],selectOnRight=i%cols<cols-1&&i+1<group.Length?rosterCards[group[i+1]]:rosterCards[group[i]]};
-                if(SetupMode==NativeMatchMode.Teams)
+                if(rosterPicker.activeSelf)RosterVerticalNavigation(rosterChoices.Where(b=>b.interactable).Cast<Selectable>().Concat(new Selectable[]{rosterPickerBack}).ToArray());
+                else
                 {
-                    var other=group==a?bteam:a;int row=i/2;
-                    if(group==a&&i%2==1&&other.Length>0)n.selectOnRight=rosterCards[other[Math.Min(row*2,other.Length-1)]];
-                    if(group==bteam&&i%2==0&&other.Length>0)n.selectOnLeft=rosterCards[other[Math.Min(row*2+1,other.Length-1)]];
+                    RosterVerticalNavigation(new Selectable[]{rosterIdentity,rosterTeam,rosterDevice}.Concat(rosterColorSwatches).Concat(new Selectable[]{rosterRemove,rosterDone}).Where(b=>b.gameObject.activeInHierarchy&&b.interactable).ToArray());
+                    if(rosterColorRow.activeSelf)
+                    {
+                        var row=rosterColorSwatches.Where(b=>b.interactable).ToArray();
+                        for(int i=0;i<row.Length;i++)row[i].navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=rosterDevice,selectOnDown=rosterRemove,selectOnLeft=row[Math.Max(0,i-1)],selectOnRight=row[Math.Min(row.Length-1,i+1)]};
+                        var selected=row.FirstOrDefault(b=>b.GetComponentInChildren<Text>().text=="✓")??row[0];
+                        var nav=rosterDevice.navigation;nav.selectOnDown=selected;rosterDevice.navigation=nav;
+                        nav=rosterRemove.navigation;nav.selectOnUp=selected;rosterRemove.navigation=nav;
+                    }
                 }
-                rosterCards[group[i]].navigation=n;
             }
-            if(setupGamepadNavigation){NoSetupNavigation(setupPrevious);NoSetupNavigation(start);}
-            else
-            {
-                setupPrevious.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnRight=start.interactable?start:setupPrevious};
-                start.navigation=new Navigation{mode=Navigation.Mode.Explicit,selectOnUp=cards.Last(),selectOnLeft=setupPrevious};
-            }
+            else ConfigureLobbyNavigation();
         }
         void RosterVerticalNavigation(Selectable[] buttons)
         {
@@ -404,6 +452,8 @@ namespace StarTournament.ProvingGround
         void UpdateRosterInput()
         {
             if(phase!=Phase.Setup)return;
+            if(lobbyDialog!=null&&lobbyDialog.activeSelf){UpdateLobbyDialogInput();return;}
+            if(UpdateInlineInput())return;
             bool back=TryTakeMenuBack();
             if(back)
             {

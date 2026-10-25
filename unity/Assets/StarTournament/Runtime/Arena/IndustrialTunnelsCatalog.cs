@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Approved ring + centre topology. All emitted geometry is immutable authored data.</summary>
     public static class IndustrialTunnelsCatalog
     {
-        public const string Id="industrial-tunnels-v1", Revision="1", Identity=Id+"@"+Revision;
+        public const string Id="industrial-tunnels-v1", Revision="2", Identity=Id+"@"+Revision;
         const float RoomY=-.6f, Slab=.3f, Ceiling=4.8f;
         sealed class Zone { public string Name; public Rect Rect; public Zone(string n,float x,float z,float w,float h){Name=n;Rect=new Rect(x,z,w,h);} }
         sealed class Ramp { public string Name, Room; public Vector3 Low,High; public Rect Rect; }
@@ -100,6 +100,7 @@ namespace StarTournament.ProvingGround
                 new ArenaPickupDefinition{Id="tunnels-damage-central",Kind=ArenaPickupKind.Damage,Anchor=new Vector3(0,RoomY,0),Support="support:central"},
                 new ArenaPickupDefinition{Id="tunnels-armor-west",Kind=ArenaPickupKind.Armor,Anchor=new Vector3(-23,0,0),Support="support:tunnels"},
                 new ArenaPickupDefinition{Id="tunnels-armor-east",Kind=ArenaPickupKind.Armor,Anchor=new Vector3(23,0,0),Support="support:tunnels"},
+                new ArenaPickupDefinition{Id="forge-tunnels-north",Kind=ArenaPickupKind.Plasma,Anchor=new Vector3(0,0,19),Support="support:tunnels"},
                 new ArenaPickupDefinition{Id="tunnels-pulse-south",Kind=ArenaPickupKind.Pulse,Anchor=new Vector3(0,0,-19),Support="support:tunnels"}};
             return new ArenaDefinition{MapId=Id,Revision=Revision,Identity=Identity,ProfileFingerprint="authored:"+Identity,Solids=solids.ToArray(),Spawns=spawns,SpawnRegions=regions.ToArray(),Transitions=transitions.ToArray(),RouteAnchors=new[]{new Vector3(0,RoomY,0),new Vector3(0,0,-19)},Pickups=pickups};
         }

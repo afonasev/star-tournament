@@ -7,14 +7,14 @@ namespace StarTournament.ProvingGround
     /// <summary>Published R7 with F1 windows. Default authoring data is frozen per revision; gameplay/Lab edits never rebuild it.</summary>
     public static class CombatBowlCatalog
     {
-        public const string Id="combat-bowl-v1", Revision="18", Identity=Id+"@"+Revision;
+        public const string Id="combat-bowl-v1", Revision="20", Identity=Id+"@"+Revision;
         public static bool Contains(string id)=>id==Id;
         public static ArenaFreezeSnapshot Freeze(ProvingProfile navigationProfile)=>ArenaFreezeSnapshot.Create(Resolve(Id,Revision),navigationProfile);
         public static ArenaDefinition Resolve(string id,string revision)
         {if(id!=Id||revision!=Revision)throw new ArgumentException("Unknown authored map identity: "+id+"@"+revision);return Build();}
-        public static ArenaDefinition Build()
+        public static ArenaDefinition Build(bool previousForgePlacement=false)
         {
-            var definition=Draft();
+            var definition=Draft(previousForgePlacement);
             // Every authored spatial value is registered in the same descriptor system as Balance Lab.
             // This published revision always resolves its approved defaults, not mutable gameplay profiles.
             var profile=ProvingProfile.CreateCombatBowlAuthoringDefault(definition);
@@ -33,7 +33,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<d.RouteAnchors.Length;i++)d.RouteAnchors[i]=Read("route-"+i);
             foreach(var item in d.Pickups)item.Anchor=Read(item.Id+".anchor");
         }
-        static ArenaDefinition Draft()
+        internal static ArenaDefinition Draft(bool previousForgePlacement=false)
         {
             // Authored P4 defaults, all exported as range-validated profile metadata below.
             var solids=new List<ArenaSolid>();var transitions=new List<NativeNavigationTransition>();
@@ -234,7 +234,8 @@ namespace StarTournament.ProvingGround
             void Spawn(string id,Vector3 position,string support){spawns.Add(position);regions.Add(new ArenaSpawnRegion{Id=id,Support=support,Center=position,Size=new Vector3(1,0,1)});}
             Spawn("spawn-inner-north",new Vector3(-10,0,14),loop);Spawn("spawn-outer-north",new Vector3(6,0,28),loop);
             Spawn("spawn-outer-south",new Vector3(-6,0,-28),loop);Spawn("spawn-inner-south",new Vector3(10,0,-14),loop);
-            return new ArenaDefinition{Revision=Revision,MapId=Id,Identity=Identity,ProfileFingerprint="authored:"+Identity,Pickups=new[]{
+            var pickups=new List<ArenaPickupDefinition>(new[]{
+
                 new ArenaPickupDefinition{Id="heal-basement",Kind=ArenaPickupKind.FullHeal,Support=basement,Anchor=new Vector3(0,-1.2f,0)},
                 new ArenaPickupDefinition{Id="armor-sw",Kind=ArenaPickupKind.Armor,Support=hall,Anchor=new Vector3(-32,4,-28)},
                 new ArenaPickupDefinition{Id="armor-ne",Kind=ArenaPickupKind.Armor,Support=hall,Anchor=new Vector3(32,4,28)},
@@ -246,7 +247,15 @@ namespace StarTournament.ProvingGround
                 new ArenaPickupDefinition{Id="pulse-south",Kind=ArenaPickupKind.Pulse,Support=hall,Anchor=new Vector3(-12,4,-21)},
                 new ArenaPickupDefinition{Id="cutter-north",Kind=ArenaPickupKind.Cutter,Support=loop,Anchor=new Vector3(-8,0,28)},
                 new ArenaPickupDefinition{Id="cutter-south",Kind=ArenaPickupKind.Cutter,Support=loop,Anchor=new Vector3(8,0,-28)},
-                new ArenaPickupDefinition{Id="damage-hall",Kind=ArenaPickupKind.Damage,Support=hall,Anchor=new Vector3(0,4,0)}},Solids=solids.ToArray(),Spawns=spawns.ToArray(),SpawnRegions=regions.ToArray(),Transitions=transitions.ToArray(),RouteAnchors=new[]{new Vector3(0,-1.2f,0),new Vector3(0,4,0)}};
+                new ArenaPickupDefinition{Id="forge-west",Kind=ArenaPickupKind.Plasma,Support=hall,Anchor=new Vector3(-24,4,0)},
+                new ArenaPickupDefinition{Id="forge-east",Kind=ArenaPickupKind.Plasma,Support=hall,Anchor=new Vector3(24,4,0)},
+                new ArenaPickupDefinition{Id="damage-hall",Kind=ArenaPickupKind.Damage,Support=hall,Anchor=new Vector3(0,4,0)}});
+            if(!previousForgePlacement)
+            {
+                pickups.RemoveAll(p=>p.Id=="forge-west"||p.Id=="forge-east");
+                var north=pickups.Find(p=>p.Id=="pulse-north");north.Id="forge-north";north.Kind=ArenaPickupKind.Plasma;
+            }
+            return new ArenaDefinition{Revision=Revision,MapId=Id,Identity=Identity,ProfileFingerprint="authored:"+Identity,Pickups=pickups.ToArray(),Solids=solids.ToArray(),Spawns=spawns.ToArray(),SpawnRegions=regions.ToArray(),Transitions=transitions.ToArray(),RouteAnchors=new[]{new Vector3(0,-1.2f,0),new Vector3(0,4,0)}};
         }
     }
 }

@@ -5,12 +5,14 @@ namespace StarTournament.ProvingGround
     /// <summary>Bounded prediction from filtered knowledge, never a future combat result.</summary>
     public sealed class NativeBotWeaponEstimate
     {
-        readonly ProvingProfile combat, life, cutter;
+        readonly ProvingProfile combat, life, cutter, plasma;
         readonly ShotgunResolver zones;
         readonly NativeShotgunPolicy aim;
-        public NativeBotWeaponEstimate(ProvingProfile movement,ProvingProfile combat,ProvingProfile life,ProvingProfile cutter,NativeShotgunPolicy aim)
+        readonly float fixedStep;
+        public NativeBotWeaponEstimate(ProvingProfile movement,ProvingProfile combat,ProvingProfile life,ProvingProfile cutter,NativeShotgunPolicy aim,ProvingProfile plasma=null)
         {
-            this.combat=combat;this.life=life;this.cutter=cutter;this.aim=aim;
+            this.plasma=plasma??ProvingProfile.CreatePlasmaDefault();this.combat=combat;this.life=life;this.cutter=cutter;this.aim=aim;
+            fixedStep=1f/movement.Get("simulation.fixedTickHz");
             zones=new ShotgunResolver(combat,movement.Get("player.capsule.height"));
         }
         public float Estimate(WeaponId id,NativeBotFrame frame,NativeBotMemoryEntry target,double time,float phase,
@@ -34,8 +36,10 @@ namespace StarTournament.ProvingGround
             int steps=Mathf.Max(2,timeSamples);float dt=horizon/steps,score=0;
             var pose=frame.Pose;float nextShot=delay;
             int rounds=id==WeaponId.Cutter?0:CombatLife.AmmoFor(frame.Life,id);
-            float cooldown=id==WeaponId.Rifle?life.Get("rifle.cooldownSeconds"):id==WeaponId.Shotgun?life.Get("combat.cooldownSeconds"):life.Get("rocket.cooldownSeconds");
-            float damage=id==WeaponId.Rifle?combat.Get("rifle.damage"):id==WeaponId.Shotgun?combat.Get("shot.damage"):combat.Get("rocket.maximumDamage");
+            float cooldown=id==WeaponId.Plasma?plasma.Get("plasma.cooldownSeconds"):id==WeaponId.Rifle?life.Get("rifle.cooldownSeconds"):id==WeaponId.Shotgun?life.Get("combat.cooldownSeconds"):life.Get("rocket.cooldownSeconds");
+            // Match CombatLife numerical tick boundaries for the independently tuned rifle.
+            if(id==WeaponId.Rifle)cooldown=(float)(Math.Max(1,Math.Ceiling((cooldown-1e-7)/fixedStep))*fixedStep);
+            float damage=id==WeaponId.Plasma?plasma.Get("plasma.damage"):id==WeaponId.Rifle?combat.Get("rifle.damage"):id==WeaponId.Shotgun?combat.Get("shot.damage"):combat.Get("rocket.maximumDamage");
             float boostMultiplier=life.Get("damageBoost.multiplier");
             var beamDelivered=id==WeaponId.Cutter?new float[frame.Knowledge.Enemies.Length]:null;
             float delivered=0;
@@ -43,7 +47,7 @@ namespace StarTournament.ProvingGround
             {
                 float t=(i+.5f)*dt;pose.Position=frame.Pose.Position+frame.Pose.Velocity*t;
                 var observed=target.Sighting.Position+target.Sighting.Velocity*t;
-                float travel=id==WeaponId.Rifle?Vector3.Distance(pose.Position,observed)/combat.Get("rifle.speed"):0;
+                float travel=(id==WeaponId.Rifle||id==WeaponId.Plasma)?Vector3.Distance(pose.Position,observed)/(id==WeaponId.Plasma?plasma.Get("plasma.speed"):combat.Get("rifle.speed")):0;
                 var point=observed+Vector3.up*aim.TargetHeight+target.Sighting.Velocity*travel*lead;
                 var action=aim.AimPoint(pose,point,time+t,dt,phase,rate,error,period,out _);
                 pose.Yaw+=action.LookDegrees.x;pose.Pitch-=action.LookDegrees.y;
@@ -68,13 +72,13 @@ namespace StarTournament.ProvingGround
                 {
                     while(rounds>0&&nextShot<(i+1)*dt&&nextShot<horizon)
                     {
-                        float flight=id==WeaponId.Rifle?travel:id==WeaponId.RocketLauncher?distance/combat.Get("rocket.speed"):0;
+                        float flight=(id==WeaponId.Rifle||id==WeaponId.Plasma)?travel:id==WeaponId.RocketLauncher?distance/combat.Get("rocket.speed"):0;
                         float probability;
                         if(id==WeaponId.RocketLauncher)
                             probability=Mathf.Clamp01(1-aim.TargetHeight/aim.RocketRadius); // Existing safe RocketPlan owns body/floor/LOS choice.
                         else
                         {
-                            probability=0;float spread=Mathf.Tan(combat.Get(id==WeaponId.Rifle?"rifle.spread":"shot.spread")*Mathf.Deg2Rad);
+                            probability=0;float spread=id==WeaponId.Plasma?0:Mathf.Tan(combat.Get(id==WeaponId.Rifle?"rifle.spread":"shot.spread")*Mathf.Deg2Rad);
                             var rotation=Quaternion.Euler(pose.Pitch,pose.Yaw,0);var origin=pose.Position+Vector3.up*aim.EyeHeight;
                             int count=Mathf.Max(1,spreadSamples);
                             for(int n=0;n<count;n++)
@@ -83,7 +87,7 @@ namespace StarTournament.ProvingGround
                                 // not a new spread or damage multiplier. Count is profile-owned.
                                 float r=Mathf.Sqrt((n+.5f)/count)*spread,a=n*2.39996323f;
                                 var ray=rotation*new Vector3(Mathf.Cos(a)*r,Mathf.Sin(a)*r,1).normalized;
-                                probability+=Coverage(origin,ray,target.Sighting,t+flight,id==WeaponId.Rifle?float.PositiveInfinity:zones.Range);
+                                probability+=Coverage(origin,ray,target.Sighting,t+flight,(id==WeaponId.Rifle||id==WeaponId.Plasma)?float.PositiveInfinity:zones.Range);
                             }
                             probability/=count;
                         }

@@ -12,7 +12,7 @@ import subprocess
 import tempfile
 
 STAGES = {'draft','ready','implementing','verified','merged','deployed','published','finalizing','awaiting-acceptance','rework-required','accepted','archived','cancelled'}
-EDGES = {'draft':{'ready'},'ready':{'implementing'},'implementing':{'verified'},'verified':{'merged','published'},'merged':{'deployed'},'deployed':{'finalizing'},'published':{'finalizing'},'finalizing':{'awaiting-acceptance','accepted','rework-required'},'awaiting-acceptance':{'accepted','rework-required'},'rework-required':{'implementing'},'accepted':{'archived','rework-required'}}
+EDGES = {'draft':{'ready'},'ready':{'implementing'},'implementing':{'verified'},'verified':{'merged','published'},'merged':{'deployed','finalizing'},'deployed':{'finalizing'},'published':{'finalizing'},'finalizing':{'awaiting-acceptance','accepted','rework-required'},'awaiting-acceptance':{'accepted','rework-required'},'rework-required':{'implementing'},'accepted':{'archived','rework-required'}}
 
 def now():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -84,6 +84,7 @@ class Flow:
                 except ValueError: errors.append('missing:'+edge['id']); continue
                 threshold=edge['threshold']; stage=dep['stage']
                 delivered=stage in ({'deployed','finalizing','awaiting-acceptance','accepted','archived'} if dep['kind']=='software' else {'published','finalizing','awaiting-acceptance','accepted','archived'})
+                if dep['kind']=='software' and self.source_only(dep): delivered=False
                 ok=delivered and (threshold!='accepted' or self.acceptance_status(dep)=='accepted')
                 if not ok: errors.append('dependency:'+edge['id'])
         return errors
@@ -192,8 +193,27 @@ class Flow:
         d['evidence']['acceptance_deferred']={'source':source,'reason':reason,'binding':self.result_binding(d),'at':now()}
         return self.save(p,d,'acceptance-deferred',source=source)
 
+    def source_only(self,d):
+        scope=d['evidence'].get('delivery_scope')
+        if isinstance(scope,dict) and scope.get('result')=='source': return True
+        # A removed marker must not turn source completion into a deployed dependency.
+        for event in reversed(d['history']):
+            if event.get('event')=='transition' and event.get('stage') in {'finalizing','deployed','rework-required'}:
+                return event['stage']=='finalizing' and event.get('previous')=='merged'
+        return False
+
+    def source_scope_errors(self,d):
+        scope=d['evidence'].get('delivery_scope')
+        if not isinstance(scope,dict) or scope.get('result')!='source': return ['source-delivery-scope-required']
+        reason=scope.get('reason'); gates=scope.get('deferred_gates')
+        if not isinstance(reason,str) or not reason.strip(): return ['source-scope-reason-required']
+        if not isinstance(gates,list) or not all(isinstance(g,str) for g in gates) or not {'build','player','release','deploy'} <= set(gates):
+            return ['source-deferred-gates-required']
+        return []
+
     def finalization_errors(self,p,d):
         errors=self.blocks(d,'awaiting-acceptance')
+        if d['kind']=='software' and self.source_only(d): errors.extend(self.source_scope_errors(d))
         for key in ['spec_sync','cleanup','acceptance_guide']:
             if not d['evidence'].get(key): errors.append('missing:'+key)
         if d['evidence'].get('cleanup_pending',{}).get('completed') is False:
@@ -231,6 +251,11 @@ class Flow:
         elif target not in EDGES.get(old,set()): raise ValueError('Invalid transition: '+old+' → '+target)
         if d['owner'] and d['owner']!=owner: raise ValueError('Change belongs to another session')
         if target=='implementing' and not d['owner']: raise ValueError('Claim first')
+        if old=='merged' and target=='finalizing':
+            scope_errors=self.source_scope_errors(d)
+            if scope_errors: raise ValueError('Source finalization incomplete: '+str(scope_errors))
+        if target=='deployed' and self.source_only(d):
+            raise ValueError('Source-only result cannot be marked deployed; record deployment scope explicitly')
         errors=self.blocks(d,target)
         if errors and target!='cancelled': raise ValueError('Blocked: '+str(errors))
         needed={'ready':['scope'],'verified':['verification'],'merged':['merge'],'deployed':['release','smoke'],'published':['publication'],'finalizing':[],'awaiting-acceptance':['spec_sync','cleanup','acceptance_guide'],'archived':['archive']}.get(target,[])

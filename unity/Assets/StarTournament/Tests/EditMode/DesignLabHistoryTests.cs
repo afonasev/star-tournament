@@ -18,6 +18,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [Test]public void LobbyRemovalHoldUpgradePreservesVersionOneBytesAndValues()
+        {
+            var shipped=Shipped();shipped.Profiles.Add(ProvingProfile.CreateLobbyDefault());
+            var old=shipped.Clone();var lobby=old.Profiles.Single(p=>p.Id=="single-screen-lobby-v1");
+            var before=typeof(ProvingProfile).GetMethod("BeforeLobbyRemovalHold",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            old.Profiles[old.Profiles.IndexOf(lobby)]=(ProvingProfile)before.Invoke(lobby,null);
+            var history=new DesignLabHistory(path,old);history.Create("Лобби v1");var draft=history.Selected.Snapshot;draft.Set("lobby.durationMinutes",7);history.Save(draft);
+            var previous=history.Selected;string hash=previous.Hash;
+            var upgraded=new DesignLabHistory(path,shipped);Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("lobby.durationMinutes"),Is.EqualTo(7));Assert.That(upgraded.Selected.Snapshot.Get("lobby.removeHoldSeconds"),Is.EqualTo(1));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(hash));
+            Assert.That(upgraded.Selected.Snapshot.Validate(),Is.Empty);
+        }
         [TestCase(13)][TestCase(14)]public void SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash(int previousVersion)
         {
             var prior=typeof(ProvingProfile).GetMethod(previousVersion==14?"BeforeSmoothGamepadTap":"BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
@@ -111,11 +124,23 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(restarted.Selected.Hash,Is.EqualTo(migrated.Hash));
             Assert.That(restarted.SelectedProfile.Revisions.Single(r=>r.Number==originalRevision.Number).Hash,Is.EqualTo(originalRevision.Hash));
         }
+        [Test]public void ReactiveBotUpgradePreservesV4HashAndCustomDistance()
+        {
+            var prior=typeof(ProvingProfile).GetMethod("BeforeBotReactiveCombat",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Мои дистанции");var draft=history.Selected.Snapshot;draft.Set("bots.hard.preferredDistanceMeters",7);history.Save(draft);
+            var previous=history.Selected;string original=JsonUtility.ToJson(previous.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped(),releases:LabReleaseCatalog.Factory(old),resetToLatestDefault:true);
+            Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("bots.spacing.rifleMeters"),Is.EqualTo(16));
+            var local=upgraded.Profiles.Single(p=>p.Name=="Мои дистанции");var preserved=local.Revisions.Single(r=>r.Number==previous.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(previous.Hash));Assert.That(JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(original));
+            Assert.That(local.Revisions.Last().Snapshot.Get("bots.hard.preferredDistanceMeters"),Is.EqualTo(7));
+        }
         [Test]public void SerializedBotProfileDefaultsUpgradeWhileCustomValuesRemain()
         {
             var prior=typeof(ProvingProfile).GetMethod("BeforeBotCombatMovement",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
             var profile=(ProvingProfile)prior.Invoke(ProvingProfile.CreateBotBehaviorDefault(),null);profile.Set("bots.hard.jumpChance",.4f);
-            profile.EnsureBotDescriptors();Assert.That(profile.Version,Is.EqualTo(4));Assert.That(profile.Validate(),Is.Empty);
+            profile.EnsureBotDescriptors();Assert.That(profile.Version,Is.EqualTo(5));Assert.That(profile.Validate(),Is.Empty);
             Assert.That(profile.Get("bots.easy.jumpChance"),Is.Zero);Assert.That(profile.Get("bots.normal.jumpChance"),Is.EqualTo(.3f));
             Assert.That(profile.Get("bots.hard.jumpChance"),Is.EqualTo(.4f));Assert.That(profile.Get("bots.hard.surpriseJumpChance"),Is.EqualTo(.9f));
             profile.EnsureBotDescriptors();Assert.That(profile.Get("bots.hard.jumpChance"),Is.EqualTo(.4f));
@@ -304,7 +329,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
-        {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        {var bundle=Shipped();bundle.Profiles.Add(ProvingProfile.CreateLobbyDefault());Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
         [Test]public void TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning()
         {
             var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>p.BeforeUnifiedBodyDamage().BeforeTravelingRifle()).ToList();

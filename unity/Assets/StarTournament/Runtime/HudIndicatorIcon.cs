@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class HudIndicatorIcon : MaskableGraphic
     {
-        public enum IconKind { Heart, Shield, Cartridges, Rifle, Shotgun, Rocket, Cutter }
+        public enum IconKind { Heart, Shield, Cartridges, Rifle, Shotgun, Rocket, Cutter, Plasma }
 
         IconKind kind;
         public IconKind Kind
@@ -52,6 +52,9 @@ namespace StarTournament.ProvingGround
                     Quad(mesh,rect,.71f,.51f,.97f,.59f); // long barrel
                     Quad(mesh,rect,.35f,.20f,.47f,.44f); // grip
                     Quad(mesh,rect,.43f,.72f,.58f,.78f); // raised sight
+                    break;
+                case IconKind.Plasma:
+                    FillPolygon(mesh,rect,new[]{new Vector2(.5f,.94f),new Vector2(.2f,.8f),new Vector2(.08f,.5f),new Vector2(.2f,.2f),new Vector2(.5f,.06f),new Vector2(.8f,.2f),new Vector2(.92f,.5f),new Vector2(.8f,.8f)});
                     break;
                 case IconKind.Cutter:
                     // Authored icon contour is a technical glyph, not a balance parameter.

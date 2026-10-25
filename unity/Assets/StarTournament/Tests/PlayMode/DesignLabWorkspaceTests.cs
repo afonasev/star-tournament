@@ -21,6 +21,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string name)=>ground.GetComponentsInChildren<Button>().Single(b=>b.name==name);
         InputField Input(string name)=>ground.GetComponentsInChildren<InputField>().Single(b=>b.name==name);
         void Click(string name)=>Button(name).onClick.Invoke();
+        [UnityTest] public IEnumerator IndividualEffectFieldsSaveForNextMatchAndRenderInAudioGroup()
+        {
+            directory=Path.Combine(Path.GetTempPath(),"st-effect-mix-"+Guid.NewGuid());Directory.CreateDirectory(directory);
+            oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",Path.Combine(directory,"history.json"));
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return NativeLoadingTestScene.WaitLabHistory(ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single());
+            Click("main-action-2");yield return null;Click("lab-create");yield return null;Input("lab-profile-name").text="Микс эффектов";Click("submit");yield return null;
+            Input("lab-search").text="audio.effect.";yield return null;
+            var fields=ground.GetComponentsInChildren<InputField>().Where(i=>i.name.StartsWith("input-audio.effect.")).ToArray();Assert.That(fields.Length,Is.EqualTo(19));
+            Input("input-audio.effect.rifleGain").text="0.5";Input("input-audio.effect.shotgunGain").text="1.5";yield return null;
+            Assert.That(ground.Profile.Get("audio.effect.rifleGain"),Is.EqualTo(1),"Draft does not change current mix");
+            var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../.local/effect-mix"));Directory.CreateDirectory(output);
+            yield return EditorUiCapture.Capture(ground,Path.Combine(output,"lab-effect-levels.png"),1920,1080);
+            Click("lab-save");yield return null;string saved=ground.LabSavedIdentity;
+            Click("lab-back");yield return null;Click("main-action-0");yield return null;
+            pad=InputSystem.AddDevice<Gamepad>();ground.StartCombatReview(new[]{pad},true,true);yield return NativeLoadingTestScene.Wait(ground);
+            Assert.That(ground.FrozenLabIdentity,Is.EqualTo(saved));Assert.That(ground.Profile.Get("audio.effect.rifleGain"),Is.EqualTo(.5f));Assert.That(ground.Profile.Get("audio.effect.shotgunGain"),Is.EqualTo(1.5f));
+        }
         [UnityTest] public IEnumerator DraftValidationFocusAndSavedSelectionRemainIndependentOfLiveMatch()
         {
             directory=Path.Combine(Path.GetTempPath(),"st-lab-ui-"+Guid.NewGuid());Directory.CreateDirectory(directory);
