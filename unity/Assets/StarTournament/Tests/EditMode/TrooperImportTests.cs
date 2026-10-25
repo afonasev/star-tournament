@@ -57,6 +57,19 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(forearms,Is.Not.SameAs(hands));
             Assert.That(forearms.triangles.Length,Is.LessThan(hands.triangles.Length));
         }
+        [Test] public void ShotgunMetalRetainsOriginalTextureInBodyAndArms()
+        {
+            foreach(var name in new[]{"TrooperBody.prefab","TrooperArms.prefab"})
+            {
+                var gun=AssetDatabase.LoadAssetAtPath<GameObject>(Root+name).GetComponentsInChildren<Renderer>(true).Single(r=>r.name=="weapon:joined");
+                foreach(var key in new[]{"vector-chassis","vector-titanium"})
+                {
+                    var material=gun.sharedMaterials.Single(m=>m.name==key);
+                    var textures=material.GetTexturePropertyNames().Where(p=>p.ToLowerInvariant().Contains("basecolor")).Select(material.GetTexture).Where(t=>t).ToArray();
+                    Assert.That(textures,Is.Not.Empty,key);Assert.That(textures.All(t=>t.width<=128&&t.height<=128),Is.True,"Reuse bounded original metal texture");
+                }
+            }
+        }
         [Test] public void ProfileAndAttributionAreComplete()
         {
             var profile=ProvingProfile.CreateTrooperDefault();Assert.That(profile.Validate(),Is.Empty);

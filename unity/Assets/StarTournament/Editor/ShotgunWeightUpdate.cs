@@ -27,8 +27,9 @@ namespace StarTournament.ProvingGround.Editor
             float before=draft.Get("shot.spread");
             if(!Mathf.Approximately(before,6)&&!Mathf.Approximately(before,4.8f))throw new InvalidOperationException("Unexpected shotgun baseline "+before);
             draft.Set("shot.spread",4.8f);
-            draft.Set("presentation.shotTracerRed",.46f);draft.Set("presentation.shotTracerGreen",.30f);draft.Set("presentation.shotTracerBlue",.14f);
+            draft.Set("presentation.shotTracerRed",.32f);draft.Set("presentation.shotTracerGreen",.32f);draft.Set("presentation.shotTracerBlue",.32f);
             if(draft.Hash()!=history.Selected.Hash||history.CanMaterializeSelected){history.Save(draft);history.MarkSelectedForRelease(true);}
+            history.RefreshAuthoringCompatibility();
             LabReleaseStaging.Stage(project,baseline);
             AssetDatabase.Refresh();
             var updated=LabReleaseCatalog.Load();

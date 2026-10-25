@@ -57,13 +57,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{Directory.Delete(directory,true);}
         }
-        [Test] public void AuthoringWellDefaultUsesCurrentLightingAndPreservesSourceAndCustomProfile()
+        [TestCase(false)][TestCase(true)] public void AuthoringWellDefaultUsesCurrentLightingAndPreservesSourceAndCustomProfile(bool beforeIdleDeparture)
         {
             string directory=Path.Combine(Path.GetTempPath(),"author-well-"+Guid.NewGuid());Directory.CreateDirectory(directory);string path=Path.Combine(directory,"history.json");
             try
             {
                 var current=DesignLabHistoryTests.Shipped();var before=typeof(ProvingProfile).GetMethod("BeforeWellDaylight",BindingFlags.Instance|BindingFlags.NonPublic);
-                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList();var catalog=LabReleaseCatalog.Factory(old);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList();
+                if(beforeIdleDeparture)
+                {
+                    var older=typeof(ProvingProfile).GetMethod("BeforeWellIdleDeparture",BindingFlags.Instance|BindingFlags.NonPublic);
+                    old.Profiles=old.Profiles.Select(p=>(ProvingProfile)older.Invoke(p,null)).ToList();
+                }
+                var catalog=LabReleaseCatalog.Factory(old);
                 var history=new DesignLabHistory(path,old,releases:catalog,authoring:true);var original=history.Selected;string originalJson=JsonUtility.ToJson(original.Snapshot);
                 history.Create("Custom Well");var draft=history.Selected.Snapshot;draft.Set("well.lampRange",15);history.Save(draft);var custom=history.Selected;
                 var next=new DesignLabHistory(path,current,releases:catalog,authoring:true,persistMigration:false);

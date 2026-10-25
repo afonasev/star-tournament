@@ -15,15 +15,17 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var catalog=LabReleaseCatalog.Load();
                 var current=DesignLabHistory.ResolvePublishedDefault(ground.CaptureLabAuthoringBaseline(),catalog).Selected.Snapshot;
                 var prior=catalog.Entries.Where(e=>e.ProfileId==DesignLabHistory.ReleaseId).OrderByDescending(e=>e.Revision).Skip(1).First().Snapshot;
-                Assert.That(current.Get("shot.spread"),Is.EqualTo(prior.Get("shot.spread")*.8f).Within(.00001f));
+                var original=catalog.Entries.Single(e=>e.ProfileId==DesignLabHistory.ReleaseId&&e.Revision==2).Snapshot;
+                Assert.That(current.Get("shot.spread"),Is.EqualTo(original.Get("shot.spread")*.8f).Within(.00001f));
+                Assert.That(current.Get("shot.spread"),Is.EqualTo(prior.Get("shot.spread")));
                 foreach(var path in new[]{"shot.damage","shot.pellets","shot.range","combat.cooldownSeconds"})
                     Assert.That(current.Get(path),Is.EqualTo(prior.Get(path)),path);
-                Assert.That(current.Get("presentation.shotTracerRed"),Is.EqualTo(.46f));
-                Assert.That(current.Get("presentation.shotTracerGreen"),Is.EqualTo(.30f));
-                Assert.That(current.Get("presentation.shotTracerBlue"),Is.EqualTo(.14f));
+                Assert.That(current.Get("presentation.shotTracerRed"),Is.EqualTo(.32f));
+                Assert.That(current.Get("presentation.shotTracerGreen"),Is.EqualTo(.32f));
+                Assert.That(current.Get("presentation.shotTracerBlue"),Is.EqualTo(.32f));
                 catalog.Entries.Remove(catalog.Entries.Where(e=>e.ProfileId==DesignLabHistory.ReleaseId).OrderByDescending(e=>e.Revision).First());
                 var previous=DesignLabHistory.ResolvePublishedDefault(ground.CaptureLabAuthoringBaseline(),catalog).Selected.Snapshot;
-                foreach(var descriptor in previous.Descriptors.Where(d=>d.Path!="shot.spread"))
+                foreach(var descriptor in previous.Descriptors.Where(d=>!d.Path.StartsWith("presentation.shotTracer")))
                     Assert.That(current.Get(descriptor.Path),Is.EqualTo(previous.Get(descriptor.Path)),descriptor.Path);
                 var combat=current.Profiles.Single(p=>p.Id=="unity-native-combat-v1");
                 var resolver=new ShotgunResolver(combat,1.8f);

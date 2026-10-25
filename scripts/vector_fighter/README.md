@@ -169,3 +169,6 @@ that the editable high-poly source remains byte-identical to that revision.
 Set `STAR_TOURNAMENT_MESH_SHIPPING_ONLY=1` for a graphical capture of the actual
 current prefabs without candidate imports or timing loops. That mode supports
 unity-run shared; measured multi-variant comparison uses exclusive.
+
+## Restored shotgun surface maps (2026-10-25)
+After exporting the final runtime GLBs, run `python3 tools/restore-shotgun-surfaces.py`. This append-only pass reuses the original 128px shotgun metal map from double-barrel-shotgun-lod0.glb on vector-chassis/vector-titanium. It preserves all existing geometry, UV, skin, clip and image bytes, shares one new texture between the two materials per file, and updates asset-manifest hashes. Existing ceramic/glove maps remain intact.
