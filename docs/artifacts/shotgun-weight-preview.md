@@ -32,3 +32,9 @@ User selected Quake or an intermediate Quake/DOOM direction after reviewing game
 Recipe preserves the original-pitch attack, blends a band-limited low-mid recorded layer at 0.88 playback rate and one 9ms recorded snap; short envelope, parallel saturation after the attack. No synthetic rumble or added reverb. Recipe values are offline preview authoring parameters, not runtime gameplay/Lab settings.
 `python3 tools/preview-shotgun-arena.py` generates two bank takes each, plus two five-second previews (two isolated shots and three at 0.7-second cadence). Results and hashes in `.local/shotgun-arena-v3/manifest.json`.
 Generation/readback checks passed: mono PCM16 48 kHz; peaks below full scale. Human listening and resemblance judgment pending. Runtime/gameplay unchanged; no Unity or build was necessary for this preview-only revision. Keep this worktree/media for the selected sound implementation and the original spread/color request.
+
+## Revision 4 — duration diagnosis
+
+User says revision 3 still does not resemble the reference and may be too fast. Measurement of v3 first takes: 95% energy in 19.0/19.2ms, 99% in 25.1/25.7ms; intended envelope differences did not materially change the heard-body energy distribution. Do not claim the previews met Quake resemblance.
+New diagnostic pair: restored recorded body at original pitch, then the same result at 0.7 tempo with pitch preserved. Model 12 recorded body uses bounded RMS gain, not added tonal rumble. First/second take 95% energy at 102.6/142.4ms, 99% at 217.9/220.6ms. These are measured energy durations, not human sound-quality judgments.
+Reproduce after v3: `PYTHONDONTWRITEBYTECODE=1 python3 tools/preview-shotgun-duration.py`. Output `.local/shotgun-duration-v4/`, hashes and parameters in manifest. Readback PCM/peak checks passed; no clipping. Listen/selection pending. No gameplay/default/runtime changes or integration. Original spread/color request remains open.
