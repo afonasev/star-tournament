@@ -41,6 +41,9 @@ class MacPackageRoute(unittest.TestCase):
                     self.assertEqual(info['LSMinimumSystemVersion'],minimum)
                     self.assertEqual(info['CFBundleExecutable'],'StarTournamentLauncher')
                     stage=Path(command[command.index('--packDir')+1]);out=Path(command[command.index('--outputDir')+1])
+                    self.assertFalse((stage/'Contents/MacOS/game').is_symlink())
+                    self.assertTrue((stage/'Contents/MacOS/game/Player.app').is_dir())
+                    self.assertTrue((stage/'Contents/MacOS/release.json').is_symlink())
                     config=json.loads((stage/'Contents/MacOS/release.json').read_text());configs.append(config)
                     with zipfile.ZipFile(out/'full.nupkg','w') as archive:
                         archive.writestr('lib/app/Contents/Resources/payload/release.json',json.dumps(config))
