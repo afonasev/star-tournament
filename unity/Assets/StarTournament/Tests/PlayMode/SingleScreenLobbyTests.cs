@@ -80,6 +80,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Click("lobby-map");EventSystem.current.SetSelectedGameObject(B("lobby-map-"+WellArenaCatalog.Id).gameObject);yield return null;yield return Capture("02-map-picker");yield return Press(GamepadButton.East);
             Assert.That(ground.SelectedMapId,Is.EqualTo(CombatBowlCatalog.Id));
         }
+        [UnityTest] public IEnumerator SelectedMapArtworkFollowsPreviewAndConfirmation()
+        {
+            foreach(var id in new[]{CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id})
+            {
+                var original=ground.SelectedMapId;
+                yield return Click("lobby-map");
+                EventSystem.current.SetSelectedGameObject(B("lobby-map-"+id).gameObject);yield return null;yield return null;
+                var preview=ground.GetComponentsInChildren<ArenaPreviewGraphic>().Single(p=>p.name=="lobby-large-map-preview");
+                Assert.That(ground.SelectedMapId,Is.EqualTo(original),"Focus previews without committing the map");
+                Assert.That(preview.texture,Is.SameAs(Resources.Load<Texture2D>("MapMenuArt/"+id)),id);
+                Assert.That(preview.texture,Is.Not.Null,id);Assert.That(preview.raycastTarget,Is.False);
+                var rect=preview.rectTransform.rect;
+                Assert.That(preview.texture.width*preview.uvRect.width/(preview.texture.height*preview.uvRect.height),Is.EqualTo(rect.width/rect.height).Within(.01f),"Artwork must not stretch");
+                yield return Capture("map-picker-"+id);
+                yield return Click("lobby-map-"+id);
+                Assert.That(ground.SelectedMapId,Is.EqualTo(id));
+                var compact=ground.GetComponentsInChildren<ArenaPreviewGraphic>().Single(p=>p.name=="lobby-map-preview");
+                Assert.That(compact.texture,Is.SameAs(preview.texture),"Confirmed artwork also updates the compact card");
+                yield return Capture("lobby-"+id);
+            }
+        }
         [UnityTest] public IEnumerator BotTransactionsRememberOnlySuccessfulAddAndBlockModalShortcuts()
         {
             yield return Click("lobby-mode");yield return Click("lobby-teams");
