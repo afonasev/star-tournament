@@ -242,7 +242,7 @@ namespace StarTournament.ProvingGround
         NativeTeam RosterTeamAt(int p)=>p<LocalSeatCount?teamAssignments[p]:botSetup.At(p-LocalSeatCount).Team;
         int RosterDifficultyAt(int p)=>p<LocalSeatCount?botSetup.SeatDifficulty(p):botSetup.At(p-LocalSeatCount).Difficulty;
         string RosterTeamName(NativeTeam team)=>(team==NativeTeam.TeamA)^swappedTeamColors?"Синяя":"Красная";
-        Color RosterTeamColor(NativeTeam team)=>NativeParticipantColors.Read(ParticipantPaletteProfile)[(team==NativeTeam.TeamA)^swappedTeamColors?0:1];
+        Color RosterTeamColor(NativeTeam team)=>NativeParticipantColors.TeamColor(team,swappedTeamColors,ParticipantPaletteProfile);
         Button[] LayoutRosterGrid(Transform content,int[] participants,int slots,int columns,float height)
         {
             var cards=participants.Select(i=>rosterCards[i]).ToList();

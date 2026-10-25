@@ -42,7 +42,7 @@ namespace StarTournament.ProvingGround
         public static Color[] Palette=>NativeParticipantColors.Read();
         public bool SwapTeamColors {get;set;}
         public static string TeamName(NativeTeam team)=>team==NativeTeam.TeamA?"Team A":team==NativeTeam.TeamB?"Team B":"";
-        public static Color TeamColor(NativeTeam team,bool swap)=>Palette[(team==NativeTeam.TeamA?0:1)^(swap?1:0)];
+        public static Color TeamColor(NativeTeam team,bool swap)=>NativeParticipantColors.TeamColor(team,swap);
         public static Color Identity(NativeMatchSnapshot state,int participant,bool swap)=>Identity(state?.Roster,participant,swap);
         public static Color Identity(NativeRosterSnapshot roster,int participant,bool swap)=>roster?.Mode==NativeMatchMode.Teams?TeamColor(roster.Teams[participant],swap):Palette[participant];
         public NativeStandingsView(Transform parent,Font font,int size,string name,Vector2 min,Vector2 max,ProvingProfile profile=null)

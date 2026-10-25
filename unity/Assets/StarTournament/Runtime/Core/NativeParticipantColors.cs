@@ -16,10 +16,9 @@ namespace StarTournament.ProvingGround
             var palette=Read(profile);
             if(draft.Roster.Mode!=NativeMatchMode.Ffa)
             {
-                if(profile==null)return draft;
                 var teams=draft.Read();
-                // Setup already resolves the selected blue/magenta team swap.
-                for(int p=0;p<teams.Participants.Length;p++)teams.Participants[p].Color=palette[draft.Participant(p).Color==For(0)?0:1];
+                // Setup resolves orientation. New matches use blue/red; historical Restore/Repeat bypasses this assignment.
+                for(int p=0;p<teams.Participants.Length;p++)teams.Participants[p].Color=palette[TeamPaletteIndex(draft.Participant(p).Color==For(0))];
                 return NativeMatchComposition.Restore(teams);
             }
             if(next==null)
@@ -37,6 +36,8 @@ namespace StarTournament.ProvingGround
             }
             return NativeMatchComposition.Restore(snapshot);
         }
+        static int TeamPaletteIndex(bool blue)=>blue?0:6;
+        public static Color TeamColor(NativeTeam team,bool swap,ProvingProfile profile=null)=>Read(profile)[TeamPaletteIndex((team==NativeTeam.TeamA)^swap)];
         public static bool Contains(Color color)=>colors.Contains(color);
         public static Color[] Read(ProvingProfile profile=null)
         {
