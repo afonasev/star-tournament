@@ -1,12 +1,20 @@
 using System.Collections;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.TestTools;
 namespace StarTournament.ProvingGround.Tests
 {
     public sealed class OrbitalLeaguePresentationTests
     {
+        [System.Serializable] sealed class GlassLifecycleEvidence
+        {
+            public string profileIdentity,baselineSourceSha,candidateRuntimeSha,candidateLifecycleSha;
+            public int originalWindowRendererCount,originalUniqueWindowMeshCount,originalUniqueWindowMaterialCount;
+            public bool firstGenerationAssetsDisposedAfterRebuild,rebuiltAssetsAliveAndShared,secondGenerationAssetsDisposedAfterDestroy,collisionAndRebuildChecksCompleted;
+        }
         GameObject root;
         [UnityTearDown] public IEnumerator Cleanup(){if(root)Object.Destroy(root);yield return null;}
         static bool HasRenderedFace(Transform solid,Vector3 point,Vector3 outward)
@@ -56,7 +64,7 @@ namespace StarTournament.ProvingGround.Tests
                     Assert.That(t.GetComponent<Renderer>().shadowCastingMode,Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.Off),s.Id);
             }
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();
-            Assert.That(art.ProfileIdentity,Is.EqualTo("orbital-league-ring-v1@10"));
+            var profileIdentity=art.ProfileIdentity;
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Slow orbital emblem"),Is.EqualTo(5));
             Assert.That(art.GetComponentsInChildren<Transform>().Count(t=>t.name=="Enclosed slow fan"),Is.EqualTo(3));
             Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
@@ -76,13 +84,55 @@ namespace StarTournament.ProvingGround.Tests
             foreach(var light in fixtureLights)
                 Assert.That(arena.gameObject.scene.GetPhysicsScene().Raycast(light.transform.position,Vector3.down,
                     out _,light.range,surfaces,QueryTriggerInteraction.Ignore),Is.True,light.name+" at "+light.transform.position);
+            var firstWindowRenderers=frozen.Definition.Solids.Where(s=>s.Surface=="window").Select(s=>arena.transform.Find(s.Id).GetComponent<Renderer>()).ToArray();
+            Assert.That(firstWindowRenderers.Length,Is.EqualTo(20));
+            var firstWindowMeshes=firstWindowRenderers.Select(r=>r.GetComponent<MeshFilter>().sharedMesh).Distinct().ToArray();
+            var firstWindowMaterials=firstWindowRenderers.Select(r=>r.sharedMaterial).Distinct().ToArray();
+            Assert.That(firstWindowMeshes.Length,Is.EqualTo(2));
+            Assert.That(firstWindowMaterials.Length,Is.EqualTo(1));
             int renderers=arena.GetComponentsInChildren<Renderer>().Length;
             arena.Build(frozen,ProvingProfile.CreateDefault());yield return null;
             Assert.That(arena.GetComponentsInChildren<OrbitalLeaguePresentation>().Length,Is.EqualTo(1));
             Assert.That(arena.GetComponentsInChildren<Renderer>().Length,Is.EqualTo(renderers));
             Assert.That(arena.GetComponentsInChildren<Light>().Length,Is.EqualTo(art.LocalLightCount));
             Assert.That(JsonUtility.ToJson(frozen.Definition),Is.EqualTo(before));
+            Assert.That(firstWindowMeshes.All(mesh=>!mesh),Is.True,"First-generation shared window meshes are disposed when the arena is rebuilt");
+            Assert.That(firstWindowMaterials.All(material=>!material),Is.True,"First-generation shared window material is disposed when the arena is rebuilt");
+            var rebuiltWindowRenderers=frozen.Definition.Solids.Where(s=>s.Surface=="window").Select(s=>arena.transform.Find(s.Id).GetComponent<Renderer>()).ToArray();
+            var rebuiltWindowMeshes=rebuiltWindowRenderers.Select(r=>r.GetComponent<MeshFilter>().sharedMesh).Distinct().ToArray();
+            var rebuiltWindowMaterials=rebuiltWindowRenderers.Select(r=>r.sharedMaterial).Distinct().ToArray();
+            Assert.That(rebuiltWindowRenderers.Length,Is.EqualTo(20));
+            Assert.That(rebuiltWindowMeshes.Length,Is.EqualTo(2));
+            Assert.That(rebuiltWindowMaterials.Length,Is.EqualTo(1));
+            Assert.That(rebuiltWindowMeshes.All(mesh=>mesh),Is.True,"Rebuilt shared window meshes remain alive");
+            Assert.That(rebuiltWindowMaterials.All(material=>material),Is.True,"Rebuilt shared window material remains alive");
+            var rebuiltAssetsAliveAndShared=rebuiltWindowMeshes.Length==2&&rebuiltWindowMaterials.Length==1&&rebuiltWindowMeshes.All(mesh=>mesh)&&rebuiltWindowMaterials.All(material=>material);
             Object.Destroy(root);yield return null;
+            Assert.That(rebuiltWindowMeshes.All(mesh=>!mesh),Is.True,"Second-generation shared window meshes are disposed with their owner");
+            Assert.That(rebuiltWindowMaterials.All(material=>!material),Is.True,"Second-generation shared window material is disposed with its owner");
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_GLASS_LIFECYCLE_OUTPUT");
+            if(!string.IsNullOrWhiteSpace(output))
+            {
+                var evidence=new GlassLifecycleEvidence
+                {
+                    profileIdentity=profileIdentity,
+                    baselineSourceSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_BASE_SHA"),
+                    candidateRuntimeSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_RUNTIME_SHA"),
+                    candidateLifecycleSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_LIFECYCLE_SHA"),
+                    originalWindowRendererCount=firstWindowRenderers.Length,
+                    originalUniqueWindowMeshCount=firstWindowMeshes.Length,
+                    originalUniqueWindowMaterialCount=firstWindowMaterials.Length,
+                    firstGenerationAssetsDisposedAfterRebuild=firstWindowMeshes.All(mesh=>!mesh)&&firstWindowMaterials.All(material=>!material),
+                    rebuiltAssetsAliveAndShared=rebuiltAssetsAliveAndShared,
+                    secondGenerationAssetsDisposedAfterDestroy=rebuiltWindowMeshes.All(mesh=>!mesh)&&rebuiltWindowMaterials.All(material=>!material),
+                    collisionAndRebuildChecksCompleted=true
+                };
+                Assert.That(string.IsNullOrWhiteSpace(evidence.baselineSourceSha)||string.IsNullOrWhiteSpace(evidence.candidateRuntimeSha)||string.IsNullOrWhiteSpace(evidence.candidateLifecycleSha),Is.False,"Lifecycle source SHA mapping is required");
+                System.IO.Directory.CreateDirectory(output);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(output,"lifecycle-completed.json"),JsonUtility.ToJson(evidence,true));
+            }
+            // Preserve the existing profile-version contract; assert it after the ownership witness.
+            Assert.That(profileIdentity,Is.EqualTo("orbital-league-ring-v1@10"));
         }
         [UnityTest] public IEnumerator WindowsTransmitSeparateDistantSpaceAndRemainSolid()
         {
@@ -97,6 +147,12 @@ namespace StarTournament.ProvingGround.Tests
                 var inward=window.Size.x>window.Size.z?Vector3.back*Mathf.Sign(window.Position.z):Vector3.left*Mathf.Sign(window.Position.x);
                 Assert.That(Physics.Raycast(window.Position+inward*2,-inward,out var hit,4,1<<ProvingArena.WorldLayer),Is.True);Assert.That(hit.collider.transform,Is.EqualTo(pane));
             }
+            var glassRenderers=windows.Select(w=>arena.transform.Find(w.Id).GetComponent<Renderer>()).ToArray();
+            Assert.That(glassRenderers.Select(r=>r.sharedMaterial).Distinct().Count(),Is.EqualTo(1),"All windows share the identical glass material");
+            Assert.That(glassRenderers.Select(r=>r.GetComponent<MeshFilter>().sharedMesh).Distinct().Count(),Is.EqualTo(2),"Each pane orientation shares one geometry asset");
+            foreach(bool alongX in new[]{false,true})
+                Assert.That(windows.Where(w=>(w.Size.x>w.Size.z)==alongX).Select(w=>arena.transform.Find(w.Id).GetComponent<MeshFilter>().sharedMesh).Distinct().Count(),Is.EqualTo(1),"One shared pane mesh per orientation");
+            Assert.That(glassRenderers.All(r=>r.shadowCastingMode==ShadowCastingMode.Off&&r.receiveShadows),Is.True,"Glass keeps baseline shadow flags");
             var shell=arena.Definition.Solids.Single(s=>s.Id=="interior-shell-roof");
             foreach(bool alongX in new[]{false,true})foreach(int side in new[]{-1,1})
             {
@@ -112,6 +168,14 @@ namespace StarTournament.ProvingGround.Tests
             var art=arena.GetComponentInChildren<OrbitalLeaguePresentation>();var faces=art.GetComponentsInChildren<MeshRenderer>().Where(r=>r.name.StartsWith("Distant space cube / ")).ToArray();
             Assert.That(faces.Length,Is.EqualTo(6));Assert.That(faces.Count(r=>r.name.EndsWith("planet")),Is.EqualTo(2));Assert.That(faces.Count(r=>r.name.EndsWith("Sun")),Is.EqualTo(1));
             Assert.That(faces.All(r=>r.bounds.center.magnitude>100),Is.True);Assert.That(art.GetComponentsInChildren<Collider>(),Is.Empty);
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RENDER_COST_OUTPUT");if(!string.IsNullOrWhiteSpace(output))
+            {
+                SecondaryRenderingCostDiagnostics.Write(output,"transparent-glass",glassRenderers);
+                var window=windows[0];var inward=window.Size.x>window.Size.z?Vector3.back*Mathf.Sign(window.Position.z):Vector3.left*Mathf.Sign(window.Position.x);
+                var cameraGo=new GameObject("P5 transparent-glass baseline camera");cameraGo.transform.position=window.Position+inward*2;cameraGo.transform.LookAt(window.Position-inward*100);
+                var camera=cameraGo.AddComponent<Camera>();camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.farClipPlane=300;
+                SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(output,"transparent-glass.png"));Object.Destroy(cameraGo);
+            }
         }
         [UnityTest] public IEnumerator WayfindingUsesPlanSidesAndPanelsStayOnOpaqueWalls()
         {

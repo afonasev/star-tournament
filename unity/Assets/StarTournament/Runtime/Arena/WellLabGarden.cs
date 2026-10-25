@@ -86,7 +86,7 @@ namespace StarTournament.ProvingGround
                     pixels[y*n+x]=new Color(.40f+cloud*.15f+grain-seam,.41f+cloud*.15f+grain-seam,.39f+cloud*.15f+grain-seam);
                 }
             }
-            var texture=new Texture2D(n,n,TextureFormat.RGBA32,true){name="Well garden "+kind,wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};texture.SetPixels(pixels);texture.Apply(true,true);return texture;
+            var texture=new Texture2D(n,n,TextureFormat.RGB24,true){name="Well garden "+kind,wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};texture.SetPixels(pixels);texture.Apply(true,true);return texture;
         }
         readonly List<Vector3> meadowBeds=new List<Vector3>();
         public void Plants(Vector3 center)=>meadowBeds.Add(center);
@@ -110,7 +110,7 @@ namespace StarTournament.ProvingGround
             // Imported cutout is shared by Resources; only the per-arena material/meshes are owned here.
             grass.SetTexture("_BaseMap",Resources.Load<Texture2D>("WellMeadowGrass"));
             grass.SetFloat("_Cull",0);grass.SetFloat("_AlphaClip",1);grass.SetFloat("_Cutoff",.38f);grass.EnableKeyword("_ALPHATEST_ON");grass.SetOverrideTag("RenderType","TransparentCutout");grass.renderQueue=2450;
-            var clover=GardenMaterial("Well meadow clover",WellLabDetail.Texture("leaf",profile),true);clover.color=new Color(1.24f,1.35f,1.05f);
+            var clover=GardenMaterial("Well meadow clover",WellLabDetail.Texture("leaf",profile,format:TextureFormat.RGB24),true);clover.color=new Color(1.24f,1.35f,1.05f);
             var flower=DetailMaterial("Well meadow ivory petals",new Color(.87f,.85f,.68f),0,.1f);flower.SetFloat("_Cull",0);
             var pollen=DetailMaterial("Well meadow ochre centres",new Color(.68f,.47f,.12f),0,.1f);pollen.SetFloat("_Cull",0);
             var bed=new GardenMesh();
