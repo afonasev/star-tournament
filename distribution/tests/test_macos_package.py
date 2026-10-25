@@ -28,6 +28,8 @@ class MacPackageRoute(unittest.TestCase):
             def run(command, **kwargs):
                 command=list(map(str,command))
                 if 'publish' in command:
+                    self.assertIn('-p:PublishSingleFile=true', command)
+                    self.assertIn('-p:IncludeNativeLibrariesForSelfExtract=true', command)
                     events.append('launcher');target=Path(command[command.index('-o')+1]);target.mkdir(parents=True,exist_ok=True)
                     (target/'StarTournamentLauncher').write_bytes(b'not executable fixture')
                 elif command[0]=='ditto': shutil.copytree(command[1],command[2])
