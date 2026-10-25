@@ -133,7 +133,7 @@ namespace StarTournament.ProvingGround
 
             RoundRosterPanel(setupPlayersPage);RoundRosterPanel(setupSummary.transform.parent.gameObject);
             rosterAddHuman=RosterButton(setupPlayersPage.transform,"roster-add-human","+ ИГРОК",new Vector2(.70f,.865f),new Vector2(.835f,.97f),AddRosterHuman);
-            rosterAddBot=RosterButton(setupPlayersPage.transform,"roster-add-bot","+ БОТ",new Vector2(.845f,.865f),new Vector2(.98f,.97f),()=>{int p=LocalSeatCount+botSetup.Count;AddBot();if(LocalSeatCount+botSetup.Count>p){OpenRosterEditor(p);Select(rosterDone);}});
+            rosterAddBot=RosterButton(setupPlayersPage.transform,"roster-add-bot","+ БОТ",new Vector2(.845f,.865f),new Vector2(.98f,.97f),()=>{int p=LocalSeatCount+botSetup.Count;AddBot();if(LocalSeatCount+botSetup.Count>p){OpenRosterEditor(p);}});
             rosterFull=Label(setupPlayersPage.transform,"roster-full","",20,new Vector2(.68f,.795f),new Vector2(.98f,.862f),TextAnchor.MiddleCenter,RosterMuted);
             rosterFfa=RosterScroll(setupPlayersPage.transform,"roster-ffa",new Vector2(.017f,.025f),new Vector2(.98f,.77f),out rosterFfaScroll);
             rosterBluePanel=Panel(setupPlayersPage.transform,"roster-team-blue",new Vector2(.017f,.025f),new Vector2(.49f,.77f),new Color32(23,37,52,255));
@@ -297,19 +297,20 @@ namespace StarTournament.ProvingGround
             else lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,8,4,250)};
             // Reparenting between FFA/team grids can disable a card without a new
             // EventSystem selection event. Restore the shared visual focus explicitly.
-            foreach(var card in rosterCards)card.GetComponent<MenuPresentation>().SetFocused(EventSystem.current&&EventSystem.current.currentSelectedGameObject==card.gameObject);
+            foreach(var card in rosterCards.Concat(rosterEmpty))card.GetComponent<MenuPresentation>().SetFocused(EventSystem.current&&EventSystem.current.currentSelectedGameObject==card.gameObject);
             rosterAddHuman.interactable=RosterTotal<8 && LocalSeatCount<4;rosterAddBot.interactable=RosterTotal<8;
             rosterAddHuman.GetComponentInChildren<Text>().color=rosterAddHuman.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterAddBot.GetComponentInChildren<Text>().color=rosterAddBot.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterFull.text=RosterTotal==8?"Состав заполнен":LocalSeatCount==4?"Все 4 экрана назначены":"";
             rosterEditor.SetActive(phase==Phase.Setup&&setupStep==2&&rosterEditing>=0);
             if(rosterEditing>=0 && rosterEditing<RosterTotal)RefreshRosterEditor();
+            RefreshInlineCards();
             ConfigureRosterNavigation();
         }
         void OpenRosterEditor(int p)
         {
             if(phase!=Phase.Setup||setupStep!=2||p<0||p>=RosterTotal)return;
-            pendingSeat=-1;rosterEditing=p;rosterPicker.SetActive(false);RefreshInterface();rosterEditor.transform.SetAsLastSibling();StartCoroutine(FadeLobbyPanel(rosterEditor.transform.GetChild(0).gameObject,rosterIdentity.colors.fadeDuration));Select(rosterIdentity);
+            OpenInlineEditor(p);
         }
         void CloseRosterEditor()
         {
@@ -452,6 +453,7 @@ namespace StarTournament.ProvingGround
         {
             if(phase!=Phase.Setup)return;
             if(lobbyDialog!=null&&lobbyDialog.activeSelf){UpdateLobbyDialogInput();return;}
+            if(UpdateInlineInput())return;
             bool back=TryTakeMenuBack();
             if(back)
             {

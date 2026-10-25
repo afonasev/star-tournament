@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
 {
     [Serializable] public sealed class ArenaSolid { public string Id, Support, Material, Surface; public Vector3 Position, Size; public Quaternion Rotation; public int Layer; }
     [Serializable] public sealed class ArenaSpawnRegion { public string Id, Support; public Vector3 Center, Size; }
-    public enum ArenaPickupKind { Armor, Speed, Damage, FullHeal, Shotgun, Pulse, Cutter }
+    public enum ArenaPickupKind { Armor, Speed, Damage, FullHeal, Shotgun, Pulse, Cutter, Plasma }
     [Serializable] public sealed class ArenaPickupDefinition { public string Id, Support; public ArenaPickupKind Kind; public Vector3 Anchor; }
     [Serializable] public sealed class ArenaLiftDefinition { public string Id; public Vector3 Center, Size; public float Bottom, Top, InitialHeight; }
     [Serializable] public sealed class ArenaDefinition

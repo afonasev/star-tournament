@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround
         readonly float radius, heightTolerance;
         readonly double respawnSeconds;
         WeaponPickupState state;
-        public static bool IsWeapon(ArenaPickupKind kind)=>kind==ArenaPickupKind.Shotgun||kind==ArenaPickupKind.Pulse||kind==ArenaPickupKind.Cutter;
+        public static bool IsWeapon(ArenaPickupKind kind)=>kind==ArenaPickupKind.Shotgun||kind==ArenaPickupKind.Pulse||kind==ArenaPickupKind.Cutter||kind==ArenaPickupKind.Plasma;
         public WeaponPickup(ArenaPickupDefinition definition,ProvingProfile profile)
         {
             if(definition==null||!IsWeapon(definition.Kind)||string.IsNullOrWhiteSpace(definition.Id)||string.IsNullOrWhiteSpace(definition.Support))throw new ArgumentException("Named weapon definition required");
@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
             profile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(profile));profile.EnsureCombatDescriptors();
             if(profile.Validate().Count!=0)throw new ArgumentException("Invalid pickup profile");
             radius=profile.Get("weaponPickup.radius");heightTolerance=profile.Get("pickup.maximumHeightDifference");respawnSeconds=profile.Get("weaponPickup.respawnSeconds");
-            state=new WeaponPickupState{InstanceId=definition.Id,Support=definition.Support,Anchor=definition.Anchor,Available=true,Weapon=definition.Kind==ArenaPickupKind.Shotgun?WeaponId.Shotgun:definition.Kind==ArenaPickupKind.Pulse?WeaponId.RocketLauncher:WeaponId.Cutter};
+            state=new WeaponPickupState{InstanceId=definition.Id,Support=definition.Support,Anchor=definition.Anchor,Available=true,Weapon=definition.Kind==ArenaPickupKind.Plasma?WeaponId.Plasma:definition.Kind==ArenaPickupKind.Shotgun?WeaponId.Shotgun:definition.Kind==ArenaPickupKind.Pulse?WeaponId.RocketLauncher:WeaponId.Cutter};
         }
         public WeaponPickupState Read()=>state;
         public void ValidateSnapshot(WeaponPickupState s)

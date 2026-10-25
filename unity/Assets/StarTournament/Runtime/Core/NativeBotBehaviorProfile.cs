@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
         internal static readonly string[] BotCombatMovementDefaults={"bots.easy.jumpChance","bots.normal.jumpChance","bots.hard.jumpChance","bots.normal.jumpCooldownSeconds"};
         public static ProvingProfile CreateBotBehaviorDefault()
         {
-            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 4 };
+            var p = new ProvingProfile { id = "unity-bot-behavior-v1", version = 5 };
             string[] ids = { "easy", "normal", "hard" }, labels = { "Салага", "Боец", "Ветеран" };
             float[] reaction = { .6f, .28f, .12f }, decision = { .35f, .2f, .1f };
             float[] aimSpeed = { 90, 160, 230 }, aimError = { 12, 5, 1.5f }, aimPeriod = { 1.4f, 1, .7f };
@@ -26,7 +26,8 @@ namespace StarTournament.ProvingGround
                 p.Add(path+"strafeSeconds", "bots", label+"Ритм стрейфа", "Средняя длительность одного бокового манёвра.", "seconds", .2f, 5, .1f, strafeSeconds[i]);
                 p.Add(path+"strafeWeight", "bots", label+"Стрейф", "Вес бокового движения в перестрелке.", "ratio", 0, 1, .05f, strafeWeight[i]);
                 p.Add(path+"jumpCooldownSeconds", "bots", label+"Пауза прыжков", "Минимальная пауза между прыжками.", "seconds", 1, 15, .1f, jumpCooldown[i]);
-                p.Add(path+"jumpChance", "bots", label+"Боевой прыжок", "Вероятность прыжка при смене боевого манёвра и свободном приземлении.", "ratio", 0, 1, .01f, jumpChance[i]);
+                p.Add(path+"jumpAttemptSeconds", "bots", label+"Ритм попыток прыжка", "Пауза между безопасными попытками независимо от смены стрейфа.", "seconds", .1f, 5, .05f, i==2?.3f:1.2f);
+                p.Add(path+"jumpChance", "bots", label+"Боевой прыжок", "Вероятность прыжка при отдельной боевой попытке и свободном приземлении.", "ratio", 0, 1, .01f, jumpChance[i]);
                 p.Add(path+"surpriseJumpChance", "bots", label+"Прыжок от неожиданности", "Шанс безопасного прыжка при новой угрозе вне окна прицела; 0 отключает реакцию, 1 гарантирует попытку после паузы.", "ratio", 0, 1, .01f, i==2?.9f:0);
                 p.Add(path+"retreatSeconds", "bots", label+"Короткий отход", "Предельное время отхода после обнаружения угрозы при низком здоровье.", "seconds", .1f, 3, .1f, retreatSeconds[i]);
                 p.Add(path+"retreatHealthRatio", "bots", label+"Порог отхода", "Доля здоровья для временного отхода.", "ratio", .05f, .6f, .05f, retreatHealth[i]);
@@ -45,9 +46,19 @@ namespace StarTournament.ProvingGround
             AddBotTactics(p);
             return p;
         }
+        internal ProvingProfile BeforeBotReactiveCombat()
+        {
+            if(id!="unity-bot-behavior-v1"||version!=5)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=4;
+            p.descriptors.RemoveAll(d=>d.Path.EndsWith(".jumpAttemptSeconds")||d.Path.StartsWith("bots.spacing.")||d.Path.StartsWith("bots.damage."));
+            p.values.RemoveAll(v=>v.Path.EndsWith(".jumpAttemptSeconds")||v.Path.StartsWith("bots.spacing.")||v.Path.StartsWith("bots.damage."));
+            foreach(var d in p.descriptors)if(d.Path.EndsWith(".jumpChance"))d.Description="Вероятность прыжка при смене боевого манёвра и свободном приземлении.";
+            return p;
+        }
         // Preserve the exact v3 registry and defaults for immutable Lab history hashes.
         internal ProvingProfile BeforeBotCombatMovement()
         {
+            if(id=="unity-bot-behavior-v1"&&version==5)return BeforeBotReactiveCombat().BeforeBotCombatMovement();
             if(id!="unity-bot-behavior-v1"||version!=4)return this;
             var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=3;
             p.descriptors.RemoveAll(d=>d.Path.EndsWith(".surpriseJumpChance")||d.Path=="bots.tactics.surpriseWindowSeconds");
@@ -57,7 +68,7 @@ namespace StarTournament.ProvingGround
         }
         internal ProvingProfile BeforeBotWeaponEvaluation()
         {
-            if(id=="unity-bot-behavior-v1"&&version==4)return BeforeBotCombatMovement().BeforeBotWeaponEvaluation();
+            if(id=="unity-bot-behavior-v1"&&version>=4)return BeforeBotCombatMovement().BeforeBotWeaponEvaluation();
             if(id!="unity-bot-behavior-v1"||version!=3)return this;
             var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=2;
             p.descriptors.RemoveAll(d=>d.Path=="bots.strategy.weaponTimeSamples"||d.Path=="bots.strategy.weaponSpreadSamples");
@@ -91,6 +102,12 @@ namespace StarTournament.ProvingGround
         }
         static void AddBotTactics(ProvingProfile p)
         {
+            p.Add("bots.damage.memorySeconds","bots","Память направления удара","Срок осмотра направления реального попадания без знания стрелка.","seconds",1,10,.1f,3);
+            p.Add("bots.damage.acquireDegrees","bots","Сектор угрозы","Допуск подтверждения видимого противника по направлению удара.","degrees",5,90,1,35);
+            p.Add("bots.spacing.deadBandMeters","bots","Допуск дистанции","Нейтральная полоса без радиального движения около рабочей дистанции.","meters",0,5,.1f,1);
+            string[] weaponNames={"rifle","shotgun","rocket","cutter","plasma"};
+            string[] weaponLabels={"Винтовка","Дробовик","Pulse","Резак","FORGE"};float[] distances={16,4,12,3,14};
+            for(int i=0;i<weaponNames.Length;i++)p.Add("bots.spacing."+weaponNames[i]+"Meters","bots",weaponLabels[i]+" · Дистанция","Рабочая дистанция; ограничена физической дальностью и безопасностью оружия.","meters",1,40,.5f,distances[i]);
             p.Add("bots.strategy.healUrgency","bot-behavior","Срочность лечения","Вес восстановления здоровья относительно открытия оружия.","ratio",1,5,.1f,2);
             p.Add("bots.strategy.intentHoldSeconds","bot-behavior","Устойчивость цели","Минимальное время полезной pickup цели до обычного пересмотра.","seconds",0f,5f,0.05f,0.8f);
             p.Add("bots.strategy.pickupRetrySeconds","bot-behavior","Повтор пути","Пауза перед повтором недостижимого pickup.","seconds",1f,60f,1f,12f);

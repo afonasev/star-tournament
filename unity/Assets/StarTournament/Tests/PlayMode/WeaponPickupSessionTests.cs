@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class WeaponPickupSessionTests
     {
-        [UnityTest]public IEnumerator SixPhysicalAnchorsIndependentTimersRestoreAndFreshSession()
+        [UnityTest]public IEnumerator EightPhysicalAnchorsIndependentTimersRestoreAndFreshSession()
         {
             var scene=SceneManager.CreateScene("weapon-pickups-"+Guid.NewGuid(),new CreateSceneParameters(LocalPhysicsMode.Physics3D));
             var owner=new GameObject("pickup physical fixture");SceneManager.MoveGameObjectToScene(owner,scene);
@@ -19,7 +19,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var arena=owner.AddComponent<ProvingArena>();arena.Build(CombatBowlCatalog.Freeze(move),move);
                 var motors=new CharacterMotor[2];for(int i=0;i<2;i++){var o=new GameObject("p"+i);o.transform.SetParent(owner.transform);o.layer=ProvingArena.ParticipantLayer;motors[i]=o.AddComponent<CharacterMotor>();motors[i].Initialize(move,new Vector3(0,-1.2f,i*2));}
                 var session=new NativeCombatSession(motors,arena,scene.GetPhysicsScene(),move,life,combat);
-                Assert.That(session.WeaponPickups.Length,Is.EqualTo(6));Assert.That(session.WeaponPickups.All(x=>x.Available),Is.True);
+                Assert.That(session.WeaponPickups.Length,Is.EqualTo(8));Assert.That(session.WeaponPickups.All(x=>x.Available),Is.True);
                 var shortJump=session.WeaponPickups.Single(x=>x.InstanceId=="shotgun-west");
                 motors[0].Initialize(move,shortJump.Anchor+Vector3.up*.2f);session.Tick(new LocalAction[2],.02f);
                 Assert.That(session.Life(0).ShotgunOwned,Is.True,"Small jump within contact height retains named support");

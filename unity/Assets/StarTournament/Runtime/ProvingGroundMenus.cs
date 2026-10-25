@@ -216,7 +216,13 @@ namespace StarTournament.ProvingGround
             rosterEditing=-1;setupStep=step;RefreshInterface();FocusSetupStep();
         }
         void NextSetupStep() { setupMaxStep=Mathf.Max(setupMaxStep,Mathf.Min(2,setupStep+1));ShowSetupStep(Mathf.Min(2,setupStep+1)); }
-        void PreviousSetupStep() { ToMainMenu(); }
+        void PreviousSetupStep()
+        {
+            var own=InlineFor(inlineInvokingDevice??menuDevice);
+            if(own!=null&&own.Page!=InlinePage.Closed){BackInlineEditor(own);return;}
+            if(InlineAny)return;
+            ToMainMenu();
+        }
         string SetupBlockingReason()
         {
             if(LocalSeatCount+botSetup.Count>AuthoredArenaCatalog.Maximum(SelectedMapId))return "Для этой карты нужно 2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участника";
@@ -255,7 +261,7 @@ namespace StarTournament.ProvingGround
         void OpenSetup()
         {
             if(labProjectRoot!=null&&!authorStartupResolved){OpenDesignLab();return;}
-            fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=2;
+            fps.RestoreGeneralPreference();phase=Phase.Setup;setupStep=setupMaxStep=2;setupTransitionFrame=Time.frameCount;
             setupError=null;pendingSeat=-1;rosterEditing=-1;
             if(!lobbyInitialized)
             {

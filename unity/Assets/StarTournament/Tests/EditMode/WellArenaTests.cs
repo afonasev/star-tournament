@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround.Tests
         {
             var d=WellArenaCatalog.Build();Assert.That(ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).IsValid,Is.True,ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).ToString());
             Assert.That(AuthoredArenaCatalog.Name(d.MapId),Is.EqualTo("Колодец"));Assert.That(AuthoredArenaCatalog.Maximum(d.MapId),Is.EqualTo(8));
-            Assert.That(d.Revision,Is.EqualTo("5"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(11));
+            Assert.That(d.Revision,Is.EqualTo("6"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(12));
             Assert.That(d.Pickups.Count(p=>p.Kind==ArenaPickupKind.Armor),Is.EqualTo(3));
             foreach(var kind in new[]{ArenaPickupKind.Speed,ArenaPickupKind.Pulse,ArenaPickupKind.Damage,ArenaPickupKind.FullHeal})
                 Assert.That(d.Pickups.Count(p=>p.Kind==kind),Is.EqualTo(1),kind.ToString());
@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(current.Transitions.Select(JsonUtility.ToJson),Is.EqualTo(previous.Transitions.Select(JsonUtility.ToJson)));
             Assert.That(current.Lifts.Select(JsonUtility.ToJson),Is.EqualTo(previous.Lifts.Select(JsonUtility.ToJson)));
             Assert.That(current.RouteAnchors,Is.EqualTo(previous.RouteAnchors));
-            Assert.That(current.Pickups.Where(p=>p.Id!="shotgun-02"&&p.Id!="cutter-02").Select(JsonUtility.ToJson),Is.EqualTo(previous.Pickups.Select(JsonUtility.ToJson)));
+            Assert.That(current.Pickups.Where(p=>p.Id!="shotgun-02"&&p.Id!="cutter-02"&&p.Kind!=ArenaPickupKind.Plasma).Select(JsonUtility.ToJson),Is.EqualTo(previous.Pickups.Select(JsonUtility.ToJson)));
             foreach(var kind in new[]{ArenaPickupKind.Shotgun,ArenaPickupKind.Cutter})Assert.That(current.Pickups.Count(p=>p.Kind==kind),Is.EqualTo(2));
             foreach(var id in new[]{"shotgun-02","cutter-02"})
             {

@@ -8,12 +8,14 @@ namespace StarTournament.ProvingGround
     {
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
-        GameObject rifle,pulse,cutter;
-        Transform rifleMuzzle,cutterMuzzle,pulseMuzzle;
+        GameObject rifle,pulse,cutter,plasma;
+        Transform rifleMuzzle,cutterMuzzle,pulseMuzzle,plasmaMuzzle;
+        public float PlasmaViewScale { get; private set; }=1;
+        public Vector3 PlasmaMuzzle=>plasmaMuzzle?plasmaMuzzle.position:transform.position;
         public Vector3 PulseMuzzle=>pulseMuzzle?pulseMuzzle.position:transform.position;
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
-        public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null)
+        public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null,GameObject plasmaPrefab=null,ProvingProfile plasmaProfile=null,GameObject plasmaLod1Prefab=null)
         {
             if(!prefab)throw new System.ArgumentException("Rifle GLB missing",nameof(prefab));
             var mount=GetComponentsInChildren<Transform>(true).Single(x=>x.name=="trooper:rig:weapon-mount");
@@ -51,12 +53,32 @@ namespace StarTournament.ProvingGround
                 foreach(var t in cutter.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
                 foreach(var renderer in cutter.GetComponentsInChildren<Renderer>(true))if(gameObject.layer>=15)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
+            if(plasmaPrefab)
+            {
+                plasma=Object.Instantiate(plasmaPrefab,mount);plasma.name="forge-plasma";
+                plasma.transform.localPosition=Vector3.zero;plasma.transform.localRotation=Quaternion.identity;
+                var pp=plasmaProfile??ProvingProfile.CreatePlasmaDefault();
+                PlasmaViewScale=gameObject.layer>=15?pp.Get("plasma.viewScale"):1;
+                plasma.transform.localScale=Vector3.one*pp.Get("plasma.modelScale")*PlasmaViewScale;
+                plasmaMuzzle=plasma.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="forge-muzzle");
+                if(gameObject.layer<15)AddForgeLod(plasma,plasmaLod1Prefab);
+                foreach(var t in plasma.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
+                foreach(var r in plasma.GetComponentsInChildren<Renderer>(true))if(gameObject.layer>=15)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
             Show(WeaponId.Rifle);
+        }
+        public static void AddForgeLod(GameObject root,GameObject lowPrefab)
+        {
+            if(!lowPrefab)return;
+            var high=root.GetComponentsInChildren<Renderer>(true);var low=Object.Instantiate(lowPrefab,root.transform);
+            low.name="forge-lod1";low.transform.localPosition=Vector3.zero;low.transform.localRotation=Quaternion.identity;low.transform.localScale=Vector3.one;
+            // Screen-relative LOD selection is an asset-rendering budget, never a gameplay distance.
+            var group=root.AddComponent<LODGroup>();group.SetLODs(new[]{new LOD(.12f,high),new LOD(.005f,low.GetComponentsInChildren<Renderer>(true))});group.RecalculateBounds();
         }
         public void HideForCorpse()
         {
             foreach(var renderer in GetComponentsInChildren<Renderer>(true))
-                if(renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"))renderer.enabled=false;
+                if(renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"))renderer.enabled=false;
         }
         public WeaponId ShownWeapon { get; private set; }
         public void Show(WeaponId weapon)
@@ -64,6 +86,7 @@ namespace StarTournament.ProvingGround
             ShownWeapon=weapon;
             if(shotgun)shotgun.enabled=weapon==WeaponId.Shotgun;
             if(rifle)rifle.SetActive(weapon==WeaponId.Rifle);
+            if(plasma)plasma.SetActive(weapon==WeaponId.Plasma);
             if(cutter)cutter.SetActive(weapon==WeaponId.Cutter);
             if(pulse)pulse.SetActive(weapon==WeaponId.RocketLauncher);
         }
@@ -72,6 +95,7 @@ namespace StarTournament.ProvingGround
             var renderers=new List<Renderer>();if(shotgun)renderers.Add(shotgun);
             if(rifle)renderers.AddRange(rifle.GetComponentsInChildren<Renderer>(true));
             if(pulse)renderers.AddRange(pulse.GetComponentsInChildren<Renderer>(true));
+            if(plasma)renderers.AddRange(plasma.GetComponentsInChildren<Renderer>(true));
             if(cutter)renderers.AddRange(cutter.GetComponentsInChildren<Renderer>(true));
             foreach(var renderer in renderers)
                 for(int slot=0;slot<renderer.sharedMaterials.Length;slot++)
@@ -106,6 +130,7 @@ namespace StarTournament.ProvingGround
         readonly RocketPresentation rocketPresentation;
         internal RocketPresentation RocketEffectsForReview=>rocketPresentation;
         readonly RifleBulletPresentation riflePresentation;
+        readonly PlasmaPresentation plasmaPresentation;
         readonly CutterPresentation cutterPresentation;
         readonly ProvingProfile movement, tuning, deathProfile;
         DeathPhysicsWorld deathPhysics;
@@ -126,7 +151,7 @@ namespace StarTournament.ProvingGround
         readonly List<Corpse> corpses = new List<Corpse>();
         readonly List<PelletEffect> pellets = new List<PelletEffect>();
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
-        public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount;
+        public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount+plasmaPresentation.ActiveCount;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
             Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null,GameObject rocketPrefab=null,ProvingProfile rocketEffects=null,ProvingProfile hitProfile=null)
         {
@@ -144,6 +169,7 @@ namespace StarTournament.ProvingGround
             bloodPresentation=new BloodPresentation(session,bloodProfile??ProvingProfile.CreateBloodDefault(),owner,physics);
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner,rocketPrefab,rocketEffects);
+            plasmaPresentation=new PlasmaPresentation(session,owner,seat=>Muzzle(seat,0,WeaponId.Plasma));
             riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle));
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
@@ -164,6 +190,7 @@ namespace StarTournament.ProvingGround
             // FixedUpdate can run several times before LateUpdate. Sample this shot's pose now,
             // before freezing its world-space muzzle; never use the previous rendered camera.
             PrepareShotPose(notice.Shooter);
+            if(notice.Weapon==WeaponId.Plasma){plasmaPresentation.Launch(notice.Sequence,notice.Shooter);return;}
             if(notice.Weapon==WeaponId.Rifle)
             {
                 riflePresentation.Launch(notice.Sequence,notice.Shooter);
@@ -221,9 +248,9 @@ namespace StarTournament.ProvingGround
             }
             if(traceMaterial)return traceMaterial;
             var shader=Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
-            traceMaterial=new Material(shader){color=new Color(1f,.78f,.4f,1f)};
-            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",new Color(1f,.78f,.4f,1f));
-            if(traceMaterial.HasProperty("_EmissionColor")){traceMaterial.EnableKeyword("_EMISSION");traceMaterial.SetColor("_EmissionColor",new Color(1f,.55f,.15f,1f));}
+            var traceColor=new Color(movement.Get("presentation.shotTracerRed"),movement.Get("presentation.shotTracerGreen"),movement.Get("presentation.shotTracerBlue"),1f);
+            traceMaterial=new Material(shader){color=traceColor};
+            if(traceMaterial.HasProperty("_BaseColor"))traceMaterial.SetColor("_BaseColor",traceColor);
             return traceMaterial;
         }
         void PrepareShotPose(int participant)
@@ -245,10 +272,10 @@ namespace StarTournament.ProvingGround
         Vector3 Muzzle(int participant,int pellet,WeaponId weapon)
         {
             int view=ViewOf(participant);
-            if(weapon==WeaponId.Rifle||weapon==WeaponId.RocketLauncher)
+            if(weapon==WeaponId.Rifle||weapon==WeaponId.RocketLauncher||weapon==WeaponId.Plasma)
             {
                 var model=(view>=0?views[view]:bodies[participant]).GetComponent<WeaponModelPresentation>();
-                if(model)return weapon==WeaponId.Rifle?model.RifleMuzzle:model.PulseMuzzle;
+                if(model)return weapon==WeaponId.Plasma?model.PlasmaMuzzle:weapon==WeaponId.Rifle?model.RifleMuzzle:model.PulseMuzzle;
             }
             var visual=(view>=0?views[view]:bodies[participant]).GetComponent<VectorShotPresentation>();
             return visual!=null && visual.MuzzleCount==2?visual.Muzzle(pellet):bodies[participant].transform.position+Vector3.up*movement.Get("camera.eyeHeight");
@@ -319,7 +346,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();cutterPresentation.Dispose();
+            hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
@@ -472,7 +499,7 @@ namespace StarTournament.ProvingGround
                 if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
             // Capture a new trace only after all cameras, animation and weapon-switch joints are final for this frame.
-            RenderPellets();riflePresentation.Render();cutterPresentation.Render();
+            RenderPellets();riflePresentation.Render();plasmaPresentation.Render();cutterPresentation.Render();
         }
     }
 }

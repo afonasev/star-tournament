@@ -76,6 +76,14 @@ namespace StarTournament.ProvingGround
         }
 
         public void ResetToRelease()=>Commit(SelectLatestDefault);
+        // Missing fields in derived views inherit the current author Default. Refresh
+        // after an explicit Default edit before staging; saved source revisions stay intact.
+        public void RefreshAuthoringCompatibility()
+        {
+            if(!authoring)throw new InvalidOperationException("Обновление авторских представлений доступно только в проекте");
+            Commit(MigrateCompatibility);
+        }
+
         public void PersistAuthoring()
         {
             if(!authoring)throw new InvalidOperationException("Сохранение проекта доступно только авторскому клиенту");

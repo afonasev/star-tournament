@@ -87,7 +87,7 @@ namespace StarTournament.ProvingGround
             upper.rotation=Quaternion.FromToRotation(b-a,elbow-a)*upper.rotation;
             lower.rotation=Quaternion.FromToRotation(wrist.position-lower.position,target-lower.position)*lower.rotation;
         }
-        public void Apply(ProvingProfile profile,WeaponId weapon)
+        public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1)
         {
             if(!wrist)return;
             foreach(var bone in sampledBones)
@@ -104,7 +104,7 @@ namespace StarTournament.ProvingGround
             // Rotate around the palm contact, then solve the elbow without stretching bones.
             var turn=Quaternion.AngleAxis(profile.Get(fit+"supportPitch"),mount.right)*Quaternion.AngleAxis(profile.Get(fit+"supportYaw"),mount.up);
             var pivot=palm.position;
-            var target=mount.TransformPoint(new Vector3(profile.Get(fit+"supportX"),profile.Get(fit+"supportY"),profile.Get(fit+"supportZ")))+turn*(wrist.position-pivot);
+            var target=mount.TransformPoint(new Vector3(profile.Get(fit+"supportX"),profile.Get(fit+"supportY"),profile.Get(fit+"supportZ"))*supportScale)+turn*(wrist.position-pivot);
             var handRotation=turn*wrist.rotation;
             var handDirection=turn*(palm.position-wrist.position).normalized;
             Reach(target,handDirection,profile.Get(fit+"wristAlignment"));wrist.rotation=handRotation;

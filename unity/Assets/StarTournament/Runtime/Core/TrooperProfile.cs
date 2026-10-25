@@ -3,11 +3,17 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeForgeGrip()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<21)return this;
+            var p=DetachedCopy();p.version=20;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.Plasma."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.Plasma."));return p;
+        }
         // Reconstruct exact @19 digit defaults/ranges for saved Lab snapshots.
         internal ProvingProfile BeforeArticulatedFingerGrips()
         {
             if(id!="unity-trooper-presentation-v1"||version<20)return this;
-            var p=DetachedCopy();p.version=19;
+            var p=BeforeForgeGrip().DetachedCopy();p.version=19;
             foreach(var old in CreateTrooperDefault(false).Descriptors.Where(d=>d.Path.StartsWith("grip.")&&(d.Path.Contains(".left.")||d.Path.Contains(".right."))))
             {
                 var d=p.FindDescriptor(old.Path);d.Minimum=old.Minimum;d.Maximum=old.Maximum;d.DefaultValue=old.DefaultValue;p.Set(d.Path,old.DefaultValue);
@@ -94,7 +100,7 @@ namespace StarTournament.ProvingGround
             var p=BeforeVerticalSupportGrips().DetachedCopy();p.version=12;
             p.descriptors.RemoveAll(d=>d.Path.Contains(".left.")||d.Path.Contains(".right."));
             p.values.RemoveAll(v=>v.Path.Contains(".left.")||v.Path.Contains(".right."));
-            foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
+            foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter})
             {
                 string prefix="grip."+weapon+".";
                 void Restore(string name,float value){var d=p.FindDescriptor(prefix+name);d.DefaultValue=value;p.Set(d.Path,value);}
@@ -248,7 +254,7 @@ namespace StarTournament.ProvingGround
             p.Add("grip.supportProximalBias","trooper-grip","Основания опорных пальцев","Разгиб оснований пальцев для опоры снизу цевья.","degrees",-60,60,1,-25);
             p.Add("grip.supportIntermediateBias","trooper-grip","Средние опорные фаланги","Сгиб вокруг боковой грани цевья.","degrees",-60,60,1,25);
             p.Add("grip.supportDistalBias","trooper-grip","Кончики опорных пальцев","Замыкание хвата вокруг боковой грани.","degrees",-60,60,1,10);
-            foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
+            foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter})
             {
                 var prefix="grip."+weapon+".";var group="trooper-grip-"+weapon;
                 p.Add(prefix+"primaryYaw",group,"Доворот правой кисти","Поправка контакта с рукоятью выбранного оружия; оружие остаётся неподвижным.","degrees",-20,20,1,0);
@@ -526,6 +532,14 @@ namespace StarTournament.ProvingGround
                 Articulate("grip.Cutter.right.Little.Intermediate",-19);
                 Articulate("grip.Cutter.right.Little.Distal",-1);
                 Articulate("grip.Cutter.right.Little.Spread",-24);
+            }
+            if(articulated)
+            {
+                // FORGE has its own fit while all four accepted weapon registries remain exact.
+                p.version=21;
+                foreach(var d in p.descriptors.Where(d=>d.Path.StartsWith("grip.Cutter.")).ToArray())
+                    p.Add(d.Path.Replace("grip.Cutter.","grip.Plasma."),"plasma-grip",d.Label,"FORGE: "+d.Description,d.Unit,d.Minimum,d.Maximum,d.Step,p.Get(d.Path));
+                Fit("grip.Plasma.supportZ",.62f);Fit("grip.Plasma.supportY",-.10f);
             }
             return p;
         }

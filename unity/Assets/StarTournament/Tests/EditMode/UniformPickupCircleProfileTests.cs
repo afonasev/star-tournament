@@ -36,6 +36,72 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             }
             finally{Directory.Delete(directory,true);}
         }
+        [Test] public void AuthoringDefaultMatchesRuntimeWithoutChangingHistoricalOrNamedProfiles()
+        {
+            string directory=Path.Combine(Path.GetTempPath(),"author-circles-"+Guid.NewGuid());Directory.CreateDirectory(directory);string path=Path.Combine(directory,"history.json");
+            try
+            {
+                var current=DesignLabHistoryTests.Shipped();var old=current.Clone();old.Profiles=old.Profiles.Select(Before).ToList();var catalog=LabReleaseCatalog.Factory(old);
+                var history=new DesignLabHistory(path,old,releases:catalog,authoring:true);var original=history.Selected;string originalJson=JsonUtility.ToJson(original.Snapshot);
+                history.Create("Custom rings");string customId=history.SelectedProfileId;var draft=history.Selected.Snapshot;draft.Set("tunnels.pickupRingRadius",1.12f);history.Save(draft);var custom=history.Selected;
+                var next=new DesignLabHistory(path,current,releases:catalog,authoring:true,persistMigration:false);
+                Assert.That(next.StorageError,Is.Null);Assert.That(next.ReleaseError,Is.Null);
+                Assert.That(next.Selected.Snapshot.Get("detail.ringRadius"),Is.EqualTo(1.65f));Assert.That(next.Selected.Snapshot.Get("tunnels.pickupRingRadius"),Is.EqualTo(1.12f));
+                var savedCustom=next.Profiles.Single(p=>p.Id==customId).Revisions.Single(r=>r.Number==custom.Number);Assert.That(savedCustom.Hash,Is.EqualTo(custom.Hash));Assert.That(savedCustom.Snapshot.Hash(),Is.EqualTo(custom.Hash));
+                var factory=next.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId);var saved=factory.Revisions.Single(r=>r.Number==original.Number);
+                Assert.That(saved.Hash,Is.EqualTo(original.Hash));Assert.That(JsonUtility.ToJson(saved.Snapshot),Is.EqualTo(originalJson));
+                var effective=factory.Revisions.OrderByDescending(r=>r.Number).First().Snapshot;
+                foreach(var key in new[]{"detail.ringRadius","tunnels.pickupRingRadius","lunar.pickupRingRadius"})Assert.That(effective.Get(key),Is.EqualTo(1.35f),key);
+                var output=next.BuildReleaseCatalog();Assert.That(output.Entries.Single().Hash,Is.EqualTo(catalog.Entries.Single().Hash));
+                Assert.That(DesignLabHistory.ResolvePublishedDefault(current,output).Selected.Hash,Is.EqualTo(effective.Hash()));
+            }
+            finally{Directory.Delete(directory,true);}
+        }
+        [TestCase(false)][TestCase(true)] public void AuthoringWellDefaultUsesCurrentLightingAndPreservesSourceAndCustomProfile(bool beforeIdleDeparture)
+        {
+            string directory=Path.Combine(Path.GetTempPath(),"author-well-"+Guid.NewGuid());Directory.CreateDirectory(directory);string path=Path.Combine(directory,"history.json");
+            try
+            {
+                var current=DesignLabHistoryTests.Shipped();var before=typeof(ProvingProfile).GetMethod("BeforeWellDaylight",BindingFlags.Instance|BindingFlags.NonPublic);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList();
+                if(beforeIdleDeparture)
+                {
+                    var older=typeof(ProvingProfile).GetMethod("BeforeWellIdleDeparture",BindingFlags.Instance|BindingFlags.NonPublic);
+                    old.Profiles=old.Profiles.Select(p=>(ProvingProfile)older.Invoke(p,null)).ToList();
+                }
+                var catalog=LabReleaseCatalog.Factory(old);
+                var history=new DesignLabHistory(path,old,releases:catalog,authoring:true);var original=history.Selected;string originalJson=JsonUtility.ToJson(original.Snapshot);
+                history.Create("Custom Well");var draft=history.Selected.Snapshot;draft.Set("well.lampRange",15);history.Save(draft);var custom=history.Selected;
+                var next=new DesignLabHistory(path,current,releases:catalog,authoring:true,persistMigration:false);
+                Assert.That(next.StorageError,Is.Null);Assert.That(next.Selected.Snapshot.Get("well.daylight"),Is.EqualTo(.8f));Assert.That(next.Selected.Snapshot.Get("well.lampRange"),Is.EqualTo(15));
+                Assert.That(next.SelectedProfile.Revisions.Single(r=>r.Number==custom.Number).Hash,Is.EqualTo(custom.Hash));
+                var factory=next.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId);Assert.That(JsonUtility.ToJson(factory.Revisions.Single(r=>r.Number==original.Number).Snapshot),Is.EqualTo(originalJson));
+                var effective=factory.Revisions.OrderByDescending(r=>r.Number).First().Snapshot;
+                foreach(var key in new[]{"well.daylight","well.innerAngle","well.fill","well.lampRange","well.daylightShadow"})Assert.That(effective.Get(key),Is.EqualTo(current.Get(key)),key);
+                var output=next.BuildReleaseCatalog();Assert.That(output.Entries.Single().Hash,Is.EqualTo(catalog.Entries.Single().Hash));
+                Assert.That(DesignLabHistory.ResolvePublishedDefault(current,output).Selected.Hash,Is.EqualTo(effective.Hash()));
+            }
+            finally{Directory.Delete(directory,true);}
+        }
+        [Test] public void AuthoringDefaultKeepsIntegratedSteelRiflePresentation()
+        {
+            string directory=Path.Combine(Path.GetTempPath(),"author-steel-"+Guid.NewGuid());Directory.CreateDirectory(directory);string path=Path.Combine(directory,"history.json");
+            try
+            {
+                var current=DesignLabHistoryTests.Shipped();var before=typeof(ProvingProfile).GetMethod("BeforeRifleSteelPresentation",BindingFlags.Instance|BindingFlags.NonPublic);
+                var old=current.Clone();old.Profiles=old.Profiles.Select(p=>(ProvingProfile)before.Invoke(p,null)).ToList();var catalog=LabReleaseCatalog.Factory(old);
+                var history=new DesignLabHistory(path,old,releases:catalog,authoring:true);var original=history.Selected;history.Create("Custom old rifle");var custom=history.Selected;
+                var next=new DesignLabHistory(path,current,releases:catalog,authoring:true,persistMigration:false);
+                Assert.That(next.StorageError,Is.Null);Assert.That(next.Selected.Snapshot.Get("presentation.rifleTracerLength"),Is.EqualTo(3));
+                Assert.That(next.SelectedProfile.Revisions.Single(r=>r.Number==custom.Number).Hash,Is.EqualTo(custom.Hash));
+                var factory=next.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId);Assert.That(factory.Revisions.Single(r=>r.Number==original.Number).Hash,Is.EqualTo(original.Hash));
+                var effective=factory.Revisions.OrderByDescending(r=>r.Number).First().Snapshot;
+                foreach(var key in new[]{"presentation.rifleTracerLength","presentation.rifleTracerRed","presentation.rifleTracerGreen","presentation.rifleTracerBlue"})Assert.That(effective.Get(key),Is.EqualTo(current.Get(key)),key);
+                var output=next.BuildReleaseCatalog();Assert.That(output.Entries.Single().Hash,Is.EqualTo(catalog.Entries.Single().Hash));
+                Assert.That(DesignLabHistory.ResolvePublishedDefault(current,output).Selected.Hash,Is.EqualTo(effective.Hash()));
+            }
+            finally{Directory.Delete(directory,true);}
+        }
         [Test] public void SerializedBowlProfileAdoptsDefaultAndKeepsCustomRadius()
         {
             var old=Before(ProvingProfile.CreateCombatBowlRingPresentationDefault());old.EnsureOrbitalLeagueDescriptors();Assert.That(old.Version,Is.EqualTo(11));Assert.That(old.Get("detail.ringRadius"),Is.EqualTo(1.35f));

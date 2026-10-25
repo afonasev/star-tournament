@@ -127,7 +127,7 @@ namespace StarTournament.ProvingGround
         {
             for(;t;t=t.parent)
             if(t.name=="weapon:joined"||t.name=="own-shadow-proxy"||t.name=="vector-armored-hands"||
-            t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name.StartsWith("hit-contact-"))return true;
+            t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"||t.name.StartsWith("hit-contact-"))return true;
             return false;
         }
         static bool Intersect(Vector3 origin,Vector3 direction,Vector3 a,Vector3 b,Vector3 c,out float distance)

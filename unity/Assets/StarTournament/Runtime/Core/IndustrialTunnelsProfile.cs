@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
         public const string TunnelsArtId="industrial-tunnels-presentation-v1",TunnelsAuthoringId="industrial-tunnels-authoring-v1";
         public static ProvingProfile CreateIndustrialTunnelsAuthoring(ArenaDefinition d)
         {
-            var p=CreateCombatBowlAuthoringDefault(d);p.id=TunnelsAuthoringId;p.version=1;
+            var p=CreateCombatBowlAuthoringDefault(d);p.id=TunnelsAuthoringId;p.version=System.Array.Exists(d.Pickups,x=>x.Kind==ArenaPickupKind.Plasma)?2:1;
             foreach(var descriptor in p.descriptors){descriptor.Path="tunnels.map."+descriptor.Path;descriptor.Description="Геометрия технических тоннелей; изменение требует новой immutable map revision.";}
             foreach(var value in p.values)value.Path="tunnels.map."+value.Path;
             return p;

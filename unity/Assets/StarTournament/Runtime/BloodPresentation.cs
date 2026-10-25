@@ -47,7 +47,7 @@ namespace StarTournament.ProvingGround
                 drops.Add(new Drop{Root=root,Origin=origin,Velocity=velocity,Born=notice.Time,Sampled=notice.Time,Scale=scale,Size=size,Seed=seed});
             }
         }
-        float Scale(WeaponId weapon)=>profile.Get("blood."+(weapon==WeaponId.Shotgun?"shotgunScale":weapon==WeaponId.Rifle?"rifleScale":weapon==WeaponId.Cutter?"cutterScale":"rocketScale"));
+        float Scale(WeaponId weapon)=>profile.Get("blood."+(weapon==WeaponId.Shotgun?"shotgunScale":(weapon==WeaponId.Rifle||weapon==WeaponId.Plasma)?"rifleScale":weapon==WeaponId.Cutter?"cutterScale":"rocketScale"));
         Vector3 Position(Drop drop,double time)=>drop.Origin+drop.Velocity*(float)(time-drop.Born)+Vector3.down*(profile.Get("blood.gravity")*.5f*(float)((time-drop.Born)*(time-drop.Born)));
         public void Render()
         {
