@@ -27,7 +27,7 @@ namespace StarTournament.ProvingGround
         string lobbyJoinProfile;
         int lobbyBotDifficulty;
         bool lobbyJoinFromButton;
-        bool LobbyModal=>rosterEditing>=0||pendingSeat>=0||(lobbyDialog!=null&&lobbyDialog.activeSelf)||textEntryPanel;
+        bool LobbyModal=>InlineAny||rosterEditing>=0||pendingSeat>=0||(lobbyDialog!=null&&lobbyDialog.activeSelf)||textEntryPanel;
 
         int LobbyPosition(int seat,int count)=>lobbyPositions.Take(count).Distinct().Count()==count&&lobbyPositions.Take(count).All(p=>p>=0&&p<count)?lobbyPositions[seat]:seat;
         void RemoveLobbyPosition(int seat,int count)
@@ -219,14 +219,24 @@ namespace StarTournament.ProvingGround
         void OpenLobbyMaps()
         {
             BeginLobbyDialog("ВЫБЕРИТЕ КАРТУ",CloseLobbyDialog,lobbyMap);
-            Layout((RectTransform)lobbyScroll.transform,new Vector2(.04f,.19f),new Vector2(.45f,.82f));
-            var preview=new GameObject("lobby-large-map-preview",typeof(RectTransform),typeof(ArenaPreviewGraphic));preview.transform.SetParent(lobbyScroll.transform.parent,false);Layout((RectTransform)preview.transform,new Vector2(.48f,.20f),new Vector2(.97f,.84f));lobbyDialogPreview=preview.GetComponent<ArenaPreviewGraphic>();lobbyDialogPreview.Show(SelectedMapId);
-            foreach(var id in SetupMapIds)
+            lobbyScroll.gameObject.SetActive(false);
+            var panel=lobbyScroll.transform.parent;
+            foreach(Transform child in panel)if(child.name=="selector-rule")child.gameObject.SetActive(false);
+            Layout((RectTransform)panel,new Vector2(.13f,.12f),new Vector2(.87f,.90f));
+            for(int i=0;i<SetupMapIds.Length;i++)
             {
-                var choice=id;var b=LobbyChoice("lobby-map-"+id,AuthoredArenaCatalog.Name(id),()=>{SelectAuthoredMap(choice);CloseLobbyDialog();});
-                b.gameObject.AddComponent<LobbyPreviewFocus>().Show=()=>lobbyDialogPreview.Show(choice);
+                string id=SetupMapIds[i];int col=i%2,row=i/2;
+                var button=RosterButton(panel,"lobby-map-"+id,"",new Vector2(.045f+col*.47f,.49f-row*.34f),new Vector2(.485f+col*.47f,.81f-row*.34f),()=>{if(Time.frameCount<=lobbyDialogFrame)return;SelectAuthoredMap(id);CloseLobbyDialog();});
+                button.GetComponent<MenuPresentation>().Compact=false;((RectTransform)button.transform).offsetMin=((RectTransform)button.transform).offsetMax=Vector2.zero;button.GetComponent<MenuActionHint>().HideFocusedConfirm=true;
+                var image=new GameObject("map-art",typeof(RectTransform),typeof(ArenaPreviewGraphic));image.transform.SetParent(button.transform,false);Layout((RectTransform)image.transform,new Vector2(.012f,.02f),new Vector2(.988f,.98f));image.GetComponent<ArenaPreviewGraphic>().Show(id);image.GetComponent<ArenaPreviewGraphic>().raycastTarget=false;
+                var shade=Panel(button.transform,"map-caption-backing",new Vector2(.012f,.02f),new Vector2(.988f,.22f),new Color32(6,15,24,230));shade.GetComponent<Image>().raycastTarget=false;
+                var caption=button.transform.Find("label").GetComponent<Text>();caption.text=AuthoredArenaCatalog.Name(id);caption.fontSize=26;caption.alignment=TextAnchor.MiddleLeft;Layout(caption.rectTransform,new Vector2(.04f,.02f),new Vector2(.96f,.22f));caption.transform.SetAsLastSibling();
+                lobbyChoices.Add(button);
             }
-            FinishLobbyChoices(Array.IndexOf(SetupMapIds,SelectedMapId));
+            for(int i=0;i<4;i++)SetupNavigation(lobbyChoices[i],i>=2?lobbyChoices[i-2]:lobbyChoices[i],i<2?lobbyChoices[i+2]:lobbyDialogBack,lobbyChoices[i%2==1?i-1:i],lobbyChoices[i%2==0?i+1:i]);
+            SetupNavigation(lobbyDialogBack,lobbyChoices[2],lobbyDialogBack,lobbyDialogBack,lobbyDialogBack);
+            Select(lobbyChoices[Mathf.Max(0,Array.IndexOf(SetupMapIds,SelectedMapId))]);
+            RouteInlineInput();
         }
         void UpdateLobbyDialogInput()
         {
@@ -375,10 +385,17 @@ namespace StarTournament.ProvingGround
     }
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeLobbyRemovalHold()
+        {
+            if(id!="single-screen-lobby-v1"||version<2)return this;
+            var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            old.descriptors.RemoveAll(d=>d.Path=="lobby.removeHoldSeconds");old.values.RemoveAll(v=>v.Path=="lobby.removeHoldSeconds");old.version=1;return old;
+        }
         public static ProvingProfile CreateLobbyDefault()
         {
-            var p=new ProvingProfile{id="single-screen-lobby-v1",version=1};
+            var p=new ProvingProfile{id="single-screen-lobby-v1",version=2};
             p.Add("lobby.durationMinutes","lobby","Начальное время","Время нового лобби после запуска; редактор использует этот шаг.","minutes",1,30,1,3);
+            p.Add("lobby.removeHoldSeconds","lobby","Удержание удаления","Время West/X до удаления выбранного участника; отпускание отменяет.","seconds",.3f,3f,.1f,1f);
             p.Add("lobby.targetPoints","lobby","Начальная цель","Цель нового лобби после запуска; редактор использует этот шаг.","points",1000,20000,500,2000);
             return p;
         }

@@ -965,6 +965,7 @@ namespace StarTournament.ProvingGround
         bool menuGamepadCursor,menuWindowFocused=true;
         void UpdateMenuCursor()
         {
+            RouteInlineInput();
             if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);return;}
             if(phase==Phase.Running || phase==Phase.Loading)return;
             foreach(var pad in Gamepad.all)
