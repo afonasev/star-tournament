@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround
     {
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
-        Mesh cube,cylinder,sphere;Material ivory,ceiling,graphite,metal,grate,paving,ochre,sand,glass,white,blue,green,purple,fontMaterial;Font signFont;ProvingProfile p;
+        Mesh cube,cylinder,sphere,starMesh;Material ivory,ceiling,graphite,metal,grate,paving,ochre,sand,glass,white,blue,green,purple,fontMaterial;Font signFont;ProvingProfile p;
         ArenaDefinition definition;
         AmbientMode oldMode;Color oldAmbient;public int LightCount{get;private set;}
         float P(string key)=>p.Get("lunar."+key);
@@ -311,7 +311,8 @@ namespace StarTournament.ProvingGround
             var earth=new Material(Shader.Find("StarTournament/LunarEarth")){name="NASA Blue Marble / clouds and atmosphere"};earth.SetTexture("_BaseMap",Resources.Load<Texture2D>("LunarEarth"));owned.Add(earth);
             Ball(earth,new Vector3(-70,63,90),Vector3.one*P("earthRadius")*2);Ball(white,new Vector3(60,84,75),Vector3.one*P("sunRadius")*2);
             var random=new System.Random(42026);
-            for(int i=0;i<450;i++){var dir=new Vector3((float)random.NextDouble()*2-1,(float)random.NextDouble(),(float)random.NextDouble()*2-1).normalized;Ball(white,dir*(radius-3),Vector3.one*(i%4==0?.14f:.07f));}
+            starMesh=CreateLunarStarMesh(sphere);owned.Add(starMesh);
+            for(int i=0;i<450;i++){var dir=new Vector3((float)random.NextDouble()*2-1,(float)random.NextDouble(),(float)random.NextDouble()*2-1).normalized;Shape(white,starMesh,dir*(radius-3),Vector3.one*(i%4==0?.14f:.07f),Quaternion.identity);}
             // Annulus of triangulated regolith and a continuous jagged mountain horizon.
             var v=new List<Vector3>();var uv=new List<Vector2>();var tris=new List<int>();
             const int segments=160;const int rings=9;
@@ -326,6 +327,19 @@ namespace StarTournament.ProvingGround
             Box(sand,new Vector3(0,-.45f,0),new Vector3(90,.2f,90));
             foreach(var c in new[]{new Vector3(-42,0,37),new Vector3(48,0,23),new Vector3(8,0,-55),new Vector3(35,0,49)})Crater(c,5);
             for(int i=0;i<100;i++){float a=(float)random.NextDouble()*Mathf.PI*2,r=47+(float)random.NextDouble()*60;var c=new Vector3(Mathf.Sin(a)*r,.2f,Mathf.Cos(a)*r);GroundedRock(RockMesh(i),c,new Vector3(1+i%3,.6f+i%4,1.5f),Quaternion.Euler(0,i*37,0));}
+        }
+        internal static Mesh CreateLunarStarMesh(Mesh source)
+        {
+            var inputVertices=source.vertices;var inputTriangles=source.triangles;
+            var vertices=new List<Vector3>();var byPosition=new Dictionary<Vector3,int>();var remap=new int[inputVertices.Length];
+            for(int i=0;i<inputVertices.Length;i++)
+            {
+                var position=inputVertices[i];
+                if(!byPosition.TryGetValue(position,out int index)){index=vertices.Count;byPosition.Add(position,index);vertices.Add(position);}
+                remap[i]=index;
+            }
+            var triangles=new int[inputTriangles.Length];for(int i=0;i<inputTriangles.Length;i++)triangles[i]=remap[inputTriangles[i]];
+            var mesh=new Mesh{name="Lunar star sphere / welded unlit vertices"};mesh.SetVertices(vertices);mesh.triangles=triangles;mesh.RecalculateBounds();return mesh;
         }
         // Fixed tessellation and contact inset are asset construction tolerances, not gameplay controls.
         internal static Vector3 LandscapeVertex(int ring,int segment,float mountainHeight)
