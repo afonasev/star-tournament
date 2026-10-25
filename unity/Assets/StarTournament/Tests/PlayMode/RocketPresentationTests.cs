@@ -44,7 +44,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RENDER_COST_OUTPUT");Assert.That(directory,Is.Not.Null.And.Not.Empty);Directory.CreateDirectory(directory);
             var flight=Flight();presentation.Render();
             // Preserve construction-owned flight materials in the inventory after contact removes the rocket renderers.
-            var flightMaterials=owner.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).ToArray();
+            var flightMaterials=owner.GetComponentsInChildren<Renderer>(true).Where(r=>r is LineRenderer||r is ParticleSystemRenderer).SelectMany(r=>r.sharedMaterials).ToArray();
             Contact(flight);presentation.Render();
             var systems=owner.GetComponentsInChildren<ParticleSystem>(true);var particleRenderers=systems.Select(s=>s.GetComponent<ParticleSystemRenderer>()).Where(r=>r).Cast<Renderer>().Concat(owner.GetComponentsInChildren<LineRenderer>(true)).ToArray();
             SecondaryRenderingCostDiagnostics.Write(directory,"pulse-vfx",particleRenderers,flightMaterials);SecondaryRenderingCostDiagnostics.WriteParticles(directory,"pulse-vfx",systems);
