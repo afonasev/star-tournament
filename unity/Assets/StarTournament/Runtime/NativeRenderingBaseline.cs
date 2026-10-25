@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class Report
         {
             public string status="INCOMPLETE",unity,device,cpu,gpu,os,graphicsApi,map,pipeline,protocol="v1: 8 Hard bots/FFA seed20261025, 1920x1080, uncapped; ordinary1 warmup5/sample15; fresh frozen1 and frozen4 warmup5/sample8; no asset/light/quality perturbations",source;
-            public string focusRoute="ordinary-windowed";public int ownBackgroundWindows;public bool batchMode;public string referenceInput;public uint seed=Seed;public int cpuThreads,systemMemoryMB,graphicsMemoryMB;public bool frameTimingEnabled;public List<Sample> samples=new List<Sample>();
+            public List<string> nativeBackgroundEvents=new List<string>();public string focusRoute="ordinary-windowed";public int ownBackgroundWindows;public bool batchMode;public string referenceInput;public uint seed=Seed;public int cpuThreads,systemMemoryMB,graphicsMemoryMB;public bool frameTimingEnabled;public List<Sample> samples=new List<Sample>();
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Bootstrap(){if(Requested(Environment.GetCommandLineArgs()))new GameObject("Rendering baseline QA").AddComponent<NativeRenderingBaseline>();}
         ProvingGround ground;Report report,reference;string directory,map;bool background;readonly FrameTiming[] timings=new FrameTiming[1];
@@ -69,7 +69,7 @@ namespace StarTournament.ProvingGround
             report=new Report{batchMode=Application.isBatchMode,unity=Application.unityVersion,device=SystemInfo.deviceModel,cpu=SystemInfo.processorType,gpu=SystemInfo.graphicsDeviceName,os=SystemInfo.operatingSystem,graphicsApi=SystemInfo.graphicsDeviceType.ToString(),map=map,pipeline=pipeline?pipeline.name:"none",cpuThreads=SystemInfo.processorCount,systemMemoryMB=SystemInfo.systemMemorySize,graphicsMemoryMB=SystemInfo.graphicsMemorySize,frameTimingEnabled=FrameTimingManager.IsFeatureEnabled(),source=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BASELINE_SOURCE")};Save();
             while(!ground||!ReadyForReview(ground.IsReady,SplashScreen.isFinished,Application.isBatchMode)){ground=FindFirstObjectByType<ProvingGround>();yield return null;}
             Screen.SetResolution(1920,1080,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(1);
-            background=args.Contains("-baselineBackground");if(background){report.focusRoute="macOS-own-window-background";report.ownBackgroundWindows=RenderingBaselineMacBackground.Apply();Save();}
+            background=args.Contains("-baselineBackground");if(background){report.focusRoute="macOS-own-window-background";report.ownBackgroundWindows=RenderingBaselineMacBackground.Apply();report.nativeBackgroundEvents.Add(RenderingBaselineMacBackground.LastEvidence);Save();}
             int refAt=Array.IndexOf(args,"-baselineReference");if(refAt>=0){report.referenceInput=args[refAt+1];reference=JsonUtility.FromJson<Report>(File.ReadAllText(report.referenceInput));if(reference.map!=map)throw new InvalidOperationException("Reference map mismatch");}
             recorders=Names.Select((name,n)=>ProfilerRecorder.StartNew(Categories[n],name)).ToArray();
             yield return Measure("ordinary1",1,true,15);yield return Measure("frozen1",1,false,8);yield return Measure("frozen4",4,false,8);
@@ -92,7 +92,7 @@ namespace StarTournament.ProvingGround
             string expected=null;Sample referenceSample=null;
             if(!live){referenceSample=reference?.samples.Single(s=>s.name==name);expected=referenceSample?.stateStart??JsonUtility.ToJson(ground.Session.Capture());RestoreReference(ground.Session,expected);}
             ground.FullHealReviewManualTick=!live;QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
-            if(background)report.ownBackgroundWindows=RenderingBaselineMacBackground.Apply();
+            if(background){report.ownBackgroundWindows=RenderingBaselineMacBackground.Apply();report.nativeBackgroundEvents.Add(RenderingBaselineMacBackground.LastEvidence);Save();}
             double warm=Time.realtimeSinceStartupAsDouble+5;while(Time.realtimeSinceStartupAsDouble<warm){FrameTimingManager.CaptureFrameTimings();yield return null;}
             var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             if(background&&Application.isFocused)throw new InvalidOperationException("QA Player did not enter background focus condition");
