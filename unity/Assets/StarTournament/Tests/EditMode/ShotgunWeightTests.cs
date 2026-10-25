@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(current.Get("presentation.shotTracerRed"),Is.EqualTo(.46f));
                 Assert.That(current.Get("presentation.shotTracerGreen"),Is.EqualTo(.30f));
                 Assert.That(current.Get("presentation.shotTracerBlue"),Is.EqualTo(.14f));
-                catalog.Entries.RemoveAll(e=>e.ProfileId==DesignLabHistory.ReleaseId&&e.Revision==9);
+                catalog.Entries.Remove(catalog.Entries.Where(e=>e.ProfileId==DesignLabHistory.ReleaseId).OrderByDescending(e=>e.Revision).First());
                 var previous=DesignLabHistory.ResolvePublishedDefault(ground.CaptureLabAuthoringBaseline(),catalog).Selected.Snapshot;
                 foreach(var descriptor in previous.Descriptors.Where(d=>d.Path!="shot.spread"))
                     Assert.That(current.Get(descriptor.Path),Is.EqualTo(previous.Get(descriptor.Path)),descriptor.Path);

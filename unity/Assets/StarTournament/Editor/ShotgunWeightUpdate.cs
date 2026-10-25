@@ -19,6 +19,11 @@ namespace StarTournament.ProvingGround.Editor
             var history=LabProjectStorage.Open(project,baseline,previous);
             if(history.StorageError!=null||history.ReleaseError!=null)throw new InvalidOperationException(history.StorageError??history.ReleaseError);
             var draft=history.Selected.Snapshot;
+            // Publish a shotgun-only delta against actual gameplay, not old authoring
+            // values that would freeze pre-migration visuals into the current schema.
+            var gameplay=DesignLabHistory.ResolvePublishedDefault(baseline,previous).Selected.Snapshot;
+            foreach(var descriptor in draft.Descriptors)
+                if(draft.IsEditable(descriptor.Path))draft.Set(descriptor.Path,gameplay.Get(descriptor.Path));
             float before=draft.Get("shot.spread");
             if(!Mathf.Approximately(before,6)&&!Mathf.Approximately(before,4.8f))throw new InvalidOperationException("Unexpected shotgun baseline "+before);
             draft.Set("shot.spread",4.8f);
