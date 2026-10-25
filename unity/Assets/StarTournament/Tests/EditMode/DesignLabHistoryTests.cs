@@ -304,7 +304,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [Test]public void CompleteRegistryHasUniquePathsAndValidDefaults()
-        {var bundle=Shipped();Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
+        {var bundle=Shipped();bundle.Profiles.Add(ProvingProfile.CreateLobbyDefault());Assert.That(bundle.Validate(),Is.Empty,string.Join(";",bundle.Validate().Select(i=>i.Path+": "+i.Message)));Assert.That(bundle.Profiles.Count,Is.EqualTo(typeof(ProvingGround).GetFields().Count(f=>f.FieldType==typeof(ProvingProfile))),"Each public runtime profile must be represented in the bundle");Assert.That(bundle.Descriptors.Count(),Is.GreaterThan(200));Assert.That(bundle.Descriptors.Select(d=>d.Path).Distinct().Count(),Is.EqualTo(bundle.Descriptors.Count()));}
         [Test]public void TravelingRifleMigratesExactOldHistoryWithoutLosingRevisionOrTuning()
         {
             var old=BeforeRebalance(Shipped());old.Profiles=old.Profiles.Select(p=>p.BeforeUnifiedBodyDamage().BeforeTravelingRifle()).ToList();

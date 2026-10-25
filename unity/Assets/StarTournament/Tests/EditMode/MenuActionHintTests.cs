@@ -51,6 +51,41 @@ namespace StarTournament.ProvingGround.Tests
             hint.ReservedRightInset=()=>250;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.rectTransform.offsetMax.x,Is.EqualTo(-250));
             hint.ReservedRightInset=()=>790;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);Assert.That(caption.text,Is.EqualTo("Версия"));
         }
+        [TestCase(false)] [TestCase(true)]
+        public void LobbyOptInHidesConfirmAndPreservesFamilyShortcutsInBothLayouts(bool centered)
+        {
+            hint.HideFocusedConfirm=true;hint.ColoredLobbyGlyph=centered;
+            string[] layouts={"XInputController","DualShockGamepad","SwitchProControllerHID","Gamepad"};
+            var actions=new[]{MenuPadButton.East,MenuPadButton.West,MenuPadButton.North,MenuPadButton.Start};
+            var colors=new[]{new Color32(216,61,66,255),new Color32(47,133,226,255),new Color32(238,190,45,255),new Color32(9,20,29,255)};
+            foreach(string layout in layouts)
+            {
+                var device=(Gamepad)InputSystem.AddDevice(layout);
+                try
+                {
+                    hint.Device=()=>device;focused=true;hint.Shortcut=null;hint.Refresh();
+                    Assert.That(hint.GlyphLabel.enabled,Is.False,"Focused lobby action needs no redundant confirm: "+layout);
+                    Assert.That(root.transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.False);
+                    for(int n=0;n<actions.Length;n++)
+                    {
+                        hint.Shortcut=actions[n];hint.Refresh();
+                        var family=MenuGamepadHints.Family(device.layout,device.description.product);
+                        string expected=MenuGamepadHints.Glyph(family,actions[n]);
+                        if(centered&&family!=MenuPadFamily.Generic&&(expected=="Menu"||expected=="Options"||expected=="+"))expected="≡";
+                        Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(expected));
+                        Assert.That(root.transform.Find("gamepad-shortcut-hint").GetComponent<Text>().enabled,Is.False,"Only one shortcut remains");
+                        var backing=root.transform.Find("gamepad-action-button").GetComponent<Image>();
+                        if(centered&&family!=MenuPadFamily.Generic){Assert.That(backing.enabled,Is.True);Assert.That((Color32)backing.color,Is.EqualTo(colors[n]));}
+                        focused=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(expected));focused=true;
+                    }
+                    hint.Shortcut=MenuPadButton.South;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False,"South is redundant on the focused lobby action");
+                    hint.Shortcut=MenuPadButton.East;button.interactable=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);button.interactable=true;
+                    hint.Shortcut=null;hint.HideFocusedConfirm=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True,"Other menus retain focused confirm by default");hint.HideFocusedConfirm=true;
+                    Assert.That(caption.text,Is.EqualTo("Профиль · Нижняя"));
+                }
+                finally{InputSystem.RemoveDevice(device);}
+            }
+        }
         [Test]public void ContextSpecificFocusDoesNotDependOnASingleGlobalSelection()
         {
             var second=Object.Instantiate(root);try

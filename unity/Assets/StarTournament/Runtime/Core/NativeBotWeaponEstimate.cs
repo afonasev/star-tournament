@@ -8,9 +8,11 @@ namespace StarTournament.ProvingGround
         readonly ProvingProfile combat, life, cutter, plasma;
         readonly ShotgunResolver zones;
         readonly NativeShotgunPolicy aim;
+        readonly float fixedStep;
         public NativeBotWeaponEstimate(ProvingProfile movement,ProvingProfile combat,ProvingProfile life,ProvingProfile cutter,NativeShotgunPolicy aim,ProvingProfile plasma=null)
         {
             this.plasma=plasma??ProvingProfile.CreatePlasmaDefault();this.combat=combat;this.life=life;this.cutter=cutter;this.aim=aim;
+            fixedStep=1f/movement.Get("simulation.fixedTickHz");
             zones=new ShotgunResolver(combat,movement.Get("player.capsule.height"));
         }
         public float Estimate(WeaponId id,NativeBotFrame frame,NativeBotMemoryEntry target,double time,float phase,
@@ -35,6 +37,8 @@ namespace StarTournament.ProvingGround
             var pose=frame.Pose;float nextShot=delay;
             int rounds=id==WeaponId.Cutter?0:CombatLife.AmmoFor(frame.Life,id);
             float cooldown=id==WeaponId.Plasma?plasma.Get("plasma.cooldownSeconds"):id==WeaponId.Rifle?life.Get("rifle.cooldownSeconds"):id==WeaponId.Shotgun?life.Get("combat.cooldownSeconds"):life.Get("rocket.cooldownSeconds");
+            // Match CombatLife numerical tick boundaries for the independently tuned rifle.
+            if(id==WeaponId.Rifle)cooldown=(float)(Math.Max(1,Math.Ceiling((cooldown-1e-7)/fixedStep))*fixedStep);
             float damage=id==WeaponId.Plasma?plasma.Get("plasma.damage"):id==WeaponId.Rifle?combat.Get("rifle.damage"):id==WeaponId.Shotgun?combat.Get("shot.damage"):combat.Get("rocket.maximumDamage");
             float boostMultiplier=life.Get("damageBoost.multiplier");
             var beamDelivered=id==WeaponId.Cutter?new float[frame.Knowledge.Enemies.Length]:null;

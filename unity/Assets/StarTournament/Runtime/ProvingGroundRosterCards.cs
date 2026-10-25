@@ -297,7 +297,7 @@ namespace StarTournament.ProvingGround
             else lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,8,4,250)};
             // Reparenting between FFA/team grids can disable a card without a new
             // EventSystem selection event. Restore the shared visual focus explicitly.
-            foreach(var card in rosterCards)card.GetComponent<MenuPresentation>().SetFocused(EventSystem.current&&EventSystem.current.currentSelectedGameObject==card.gameObject);
+            foreach(var card in rosterCards.Concat(rosterEmpty))card.GetComponent<MenuPresentation>().SetFocused(EventSystem.current&&EventSystem.current.currentSelectedGameObject==card.gameObject);
             rosterAddHuman.interactable=RosterTotal<8 && LocalSeatCount<4;rosterAddBot.interactable=RosterTotal<8;
             rosterAddHuman.GetComponentInChildren<Text>().color=rosterAddHuman.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterAddBot.GetComponentInChildren<Text>().color=rosterAddBot.interactable?Color.white:(Color)new Color32(127,153,165,255);

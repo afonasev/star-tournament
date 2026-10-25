@@ -112,7 +112,7 @@ namespace StarTournament.ProvingGround
         void StyleLobbySurface(Button button)
         {
             var presentation=button.GetComponent<MenuPresentation>();presentation.Compact=false;presentation.LobbySurface=true;button.transition=Selectable.Transition.None;
-            var hint=button.GetComponent<MenuActionHint>();if(hint)hint.ColoredLobbyGlyph=true;
+            var hint=button.GetComponent<MenuActionHint>();if(hint){hint.ColoredLobbyGlyph=true;hint.HideFocusedConfirm=true;}
             // MenuPresentation owns the material and tint at render time.
             var outline=button.GetComponent<Outline>();if(outline)outline.effectColor=new Color32(109,130,145,180);
         }
@@ -132,7 +132,7 @@ namespace StarTournament.ProvingGround
             lobbyTeamMaterial.gameObject.SetActive(SetupMode==NativeMatchMode.Teams);
             lobbyTeamMaterial.Left=RosterTeamColor(NativeTeam.TeamA);lobbyTeamMaterial.Right=RosterTeamColor(NativeTeam.TeamB);lobbyTeamMaterial.SetVerticesDirty();
             foreach(var button in new[]{lobbyMap,lobbyMode,lobbyTime,lobbyTarget,setupPrevious,rosterAddBot,rosterAddHuman})StyleLobbySurface(button);
-            start.GetComponent<MenuActionHint>().ColoredLobbyGlyph=true;
+            start.GetComponent<MenuActionHint>().ColoredLobbyGlyph=true;start.GetComponent<MenuActionHint>().HideFocusedConfirm=true;
             foreach(var button in rosterCards.Concat(rosterEmpty))StyleLobbySurface(button);
         }
         void RefreshSingleScreenLobby()

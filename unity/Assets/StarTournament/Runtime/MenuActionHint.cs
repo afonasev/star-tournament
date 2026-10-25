@@ -11,6 +11,8 @@ namespace StarTournament.ProvingGround
         public Func<InputDevice> Device;
         // Only screens that opt in receive the colored button artwork.
         public bool ColoredLobbyGlyph;
+        // Main lobby opt-in; other menus retain their confirm hints.
+        public bool HideFocusedConfirm;
         public Text CaptionOverride;
         public bool CardHint;
         public Func<bool> Active,Focused,ShortcutActive;
@@ -50,7 +52,9 @@ namespace StarTournament.ProvingGround
             if(ColoredLobbyGlyph){RefreshAdjacent();return;}
             var device=Device?.Invoke();
             bool focused=Focused?.Invoke()??false,shortcut=Shortcut.HasValue&&(ShortcutActive?.Invoke()??true);
-            bool show=button.IsActive()&&button.IsInteractable()&&(Active?.Invoke()??false)&&(focused||shortcut)&&device is Gamepad&&device.added&&device.enabled;
+            bool showConfirm=focused&&!HideFocusedConfirm;
+            if(HideFocusedConfirm&&focused&&Shortcut==MenuPadButton.South)shortcut=false;
+            bool show=button.IsActive()&&button.IsInteractable()&&(Active?.Invoke()??false)&&(showConfirm||shortcut)&&device is Gamepad&&device.added&&device.enabled;
             if(show)
             {
                 var family=MenuGamepadHints.Family(device.layout,device.description.product);
@@ -58,9 +62,9 @@ namespace StarTournament.ProvingGround
                 string direct=shortcut?MenuGamepadHints.Glyph(family,Shortcut.Value):null;
                 string confirm=MenuGamepadHints.Glyph(family,MenuPadButton.South);
                 if(ColoredLobbyGlyph&&family!=MenuPadFamily.Generic){direct=NeutralMenuGlyph(direct);confirm=NeutralMenuGlyph(confirm);}
-                bool pair=ColoredLobbyGlyph&&family!=MenuPadFamily.Generic&&focused&&shortcut&&Shortcut.Value!=MenuPadButton.South;
-                glyph.text=focused?confirm:direct;
-                if(focused&&shortcut&&Shortcut.Value!=MenuPadButton.South&&!pair)glyph.text+=" / "+direct;
+                bool pair=ColoredLobbyGlyph&&family!=MenuPadFamily.Generic&&showConfirm&&shortcut&&Shortcut.Value!=MenuPadButton.South;
+                glyph.text=showConfirm?confirm:direct;
+                if(showConfirm&&shortcut&&Shortcut.Value!=MenuPadButton.South&&!pair)glyph.text+=" / "+direct;
                 bool buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(glyph.text);
                 bool secondaryButton=pair&&IsButtonGlyph(direct);
                 float buttonWidth=buttonGlyph?GlyphWidth(glyph.text):0,secondaryWidth=secondaryButton?GlyphWidth(direct):0;
@@ -74,14 +78,14 @@ namespace StarTournament.ProvingGround
                 float space=((RectTransform)button.transform).rect.xMax-inset-captionEnd-4;
                 if(space<width&&pair)
                 {
-                    pair=false;glyph.text=ColoredLobbyGlyph&&focused?confirm:direct;buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(glyph.text);secondaryButton=false;
+                    pair=false;glyph.text=ColoredLobbyGlyph&&showConfirm?confirm:direct;buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(glyph.text);secondaryButton=false;
                     buttonWidth=buttonGlyph?GlyphWidth(glyph.text):0;secondaryWidth=0;width=buttonGlyph?buttonWidth:glyph.preferredWidth+4;
                     inset=Mathf.Max(ColoredLobbyGlyph?12:buttonGlyph?width+8:8,ReservedRightInset?.Invoke()??8);
                     space=((RectTransform)button.transform).rect.xMax-inset-captionEnd-4;
                 }
-                if(space<width&&focused&&shortcut&&!pair&&!ColoredLobbyGlyph){glyph.text=direct;buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(direct);buttonWidth=buttonGlyph?GlyphWidth(direct):0;width=buttonGlyph?buttonWidth:glyph.preferredWidth+4;inset=Mathf.Max(ColoredLobbyGlyph?12:buttonGlyph?width+8:8,ReservedRightInset?.Invoke()??8);}
+                if(space<width&&showConfirm&&shortcut&&!pair&&!ColoredLobbyGlyph){glyph.text=direct;buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(direct);buttonWidth=buttonGlyph?GlyphWidth(direct):0;width=buttonGlyph?buttonWidth:glyph.preferredWidth+4;inset=Mathf.Max(ColoredLobbyGlyph?12:buttonGlyph?width+8:8,ReservedRightInset?.Invoke()??8);}
                 show=space>=width;
-                MenuPadButton primaryAction=focused?(ColoredLobbyGlyph?MenuPadButton.South:shortcut&&Shortcut.Value!=MenuPadButton.South&&!pair?Shortcut.Value:MenuPadButton.South):Shortcut.Value;
+                MenuPadButton primaryAction=showConfirm?(ColoredLobbyGlyph?MenuPadButton.South:shortcut&&Shortcut.Value!=MenuPadButton.South&&!pair?Shortcut.Value:MenuPadButton.South):Shortcut.Value;
                 float primaryWidth=pair?buttonWidth:width;
                 glyph.rectTransform.offsetMin=new Vector2(-primaryWidth-inset,0);glyph.rectTransform.offsetMax=new Vector2(-inset,0);
                 float y=(glyph.rectTransform.anchorMin.y+glyph.rectTransform.anchorMax.y)*.5f;
@@ -109,7 +113,9 @@ namespace StarTournament.ProvingGround
         {
             var device=Device?.Invoke();bool focused=Focused?.Invoke()??false;
             bool shortcut=Shortcut.HasValue&&(ShortcutActive?.Invoke()??true);
-            bool show=button.IsActive()&&button.IsInteractable()&&(Active?.Invoke()??false)&&(focused||shortcut)&&device is Gamepad&&device.added&&device.enabled;
+            bool showConfirm=focused&&!HideFocusedConfirm;
+            if(HideFocusedConfirm&&focused&&Shortcut==MenuPadButton.South)shortcut=false;
+            bool show=button.IsActive()&&button.IsInteractable()&&(Active?.Invoke()??false)&&(showConfirm||shortcut)&&device is Gamepad&&device.added&&device.enabled;
             bool pair=false,primaryButton=false,secondaryButton=false;
             float primaryWidth=0,secondaryWidth=0;
             var parent=(RectTransform)button.transform;float inset=Mathf.Max(14,ReservedRightInset?.Invoke()??14);
@@ -126,8 +132,8 @@ namespace StarTournament.ProvingGround
                 string confirm=family==MenuPadFamily.Generic?MenuGamepadHints.Glyph(family,MenuPadButton.South):NeutralMenuGlyph(MenuGamepadHints.Glyph(family,MenuPadButton.South));
                 string direct=shortcut?MenuGamepadHints.Glyph(family,Shortcut.Value):null;
                 if(family!=MenuPadFamily.Generic&&direct!=null)direct=NeutralMenuGlyph(direct);
-                glyph.text=focused?confirm:direct;
-                pair=focused&&shortcut&&Shortcut.Value!=MenuPadButton.South;
+                glyph.text=showConfirm?confirm:direct;
+                pair=showConfirm&&shortcut&&Shortcut.Value!=MenuPadButton.South;
                 primaryButton=family!=MenuPadFamily.Generic&&IsButtonGlyph(glyph.text);
                 primaryWidth=primaryButton?GlyphWidth(glyph.text):glyph.preferredWidth+4;
                 shortcutGlyph.font=caption.font;shortcutGlyph.fontStyle=caption.fontStyle;shortcutGlyph.fontSize=glyph.fontSize;shortcutGlyph.text=direct;
@@ -150,7 +156,7 @@ namespace StarTournament.ProvingGround
                 float start=left?lo:(lo+hi-titleWidth-hints)*.5f;
                 float x=start+titleWidth+14;
                 var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds(button.transform,caption.rectTransform);float y=bounds.center.y;
-                PlaceGlyph(glyph,glyphBacking,x+primaryWidth*.5f,y,primaryWidth,primaryButton,focused?MenuPadButton.South:Shortcut.Value);
+                PlaceGlyph(glyph,glyphBacking,x+primaryWidth*.5f,y,primaryWidth,primaryButton,showConfirm?MenuPadButton.South:Shortcut.Value);
                 if(pair)PlaceGlyph(shortcutGlyph,shortcutBacking,x+primaryWidth+6+secondaryWidth*.5f,y,secondaryWidth,secondaryButton,Shortcut.Value);
             }
             glyph.enabled=show;glyphBacking.enabled=show&&primaryButton;

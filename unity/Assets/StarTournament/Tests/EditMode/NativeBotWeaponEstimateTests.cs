@@ -15,6 +15,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             return new NativeBotFrame{Pose=new ParticipantState(),Life=life,Knowledge=new NativeBotKnowledge{Enemies=new[]{enemy}}};
         }
         float Score(NativeShotgunPolicy policy,WeaponId id,NativeBotFrame f,float error=0,float rate=230)=>policy.Estimate.Estimate(id,f,f.Knowledge.Enemies[0],0,0,1,16,32,rate,error,.7f,1);
+        [TestCase(30f)][TestCase(50f)][TestCase(60f)][TestCase(120f)]
+        public void RifleForecastMatchesObservedCombatLifeCadence(float hz)
+        {
+            var move=ProvingProfile.CreateDefault();move.Set("simulation.fixedTickHz",hz);
+            var nominal=ProvingProfile.CreateCombatDefault();var actual=new CombatLife("cadence",nominal);
+            Assert.That(actual.Fire(true),Is.True);float step=1f/hz;int ticks=0;
+            do {actual.Advance(step);ticks++;Assert.That(ticks,Is.LessThan(120));}while(!actual.Fire(true));
+            var control=ProvingProfile.CreateCombatDefault();control.Set("rifle.cooldownSeconds",ticks*step);
+            var combat=ProvingProfile.CreateNativeCombatDefault();var cutter=ProvingProfile.CreateCutterDefault();
+            var candidate=new NativeShotgunPolicy(move,combat,cutter,nominal);
+            var reference=new NativeShotgunPolicy(move,combat,cutter,control);
+            Assert.That(Score(candidate,WeaponId.Rifle,Frame(8)),Is.EqualTo(Score(reference,WeaponId.Rifle,Frame(8))).Within(.0001f));
+        }
         [Test] public void RifleSpreadReducesDistantExpectedDamage()
         {
             var combat=ProvingProfile.CreateNativeCombatDefault();var f=Frame(30);combat.Set("rifle.spread",0);

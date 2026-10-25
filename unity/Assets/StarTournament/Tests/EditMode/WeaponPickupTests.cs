@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Cutter));life.ConsumeCutter(30);life.Select(WeaponSelection.Previous);life.Advance(1);life.Select(WeaponSelection.Next);life.Advance(1);
             Assert.That(life.Read().SelectedWeapon,Is.EqualTo(WeaponId.Cutter),"Empty collected slot stays owned");
             life.Damage(1,100);Assert.That(life.Read().CutterOwned,Is.False);life.Advance(10);life.Respawn(1);
-            Assert.That(life.Read().RifleAmmo,Is.EqualTo(200));Assert.That(life.Read().CutterEnergy,Is.Zero);
+            Assert.That(life.Read().RifleAmmo,Is.EqualTo(240));Assert.That(life.Read().CutterEnergy,Is.Zero);
         }
         [Test]public void FractionalRefillPreservesTransitionCooldownAndHeldInput()
         {

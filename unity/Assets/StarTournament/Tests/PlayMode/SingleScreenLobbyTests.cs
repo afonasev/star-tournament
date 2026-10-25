@@ -102,6 +102,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var human=B("roster-card-0");var humanPortrait=human.transform.Find("portrait").GetComponent<Image>();
             Assert.That(humanPortrait.sprite,Is.Not.Null);Assert.That(humanPortrait.sprite.texture,Is.SameAs(Resources.Load<Texture2D>("LobbyPortraits/Human")));
             Assert.That(human.transform.Find("participant-device-glyph").gameObject.activeSelf,Is.True);
+            Assert.That(human.transform.Find("participant-device-glyph").GetComponent<LobbyRosterGlyph>().mainTexture,Is.SameAs(Resources.Load<Texture2D>("LobbyIcons/GamepadSilhouette")),"Gamepad uses the exact approved SVG raster resource");
             Assert.That(human.transform.Find("participant-screen-slot").gameObject.activeSelf,Is.True);
             var slots=human.transform.Find("participant-screen-slot").GetComponentsInChildren<Image>(true);
             Assert.That(slots.Length,Is.EqualTo(4));Assert.That(slots[0].sprite,Is.SameAs(LobbyVisualAssets.ScreenCell(true)));
@@ -440,9 +441,41 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 finally{InputSystem.RemoveDevice(generic);}
             }
         }
+        [UnityTest] public IEnumerator F09FocusedLobbyHasOnlyShortcutsAndKeepsConfirmInput()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                ground.AddBot();yield return null;
+                EventSystem.current.SetSelectedGameObject(B("lobby-mode").gameObject);yield return Press(GamepadButton.South);Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Teams));
+                yield return Press(GamepadButton.South);Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Ffa),"Confirm input remains bound while its glyph is hidden");
+                foreach(string name in new[]{"lobby-map","lobby-mode","lobby-time","lobby-target","roster-card-0","roster-empty-0"})
+                {
+                    var button=B(name);EventSystem.current.SetSelectedGameObject(button.gameObject);yield return null;yield return null;
+                    var hint=button.GetComponent<MenuActionHint>();hint.Refresh();Assert.That(hint.HideFocusedConfirm,Is.True);Assert.That(hint.GlyphLabel.enabled,Is.False);
+                    Assert.That(button.GetComponent<MenuPresentation>().FocusVisible,Is.True,"Focus remains visible: "+button.name);
+                    Assert.That(button.transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.False);
+                }
+                EventSystem.current.SetSelectedGameObject(B("lobby-mode").gameObject);yield return null;yield return Capture("01-upper-mode-no-A");
+                foreach(var pair in new[]{new[]{"setup-previous","B"},new[]{"roster-add-bot","X"},new[]{"roster-add-human","Y"},new[]{"Начать — четыре игрока","≡"}})
+                {
+                    var button=B(pair[0]);Assert.That(button.interactable,Is.True);EventSystem.current.SetSelectedGameObject(button.gameObject);yield return null;yield return null;
+                    var hint=button.GetComponent<MenuActionHint>();hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(pair[1]));
+                    Assert.That(button.transform.Find("gamepad-shortcut-hint").GetComponent<Text>().enabled,Is.False);
+                    Assert.That(button.GetComponent<MenuPresentation>().FocusVisible,Is.True,"Focus remains visible: "+button.name);
+                    if(pair[0]=="roster-add-bot")yield return Capture("02-footer-add-bot-X");
+                    if(pair[0]=="Начать — четыре игрока")yield return Capture("03-footer-start-Menu");
+                }
+                yield return Click("roster-card-0");var editor=B("roster-identity").GetComponent<MenuActionHint>();
+                Assert.That(editor.HideFocusedConfirm,Is.False,"Lobby modal editors keep their previous policy");
+                EventSystem.current.SetSelectedGameObject(editor.gameObject);yield return null;editor.Refresh();Assert.That(editor.GlyphLabel.enabled,Is.True);Assert.That(editor.GlyphLabel.text,Is.EqualTo("A"));
+            }
+        }
         [UnityTest] public IEnumerator ControllerFamilyGlyphsStayInsideActionsWithoutRebinding()
         {
-            string[] layouts={"XInputController","DualShockGamepad","SwitchProControllerHID"};string[] confirms={"A","×","B"};var expectedColors=new[]{new Color32(36,174,91,255),new Color32(36,174,91,255),new Color32(36,174,91,255)};var shortcuts=new[]{MenuPadButton.East,MenuPadButton.West,MenuPadButton.North,MenuPadButton.South};var shortcutGlyphs=new[]{new[]{"B","X","Y","A"},new[]{"○","□","△","×"},new[]{"A","Y","X","B"}};var shortcutColors=new[]{new Color32(216,61,66,255),new Color32(47,133,226,255),new Color32(238,190,45,255),new Color32(36,174,91,255)};
+            string[] layouts={"XInputController","DualShockGamepad","SwitchProControllerHID"};
+            var actions=new[]{MenuPadButton.East,MenuPadButton.West,MenuPadButton.North,MenuPadButton.Start};
+            var expected=new[]{new[]{"B","X","Y","≡"},new[]{"○","□","△","≡"},new[]{"A","Y","X","≡"}};
+            var colors=new[]{new Color32(216,61,66,255),new Color32(47,133,226,255),new Color32(238,190,45,255),new Color32(9,20,29,255)};
             for(int i=0;i<layouts.Length;i++)
             {
                 var device=(Gamepad)InputSystem.AddDevice(layouts[i]);
@@ -452,12 +485,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     using(StateEvent.From(device,out var press)){device.dpad.WriteValueIntoEvent(Vector2.right,press);InputSystem.QueueEvent(press);}yield return null;yield return null;
                     using(StateEvent.From(device,out var release)){device.dpad.WriteValueIntoEvent(Vector2.zero,release);InputSystem.QueueEvent(release);}yield return null;
                     Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.SameAs(pad));
-                    var focused=EventSystem.current.currentSelectedGameObject.GetComponent<Button>();var hint=focused.GetComponent<MenuActionHint>();
-                    hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(confirms[i]));
-                    var backing=hint.transform.Find("gamepad-action-button").GetComponent<Image>();Assert.That(backing.enabled,Is.True);Assert.That((Color32)backing.color,Is.EqualTo(expectedColors[i]));
-                    hint.ColoredLobbyGlyph=true;hint.ShortcutActive=()=>true;
-                    for(int j=0;j<shortcuts.Length;j++){hint.Shortcut=shortcuts[j];hint.Refresh();var secondary=hint.transform.Find("gamepad-shortcut-hint").GetComponent<Text>();var primary=hint.transform.Find("gamepad-action-hint").GetComponent<Text>();var shortcutBg=hint.transform.Find("gamepad-shortcut-button").GetComponent<Image>();var primaryBg=hint.transform.Find("gamepad-action-button").GetComponent<Image>();if(secondary.enabled){Assert.That(secondary.text,Is.EqualTo(shortcutGlyphs[i][j]));Assert.That((Color32)shortcutBg.color,Is.EqualTo(shortcutColors[j]));}else{Assert.That(primary.text,Is.EqualTo(confirms[i]));Assert.That((Color32)primaryBg.color,Is.EqualTo(expectedColors[i]),"Focused confirm remains visible when the optional shortcut cannot fit");}}
-                    hint.Shortcut=null;hint.Refresh();yield return Capture("glyph-"+layouts[i]);
+                    var hint=EventSystem.current.currentSelectedGameObject.GetComponent<MenuActionHint>();
+                    Assert.That(hint.HideFocusedConfirm,Is.True);hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);
+                    Assert.That(hint.transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.False);
+                    hint.ShortcutActive=()=>true;
+                    for(int n=0;n<actions.Length;n++)
+                    {
+                        hint.Shortcut=actions[n];hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(expected[i][n]));
+                        Assert.That(hint.transform.Find("gamepad-shortcut-hint").GetComponent<Text>().enabled,Is.False);
+                        var backing=hint.transform.Find("gamepad-action-button").GetComponent<Image>();Assert.That(backing.enabled,Is.True);Assert.That((Color32)backing.color,Is.EqualTo(colors[n]));
+                    }
+                    hint.Shortcut=MenuPadButton.South;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);
+                    hint.Shortcut=null;hint.Refresh();yield return Capture("family-no-confirm-"+layouts[i]);
                 }
                 finally{InputSystem.RemoveDevice(device);}
             }
