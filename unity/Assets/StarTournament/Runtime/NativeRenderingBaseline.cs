@@ -1,0 +1,103 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using Unity.Profiling;
+using UnityEngine;
+using UnityEngine.Profiling;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+namespace StarTournament.ProvingGround
+{
+    // Development-only, opt-in evidence adapter. No asset/settings persistence.
+    public sealed class NativeRenderingBaseline : MonoBehaviour
+    {
+        public const uint Seed=20261025;
+        public static readonly string[] Maps={CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id};
+        public static bool Requested(string[] args)=>args.Contains("-renderingBaseline");
+        public static NativeMatchComposition Composition(int views)
+        {
+            if(views!=1&&views!=4)throw new ArgumentOutOfRangeException(nameof(views));
+            return new NativeMatchComposition(NativeMatchRoster.Ffa(8),Enumerable.Range(0,8).Select(n=>new NativeParticipantInfo(NativeParticipantKind.Bot,"Bot "+n,NativeParticipantColors.For(n),(int)NativeBotDifficulty.Hard)).ToArray(),Enumerable.Range(0,views).ToArray());
+        }
+        [Serializable] public sealed class Distribution
+        {
+            public int count;public double mean,p50,p95,p99,max;
+            public Distribution(IEnumerable<double> values){var a=values.OrderBy(x=>x).ToArray();count=a.Length;if(count==0)return;mean=a.Average();p50=a[(count-1)/2];p95=a[Math.Min(count-1,(int)(count*.95))];p99=a[Math.Min(count-1,(int)(count*.99))];max=a[count-1];}
+        }
+        [Serializable] sealed class CameraInfo{public string name;public Vector3 position,euler;public Rect viewport;public float fov,near,far;public bool postProcessing;public int antialiasing;}
+        [Serializable] sealed class MeshInfo{public string renderer,mesh,material;public int vertices;public long indices,bytes;public bool readable;public Vector3 bounds;}
+        [Serializable] sealed class Sample
+        {
+            public string name,status="DIAGNOSTIC_NOT_ACCEPTANCE",stateStart,stateEnd,gpuStatus="NotRun",cpuStatus="NotRun";
+            public int views,width,height,quality,aa,vsync,frameCap,unfocusedFrames,nonRunningFrames;public string qualityName,shadows;public float renderScale;public double simulationStart,simulationEnd;
+            public NativeCompositionSnapshot composition;public float shadowDistance;public int shadowCascades;public string pipelineSettings;public CameraInfo[] camerasStart,camerasEnd;public long allocated,reserved,mono,workingSet,meshBytes;public int meshCount,materialCount;
+            public Distribution frameMs,cpuMs,gpuMs;public string[] counterNames;public bool[] counterAvailable;public Distribution[] counters;public List<MeshInfo> meshes=new List<MeshInfo>();
+        }
+        [Serializable] sealed class Report
+        {
+            public string status="INCOMPLETE",unity,device,cpu,gpu,os,graphicsApi,map,pipeline,protocol="v1: 8 Hard bots/FFA seed20261025, 1920x1080, uncapped; ordinary1 warmup5/sample15; fresh frozen1 and frozen4 warmup5/sample8; no asset/light/quality perturbations",source;
+            public uint seed=Seed;public int cpuThreads,systemMemoryMB,graphicsMemoryMB;public bool frameTimingEnabled;public List<Sample> samples=new List<Sample>();
+        }
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Bootstrap(){if(Requested(Environment.GetCommandLineArgs()))new GameObject("Rendering baseline QA").AddComponent<NativeRenderingBaseline>();}
+        ProvingGround ground;Report report;string directory,map;readonly FrameTiming[] timings=new FrameTiming[1];
+        static readonly string[] Names={"Draw Calls Count","SetPass Calls Count","Triangles Count","Vertices Count","Batches Count","Main Thread","Render Thread","GC Allocated In Frame"};
+        static readonly ProfilerCategory[] Categories={ProfilerCategory.Render,ProfilerCategory.Render,ProfilerCategory.Render,ProfilerCategory.Render,ProfilerCategory.Render,ProfilerCategory.Internal,ProfilerCategory.Internal,ProfilerCategory.Memory};
+        ProfilerRecorder[] recorders;
+        IEnumerator Start()
+        {
+            Invoke(nameof(Timeout),300);Application.runInBackground=true;
+            var args=Environment.GetCommandLineArgs();string Arg(string flag){int at=Array.IndexOf(args,flag);if(at<0||at+1>=args.Length)throw new ArgumentException("Required "+flag);return args[at+1];}
+            directory=Arg("-baselineEvidence");if(!Path.IsPathFullyQualified(directory))throw new ArgumentException("Absolute owned evidence required");Directory.CreateDirectory(directory);
+            map=Arg("-baselineMap");if(!Maps.Contains(map))throw new ArgumentException("Unsupported map");
+            while(!ground||!ground.IsReady||!SplashScreen.isFinished){ground=FindFirstObjectByType<ProvingGround>();yield return null;}
+            Screen.SetResolution(1920,1080,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(1);
+            var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            report=new Report{unity=Application.unityVersion,device=SystemInfo.deviceModel,cpu=SystemInfo.processorType,gpu=SystemInfo.graphicsDeviceName,os=SystemInfo.operatingSystem,graphicsApi=SystemInfo.graphicsDeviceType.ToString(),map=map,pipeline=pipeline?pipeline.name:"none",cpuThreads=SystemInfo.processorCount,systemMemoryMB=SystemInfo.systemMemorySize,graphicsMemoryMB=SystemInfo.graphicsMemorySize,frameTimingEnabled=FrameTimingManager.IsFeatureEnabled(),source=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BASELINE_SOURCE")};Save();
+            recorders=Names.Select((name,n)=>ProfilerRecorder.StartNew(Categories[n],name)).ToArray();
+            yield return Measure("ordinary1",1,true,15);yield return Measure("frozen1",1,false,8);yield return Measure("frozen4",4,false,8);
+            report.status=report.samples.All(s=>s.status=="DIAGNOSTIC_NOT_ACCEPTANCE")?"COMPLETE_DIAGNOSTIC_NOT_ACCEPTANCE":"FAIL";Save();Debug.Log("RENDERING_BASELINE_"+report.status);Application.Quit(report.status=="FAIL"?1:0);
+        }
+        CameraInfo[] Cameras()=>ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled).OrderBy(c=>c.name).Select(c=>new CameraInfo{name=c.name,position=c.transform.position,euler=c.transform.eulerAngles,viewport=c.rect,fov=c.fieldOfView,near=c.nearClipPlane,far=c.farClipPlane,postProcessing=c.GetUniversalAdditionalCameraData().renderPostProcessing,antialiasing=(int)c.GetUniversalAdditionalCameraData().antialiasing}).ToArray();
+        IEnumerator Measure(string name,int views,bool live,int duration)
+        {
+            UnityEngine.Random.InitState((int)Seed);ground.FullHealReviewManualTick=true;ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(map);
+            ground.ConfigureBotTacticsReview(new NativeMatchConfiguration{DurationMinutes=5,TargetEnabled=false,TargetPoints=20});ground.StartBotReview(Composition(views),Seed);
+            while(!ground.Running)yield return null;
+            ground.FullHealReviewManualTick=!live;QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
+            double warm=Time.realtimeSinceStartupAsDouble+5;while(Time.realtimeSinceStartupAsDouble<warm){FrameTimingManager.CaptureFrameTimings();yield return null;}
+            var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            var sample=new Sample{composition=ground.Composition.Read(),shadowDistance=QualitySettings.shadowDistance,shadowCascades=QualitySettings.shadowCascades,pipelineSettings=pipeline?JsonUtility.ToJson(pipeline):"none",name=name,views=views,width=Screen.width,height=Screen.height,quality=QualitySettings.GetQualityLevel(),qualityName=QualitySettings.names[QualitySettings.GetQualityLevel()],aa=QualitySettings.antiAliasing,shadows=QualitySettings.shadows.ToString(),vsync=QualitySettings.vSyncCount,frameCap=Application.targetFrameRate,renderScale=pipeline?pipeline.renderScale:1,stateStart=JsonUtility.ToJson(ground.Session.Capture()),simulationStart=ground.Session.Time,camerasStart=Cameras(),counterNames=Names,counterAvailable=recorders.Select(r=>r.Valid).ToArray()};
+            var frame=new List<double>();var cpu=new List<double>();var gpu=new List<double>();var counters=Names.Select(_=>new List<double>()).ToArray();
+            var csv=new StringBuilder("frame_ms,cpu_ms,gpu_ms,draw_calls,setpass,triangles,vertices,batches,main_ns,render_ns,gc_bytes,focused,running,timestamp\n");var cpuRows=new List<double>();var gpuRows=new List<double>();var focusedRows=new List<bool>();var runningRows=new List<bool>();var timestamps=new List<ulong>();ulong timestamp=0;
+            double until=Time.realtimeSinceStartupAsDouble+duration,previous=Time.realtimeSinceStartupAsDouble;
+            while(Time.realtimeSinceStartupAsDouble<until)
+            {
+                FrameTimingManager.CaptureFrameTimings();yield return null;double now=Time.realtimeSinceStartupAsDouble,ms=(now-previous)*1000;previous=now;frame.Add(ms);
+                bool fresh=FrameTimingManager.GetLatestTimings(1,timings)>0&&timings[0].frameStartTimestamp!=timestamp;var t=timings[0];if(fresh){timestamp=t.frameStartTimestamp;if(t.cpuFrameTime>0)cpu.Add(t.cpuFrameTime);if(t.gpuFrameTime>0)gpu.Add(t.gpuFrameTime);}
+                cpuRows.Add(fresh&&t.cpuFrameTime>0?t.cpuFrameTime:double.NaN);gpuRows.Add(fresh&&t.gpuFrameTime>0?t.gpuFrameTime:double.NaN);
+                for(int n=0;n<recorders.Length;n++)if(recorders[n].Valid)counters[n].Add(recorders[n].LastValue);
+                if(!Application.isFocused)sample.unfocusedFrames++;if(!ground.Running)sample.nonRunningFrames++;
+                focusedRows.Add(Application.isFocused);runningRows.Add(ground.Running);timestamps.Add(fresh?timestamp:0);
+            }
+            sample.frameMs=new Distribution(frame);sample.cpuMs=new Distribution(cpu);sample.gpuMs=new Distribution(gpu);sample.cpuStatus=cpu.Count>0?"AVAILABLE":"NotRun";sample.gpuStatus=gpu.Count>0?"AVAILABLE":"NotRun";sample.counters=counters.Select(v=>new Distribution(v)).ToArray();sample.simulationEnd=ground.Session.Time;sample.stateEnd=JsonUtility.ToJson(ground.Session.Capture());sample.camerasEnd=Cameras();
+            sample.allocated=Profiler.GetTotalAllocatedMemoryLong();sample.reserved=Profiler.GetTotalReservedMemoryLong();sample.mono=Profiler.GetMonoUsedSizeLong();sample.workingSet=System.Diagnostics.Process.GetCurrentProcess().WorkingSet64;
+            var meshes=Resources.FindObjectsOfTypeAll<Mesh>();sample.meshCount=meshes.Length;sample.meshBytes=meshes.Sum(m=>Profiler.GetRuntimeMemorySizeLong(m));sample.materialCount=Resources.FindObjectsOfTypeAll<Material>().Length;
+            foreach(var r in ground.CameraReviewArena.GetComponentsInChildren<MeshRenderer>()){var m=r.GetComponent<MeshFilter>()?.sharedMesh;if(!m)continue;sample.meshes.Add(new MeshInfo{renderer=r.name,mesh=m.name,material=string.Join(";",r.sharedMaterials.Select(x=>x?x.name:"null")),vertices=m.vertexCount,indices=Enumerable.Range(0,m.subMeshCount).Sum(i=>(long)m.GetIndexCount(i)),bytes=Profiler.GetRuntimeMemorySizeLong(m),readable=m.isReadable,bounds=r.bounds.size});}
+            if(frame.Count==0||sample.nonRunningFrames>0||sample.camerasStart.Length!=views||sample.width!=1920||sample.height!=1080||(!live&&sample.simulationEnd!=sample.simulationStart)||(live&&sample.simulationEnd<=sample.simulationStart))sample.status="FAIL_CONTRACT";
+            // Serialize only after the timed section so CSV string allocations do not distort frames.
+            string Number(double v)=>double.IsNaN(v)?"":v.ToString("R",CultureInfo.InvariantCulture);
+            for(int i=0;i<frame.Count;i++)
+            {var row=new List<string>{Number(frame[i]),Number(cpuRows[i]),Number(gpuRows[i])};for(int n=0;n<counters.Length;n++)row.Add(counters[n].Count==frame.Count?Number(counters[n][i]):"");row.Add(focusedRows[i]?"1":"0");row.Add(runningRows[i]?"1":"0");row.Add(timestamps[i]==0?"":timestamps[i].ToString());csv.AppendLine(string.Join(",",row));}
+            report.samples.Add(sample);File.WriteAllText(Path.Combine(directory,name+".csv"),csv.ToString());Save();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(directory,name+".png"));yield return new WaitForSecondsRealtime(.5f);
+        }
+        void Save()=>File.WriteAllText(Path.Combine(directory,"report.json"),JsonUtility.ToJson(report,true));
+        void Timeout(){if(report!=null){report.status="INCOMPLETE_TIMEOUT";Save();}Application.Quit(2);}
+        void OnDestroy(){if(recorders!=null)foreach(var recorder in recorders)recorder.Dispose();}
+    }
+}
+#endif
