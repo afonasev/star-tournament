@@ -321,8 +321,10 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var baseline=Baseline();var original=baseline.Clone();
             if(historical)
             {
+                // Rewind changed presentation defaults before assigning the older registry version.
+                var steel=typeof(ProvingProfile).GetMethod("BeforeRifleSteelPresentation",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 var prior=typeof(ProvingProfile).GetMethod("BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
-                original.Profiles=original.Profiles.Select(p=>(ProvingProfile)prior.Invoke(p,null)).ToList();
+                original.Profiles=original.Profiles.Select(p=>(ProvingProfile)prior.Invoke(steel.Invoke(p,null),null)).ToList();
             }
             var local=new DesignLabHistory(path,baseline);local.Create("Local");var source=File.ReadAllBytes(path);
             var catalog=LabReleaseCatalog.Factory(original);var entry=catalog.Entries.Single();
