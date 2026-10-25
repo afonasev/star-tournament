@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(light.shadows,Is.EqualTo(LightShadows.Soft));
                 Assert.That(light.shadowStrength,Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.daylightShadow")));
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24),"No growth in realtime light count");
-                int rendererCount=skin.GetComponentsInChildren<MeshRenderer>(true).Length;
+                int rendererCount=skin.GetComponentsInChildren<MeshRenderer>().Length;
                 int vertices=0;foreach(var filter in skin.GetComponentsInChildren<MeshFilter>())vertices+=filter.sharedMesh.vertexCount;
                 WriteMeshInventory(skin);
                 WriteRendererInventory(skin);
