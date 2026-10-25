@@ -1,9 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Profiling;
 namespace StarTournament.ProvingGround.Tests
 {
     public sealed class WellLabDetailVisualTests
@@ -24,10 +28,11 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(light.shadows,Is.EqualTo(LightShadows.Soft));
                 Assert.That(light.shadowStrength,Is.EqualTo(ProvingProfile.CreateWellDefault().Get("well.daylightShadow")));
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24),"No growth in realtime light count");
-                Assert.That(skin.GetComponentsInChildren<MeshRenderer>().Length,Is.LessThan(64),"Bounded material batches and labels");
-                Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Presentation cannot change authoring");
+                int rendererCount=skin.GetComponentsInChildren<MeshRenderer>().Length;
                 int vertices=0;foreach(var filter in skin.GetComponentsInChildren<MeshFilter>())vertices+=filter.sharedMesh.vertexCount;
-                Assert.That(vertices,Is.LessThan(650000),"Bounded presentation geometry");
+                WriteMeshInventory(skin);
+                WriteRendererInventory(skin);
+                Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Presentation cannot change authoring");
                 foreach(var renderer in skin.GetComponentsInChildren<Renderer>())foreach(var material in renderer.sharedMaterials)Assert.That(material.shader.isSupported,Is.True,material.name);
                 foreach(var renderer in skin.GetComponentsInChildren<Renderer>())
                 foreach(var material in renderer.sharedMaterials)
@@ -95,8 +100,67 @@ namespace StarTournament.ProvingGround.Tests
                     try{image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();File.WriteAllBytes(Path.Combine(directory,names[i]+".png"),image.EncodeToPNG());}finally{RenderTexture.active=previous;Object.Destroy(image);}
                 }
                 Assert.That(Directory.GetFiles(directory,"*.png").Length,Is.EqualTo(33));
+                Assert.That(vertices,Is.LessThan(650000),"Bounded presentation geometry");
+                Assert.That(rendererCount,Is.LessThan(64),"Bounded material batches and labels");
             }
             finally{if(visual)visual.ResetWorld();if(camera)camera.targetTexture=null;Object.Destroy(rt);Object.Destroy(root);}yield return null;
         }
+
+        static void WriteMeshInventory(WellArenaPresentation skin)
+        {
+            var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_FULL_VISUAL_OUTPUT")??Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/full-visual"));
+            var filters=skin.GetComponentsInChildren<MeshFilter>(true).Where(filter=>filter.sharedMesh).ToArray();
+            var rendered=filters.Select(filter=>new { Filter=filter, Renderer=filter.GetComponent<MeshRenderer>() }).Where(item=>item.Renderer).ToArray();
+            var ownedField=typeof(WellArenaPresentation).GetField("owned",BindingFlags.Instance|BindingFlags.NonPublic);
+            var owned=((IEnumerable<Object>)ownedField.GetValue(skin)).OfType<Mesh>().Where(mesh=>mesh).ToArray();
+            var detailField=typeof(WellArenaPresentation).GetField("detail",BindingFlags.Instance|BindingFlags.NonPublic);
+            var detail=detailField.GetValue(skin);
+            var batchesField=typeof(WellLabDetail).GetField("batches",BindingFlags.Instance|BindingFlags.NonPublic);
+            var batches=(Dictionary<Material,List<CombineInstance>>)batchesField.GetValue(detail);
+            var optimizer=skin.GetComponentInParent<ArenaRenderChunks>();
+            var optimized=optimizer?optimizer.ReadOwnedMeshes().Where(mesh=>mesh).ToArray():new Mesh[0];
+            Mesh[] Unique(IEnumerable<Mesh> meshes)=>meshes.Where(mesh=>mesh).GroupBy(mesh=>mesh.GetInstanceID()).Select(group=>group.First()).ToArray();
+            long Bytes(IEnumerable<Mesh> meshes)=>Unique(meshes).Sum(mesh=>(long)Profiler.GetRuntimeMemorySizeLong(mesh));
+            var all=Unique(filters.Select(filter=>filter.sharedMesh).Concat(owned).Concat(optimized));
+            var lines=new List<string>{"scope,material,renderer,mesh_instance_id,vertices,triangles,mesh_bytes,material_count,texture_count,shadows,lod_group"};
+            foreach(var batch in batches)
+            foreach(var mesh in Unique(batch.Value.Select(instance=>instance.mesh)))
+            {
+                var triangles=Enumerable.Range(0,mesh.subMeshCount).Sum(index=>(long)mesh.GetIndexCount(index)/3);
+                lines.Add(string.Join(",",Csv("source_template"),Csv(batch.Key.name),Csv("WellLabDetail.batches"),mesh.GetInstanceID(),mesh.vertexCount,triangles,Profiler.GetRuntimeMemorySizeLong(mesh),"","","",""));
+            }
+            foreach(var item in rendered)
+            {
+                var mesh=item.Filter.sharedMesh;
+                foreach(var material in item.Renderer.sharedMaterials.Where(material=>material))
+                {
+                    long triangles=Enumerable.Range(0,mesh.subMeshCount).Sum(index=>(long)mesh.GetIndexCount(index)/3);
+                    var textures=new[]{"_BaseMap","_BumpMap","_MetallicGlossMap","_OcclusionMap","_EmissionMap"}.Select(property=>material.HasProperty(property)?material.GetTexture(property):null).Where(texture=>texture).Distinct().Count();
+                    var lod=item.Renderer.GetComponentInParent<LODGroup>();
+                    lines.Add(string.Join(",",Csv("rendered"),Csv(material.name),Csv(item.Renderer.name),mesh.GetInstanceID(),mesh.vertexCount,triangles,Profiler.GetRuntimeMemorySizeLong(mesh),item.Renderer.sharedMaterials.Length,textures,Csv(item.Renderer.shadowCastingMode.ToString()),Csv(lod?lod.name:"none")));
+                }
+            }
+            lines.Add(string.Join(",",Csv("inclusive_unique"),Csv("ALL"),Csv("all-source-disabled-rendered-owned-optimizer"),all.Length,"","",Bytes(all),"","","",""));
+            lines.Add(string.Join(",",Csv("owned_unique"),Csv("ALL"),Csv("WellArenaPresentation.owned"),Unique(owned).Length,"","",Bytes(owned),"","","",""));
+            lines.Add(string.Join(",",Csv("optimizer_unique"),Csv("ALL"),Csv("ArenaRenderChunks.ReadOwnedMeshes"),Unique(optimized).Length,"","",Bytes(optimized),"","","",""));
+            lines.Add(string.Join(",",Csv("meshfilter_unique"),Csv("ALL"),Csv("all-child-MeshFilters-including-disabled"),Unique(filters.Select(filter=>filter.sharedMesh)).Length,"","",Bytes(filters.Select(filter=>filter.sharedMesh)),"","","",""));
+            File.WriteAllLines(Path.Combine(directory,"mesh-inventory.csv"),lines);
+        }
+
+        static void WriteRendererInventory(WellArenaPresentation skin)
+        {
+            var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_FULL_VISUAL_OUTPUT")??Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/full-visual"));
+            var renderers=skin.GetComponentsInChildren<MeshRenderer>(true);
+            var lines=new List<string>{"name,kind,active,enabled,materials,shadows"};
+            foreach(var renderer in renderers)
+            {
+                var kind=renderer.GetComponent<TextMesh>()?"TextMesh":renderer.GetComponent<MeshFilter>()?"MeshFilter":"Other";
+                lines.Add(string.Join(",",Csv(renderer.gameObject.name),Csv(kind),renderer.gameObject.activeInHierarchy,renderer.enabled,Csv(string.Join("|",renderer.sharedMaterials.Where(material=>material).Select(material=>material.name))),Csv(renderer.shadowCastingMode.ToString())));
+            }
+            lines.Add(string.Join(",",Csv("TOTAL"),renderers.Length));
+            File.WriteAllLines(Path.Combine(directory,"renderer-inventory.csv"),lines);
+        }
+
+        static string Csv(string value)=>"\""+(value??string.Empty).Replace("\"","\"\"")+"\"";
     }
 }
