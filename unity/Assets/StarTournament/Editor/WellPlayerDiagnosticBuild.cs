@@ -9,7 +9,9 @@ namespace StarTournament.ProvingGround.Editor
     {
         // Minimal Development QA build uses the existing diagnostic entry points.
         // Dedicated identity isolates PlayerPrefs and history from the human's game.
-        public static void Build()
+        public static void Build() => BuildDiagnostic("Well Player Diagnostic","tech.afonasev.well-player-diagnostic");
+        public static void BuildRenderingBaseline() => BuildDiagnostic("Rendering Baseline QA 20261025","tech.afonasev.rendering-baseline-20261025");
+        static void BuildDiagnostic(string productName,string applicationId)
         {
             string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_PLAYER_OUTPUT");
             if(string.IsNullOrEmpty(output)||!System.IO.Path.IsPathFullyQualified(output))throw new BuildFailedException("Absolute diagnostic output required");
@@ -18,8 +20,8 @@ namespace StarTournament.ProvingGround.Editor
             string identifier=PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.Standalone);
             try
             {
-                PlayerSettings.companyName="StarTournament QA";PlayerSettings.productName="Well Player Diagnostic";
-                PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone,"tech.afonasev.well-player-diagnostic");
+                PlayerSettings.companyName="StarTournament QA";PlayerSettings.productName=productName;
+                PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone,applicationId);
                 var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/StarTournament/Scenes/ProvingGround.unity"},locationPathName=output,target=BuildTarget.StandaloneOSX,options=BuildOptions.Development,extraScriptingDefines=new[]{"STAR_TOURNAMENT_DEVELOPMENT_QA"}});
                 if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
                 Debug.Log("WELL_PLAYER_DIAGNOSTIC_BUILD_PASS "+report.summary.totalSize);

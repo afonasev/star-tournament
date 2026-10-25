@@ -167,7 +167,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(colors.Values.Distinct().Count(),Is.EqualTo(8));
                     for(int i=0;i<4;i++){while(EditorField<object>(devices[i],"Page").ToString()!="Closed")yield return Press(GamepadButton.East,devices[i]);}
                     // Selected card owns X; cancellation never enters the add flow.
-                    EditorFocus(pad,"roster-card-7");int count=ground.SetupBotCount;
+                    // Seed the closed cursors through real shared selection. A raw
+                    // Focus field write can be superseded by the final editor close.
+                    EventSystem.current.SetSelectedGameObject(B("roster-card-7").gameObject);yield return null;yield return null;
+                    Assert.That(EditorField<Button>(pad,"Focus"),Is.SameAs(B("roster-card-7")));int count=ground.SetupBotCount;
                     InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return new WaitForSecondsRealtime(.2f);
                     Assert.That(EditorField<float>(pad,"Hold"),Is.GreaterThan(0));yield return Capture("03-removal-hold");
                     InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return null;
@@ -175,6 +178,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     yield return Capture("04-removal-cancelled");
                     InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return new WaitForSecondsRealtime(ground.LobbyProfile.Get("lobby.removeHoldSeconds")+.1f);
                     InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;Assert.That(ground.SetupBotCount,Is.EqualTo(count-1));
+                    Assert.That(ground.LocalSeatCount,Is.EqualTo(4),"The selected bot is removed; all four humans remain");
                     yield return Click("lobby-map");var mapButtons=ground.GetComponentsInChildren<Button>().Where(x=>x.name.StartsWith("lobby-map-")).ToArray();Assert.That(mapButtons.Length,Is.EqualTo(4));
                     Assert.That(mapButtons.Select(x=>x.GetComponent<RectTransform>().anchorMin.x).Distinct().Count(),Is.EqualTo(2));Assert.That(mapButtons.Select(x=>x.GetComponent<RectTransform>().anchorMin.y).Distinct().Count(),Is.EqualTo(2));
                     foreach(var map in mapButtons)Assert.That(map.GetComponent<MenuActionHint>().HideFocusedConfirm,Is.True);

@@ -52,7 +52,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             B("main-action-2").onClick.Invoke();yield return null;
             Assert.That(B("lab-save").interactable,Is.False);Assert.That(B("lab-create").interactable,Is.False);Assert.That(B("lab-back").interactable,Is.True);
             B("lab-back").onClick.Invoke();yield return null;
-            B("main-action-0").onClick.Invoke();B("Диагностика четырёх камер · без управления").onClick.Invoke();
+            B("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,4);
+            B("Диагностика четырёх камер · без управления").onClick.Invoke();
             float deadline=Time.realtimeSinceStartup+120;while(!ground.Running){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
             var before=JsonUtility.ToJson(Field<LabRevisionReference>(ground,"frozenLabReference"));
             var identity=ground.LabSavedIdentity;var frozen=JsonUtility.ToJson(Field<ProvingProfile>(ground,"frozenMovement"));var values=ground.CaptureLabBundle().Hash();
@@ -121,6 +122,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(B("lab-save").interactable,Is.False);Assert.That(B("lab-back").interactable,Is.True);B("lab-back").onClick.Invoke();yield return null;
             Assert.That(B("main-action-0").gameObject.activeInHierarchy,Is.True);Assert.That(ground.CaptureLabBundle().Hash(),Is.EqualTo(before));
             CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+        }
+        [UnityTest] public IEnumerator ApplicationQuitCancelsAndDrainsHistoryBeforeReturning()
+        {
+            yield return Load();Assert.That(ground.IsLabHistoryLoading,Is.True);
+            var pending=Field<Task<DesignLabHistory>>(ground,"historyLoading");
+            typeof(ProvingGround).GetMethod("OnApplicationQuit",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,null);
+            Assert.That(pending.IsCompleted,Is.True,"No background serializer may outlive application shutdown");
+            Assert.That(pending.IsCanceled,Is.True);Assert.That(ground.IsLabHistoryLoading,Is.False);
+            Assert.That(File.Exists(Path.Combine(directory,"history.json")),Is.False);
         }
         [UnityTest] public IEnumerator UnloadCancelsBlockedHistoryWithoutCreatingFile()
         {

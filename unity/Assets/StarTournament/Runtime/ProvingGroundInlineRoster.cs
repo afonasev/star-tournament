@@ -76,7 +76,13 @@ namespace StarTournament.ProvingGround
         }
         void BackInlineEditor(InlineEditor e)
         {
-            if(e.Page==InlinePage.Fields){int p=InlineParticipant(e);CloseInlineEditor(e);e.Focus=p>=0?rosterCards[p]:lobbyMap;RefreshInterface();}
+            if(e.Page==InlinePage.Fields)
+            {
+                int p=InlineParticipant(e);CloseInlineEditor(e);e.Focus=p>=0?rosterCards[p]:lobbyMap;RefreshInterface();
+                // Refresh can replace the destroyed field's shared selection. It must
+                // not overwrite this device's surviving participant cursor next frame.
+                e.LastSharedSelection=EventSystem.current?.currentSelectedGameObject;
+            }
             else
             {
                 var previous=e.Page;e.Page=previous==InlinePage.Create?InlinePage.Identity:InlinePage.Fields;e.Focus=null;
@@ -362,7 +368,8 @@ namespace StarTournament.ProvingGround
                 var e=InlineFor(keyboard);
                 if(e!=null&&e.Page!=InlinePage.Closed&&e.OpenedFrame!=Time.frameCount)
                 {
-                    var field=EventSystem.current?.currentSelectedGameObject?.GetComponent<InputField>();
+                    var selected=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
+                    var field=selected?selected.GetComponent<InputField>():null;
                     bool typing=field&&field.isFocused;
                     if(keyboard.escapeKey.wasPressedThisFrame)
                     {if(typing)field.DeactivateInputField();else BackInlineEditor(e);menuBackConsumedFrame=Time.frameCount;}

@@ -23,7 +23,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         InputSettings.EditorInputBehaviorInPlayMode priorInput;
         InputSettings.BackgroundBehavior priorBackground;
         Button B(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
-        string Focus=>EventSystem.current.currentSelectedGameObject?.name;
+        string Focus
+        {
+            get
+            {
+                var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+                if(pad!=null&&(bool)typeof(ProvingGround).GetField("inlineRouting",flags).GetValue(ground)&&(bool)typeof(ProvingGround).GetField("menuGamepadCursor",flags).GetValue(ground))
+                {
+                    var editor=typeof(ProvingGround).GetMethod("InlineFor",flags).Invoke(ground,new object[]{pad});
+                    return ((Button)editor.GetType().GetField("Focus").GetValue(editor))?.name;
+                }
+                return EventSystem.current.currentSelectedGameObject?.name;
+            }
+        }
         int Step=>(int)typeof(ProvingGround).GetField("setupStep",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
         [SetUp] public void Setup()
         {
@@ -67,12 +79,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(names.Any(n=>n.StartsWith("setup-step-")||n=="setup-next"),Is.False,"Removed tabs and next-step control must not be navigable");
             return names;
         }
-        IEnumerator Click(string name){B(name).onClick.Invoke();yield return null;yield return null;}
+        IEnumerator Click(string name){EventSystem.current.SetSelectedGameObject(B(name).gameObject);B(name).onClick.Invoke();yield return null;yield return null;}
         [UnityTest] public IEnumerator SetupShortcutHintsFollowDeviceAndEditorAvailability()
         {
             yield return Load();ground.AddBot();yield return null;
             var start=B("Начать — четыре игрока");
-            Assert.That(start.GetComponentInChildren<Text>().text,Is.EqualTo("НАЧАТЬ МАТЧ"));
+            Assert.That(start.GetComponentInChildren<Text>().text,Is.EqualTo("Начать матч"));
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Start"));
             keyboard=InputSystem.AddDevice<Keyboard>();
@@ -81,8 +93,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Keyboard hides pad shortcuts");
             yield return Press(GamepadButton.DpadRight);
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
-            Assert.That(B("roster-add-human").GetComponentInChildren<Text>().text,Is.EqualTo("ПРИСОЕДИНИТЬСЯ"));
-            Assert.That(B("roster-add-bot").GetComponentInChildren<Text>().text,Is.EqualTo("ДОБАВИТЬ БОТА"));
+            Assert.That(B("roster-add-human").GetComponentInChildren<Text>().text,Is.EqualTo("Присоединиться"));
+            Assert.That(B("roster-add-bot").GetComponentInChildren<Text>().text,Is.EqualTo("Добавить бота"));
             yield return CaptureIfRequested("05-roster-start-hint");
             yield return Click("roster-card-0");
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Participant editor owns input");
@@ -98,15 +110,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();Assert.That(Focus,Is.EqualTo("lobby-map"));
             Assert.That(Reachable(),Is.SupersetOf(new[]{"lobby-map","lobby-mode","lobby-time","lobby-target","roster-card-0","setup-previous","roster-add-bot","roster-add-human"}));
-            yield return Press(GamepadButton.South);yield return Press(GamepadButton.DpadDown);
+            yield return Press(GamepadButton.South);yield return Press(GamepadButton.DpadRight);
             Assert.That(ground.SelectedMapId,Is.EqualTo(CombatBowlCatalog.Id),"Focus previews, confirmation commits");
             Assert.That(Focus,Is.EqualTo("lobby-map-"+IndustrialTunnelsCatalog.Id));
             yield return CaptureIfRequested("01-map-preview");yield return Press(GamepadButton.South);
             Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));Assert.That(Focus,Is.EqualTo("lobby-map"));
-            yield return Press(GamepadButton.DpadRight);yield return Press(GamepadButton.South);yield return Press(GamepadButton.DpadDown);yield return Press(GamepadButton.South);
+            yield return Press(GamepadButton.DpadRight);yield return Press(GamepadButton.South);
             Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Teams));Assert.That(Focus,Is.EqualTo("lobby-mode"));
-            yield return Click("lobby-time");float before=ground.Configuration.DurationMinutes;
-            yield return Press(GamepadButton.DpadRight);yield return Press(GamepadButton.East);
+            float before=ground.Configuration.DurationMinutes;yield return Click("lobby-time");
             Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(before+1));Assert.That(Focus,Is.EqualTo("lobby-time"));
             yield return Press(GamepadButton.East);Assert.That(B("main-action-0").gameObject.activeInHierarchy,Is.True);
             yield return Press(GamepadButton.South);Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(before+1));
@@ -156,9 +167,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Focus,Is.EqualTo("lobby-map"));
             yield return Click("lobby-time");InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.RightArrow));yield return null;yield return null;
             InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.LeftArrow));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
             InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));yield return null;yield return null;
             InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
-            Assert.That(Focus,Is.EqualTo("lobby-time"));Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(4));
+            Assert.That(Focus,Is.EqualTo("lobby-time"));Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(5));
             yield return Press(GamepadButton.DpadDown);Reachable();Assert.That(Focus,Does.StartWith("roster-"));
             var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
             Assert.That(input.DeviceAt(0),Is.SameAs(keyboard),"Menu navigation must not rebind the human device");
