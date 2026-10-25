@@ -60,6 +60,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     }
                     var beforeState=WriteLiveState(statePath,map,"before_bulk_release",root.transform,candidateIds);
                     var stableControlLast=new Dictionary<string,Color32[]>(previousByMode);
+                    foreach(var mode in new[]{"source","chunks"})
+                        SaveImage(pixels,stableControlLast[mode],Path.Combine(directory,map+"-control-last-"+mode+".png"));
                     ArenaMeshResidency.PruningEnabled=true;
                     var released=ArenaMeshResidency.ReleaseUnreferencedOwnedMeshes(root.transform);
                     Assert.That(released,Is.EqualTo(candidates.Length),map+" production release candidate count changed");
@@ -70,10 +72,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     {
                         optimizer.UseChunks(false);yield return null;
                         var sourceSample=Capture(camera,target,pixels,previous);RecordSample("after_bulk_release","source",sample,sourceSample,previousByMode,firstByMode,samplesPath,map);
-                        if(!firstPostByMode.ContainsKey("source"))firstPostByMode["source"]=sourceSample;
+                        if(!firstPostByMode.ContainsKey("source")){firstPostByMode["source"]=sourceSample;SaveImage(pixels,sourceSample,Path.Combine(directory,map+"-post-first-source.png"));}
                         optimizer.UseChunks(true);yield return null;
                         var chunkSample=Capture(camera,target,pixels,previous);RecordSample("after_bulk_release","chunks",sample,chunkSample,previousByMode,firstByMode,samplesPath,map);
-                        if(!firstPostByMode.ContainsKey("chunks"))firstPostByMode["chunks"]=chunkSample;
+                        if(!firstPostByMode.ContainsKey("chunks")){firstPostByMode["chunks"]=chunkSample;SaveImage(pixels,chunkSample,Path.Combine(directory,map+"-post-first-chunks.png"));}
                     }
                     var afterState=WriteLiveState(statePath,map,"after",root.transform,candidateIds);
                     Assert.That(afterState.Hash,Is.EqualTo(beforeState.Hash),map+" live mesh geometry, transforms, materials, renderer/filter/collider references must remain identical after pruning");
@@ -145,6 +147,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
         }
         static void WriteMatrix(BinaryWriter writer,Matrix4x4 matrix){for(var i=0;i<16;i++)writer.Write(matrix[i]);}
+        static void SaveImage(Texture2D pixels,Color32[] image,string path){pixels.SetPixels32(image);pixels.Apply();File.WriteAllBytes(path,pixels.EncodeToPNG());}
         static void RecordSample(string phase,string mode,int sample,Color32[] image,Dictionary<string,Color32[]> previousByMode,Dictionary<string,Color32[]> firstByMode,string path,string map)
         {
             var previous=previousByMode.TryGetValue(mode,out var prior)?prior:null;var first=firstByMode.TryGetValue(mode,out var initial)?initial:image;
