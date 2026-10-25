@@ -130,13 +130,13 @@ namespace StarTournament.ProvingGround
                 foreach(var lift in Definition.Lifts){var go=Box("lift-"+lift.Id,lift.Center+Vector3.up*(lift.InitialHeight-lift.Size.y*.5f),lift.Size,wall);supports[go.GetComponent<Collider>()]="support:lift-"+lift.Id;Lifts.Attach(lift.Id,go.GetComponent<Collider>());}
                 var decoration=new GameObject("Well laboratory presentation");decoration.transform.SetParent(transform,false);decoration.AddComponent<WellArenaPresentation>().Build(Definition,WellProfile);
             }
-            if(Definition.Identity==CombatBowlCatalog.Identity)
+            if(Definition.MapId==CombatBowlCatalog.Id)
             {
                 var decoration=new GameObject("Orbital League presentation");decoration.transform.SetParent(transform,false);
                 var steps=decoration.AddComponent<OrbitalLeaguePresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateCombatBowlRingPresentationDefault());
                 while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
-            else if(Definition.Identity==LunarLaboratoryCatalog.Identity)
+            else if(Definition.MapId==LunarLaboratoryCatalog.Id)
             {
                 var decoration=new GameObject("Lunar laboratory presentation");decoration.transform.SetParent(transform,false);
                 var steps=decoration.AddComponent<LunarLaboratoryPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateLunarPresentation());

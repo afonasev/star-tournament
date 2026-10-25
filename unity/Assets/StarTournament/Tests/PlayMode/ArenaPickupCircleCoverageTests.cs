@@ -14,10 +14,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     {
         Scene scene;GameObject cameraGo;RenderTexture rt;
         [UnityTearDown] public IEnumerator Cleanup(){if(cameraGo){cameraGo.GetComponent<Camera>().targetTexture=null;Object.Destroy(cameraGo);}if(rt)Object.Destroy(rt);if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);}
-        [UnityTest] public IEnumerator TunnelsAllSixAnchors()=>Verify(IndustrialTunnelsCatalog.Id,6);
-        [UnityTest] public IEnumerator LunarAllElevenAnchors()=>Verify(LunarLaboratoryCatalog.Id,11);
+        [UnityTest] public IEnumerator TunnelsAllSevenAnchors()=>Verify(IndustrialTunnelsCatalog.Id,7);
+        [UnityTest] public IEnumerator LunarAllThirteenAnchors()=>Verify(LunarLaboratoryCatalog.Id,13);
         [UnityTest] public IEnumerator CombatBowlAllTwelveAnchors()=>Verify(CombatBowlCatalog.Id,12);
-        [UnityTest] public IEnumerator WellAllElevenAnchors()=>Verify(WellArenaCatalog.Id,11);
+        [UnityTest] public IEnumerator WellAllThirteenAnchors()=>Verify(WellArenaCatalog.Id,13);
         IEnumerator Verify(string id,int count)
         {
             bool had=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);string prior=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);
@@ -46,15 +46,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
                 else
                 {
-                    // Combat Bowl retains its existing white combined-box batch, including all 12 anchors.
-                    var white=meshes.Where(m=>m.GetComponent<MeshRenderer>()?.sharedMaterial?.name=="Broad white luminaire").ToArray();
+                    // Read the retained source batch: GPU static-batch outputs deliberately discard CPU vertices.
+                    // The same source feeds the rendered batch; all 12 anchors remain asserted below.
+                    var white=meshes.Where(m=>m.sharedMesh.isReadable&&m.GetComponent<MeshRenderer>()?.sharedMaterial?.name=="Broad white luminaire").ToArray();
                     Assert.That(white,Is.Not.Empty,"Existing white markings batch");
                     var vertices=white.SelectMany(m=>m.sharedMesh.vertices.Select(v=>m.transform.TransformPoint(v))).ToArray();
                     foreach(var pickup in definition.Pickups)Assert.That(vertices.Count(v=>Mathf.Abs(v.y-pickup.Anchor.y-.012f)<.004f&&Mathf.Abs(Vector2.Distance(new Vector2(v.x,v.z),new Vector2(pickup.Anchor.x,pickup.Anchor.z))-radius)<width),Is.GreaterThanOrEqualTo(64),pickup.Id);
                 }
                 if(id==IndustrialTunnelsCatalog.Id)
                 {
-                    Assert.That(whitePickups.Length,Is.EqualTo(5),"Only the five other points get white paint");
+                    Assert.That(whitePickups.Length,Is.EqualTo(6),"All six other points, including FORGE, get white paint");
                     var central=definition.Pickups.Single(item=>item.Id=="tunnels-damage-central");
                     var sector=meshes.Single(m=>m.name=="Sector 5 muted paint");
                     Assert.That(sector.GetComponent<MeshRenderer>().sharedMaterial.color,Is.EqualTo(new Color(.69f,.65f,.52f)*settings.Get("tunnels.wayfinding.paint")));
@@ -66,7 +67,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var pickup in definition.Pickups)
                 {
                     var eyeOffset=new Vector3(0,2.7f,-3.1f);
-                    if(id==IndustrialTunnelsCatalog.Id&&pickup.Id=="tunnels-pulse-south")eyeOffset=new Vector3(3.1f,2.7f,0);
+                    if(id==IndustrialTunnelsCatalog.Id&&(pickup.Id=="tunnels-pulse-south"||pickup.Id=="forge-tunnels-north"))eyeOffset=new Vector3(3.1f,2.7f,0);
                     if(lunar&&pickup.Id=="H")eyeOffset=new Vector3(0,2.7f,3.1f);
                     cameraGo.transform.position=pickup.Anchor+eyeOffset;cameraGo.transform.LookAt(pickup.Anchor+Vector3.up*.15f);camera.Render();yield return null;
                     var previous=RenderTexture.active;RenderTexture.active=rt;var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);

@@ -22,6 +22,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 yield return null;
                 foreach(var anchor in arena.Definition.Pickups.Where(p=>p.Kind==ArenaPickupKind.Plasma))
                 {
+                    if(map!=IndustrialTunnelsCatalog.Id)
+                    {
+                        var other=anchor.Anchor;other.y=map==LunarLaboratoryCatalog.Id?LunarLaboratoryCatalog.Upper:0;
+                        motor.Initialize(move,other);var wrong=new NativeCombatSession(new[]{motor},arena,scene.GetPhysicsScene(),move,ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault());
+                        wrong.Tick(new LocalAction[1],.02f);Assert.That(wrong.Life(0).PlasmaOwned,Is.False,map+"/"+anchor.Id+" cannot collect through floors");
+                    }
                     motor.Initialize(move,anchor.Anchor);var s=new NativeCombatSession(new[]{motor},arena,scene.GetPhysicsScene(),move,ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault());
                     s.Tick(new LocalAction[1],.02f);Assert.That(s.Life(0).PlasmaOwned,Is.True,map+"/"+anchor.Id+" physical support");Assert.That(s.Life(0).PlasmaAmmo,Is.EqualTo(100));
                     Assert.That(s.WeaponPickups.Single(p=>p.InstanceId==anchor.Id).Available,Is.False);
