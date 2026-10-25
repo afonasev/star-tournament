@@ -13,6 +13,7 @@ namespace StarTournament.ProvingGround
         public bool FilledFocus;
         // Opt-in for the match-lobby visual slice; other menu families keep their current palette.
         public bool LobbySurface;
+        public Color? SurfaceTint;
         Text optionCaption;
         public float Height = ButtonHeight;
         Outline border;
@@ -66,8 +67,8 @@ namespace StarTournament.ProvingGround
             }
             else if(LobbySurface&&button)
             {
-                var surface=button.GetComponent<Image>();surface.sprite=LobbyVisualAssets.Panel;surface.type=Image.Type.Simple;
-                surface.color=enabledButton?(hover?new Color(1.16f,1.16f,1.16f,1):Color.white):new Color(.68f,.68f,.68f,.85f);
+                var surface=button.GetComponent<Image>();surface.sprite=SurfaceTint.HasValue?LobbyVisualAssets.TintedPanel:LobbyVisualAssets.Panel;surface.type=Image.Type.Simple;
+                surface.color=(SurfaceTint??Color.white)*(enabledButton?(hover?new Color(1.16f,1.16f,1.16f,1):Color.white):new Color(.68f,.68f,.68f,.85f));
                 // Outline duplicates the entire translucent quad four times. A real hollow
                 // border preserves the authored material and avoids timing-dependent opacity.
                 border.enabled=false;
