@@ -87,7 +87,7 @@ static class Launcher
         var markedRoot=WindowsInstallation.MarkedRoot(locator);
         if(markedRoot!=null)await WindowsBrokerUpgradeStartup.EnsureWindows(markedRoot,config);
         var machineRoot = WindowsInstallation.MachineRoot(locator);
-        var readerProtocol = machineRoot == null ? ReleaseCompatibility.ReaderProtocol : WindowsInstallation.MetadataReader(machineRoot);
+        var readerProtocol = machineRoot == null ? ReleaseCompatibility.ReaderFor(config.Platform) : WindowsInstallation.MetadataReader(machineRoot);
         using var source = new AuthenticatedSource(config, key, discoveryCachePath: Path.Combine(logRoot, "release-discovery-v1"), readerProtocol: readerProtocol);
         bool Installing() => machineRoot != null && File.Exists(Path.Combine(machineRoot, "maintenance", "installing.flag"));
         if (Installing()) { UpdateFeedback.Show("Установщик изменяет файлы игры. Дождитесь его завершения и запустите игру снова."); return 1; }

@@ -3,7 +3,8 @@ import plistlib
 import re
 from pathlib import Path
 
-READER_PROTOCOL = 3
+READER_PROTOCOL = 2
+MAC_READER_PROTOCOL = 3
 PAYLOAD_FORMAT = 'velopack-full-v1'
 DATA_POLICY = 'profiles2-lab3-prefs1'
 FIELDS = {'minimumOsVersion', 'minimumUpdaterProtocol', 'payloadFormat', 'userDataPolicy'}
@@ -25,7 +26,7 @@ def validate(requirements, platform):
     if not isinstance(requirements, dict) or set(requirements) != FIELDS:
         raise ValueError('Explicit signed compatibility fields required')
     os_version(requirements['minimumOsVersion'], platform)
-    if type(requirements['minimumUpdaterProtocol']) is not int or requirements['minimumUpdaterProtocol'] not in (2, READER_PROTOCOL):
+    if type(requirements['minimumUpdaterProtocol']) is not int or requirements['minimumUpdaterProtocol'] not in (READER_PROTOCOL, MAC_READER_PROTOCOL):
         raise ValueError('Unsupported updater reader protocol')
     if requirements['payloadFormat'] != PAYLOAD_FORMAT or requirements['userDataPolicy'] != DATA_POLICY:
         raise ValueError('Unsupported payload or user-data contract')
@@ -40,7 +41,7 @@ def current(runtime, player: Path):
             minimum = plistlib.load(stream).get('LSMinimumSystemVersion')
         # Never advertise a lower floor than the actual Player. Missing/invalid is an error.
         os_version(minimum, platform)
-    return validate(dict(minimumOsVersion=minimum, minimumUpdaterProtocol=(READER_PROTOCOL if platform == 'osx' else 2),
+    return validate(dict(minimumOsVersion=minimum, minimumUpdaterProtocol=(MAC_READER_PROTOCOL if platform == 'osx' else READER_PROTOCOL),
                          payloadFormat=PAYLOAD_FORMAT, userDataPolicy=DATA_POLICY), platform)
 
 

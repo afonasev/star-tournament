@@ -27,10 +27,10 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     public string? PublicationDate { get; private set; }
     public CancellationToken CheckCancellationToken { get; set; }
 
-    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null, int readerProtocol = ReleaseCompatibility.ReaderProtocol, Func<string, Version, bool>? hostProbe = null)
+    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null, int? readerProtocol = null, Func<string, Version, bool>? hostProbe = null)
     {
         this.config = config; this.key = key;
-        this.readerProtocol = readerProtocol; this.hostProbe = hostProbe;
+        this.readerProtocol = readerProtocol ?? ReleaseCompatibility.ReaderFor(config.Platform); this.hostProbe = hostProbe;
         this.stallTimeout = stallTimeout ?? TimeSpan.FromSeconds(30);
         if (config.UpdateChannel != null && (config.UpdateChannel is not ("test" or "production") ||
             config.FeedBase != (config.UpdateChannel == "test" ? TestLocator : ProductionBase)))
