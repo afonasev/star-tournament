@@ -382,6 +382,8 @@ namespace StarTournament.ProvingGround
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)<p.Version?p.BeforeForgePickups():p).ToList()};
             if(!sought.Profiles.Any(p=>p.Id=="forge-plasma-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="forge-plasma-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??2)<2)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeViewScale()).ToList()};
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};

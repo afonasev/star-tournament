@@ -50,7 +50,7 @@ namespace StarTournament.ProvingGround
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
         void PrepareLabRegistry()
         {
-            MatchProfile.EnsureMatchDescriptors();TrooperProfile.EnsureTrooperDescriptors();
+            MatchProfile.EnsureMatchDescriptors();TrooperProfile.EnsureTrooperDescriptors();PlasmaProfile.EnsurePlasmaDescriptors();
             ParticipantPaletteProfile.EnsureIdentitySurfaceDescriptors();RocketEffectsProfile.EnsureRocketEffectsDescriptors();
             Profile.EnsureDefaultDescriptors();LifeProfile.EnsureCombatDescriptors();CombatProfile.EnsureNativeCombatDescriptors();
             OrbitalLeagueProfile.EnsureOrbitalLeagueDescriptors();BotBehaviorProfile.EnsureBotDescriptors();BotPerceptionProfile.EnsureBotDescriptors();

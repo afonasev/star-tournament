@@ -9,6 +9,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     public sealed class ForgeHistoryTests
     {
         static ProvingProfile Before(ProvingProfile p,string method)=>(ProvingProfile)typeof(ProvingProfile).GetMethod(method,BindingFlags.Instance|BindingFlags.NonPublic).Invoke(p,null);
+        [Test]public void SmallerViewmodelPreservesV1HistoryAndCustomWorldScale()
+        {
+            string path=Path.Combine(Path.GetTempPath(),"forge-size-history-"+Guid.NewGuid()+".json");
+            try
+            {
+                var current=ProvingProfile.CreatePlasmaDefault();var old=Before(current,"BeforeForgeViewScale");
+                Assert.That(old.Version,Is.EqualTo(1));Assert.That(old.Descriptors.Any(d=>d.Path=="plasma.viewScale"),Is.False);
+                var first=new DesignLabHistory(path,new LabBundle{Profiles={old}});first.Create("Custom FORGE");
+                var draft=first.Selected.Snapshot;draft.Set("plasma.modelScale",1.2f);first.Save(draft);
+                string hash=first.Selected.Hash,bytes=JsonUtility.ToJson(first.Selected.Snapshot);
+                var next=new DesignLabHistory(path,new LabBundle{Profiles={current}});Assert.That(next.StorageError,Is.Null);
+                Assert.That(next.Selected.Snapshot.Get("plasma.modelScale"),Is.EqualTo(1.2f));
+                Assert.That(next.Selected.Snapshot.Get("plasma.viewScale"),Is.EqualTo(.7f));
+                Assert.That(JsonUtility.ToJson(next.Profiles.SelectMany(x=>x.Revisions).Single(x=>x.Hash==hash).Snapshot),Is.EqualTo(bytes));
+                old.Set("plasma.modelScale",1.1f);old.EnsurePlasmaDescriptors();
+                Assert.That(old.Get("plasma.modelScale"),Is.EqualTo(1.1f));Assert.That(old.Get("plasma.viewScale"),Is.EqualTo(.7f));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test]public void PreviousGripRegistryHasNoForgeAndRetainsEveryOtherDescriptor()
         {
             var current=ProvingProfile.CreateTrooperDefault();var old=Before(current,"BeforeForgeGrip");Assert.That(current.Version,Is.EqualTo(21));Assert.That(old.Version,Is.EqualTo(20));

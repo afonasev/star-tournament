@@ -10,9 +10,23 @@ namespace StarTournament.ProvingGround
             bool Added(string path)=>path.StartsWith("forge-")||path.Contains(".forge-");
             p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));return p;
         }
+        internal ProvingProfile BeforeForgeViewScale()
+        {
+            if(id!="forge-plasma-v1"||version<2)return this;
+            var p=DetachedCopy();p.version=1;
+            p.descriptors.RemoveAll(d=>d.Path=="plasma.viewScale");p.values.RemoveAll(v=>v.Path=="plasma.viewScale");return p;
+        }
+        public void EnsurePlasmaDescriptors()
+        {
+            var current=CreatePlasmaDefault();valueIndex=null;
+            foreach(var descriptor in current.Descriptors)
+                if(FindDescriptor(descriptor.Path)==null)
+                {descriptors.Add(descriptor);values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});}
+            version=current.Version;valueIndex=null;
+        }
         public static ProvingProfile CreatePlasmaDefault()
         {
-            var p=new ProvingProfile{id="forge-plasma-v1",version=1};
+            var p=new ProvingProfile{id="forge-plasma-v1",version=2};
             p.Add("plasma.damage","plasma","Урон шара FORGE","Прямой урон одного шара до усиления и союзного коэффициента.","HP",0,500,1,20);
             p.Add("plasma.cooldownSeconds","plasma","Интервал FORGE","Пауза между шарами при удержании огня.","s",.02f,2,.01f,.1f);
             p.Add("plasma.speed","plasma","Скорость шара","Скорость прямого полёта: меньше — легче увернуться.","m/s",1,200,1,30);
@@ -26,6 +40,7 @@ namespace StarTournament.ProvingGround
             p.Add("plasma.orbPulseAmplitude","plasma-effects","Пульсация шара","Относительная амплитуда видимого радиуса.","ratio",0,.5f,.01f,.07f);
             p.Add("plasma.orbPulseHz","plasma-effects","Частота пульсации","Частота движения плазмы внутри шара.","Hz",0,20,.1f,5);
             p.Add("plasma.audioGain","plasma","Громкость FORGE","Относительная громкость энергетического выстрела.","ratio",0,4,.05f,1);
+            p.Add("plasma.viewScale","plasma-effects","Масштаб FORGE в руках","Дополнительный масштаб только от первого лица; уменьшает перекрытие обзора и сохраняет размер world/pickup модели.","ratio",.4f,1.2f,.05f,.7f);
             return p;
         }
     }

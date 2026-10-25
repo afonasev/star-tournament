@@ -10,6 +10,7 @@ namespace StarTournament.ProvingGround
         Renderer shotgun;
         GameObject rifle,pulse,cutter,plasma;
         Transform rifleMuzzle,cutterMuzzle,pulseMuzzle,plasmaMuzzle;
+        public float PlasmaViewScale { get; private set; }=1;
         public Vector3 PlasmaMuzzle=>plasmaMuzzle?plasmaMuzzle.position:transform.position;
         public Vector3 PulseMuzzle=>pulseMuzzle?pulseMuzzle.position:transform.position;
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
@@ -56,7 +57,9 @@ namespace StarTournament.ProvingGround
             {
                 plasma=Object.Instantiate(plasmaPrefab,mount);plasma.name="forge-plasma";
                 plasma.transform.localPosition=Vector3.zero;plasma.transform.localRotation=Quaternion.identity;
-                plasma.transform.localScale=Vector3.one*(plasmaProfile??ProvingProfile.CreatePlasmaDefault()).Get("plasma.modelScale");
+                var pp=plasmaProfile??ProvingProfile.CreatePlasmaDefault();
+                PlasmaViewScale=gameObject.layer>=15?pp.Get("plasma.viewScale"):1;
+                plasma.transform.localScale=Vector3.one*pp.Get("plasma.modelScale")*PlasmaViewScale;
                 plasmaMuzzle=plasma.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="forge-muzzle");
                 if(gameObject.layer<15)AddForgeLod(plasma,plasmaLod1Prefab);
                 foreach(var t in plasma.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
