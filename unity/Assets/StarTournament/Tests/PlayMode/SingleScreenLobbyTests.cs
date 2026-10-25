@@ -102,6 +102,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var human=B("roster-card-0");var humanPortrait=human.transform.Find("portrait").GetComponent<Image>();
             Assert.That(humanPortrait.sprite,Is.Not.Null);Assert.That(humanPortrait.sprite.texture,Is.SameAs(Resources.Load<Texture2D>("LobbyPortraits/Human")));
             Assert.That(human.transform.Find("participant-device-glyph").gameObject.activeSelf,Is.True);
+            Assert.That(human.transform.Find("participant-device-glyph").GetComponent<LobbyRosterGlyph>().mainTexture,Is.SameAs(Resources.Load<Texture2D>("LobbyIcons/GamepadSilhouette")),"Gamepad uses the exact approved SVG raster resource");
             Assert.That(human.transform.Find("participant-screen-slot").gameObject.activeSelf,Is.True);
             var slots=human.transform.Find("participant-screen-slot").GetComponentsInChildren<Image>(true);
             Assert.That(slots.Length,Is.EqualTo(4));Assert.That(slots[0].sprite,Is.SameAs(LobbyVisualAssets.ScreenCell(true)));

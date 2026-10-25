@@ -882,3 +882,5 @@ The neutral glove shell uses a continuous anatomical palm/thenar/finger volume w
 - 2026-10-25 F06: inline циклы правил и session-draft выбор реального цвета существующего участника заменяют прежние модальные редакторы и назначение цвета только на старте; остальные identity/Repeat contracts сохранены.
 
 - 2026-10-25 F07: команды новых матчей используют только vetted blue/red (палитра indices 0/6), одинаково в lobby/card и frozen composition. FFA magenta и индивидуальный выбор не меняются; swap сохранён, historical Repeat/restore хранит прежние exact цвета.
+
+- 2026-10-25 F08: пользователь выбрал силуэтную иконку геймпада B-solid: точный заполненный контур, вырез крестовины и четыре круглых выреза; keyboard/mouse glyphs, tint/disconnected и текущий focus style сохранены. Исходный SVG tracked, PNG отрисован заранее без runtime SVG dependency.
