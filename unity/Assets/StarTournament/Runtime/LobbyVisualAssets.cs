@@ -6,13 +6,19 @@ namespace StarTournament.ProvingGround
     // Deterministic high-resolution UI artwork. No game state, assets or camera tuning.
     public static class LobbyVisualAssets
     {
-        static Sprite panel, rim, scrim, button, cell, filled, emptySlot;
+        static Sprite tintedPanel, panel, rim, scrim, button, cell, filled, emptySlot;
         public static Sprite Panel => panel ? panel : panel=Make("lobby-brushed-panel",256,128,(x,y)=>
         {
             float edge=Mathf.Clamp01(Rounded(x,y,256,128,10)+.5f);
             float light=.13f+.05f*y/128+.05f*Mathf.Exp(-Mathf.Pow((x-75)/120,2));
             float grain=.0025f*Mathf.Sin(y*2.7f+x*.17f);
             return new Color(light+grain,light*1.32f+grain,light*1.65f+grain,edge*.94f);
+        });
+        public static Sprite TintedPanel=>tintedPanel?tintedPanel:tintedPanel=Make("lobby-player-metal",256,128,(x,y)=>
+        {
+            float edge=Mathf.Clamp01(Rounded(x,y,256,128,10)+.5f);
+            float light=.27f+.13f*y/128+.09f*Mathf.Exp(-Mathf.Pow((x-75)/120,2))+.006f*Mathf.Sin(y*2.7f+x*.17f);
+            return new Color(light,light,light,edge*.97f);
         });
         public static Sprite Rim => rim ? rim : rim=Make("lobby-panel-rim",64,64,(x,y)=>
         {float d=Rounded(x,y,64,64,10);return new Color(1,1,1,Mathf.Clamp01(d+.5f)*(1-Mathf.Clamp01(d-1)));},new Vector4(12,12,12,12));

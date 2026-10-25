@@ -12,8 +12,8 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingGround
     {
         bool lobbyInitialized;
+        LobbyTeamMaterial lobbyTeamMaterial;
         public ProvingProfile LobbyProfile=ProvingProfile.CreateLobbyDefault();
-        bool lobbyNumericNavigation;
         readonly int[] lobbyPositions={0,1,2,3};
         Button lobbyMap,lobbyMode,lobbyTime,lobbyTarget,lobbyBotOpener;
         ArenaPreviewGraphic lobbyPreview,lobbyDialogPreview;
@@ -23,9 +23,6 @@ namespace StarTournament.ProvingGround
         Action lobbyBack;
         Button lobbyOpener;
         int lobbyDialogFrame;
-        string lobbyNumericPath;
-        Slider lobbySlider;
-        Text lobbyNumber;
         InputDevice lobbyJoinDevice;
         string lobbyJoinProfile;
         int lobbyBotDifficulty;
@@ -56,15 +53,16 @@ namespace StarTournament.ProvingGround
             var preview=new GameObject("lobby-map-preview",typeof(RectTransform),typeof(ArenaPreviewGraphic));preview.transform.SetParent(artwork.transform,false);
             Layout((RectTransform)preview.transform,Vector2.zero,Vector2.one);lobbyPreview=preview.GetComponent<ArenaPreviewGraphic>();lobbyPreview.raycastTarget=false;
             var scrim=Panel(artwork.transform,"map-title-scrim",Vector2.zero,new Vector2(1,.60f),Color.white).GetComponent<Image>();scrim.sprite=LobbyVisualAssets.Scrim;scrim.raycastTarget=false;
+            lobbyMap.transform.Find("gamepad-action-button").SetAsLastSibling();
             lobbyMap.transform.Find("label").SetAsLastSibling();mapHint.transform.SetAsLastSibling();
-            lobbyMode=RosterButton(setupScreen.transform,"lobby-mode","",new Vector2(.38f,.735f),new Vector2(.61f,.805f),OpenLobbyModes);
-            lobbyTime=RosterButton(setupScreen.transform,"lobby-time","",new Vector2(.64f,.735f),new Vector2(.77f,.805f),()=>OpenLobbyNumber("match.durationMinutes",lobbyTime));
-            lobbyTarget=RosterButton(setupScreen.transform,"lobby-target","",new Vector2(.80f,.735f),new Vector2(.95f,.805f),()=>OpenLobbyNumber("match.targetPoints",lobbyTarget));
+            lobbyMode=RosterButton(setupScreen.transform,"lobby-mode","",new Vector2(.38f,.735f),new Vector2(.61f,.805f),()=>CycleLobbyRule("mode",1));
+            lobbyTime=RosterButton(setupScreen.transform,"lobby-time","",new Vector2(.64f,.735f),new Vector2(.77f,.805f),()=>CycleLobbyRule("time",1));
+            lobbyTarget=RosterButton(setupScreen.transform,"lobby-target","",new Vector2(.80f,.735f),new Vector2(.95f,.805f),()=>CycleLobbyRule("target",1));
             foreach(var tile in new[]{lobbyMap,lobbyMode,lobbyTime,lobbyTarget}){tile.GetComponent<MenuPresentation>().Compact=false;var r=(RectTransform)tile.transform;r.offsetMin=r.offsetMax=Vector2.zero;}
             foreach(var rule in new[]{lobbyMode,lobbyTime,lobbyTarget})
             {
-                Label(rule.transform,"rule-left","‹",36,new Vector2(.025f,.12f),new Vector2(.12f,.88f),TextAnchor.MiddleCenter,Color.white);
-                Label(rule.transform,"rule-right","›",36,new Vector2(.88f,.12f),new Vector2(.975f,.88f),TextAnchor.MiddleCenter,Color.white);
+                CreateRuleArrow(rule,"rule-left","‹",new Vector2(.0f,0),new Vector2(.14f,1),-1);
+                CreateRuleArrow(rule,"rule-right","›",new Vector2(.86f,0),Vector2.one,1);
                 var label=rule.transform.Find("label").GetComponent<Text>();label.alignment=TextAnchor.MiddleCenter;
                 Layout(label.rectTransform,new Vector2(.14f,0),new Vector2(.86f,1));
                 rule.GetComponent<MenuActionHint>().ReservedRightInset=()=>34;
@@ -85,8 +83,31 @@ namespace StarTournament.ProvingGround
             Layout((RectTransform)setupPlayersPage.transform,Vector2.zero,Vector2.one);
             rosterFull.gameObject.SetActive(false);
             Layout((RectTransform)rosterFfaScroll.transform,new Vector2(.01f,.015f),new Vector2(.99f,.985f));
-            Layout((RectTransform)rosterBluePanel.transform,new Vector2(.01f,.015f),new Vector2(.49f,.985f));
-            Layout((RectTransform)rosterRedPanel.transform,new Vector2(.51f,.015f),new Vector2(.99f,.985f));
+            Layout((RectTransform)rosterBluePanel.transform,new Vector2(0,0),new Vector2(.5f,1));
+            Layout((RectTransform)rosterRedPanel.transform,new Vector2(.5f,0),Vector2.one);
+        }
+        void CycleLobbyRule(string rule,int direction)
+        {
+            if(phase!=Phase.Setup||LobbyModal)return;
+            if(rule=="mode")SetMatchMode(SetupMode==NativeMatchMode.Ffa?NativeMatchMode.Teams:NativeMatchMode.Ffa);
+            else
+            {
+                var c=Configuration;
+                if(rule=="time")c.DurationMinutes=1+((c.DurationMinutes-1+direction+10)%10);
+                else
+                {
+                    int index=c.TargetEnabled?Mathf.Clamp((c.TargetPoints-1000)/500,0,8):9;
+                    index=(index+direction+10)%10;c.TargetEnabled=index!=9;
+                    if(c.TargetEnabled)c.TargetPoints=1000+index*500;
+                }
+                c.Validate(MatchProfile);Configuration=c;RefreshInterface();
+            }
+        }
+        void CreateRuleArrow(Button rule,string name,string text,Vector2 min,Vector2 max,int direction)
+        {
+            // A pointer-only child intercepts its own click; the parent remains the sole focus stop.
+            var label=Label(rule.transform,name,text,36,min,max,TextAnchor.MiddleCenter,Color.white);label.raycastTarget=true;
+            label.gameObject.AddComponent<LobbyRuleArrow>().Choose=()=>CycleLobbyRule(rule==lobbyMode?"mode":rule==lobbyTime?"time":"target",direction);
         }
         void StyleLobbySurface(Button button)
         {
@@ -100,8 +121,16 @@ namespace StarTournament.ProvingGround
             setupPlayersPage.GetComponent<Image>().color=Color.clear;
             setupPlayersPage.transform.parent.GetComponent<Image>().color=Color.clear;
             rosterFfaScroll.GetComponent<Image>().color=Color.clear;
-            rosterBluePanel.GetComponent<Image>().color=new Color32(9,31,43,150);
-            rosterRedPanel.GetComponent<Image>().color=new Color32(42,15,24,150);
+            rosterBluePanel.GetComponent<Image>().color=Color.clear;
+            rosterRedPanel.GetComponent<Image>().color=Color.clear;
+            if(!lobbyTeamMaterial)
+            {
+                var material=new GameObject("team-continuous-material",typeof(RectTransform),typeof(CanvasRenderer),typeof(LobbyTeamMaterial));
+                material.transform.SetParent(setupPlayersPage.transform,false);material.transform.SetAsFirstSibling();Layout((RectTransform)material.transform,Vector2.zero,Vector2.one);
+                lobbyTeamMaterial=material.GetComponent<LobbyTeamMaterial>();lobbyTeamMaterial.raycastTarget=false;
+            }
+            lobbyTeamMaterial.gameObject.SetActive(SetupMode==NativeMatchMode.Teams);
+            lobbyTeamMaterial.Left=RosterTeamColor(NativeTeam.TeamA);lobbyTeamMaterial.Right=RosterTeamColor(NativeTeam.TeamB);lobbyTeamMaterial.SetVerticesDirty();
             foreach(var button in new[]{lobbyMap,lobbyMode,lobbyTime,lobbyTarget,setupPrevious,rosterAddBot,rosterAddHuman})StyleLobbySurface(button);
             start.GetComponent<MenuActionHint>().ColoredLobbyGlyph=true;
             foreach(var button in rosterCards.Concat(rosterEmpty))StyleLobbySurface(button);
@@ -130,6 +159,9 @@ namespace StarTournament.ProvingGround
             setupMessage.text=setupError??SetupBlockingReason();
             if(lobbyDialog&&lobbyDialog.activeSelf)lobbyDialog.transform.SetAsLastSibling();
             ConfigureLobbyNavigation();
+            // The screen owns caption refresh; finish its layout transaction with the
+            // opt-in text+hint group so a later refresh cannot restore obsolete insets.
+            foreach(var hint in setupScreen.GetComponentsInChildren<MenuActionHint>().Where(h=>h.enabled))hint.Refresh();
         }
         void ConfigureLobbyNavigation()
         {
@@ -149,7 +181,7 @@ namespace StarTournament.ProvingGround
         {
             if(lobbyDialog){lobbyDialog.SetActive(false);Destroy(lobbyDialog);}
             if(opener!=null)lobbyOpener=opener;
-            lobbyDialogFrame=setupTransitionFrame=Time.frameCount;lobbyBack=back;lobbyNumericPath=null;lobbyChoices.Clear();
+            lobbyDialogFrame=setupTransitionFrame=Time.frameCount;lobbyBack=back;lobbyChoices.Clear();
             lobbyDialog=Panel(setupScreen.transform.parent,"lobby-dialog",Vector2.zero,Vector2.one,new Color32(4,12,19,220));
             var card=Panel(lobbyDialog.transform,"lobby-dialog-card",new Vector2(.20f,.14f),new Vector2(.80f,.88f),MenuCard);StyleSelectorCard(card);
             Label(card.transform,"lobby-dialog-title",title,32,new Vector2(.06f,.88f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,MenuGold);
@@ -182,9 +214,8 @@ namespace StarTournament.ProvingGround
         }
         void CloseLobbyDialog()
         {
-            if(lobbyDialog)lobbyDialog.SetActive(false);if(lobbyNumericPath!=null)StartCoroutine(RestoreLobbyNavigation());lobbyNumericPath=null;lobbyBack=null;setupTransitionFrame=Time.frameCount;RefreshInterface();Select(lobbyOpener??lobbyMap);
+            if(lobbyDialog)lobbyDialog.SetActive(false);lobbyBack=null;setupTransitionFrame=Time.frameCount;RefreshInterface();Select(lobbyOpener??lobbyMap);
         }
-        System.Collections.IEnumerator RestoreLobbyNavigation(){yield return null;if(EventSystem.current)EventSystem.current.sendNavigationEvents=lobbyNumericNavigation;}
         void OpenLobbyMaps()
         {
             BeginLobbyDialog("ВЫБЕРИТЕ КАРТУ",CloseLobbyDialog,lobbyMap);
@@ -197,58 +228,10 @@ namespace StarTournament.ProvingGround
             }
             FinishLobbyChoices(Array.IndexOf(SetupMapIds,SelectedMapId));
         }
-        void OpenLobbyModes()
-        {
-            BeginLobbyDialog("РЕЖИМ",CloseLobbyDialog,lobbyMode);
-            LobbyChoice("lobby-ffa","Каждый за себя",()=>{SetMatchMode(NativeMatchMode.Ffa);CloseLobbyDialog();});
-            LobbyChoice("lobby-teams","Командный бой",()=>{SetMatchMode(NativeMatchMode.Teams);CloseLobbyDialog();});FinishLobbyChoices(SetupMode==NativeMatchMode.Teams?1:0);
-        }
-        void OpenLobbyNumber(string path,Button opener)
-        {
-            BeginLobbyDialog(path=="match.durationMinutes"?"ВРЕМЯ":"ЦЕЛЬ",CloseLobbyDialog,opener);lobbyNumericPath=path;lobbyNumericNavigation=EventSystem.current.sendNavigationEvents;EventSystem.current.sendNavigationEvents=false;
-            lobbyScroll.gameObject.SetActive(false);var card=lobbyScroll.transform.parent;
-            Layout((RectTransform)card,new Vector2(.30f,.27f),new Vector2(.70f,.73f));
-            lobbyNumber=Label(card,"lobby-number","",42,new Vector2(.1f,.62f),new Vector2(.9f,.80f),TextAnchor.MiddleCenter,Color.white);
-            var minus=RosterButton(card,"lobby-minus","−",new Vector2(.10f,.40f),new Vector2(.23f,.53f),()=>StepLobbyNumber(-1));
-            var plus=RosterButton(card,"lobby-plus","+",new Vector2(.77f,.40f),new Vector2(.90f,.53f),()=>StepLobbyNumber(1));
-            var track=Panel(card,"lobby-slider",new Vector2(.28f,.44f),new Vector2(.72f,.49f),MenuInk);
-            var handle=Panel(track.transform,"handle",Vector2.zero,Vector2.one,MenuGold);handle.GetComponent<RectTransform>().sizeDelta=new Vector2(24,24);
-            lobbySlider=track.AddComponent<Slider>();lobbySlider.handleRect=(RectTransform)handle.transform;lobbySlider.targetGraphic=handle.GetComponent<Image>();lobbySlider.wholeNumbers=true;
-            var d=MatchProfile.Descriptors.First(x=>x.Path==path);lobbySlider.minValue=d.Minimum;lobbySlider.maxValue=d.Maximum;lobbySlider.onValueChanged.AddListener(v=>SetLobbyNumber(v));
-            var done=RosterButton(card,"lobby-number-done","ГОТОВО",new Vector2(.60f,.035f),new Vector2(.95f,.12f),CloseLobbyDialog);
-            if(path=="match.targetPoints")RosterButton(card,"lobby-target-off","БЕЗ ЦЕЛИ",new Vector2(.30f,.23f),new Vector2(.70f,.34f),()=>{var c=Configuration;c.TargetEnabled=false;Configuration=c;CloseLobbyDialog();});
-            NoSetupNavigation(done);NoSetupNavigation(minus);NoSetupNavigation(plus);NoSetupNavigation(lobbySlider);RefreshLobbyNumber();Select(done);
-        }
-        void SetLobbyNumber(float value)
-        {
-            if(lobbyNumericPath==null)return;
-            var d=MatchProfile.Descriptors.First(x=>x.Path==lobbyNumericPath);int step=lobbyNumericPath=="match.durationMinutes"?(int)LobbyProfile.Descriptor("lobby.durationMinutes").Step:(int)LobbyProfile.Descriptor("lobby.targetPoints").Step;
-            int n=(int)Mathf.Clamp(Mathf.Round(value/step)*step,d.Minimum,d.Maximum);var c=Configuration;
-            if(lobbyNumericPath=="match.durationMinutes")c.DurationMinutes=n;else{c.TargetPoints=n;c.TargetEnabled=true;}c.Validate(MatchProfile);Configuration=c;RefreshLobbyNumber();
-        }
-        void StepLobbyNumber(int direction)
-        {
-            if(lobbyNumericPath==null)return;
-            bool duration=lobbyNumericPath=="match.durationMinutes";
-            if(!duration)
-            {
-                if(!Configuration.TargetEnabled){if(direction>0)SetLobbyNumber(Configuration.TargetPoints);return;}
-                if(direction<0&&Configuration.TargetPoints<=MatchProfile.Descriptor("match.targetPoints").Minimum)
-                {var c=Configuration;c.TargetEnabled=false;Configuration=c;RefreshLobbyNumber();return;}
-            }
-            SetLobbyNumber((duration?Configuration.DurationMinutes:Configuration.TargetPoints)+direction*(int)LobbyProfile.Descriptor(duration?"lobby.durationMinutes":"lobby.targetPoints").Step);
-        }
-        void RefreshLobbyNumber(){int value=lobbyNumericPath=="match.durationMinutes"?Configuration.DurationMinutes:Configuration.TargetPoints;lobbySlider.SetValueWithoutNotify(value);lobbyNumber.text=lobbyNumericPath=="match.targetPoints"&&!Configuration.TargetEnabled?"Без цели":value+(lobbyNumericPath=="match.durationMinutes"?" мин":" очков");}
-        Vector2 lobbyHeldDirection;float lobbyRepeatAt;
         void UpdateLobbyDialogInput()
         {
             if(Time.frameCount<=lobbyDialogFrame)return;
-            if(TryTakeMenuBack()){lobbyBack?.Invoke();return;}
-            if(lobbyNumericPath==null)return;
-            if(menuSubmitAction.WasPressedThisFrame()){CloseLobbyDialog();return;}
-            var direction=menuMoveAction.ReadValue<Vector2>();
-            if(direction!=Vector2.zero&&(direction!=lobbyHeldDirection||Time.unscaledTime>=lobbyRepeatAt)){StepLobbyNumber(direction.x!=0?(direction.x>0?1:-1):direction.y>0?1:-1);lobbyRepeatAt=Time.unscaledTime+(direction==lobbyHeldDirection?.12f:.35f);}
-            lobbyHeldDirection=direction;
+            if(TryTakeMenuBack())lobbyBack?.Invoke();
         }
         void BeginLobbyBot()
         {
@@ -398,6 +381,37 @@ namespace StarTournament.ProvingGround
             p.Add("lobby.durationMinutes","lobby","Начальное время","Время нового лобби после запуска; редактор использует этот шаг.","minutes",1,30,1,3);
             p.Add("lobby.targetPoints","lobby","Начальная цель","Цель нового лобби после запуска; редактор использует этот шаг.","points",1000,20000,500,2000);
             return p;
+        }
+    }
+}
+
+namespace StarTournament.ProvingGround
+{
+    public sealed class LobbyRuleArrow : UnityEngine.MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
+    {
+        public System.Action Choose;
+        public void OnPointerClick(UnityEngine.EventSystems.PointerEventData e)
+        { if(e.button==UnityEngine.EventSystems.PointerEventData.InputButton.Left){Choose?.Invoke();e.Use();} }
+    }
+    public sealed class LobbyTeamMaterial : UnityEngine.UI.MaskableGraphic
+    {
+        public UnityEngine.Color Left,Right;
+        protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper mesh)
+        {
+            mesh.Clear();var rect=rectTransform.rect;
+            const int strips=32;
+            for(int i=0;i<strips;i++)
+            {
+                float a=i/(float)strips,b=(i+1)/(float)strips;
+                var ca=UnityEngine.Color.Lerp(Left,Right,UnityEngine.Mathf.SmoothStep(0,1,(a-.3f)/.4f));
+                var cb=UnityEngine.Color.Lerp(Left,Right,UnityEngine.Mathf.SmoothStep(0,1,(b-.3f)/.4f));
+                int n=mesh.currentVertCount;
+                mesh.AddVert(new UnityEngine.Vector3(rect.xMin+a*rect.width,rect.yMin),ca*.12f+new UnityEngine.Color(.015f,.02f,.025f,.88f),UnityEngine.Vector2.zero);
+                mesh.AddVert(new UnityEngine.Vector3(rect.xMin+a*rect.width,rect.yMax),ca*.24f+new UnityEngine.Color(.025f,.03f,.035f,.76f),UnityEngine.Vector2.zero);
+                mesh.AddVert(new UnityEngine.Vector3(rect.xMin+b*rect.width,rect.yMax),cb*.24f+new UnityEngine.Color(.025f,.03f,.035f,.76f),UnityEngine.Vector2.zero);
+                mesh.AddVert(new UnityEngine.Vector3(rect.xMin+b*rect.width,rect.yMin),cb*.12f+new UnityEngine.Color(.015f,.02f,.025f,.88f),UnityEngine.Vector2.zero);
+                mesh.AddTriangle(n,n+1,n+2);mesh.AddTriangle(n,n+2,n+3);
+            }
         }
     }
 }

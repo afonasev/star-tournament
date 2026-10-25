@@ -754,7 +754,7 @@ namespace StarTournament.ProvingGround
                 foreach(var descriptor in TeamProfile.Descriptors) NativeMatchConfiguration.ValidateValue(TeamProfile,descriptor.Path,TeamProfile.Get(descriptor.Path));
                 Composition=reviewComposition!=null?NativeMatchComposition.Restore(reviewComposition.Read()):
                     (combatReview||diagnostic?SetupComposition():WithSelectedNames(SetupComposition()));
-                if(reviewComposition==null&&!combatReview&&!diagnostic)Composition=NativeParticipantColors.FreezeNewMatch(Composition,profile:ParticipantPaletteProfile);
+                if(reviewComposition==null&&!combatReview&&!diagnostic)Composition=FreezeLobbyColors(Composition);
                 if(!AuthoredArenaCatalog.Supports(arena.Definition.MapId,Composition.ParticipantCount))throw new ArgumentException("Карта поддерживает 2–"+AuthoredArenaCatalog.Maximum(arena.Definition.MapId)+" участников");
                 frozenMatchArena=arena.FrozenSnapshot;
                 bool hasBots=Composition.Read().Participants.Any(p=>p.Kind==NativeParticipantKind.Bot);

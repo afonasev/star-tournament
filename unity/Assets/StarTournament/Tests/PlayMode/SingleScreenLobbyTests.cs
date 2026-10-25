@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.SetupBotCount,Is.Zero);yield return Press(GamepadButton.East);
             Assert.That(EventSystem.current.currentSelectedGameObject,Is.SameAs(empty.gameObject));
             yield return Press(GamepadButton.South);yield return Click("lobby-add-difficulty-1");Assert.That(ground.SetupBotCount,Is.EqualTo(1));
-            yield return Click("lobby-mode");yield return Click("lobby-teams");yield return Capture("17-empty-team-slots");
+            yield return Click("lobby-mode");yield return Capture("17-empty-team-slots");
             EventSystem.current.SetSelectedGameObject(B("roster-empty-0").gameObject);yield return Press(GamepadButton.South);yield return Click("lobby-add-difficulty-2");
             Assert.That(ground.SetupBotCount,Is.EqualTo(1));yield return Press(GamepadButton.East);yield return Press(GamepadButton.East);
             Assert.That(ground.SetupBotCount,Is.EqualTo(1));
@@ -90,7 +90,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.SameAs(pad));
             Assert.That(Reachable(),Is.SupersetOf(new[]{"lobby-map","lobby-mode","lobby-time","lobby-target","roster-card-0","setup-previous","roster-add-bot","roster-add-human"}));
             yield return Capture("01-cold-lobby");
-            yield return Click("lobby-time");yield return Press(GamepadButton.DpadRight);yield return Press(GamepadButton.East);
+            EventSystem.current.SetSelectedGameObject(B("lobby-time").gameObject);yield return Press(GamepadButton.South);
             Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(4));Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("lobby-time"));
             yield return Click("setup-previous");EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);yield return Press(GamepadButton.South,second);
             Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(4));Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.SameAs(pad));
@@ -144,7 +144,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             using(EditorUiCapture.FixedViewport(ground,1920,1080))
             {
                 yield return Capture("01-cold-lobby-xinput");
-                yield return Click("lobby-mode");yield return Click("lobby-teams");
+                yield return Click("lobby-mode");
                 EventSystem.current.SetSelectedGameObject(B("roster-card-0").gameObject);yield return null;yield return Capture("02-teams");
                 while(ground.SetupBotCount<7)ground.AddBot();yield return null;
                 Assert.That(B("roster-add-bot").interactable,Is.False);
@@ -176,7 +176,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator BotTransactionsRememberOnlySuccessfulAddAndBlockModalShortcuts()
         {
-            yield return Click("lobby-mode");yield return Click("lobby-teams");
+            yield return Click("lobby-mode");
             yield return Press(GamepadButton.West);yield return Click("lobby-add-difficulty-2");
             Assert.That(ground.SetupBotCount,Is.Zero);yield return Press(GamepadButton.Start);yield return Press(GamepadButton.North,second);
             Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(ground.Running,Is.False);
@@ -269,25 +269,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator NumericConfirmHoldUnevenTeamsAndResolutionEvidence()
         {
-            yield return Click("lobby-target");yield return Press(GamepadButton.DpadRight);
-            using(EditorUiCapture.FixedViewport(ground,1920,1080))
-            {
-                MenuSelectorOverlayTests.AssertPointerTarget(B("lobby-minus"),true);yield return null;Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2000));
-                MenuSelectorOverlayTests.AssertPointerTarget(B("lobby-plus"),true);yield return null;Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2500));
-                yield return Capture("14-numeric-target");
-            }
+            EventSystem.current.SetSelectedGameObject(B("lobby-target").gameObject);
             InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));
             for(int i=0;i<8;i++)yield return null;
-            Assert.That(Field<GameObject>("lobbyDialog").activeSelf,Is.False);Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2500));
+            Assert.That(Field<GameObject>("lobbyDialog")==null||!Field<GameObject>("lobbyDialog").activeSelf,Is.True);
+            Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2500),"Holding confirm advances once");
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
-            yield return Click("lobby-target");
-            for(int i=0;i<4;i++)yield return Press(GamepadButton.DpadLeft);
-            Assert.That(ground.Configuration.TargetEnabled,Is.False,"Arrow editing can select the existing optional target state");
-            yield return Press(GamepadButton.South);Assert.That(ground.Configuration.TargetEnabled,Is.False);
-            yield return Click("lobby-target");Assert.That(Field<Text>("lobbyNumber").text,Is.EqualTo("Без цели"));
-            yield return Press(GamepadButton.DpadRight);Assert.That(ground.Configuration.TargetEnabled,Is.True);
-            Field<Slider>("lobbySlider").value=2500;yield return null;yield return Click("lobby-number-done");
-            yield return Click("lobby-mode");yield return Click("lobby-teams");Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2500));
+            using(EditorUiCapture.FixedViewport(ground,1920,1080)){yield return Capture("14-inline-target");}
+            yield return Click("lobby-mode");Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2500));
             for(int i=0;i<7;i++){ground.AddBot();ground.SetBotTeam(i,i==0?NativeTeam.TeamB:NativeTeam.TeamA);}yield return null;
             Assert.That(Reachable(),Is.SupersetOf(Enumerable.Range(0,8).Select(i=>"roster-card-"+i)));
             foreach(int i in Enumerable.Range(0,8)){EventSystem.current.SetSelectedGameObject(B("roster-card-"+i).gameObject);yield return null;}
@@ -331,10 +320,122 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 {
                     typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);typeof(ProvingGround).GetField("menuGamepadCursor",Private).SetValue(ground,true);
                     yield return null;Canvas.ForceUpdateCanvases();
-                    var botCard=B("roster-card-2");var editBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(botCard.transform,botCard.transform.Find("edit-context").GetComponent<Text>().rectTransform);
+                    var botCard=B("roster-card-2");var editBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(botCard.transform,botCard.transform.Find("participant-name").GetComponent<Text>().rectTransform);
                     var hintBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(botCard.transform,botCard.GetComponent<MenuActionHint>().GlyphLabel.rectTransform);
-                    Assert.That(editBounds.max.x,Is.LessThan(hintBounds.min.x),"Generic direction text does not overlap the edit context");
+                    Assert.That(editBounds.max.x,Is.LessThan(hintBounds.min.x),"Generic direction text does not overlap the participant name");
                     yield return Capture("concept-v3-generic-gamepad-two-bots");
+                }
+                finally{InputSystem.RemoveDevice(generic);}
+            }
+        }
+        void PointerArrow(string rule,string arrow)
+        {
+            var graphic=B(rule).transform.Find(arrow).GetComponent<Text>();
+            Canvas.ForceUpdateCanvases();var canvas=graphic.GetComponentInParent<Canvas>();
+            var data=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left,position=RectTransformUtility.WorldToScreenPoint(canvas.worldCamera,graphic.rectTransform.TransformPoint(graphic.rectTransform.rect.center))};
+            var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(data,hits);
+            Assert.That(hits.Count,Is.GreaterThan(0));Assert.That(hits[0].gameObject,Is.SameAs(graphic.gameObject),"Arrow receives the actual topmost pointer hit");
+            // ExecuteHierarchy uses the same first-handler boundary as the InputSystem UI module.
+            var target=ExecuteEvents.ExecuteHierarchy(hits[0].gameObject,data,ExecuteEvents.pointerClickHandler);
+            Assert.That(target,Is.EqualTo(graphic.gameObject));Assert.That(graphic.GetComponent<Selectable>(),Is.Null);
+        }
+        [UnityTest] public IEnumerator F06InlineRuleBoundariesAndSingleActivation()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(3));Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(2000));yield return Capture("01-defaults-3-2000");
+                EventSystem.current.SetSelectedGameObject(B("lobby-time").gameObject);
+                yield return Press(GamepadButton.South);Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(4));
+                qaKeyboard=InputSystem.AddDevice<Keyboard>();yield return null;
+                InputSystem.QueueStateEvent(qaKeyboard,new KeyboardState(Key.Enter));yield return null;yield return null;
+                InputSystem.QueueStateEvent(qaKeyboard,new KeyboardState());yield return null;
+                Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(5),"Enter advances once");
+                MenuSelectorOverlayTests.AssertPointerTarget(B("lobby-time"),true);yield return null;Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(6),"Body pointer advances once");
+                for(int i=0;i<4;i++)yield return Click("lobby-time");
+                Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(10));yield return Capture("02-time-10");
+                yield return Click("lobby-time");Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(1));yield return Capture("03-time-1");
+                PointerArrow("lobby-time","rule-left");Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(10));
+                PointerArrow("lobby-time","rule-right");Assert.That(ground.Configuration.DurationMinutes,Is.EqualTo(1));
+                for(int i=0;i<6;i++)yield return Click("lobby-target");
+                Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(5000));yield return Capture("04-target-5000");
+                yield return Click("lobby-target");Assert.That(ground.Configuration.TargetEnabled,Is.False);yield return Capture("05-target-off");
+                PointerArrow("lobby-target","rule-right");Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(1000));Assert.That(ground.Configuration.TargetEnabled,Is.True);yield return Capture("06-target-1000");
+                PointerArrow("lobby-target","rule-left");Assert.That(ground.Configuration.TargetEnabled,Is.False);
+                PointerArrow("lobby-target","rule-left");Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(5000));Assert.That(ground.Configuration.TargetEnabled,Is.True);
+                PointerArrow("lobby-target","rule-right");Assert.That(ground.Configuration.TargetEnabled,Is.False);
+                yield return Click("lobby-target");Assert.That(ground.Configuration.TargetPoints,Is.EqualTo(1000));
+                EventSystem.current.SetSelectedGameObject(B("lobby-mode").gameObject);yield return Press(GamepadButton.South);Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Teams));
+                PointerArrow("lobby-mode","rule-left");Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Ffa));
+                PointerArrow("lobby-mode","rule-right");Assert.That(ground.SetupMode,Is.EqualTo(NativeMatchMode.Teams));
+                Assert.That(Field<GameObject>("lobbyDialog")==null||!Field<GameObject>("lobbyDialog").activeSelf,Is.True);
+            }
+        }
+        [UnityTest] public IEnumerator F06ColorsFollowIdentityAndFreezeWithoutNewAddStep()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                yield return Click("roster-add-bot");Assert.That(ground.SetupBotCount,Is.Zero);
+                Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("roster-color-")),Is.False,"Initial add has no color step");yield return Capture("12-initial-add-difficulty");
+                yield return Click("lobby-add-difficulty-1");Assert.That(ground.SetupBotCount,Is.EqualTo(1));
+                var before=(Color)Call("LobbyColor",0);yield return Click("roster-card-1");
+                var available=Enumerable.Range(0,8).First(n=>B("roster-color-"+n).interactable&&B("roster-color-"+n).GetComponent<Image>().color!=(Color)Call("LobbyColor",1));
+                var selected=B("roster-color-"+available).GetComponent<Image>().color;yield return Click("roster-color-"+available);
+                Assert.That((Color)Call("LobbyColor",1),Is.EqualTo(selected));Assert.That((Color)Call("LobbyColor",0),Is.EqualTo(before));
+                Assert.That(Enumerable.Range(0,8).Count(n=>B("roster-color-"+n).interactable),Is.EqualTo(7));
+                foreach(int n in Enumerable.Range(0,8)){var r=(RectTransform)B("roster-color-"+n).transform;Assert.That(Mathf.Abs(r.rect.width-r.rect.height),Is.LessThan(.1f),"Color choices are squares");}
+                Assert.That(B("roster-done").GetComponent<Image>().color,Is.EqualTo((Color)new Color32(231,187,114,255)),"Done stays visibly gold");
+                yield return Capture("09-existing-bot-color-swatches");
+                Call("SetRosterBotView",true);yield return null;Assert.That((Color)Call("LobbyColor",1),Is.EqualTo(selected));
+                Call("SetRosterBotView",false);yield return null;Assert.That((Color)Call("LobbyColor",1),Is.EqualTo(selected));
+                yield return Click("roster-done");
+                var frozen=(NativeMatchComposition)Call("FreezeLobbyColors",ground.SetupComposition());Assert.That(frozen.Participant(1).Color,Is.EqualTo(selected));
+                Assert.That(frozen.Read().Participants.Select(p=>p.Color).Distinct().Count(),Is.EqualTo(2));
+                yield return Click("roster-card-0");Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("roster-color-")),Is.True);yield return Capture("10-existing-human-color-swatches");yield return Click("roster-done");
+                yield return Click("lobby-mode");yield return Click("roster-card-1");Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("roster-color-")),Is.False);yield return Click("roster-done");
+                Assert.That(frozen.Participant(1).Color,Is.EqualTo(selected),"Frozen snapshot detached from later draft/mode");
+            }
+        }
+        void AssertAdjacentHintGeometry()
+        {
+            Canvas.ForceUpdateCanvases();
+            foreach(var hint in ground.GetComponentsInChildren<MenuActionHint>().Where(h=>h.ColoredLobbyGlyph&&h.GlyphLabel&&h.GlyphLabel.enabled))
+            {
+                var caption=hint.CaptionOverride?hint.CaptionOverride:hint.transform.Find("label").GetComponent<Text>();
+                var textBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(hint.transform,caption.rectTransform);
+                var glyphBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(hint.transform,hint.GlyphLabel.rectTransform);
+                Debug.Log("F06 layout "+hint.name+" caption="+textBounds+" hint="+glyphBounds+" preferred="+caption.preferredWidth+" scale="+caption.pixelsPerUnit);
+                Assert.That(glyphBounds.min.x-textBounds.max.x,Is.GreaterThanOrEqualTo(7),hint.name+" caption/hint gap");
+                Assert.That(Mathf.Abs(glyphBounds.center.y-textBounds.center.y),Is.LessThan(1),hint.name+" caption/hint baseline region");
+            }
+        }
+        [UnityTest] public IEnumerator F06CaptureChangedRosterStates()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                qaKeyboard=InputSystem.AddDevice<Keyboard>();qaMouse=InputSystem.AddDevice<Mouse>();yield return null;
+                var input=Field<SeatInputCoordinator>("input");input.SetActiveSeatCount(2);Assert.That(input.Replace(0,qaKeyboard),Is.True);Assert.That(input.Assign(1,second),Is.True);
+                var identities=Field<LocalIdentitySession>("identities");
+                identities.ChooseGuest(0,qaKeyboard.deviceId,MouseSensitivityPreference.Resolve(ground.Profile),Field<FpsDisplay>("fps").Visible);identities.ChooseGuest(1,second.deviceId,MouseSensitivityPreference.Resolve(ground.Profile),Field<FpsDisplay>("fps").Visible);
+                Call("ApplyLayout",2);ground.AddBot();ground.AddBot();yield return null;
+                EventSystem.current.SetSelectedGameObject(B("roster-card-2").gameObject);yield return null;
+                var colors=Enumerable.Range(0,4).Select(p=>(Color)Call("LobbyColor",p)).ToArray();Assert.That(colors.Distinct().Count(),Is.EqualTo(4));
+                foreach(int p in Enumerable.Range(0,4))
+                {
+                    var card=B("roster-card-"+p);Assert.That(card.transform.Find("stripe"),Is.Null);Assert.That(card.transform.Find("open"),Is.Null);Assert.That(card.transform.Find("edit-context"),Is.Null);
+                    Assert.That(((RectTransform)card.transform).rect.height,Is.GreaterThan(200));Assert.That(card.GetComponent<MenuPresentation>().SurfaceTint,Is.EqualTo(colors[p]));
+                }
+                AssertAdjacentHintGeometry();yield return Capture("07-ffa-keyboard-gamepad-two-bots");
+                yield return Click("lobby-mode");EventSystem.current.SetSelectedGameObject(B("roster-card-2").gameObject);yield return null;Assert.That(B("roster-card-2").GetComponent<MenuPresentation>().FocusVisible,Is.True,"Focus survives reparenting into team grids");yield return Capture("08-teams-continuous");
+                var generic=InputSystem.AddDevice<Gamepad>();
+                try
+                {
+                    typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);typeof(ProvingGround).GetField("menuGamepadCursor",Private).SetValue(ground,true);
+                    yield return Click("lobby-mode");yield return null;AssertAdjacentHintGeometry();yield return Capture("11-generic-ffa");
+                    foreach(var hint in ground.GetComponentsInChildren<MenuActionHint>().Where(h=>h.GlyphLabel&&h.GlyphLabel.enabled))
+                    {
+                        var rect=(RectTransform)hint.transform;var bounds=RectTransformUtility.CalculateRelativeRectTransformBounds(hint.transform,hint.GlyphLabel.rectTransform);
+                        Assert.That(bounds.min.x,Is.GreaterThanOrEqualTo(rect.rect.xMin));Assert.That(bounds.max.x,Is.LessThanOrEqualTo(rect.rect.xMax));
+                    }
                 }
                 finally{InputSystem.RemoveDevice(generic);}
             }
