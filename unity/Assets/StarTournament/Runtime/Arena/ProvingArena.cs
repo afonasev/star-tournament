@@ -149,6 +149,7 @@ namespace StarTournament.ProvingGround
                 while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
             gameObject.AddComponent<ArenaRenderChunks>().Build(transform);
+            ArenaMeshResidency.ReleaseUnreferencedOwnedMeshes(transform);
         }
         public bool TryRoute(Vector3 from, Vector3 to, float sampleDistance, out NavMeshPath path)
         {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 namespace StarTournament.ProvingGround
 {
@@ -7,7 +8,7 @@ namespace StarTournament.ProvingGround
     {
         readonly Transform parent;readonly List<Object> owned;readonly ProvingProfile profile;
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
-        readonly Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
+        Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
         readonly Dictionary<Vector3,Mesh> doorBevels=new Dictionary<Vector3,Mesh>();
         readonly Material trim,panel,screen,green,porcelain,alloy,blue,amber,sage;readonly Material[] displays;
         // Fixed tessellation/texture resolution are bounded resource tiers, not gameplay tuning.
@@ -367,5 +368,6 @@ namespace StarTournament.ProvingGround
                 Render(mesh,pair.Key,"Well details / "+pair.Key.name);
             }
         }
+        public IEnumerable<Mesh> ReadDiagnosticMeshes()=>batches.Values.SelectMany(instances=>instances).Select(instance=>instance.mesh).Where(mesh=>mesh);
     }
 }

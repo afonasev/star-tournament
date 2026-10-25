@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Static renderer-only service kit. Canonical solids remain the sole physics/nav owner.</summary>
-    public sealed partial class IndustrialTunnelsPresentation:MonoBehaviour
+    public sealed partial class IndustrialTunnelsPresentation:MonoBehaviour,IArenaMeshOwner
     {
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
@@ -62,6 +62,7 @@ namespace StarTournament.ProvingGround
                 var go=new GameObject(entry.Key.name);go.transform.SetParent(transform,false);var mesh=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(entry.Value.ToArray());owned.Add(mesh);
                 go.AddComponent<MeshFilter>().sharedMesh=mesh;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=entry.Key;r.shadowCastingMode=entry.Key==white||entry.Key==warm||entry.Key==mold?ShadowCastingMode.Off:ShadowCastingMode.On;
             }
+            batches.Clear();cube=null;tube=null;
         }
         Material Material(string name,Color c,Texture texture=null,VisualMaterialRole role=VisualMaterialRole.Wall)
         {var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name,color=c};m.SetFloat("_Metallic",P("surface.metallic"));m.SetFloat("_Smoothness",P("surface.smoothness"));if(texture)m.SetTexture("_BaseMap",texture);owned.Add(m);NativeVisualMaterials.Register(this,m,role);return m;}
@@ -147,5 +148,8 @@ namespace StarTournament.ProvingGround
             var m=new Mesh{name="Tunnel twelve-sided pipe"};m.SetVertices(v);m.SetUVs(0,uv);m.SetTriangles(t,0);m.RecalculateNormals();return m;
         }
         void OnDestroy(){RenderSettings.ambientLight=oldAmbient;RenderSettings.ambientMode=oldMode;foreach(var o in owned)if(o)DestroyImmediate(o);}
+        IEnumerable<Mesh> IArenaMeshOwner.ReadOwnedMeshes()=>ArenaMeshResidency.OwnedMeshes(owned);
+        IEnumerable<Mesh> IArenaMeshOwner.ReadDiagnosticMeshes()=>System.Array.Empty<Mesh>();
+        void IArenaMeshOwner.ReleaseUnusedMeshes(HashSet<int> referenced)=>ArenaMeshResidency.ReleaseUnused(owned,referenced);
     }
 }
