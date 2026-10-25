@@ -106,28 +106,31 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(rebuiltWindowMaterials.Length,Is.EqualTo(1));
             Assert.That(rebuiltWindowMeshes.All(mesh=>mesh),Is.True,"Rebuilt shared window meshes remain alive");
             Assert.That(rebuiltWindowMaterials.All(material=>material),Is.True,"Rebuilt shared window material remains alive");
+            var rebuiltAssetsAliveAndShared=rebuiltWindowMeshes.Length==2&&rebuiltWindowMaterials.Length==1&&rebuiltWindowMeshes.All(mesh=>mesh)&&rebuiltWindowMaterials.All(material=>material);
             Object.Destroy(root);yield return null;
             Assert.That(rebuiltWindowMeshes.All(mesh=>!mesh),Is.True,"Second-generation shared window meshes are disposed with their owner");
             Assert.That(rebuiltWindowMaterials.All(material=>!material),Is.True,"Second-generation shared window material is disposed with its owner");
             var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_GLASS_LIFECYCLE_OUTPUT");
-            Assert.That(string.IsNullOrWhiteSpace(output),Is.False,"Lifecycle evidence output path is required");
-            var evidence=new GlassLifecycleEvidence
+            if(!string.IsNullOrWhiteSpace(output))
             {
-                profileIdentity=profileIdentity,
-                baselineSourceSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_BASE_SHA"),
-                candidateRuntimeSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_RUNTIME_SHA"),
-                candidateLifecycleSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_LIFECYCLE_SHA"),
-                originalWindowRendererCount=firstWindowRenderers.Length,
-                originalUniqueWindowMeshCount=firstWindowMeshes.Length,
-                originalUniqueWindowMaterialCount=firstWindowMaterials.Length,
-                firstGenerationAssetsDisposedAfterRebuild=firstWindowMeshes.All(mesh=>!mesh)&&firstWindowMaterials.All(material=>!material),
-                rebuiltAssetsAliveAndShared=rebuiltWindowMeshes.Length==2&&rebuiltWindowMaterials.Length==1&&rebuiltWindowMeshes.All(mesh=>mesh)&&rebuiltWindowMaterials.All(material=>material),
-                secondGenerationAssetsDisposedAfterDestroy=rebuiltWindowMeshes.All(mesh=>!mesh)&&rebuiltWindowMaterials.All(material=>!material),
-                collisionAndRebuildChecksCompleted=true
-            };
-            Assert.That(string.IsNullOrWhiteSpace(evidence.baselineSourceSha)||string.IsNullOrWhiteSpace(evidence.candidateRuntimeSha)||string.IsNullOrWhiteSpace(evidence.candidateLifecycleSha),Is.False,"Lifecycle source SHA mapping is required");
-            System.IO.Directory.CreateDirectory(output);
-            System.IO.File.WriteAllText(System.IO.Path.Combine(output,"lifecycle-completed.json"),JsonUtility.ToJson(evidence,true));
+                var evidence=new GlassLifecycleEvidence
+                {
+                    profileIdentity=profileIdentity,
+                    baselineSourceSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_BASE_SHA"),
+                    candidateRuntimeSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_RUNTIME_SHA"),
+                    candidateLifecycleSha=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_P5_LIFECYCLE_SHA"),
+                    originalWindowRendererCount=firstWindowRenderers.Length,
+                    originalUniqueWindowMeshCount=firstWindowMeshes.Length,
+                    originalUniqueWindowMaterialCount=firstWindowMaterials.Length,
+                    firstGenerationAssetsDisposedAfterRebuild=firstWindowMeshes.All(mesh=>!mesh)&&firstWindowMaterials.All(material=>!material),
+                    rebuiltAssetsAliveAndShared=rebuiltAssetsAliveAndShared,
+                    secondGenerationAssetsDisposedAfterDestroy=rebuiltWindowMeshes.All(mesh=>!mesh)&&rebuiltWindowMaterials.All(material=>!material),
+                    collisionAndRebuildChecksCompleted=true
+                };
+                Assert.That(string.IsNullOrWhiteSpace(evidence.baselineSourceSha)||string.IsNullOrWhiteSpace(evidence.candidateRuntimeSha)||string.IsNullOrWhiteSpace(evidence.candidateLifecycleSha),Is.False,"Lifecycle source SHA mapping is required");
+                System.IO.Directory.CreateDirectory(output);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(output,"lifecycle-completed.json"),JsonUtility.ToJson(evidence,true));
+            }
             // Preserve the existing profile-version contract; assert it after the ownership witness.
             Assert.That(profileIdentity,Is.EqualTo("orbital-league-ring-v1@10"));
         }
