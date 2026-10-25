@@ -157,3 +157,9 @@ Modern paired collector требует DMG; исторические PKG ост�
 ### DMG discovery compatibility
 
 The published0.1.6/0.1.7 reader requires a versioned macOS `.pkg` in the GitHub listing before ranking a candidate, so a DMG-only release is invisible to it. New releases retain the DMG as the main macOS installer and also publish a genuine Velopack-built `.pkg` with the same payload/version; this is a ninth custody-bound asset, never a renamed DMG or placeholder. New readers accept either DMG or PKG while retaining complete platform pairs and authenticated package requirements. Published0.1.7 stays immutable; native update discovery failure and the corrected release identity are recorded in the delivery evidence. Schema1/protocol1 migration remains a separate gate.
+
+### macOS ad-hoc integrity gate
+
+Unsigned distribution means no Apple Developer ID/notarization. The final bundle is nevertheless sealed using Velopack `--signAppIdentity - --signDisableDeep` before producing update/portable/PKG outputs. Packaging verifies `codesign --verify --deep --strict` on the extracted full update, portable and compatibility PKG; DMG creation verifies the input and the mounted output. Failed signatures stop before authenticated metadata/publication. Ad-hoc integrity does not make Gatekeeper trust the publisher: a quarantined first install may still require the per-app Open Anyway flow. Never remove quarantine or disable Gatekeeper as a packaging acceptance shortcut.
+
+macOS bundles put non-code payload under `Contents/Resources/payload` and retain runtime/recovery paths with internal symlinks. Existing Unity/Mach-O signatures are preserved. Update readback restores Velopack's existing `.__symlink` representation before checking the complete seal; directory link spelling retains the trailing slash used by Velopack. Existing reader2 metadata and package-config authentication remain compatible.

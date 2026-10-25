@@ -97,13 +97,18 @@ def main():
         sealed_broker = seal_broker_upgrade(candidate, config, a.key.resolve(), root/'update-public.pem')
     output = a.output/'releases'; output.mkdir(exist_ok=True)
     launcher = 'StarTournamentLauncher.exe' if a.runtime.startswith('win') else 'StarTournamentLauncher'
+    pack_stage = (macos_dmg.prepare_bundle(stage, a.output, config, root/'branding/app-icon.icns')
+                  if a.runtime.startswith('osx') else stage)
     cmd = [str(a.vpk.resolve())] + (['[win]'] if a.runtime.startswith('win') else [])
-    cmd += ['--skip-updates', 'pack', '--packId', app_id, '--packVersion', a.version, '--packDir', str(stage),
+    cmd += ['--skip-updates', 'pack', '--packId', app_id, '--packVersion', a.version, '--packDir', str(pack_stage),
             '--mainExe', launcher, '--runtime', a.runtime, '--channel', a.runtime, '--packTitle', 'Star Tournament',
             '--delta', 'None', '--outputDir', str(output), '--icon', str(root/'branding'/('app-icon.ico' if a.runtime.startswith('win') else 'app-icon.icns'))]
     if a.runtime == 'win-x64': cmd += ['--shortcuts', 'None']
-    else: cmd += (['--noInst'] if a.update_only else []) + ['--plist', str(outer_info)]
+    else: cmd += (['--noInst'] if a.update_only else []) + ['--plist', str(outer_info), '--signAppIdentity', '-', '--signDisableDeep']
     subprocess.run(cmd, check=True, env=env)
+    if a.runtime.startswith('osx'):
+        # Verify what consumers extract, before signing metadata or emitting a DMG.
+        macos_dmg.verify_packages(output)
     if a.update_only:
         for first_install in output.iterdir():
             if first_install.suffix in ('.exe', '.pkg', '.zip', '.dmg'): first_install.unlink()

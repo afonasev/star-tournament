@@ -18,6 +18,9 @@ from release_compatibility import PAYLOAD_FORMAT, DATA_POLICY
 
 class MacDmg(unittest.TestCase):
     def setUp(self):
+        signing = patch.object(dmg, 'verify_signature')
+        self.signature = signing.start()
+        self.addCleanup(signing.stop)
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
