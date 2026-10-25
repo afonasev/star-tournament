@@ -99,8 +99,8 @@ def from_portable(archive, output, runtime, version):
 def prepare_bundle(stage, output, config, icon):
     """Keep code in MacOS and non-code in Resources, without xattr signatures.
 
-    Directory/file links retain launcher/recovery paths. Reader3 validates the
-    one resource config plus its exact link; older readers fail closed.
+    Directory/file links retain launcher/recovery paths. Velopack preserves
+    links using its existing .__symlink update encoding; reader2 stays valid.
     """
     app = Path(output)/APP_NAME
     macos = app/'Contents/MacOS'
@@ -116,14 +116,37 @@ def prepare_bundle(stage, output, config, icon):
             path.rename(macos/path.name)
         else:
             path.rename(payload/path.name)
-            (macos/path.name).symlink_to('../Resources/payload/'+path.name, target_is_directory=(payload/path.name).is_dir())
+            (macos/path.name).symlink_to('../Resources/payload/'+path.name+('/' if (payload/path.name).is_dir() else ''))
     return app
 
 
 def verify_signature(app):
     """Integrity only: ad-hoc signing is not Developer ID or notarization."""
-    subprocess.run(['/usr/bin/codesign', '--verify', '--deep', '--strict',
-                    '--verbose=2', str(app)], check=True, capture_output=True)
+    result = subprocess.run(['/usr/bin/codesign', '--verify', '--deep', '--strict',
+                             '--verbose=4', str(app)], capture_output=True)
+    if result.returncode:
+        error = subprocess.CalledProcessError(result.returncode, result.args, result.stdout, result.stderr)
+        error.add_note(result.stderr.decode(errors='replace'))
+        raise error
+
+
+def restore_update_links(app):
+    """Match pinned Velopack extraction before checking its signature seal."""
+    app = Path(app).resolve()
+    for encoded in app.rglob('*.__symlink'):
+        link = encoded.with_name(encoded.name[:-len('.__symlink')])
+        if encoded.is_symlink() or encoded.stat().st_size > 4096 or link.exists() or link.is_symlink():
+            raise ValueError('Invalid encoded update link')
+        target = encoded.read_text()
+        if not target or target.startswith('/') or '\\' in target or '\x00' in target:
+            raise ValueError('Unsafe encoded update link')
+        if not (link.parent/target).resolve().is_relative_to(app):
+            raise ValueError('Update link escapes bundle')
+        encoded.unlink()
+        link.symlink_to(target)
+    for path in app.rglob('*'):
+        if path.is_symlink() and (not path.resolve().is_relative_to(app) or not path.exists()):
+            raise ValueError('Invalid restored update link')
 
 
 def verify_packages(output):
@@ -141,6 +164,7 @@ def verify_packages(output):
                 (root/'lib/app').rename(app)
             else:
                 app = root/APP_NAME
+            if pattern == '*.nupkg': restore_update_links(app)
             verify_signature(app)
     for package in output.glob('*.pkg'):
         with tempfile.TemporaryDirectory(prefix='.signature-', dir=output.parent) as temporary:

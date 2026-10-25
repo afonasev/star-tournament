@@ -27,10 +27,10 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     public string? PublicationDate { get; private set; }
     public CancellationToken CheckCancellationToken { get; set; }
 
-    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null, int? readerProtocol = null, Func<string, Version, bool>? hostProbe = null)
+    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null, int readerProtocol = ReleaseCompatibility.ReaderProtocol, Func<string, Version, bool>? hostProbe = null)
     {
         this.config = config; this.key = key;
-        this.readerProtocol = readerProtocol ?? ReleaseCompatibility.ReaderFor(config.Platform); this.hostProbe = hostProbe;
+        this.readerProtocol = readerProtocol; this.hostProbe = hostProbe;
         this.stallTimeout = stallTimeout ?? TimeSpan.FromSeconds(30);
         if (config.UpdateChannel != null && (config.UpdateChannel is not ("test" or "production") ||
             config.FeedBase != (config.UpdateChannel == "test" ? TestLocator : ProductionBase)))
@@ -238,18 +238,6 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             {
                 using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
                 var entries = archive.Entries.Where(e => e.Name == "release.json").ToArray();
-                if (config.Platform == "osx" && requirements.MinimumUpdaterProtocol >= 3)
-                {
-                    var links = entries.Where(e => e.FullName == "lib/app/Contents/MacOS/release.json" &&
-                        ((e.ExternalAttributes >> 16) & 0xf000) == 0xa000).ToArray();
-                    if (entries.Length != 2 || links.Length != 1 || links[0].Length > 128)
-                        throw new CryptographicException("Exact reader3 config link required");
-                    using var link = new StreamReader(links[0].Open());
-                    if (await link.ReadToEndAsync(token) != "../Resources/payload/release.json")
-                        throw new CryptographicException("Invalid reader3 config link");
-                    entries = entries.Where(e => e.FullName == "lib/app/Contents/Resources/payload/release.json" &&
-                        ((e.ExternalAttributes >> 16) & 0xf000) != 0xa000).ToArray();
-                }
                 if (entries.Length != 1 || entries[0].Length > 65536) throw new CryptographicException("Unique bounded payload config required");
                 using var input = entries[0].Open(); using var content = new MemoryStream();
                 var buffer = new byte[8192]; int count;

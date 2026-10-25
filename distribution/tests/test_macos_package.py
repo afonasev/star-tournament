@@ -44,8 +44,6 @@ class MacPackageRoute(unittest.TestCase):
                     config=json.loads((stage/'Contents/MacOS/release.json').read_text());configs.append(config)
                     with zipfile.ZipFile(out/'full.nupkg','w') as archive:
                         archive.writestr('lib/app/Contents/Resources/payload/release.json',json.dumps(config))
-                        link=zipfile.ZipInfo('lib/app/Contents/MacOS/release.json');link.create_system=3;link.external_attr=0o120777<<16
-                        archive.writestr(link,'../Resources/payload/release.json')
                     (out/'fixture-Portable.zip').write_bytes(b'recording portable fixture')
                     if not update_only:(out/'fixture-Setup.pkg').write_bytes(b'recording real PKG route fixture')
                     asset=dict(PackageId=config['appId'],Version=version,Type='Full',FileName='full.nupkg')

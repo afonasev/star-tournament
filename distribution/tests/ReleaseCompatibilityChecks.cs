@@ -70,32 +70,6 @@ static class ReleaseCompatibilityChecks
                     await Reject<ReleaseCompatibilityException>(() => { source.RequireCompatibleTarget(); return Task.CompletedTask; }, "signed incompatible target " + unsupported);
                 }
             }
-            foreach (var mode in new[] { "valid", "wrong-link", "missing-link", "extra-config", "wrong-config" })
-            {
-                var reader3 = requirements with { MinimumUpdaterProtocol = 3 };
-                using var memory = new MemoryStream();
-                using (var archive = new ZipArchive(memory, ZipArchiveMode.Create, true))
-                {
-                    if (mode != "missing-link")
-                    {
-                        var entry = archive.CreateEntry("lib/app/Contents/MacOS/release.json");
-                        entry.ExternalAttributes = unchecked((int)(0xa1ffu << 16));
-                        using var writer = new StreamWriter(entry.Open());
-                        writer.Write(mode == "wrong-link" ? "../../foreign.json" : "../Resources/payload/release.json");
-                    }
-                    var actual = config with { Version = mode == "wrong-config" ? "9.0.0" : "1.1.0", Compatibility = reader3 };
-                    using (var writer = new StreamWriter(archive.CreateEntry("lib/app/Contents/Resources/payload/release.json").Open()))
-                        writer.Write(JsonSerializer.Serialize(actual, json));
-                    if (mode == "extra-config")
-                        using (var writer = new StreamWriter(archive.CreateEntry("foreign/release.json").Open())) writer.Write("{}");
-                }
-                var packed = memory.ToArray(); File.WriteAllBytes(file, packed);
-                using var modern = Source(reader: 3); modern.Admit(Signed(packed, reader3)); modern.RequireCompatibleTarget();
-                if (mode == "valid") { await modern.VerifyPackage(file, modern.Asset!); Check(true, "reader3 authenticates exact resource config and internal link"); }
-                else await Reject<CryptographicException>(() => modern.VerifyPackage(file, modern.Asset!), "reader3 rejects " + mode);
-                using var old = Source(reader: 2); old.Admit(Signed(packed, reader3));
-                await Reject<ReleaseCompatibilityException>(() => { old.RequireCompatibleTarget(); return Task.CompletedTask; }, "reader2 requires installer for resource layout " + mode);
-            }
             using (var old = Source(reader: 1))
             { old.Admit(Signed(bytes)); await Reject<ReleaseCompatibilityException>(() => { old.RequireCompatibleTarget(); return Task.CompletedTask; }, "actual reader capability1 cannot admit schema2 activation"); }
             using (var exact = Source(host: new Version(12, 0)))

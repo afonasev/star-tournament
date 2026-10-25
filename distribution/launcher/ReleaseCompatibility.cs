@@ -9,8 +9,7 @@ public sealed record ReleaseRequirements(string MinimumOsVersion, int MinimumUpd
 
 public static class ReleaseCompatibility
 {
-    public const int ReaderProtocol = 2, MacReaderProtocol = 3;
-    public static int ReaderFor(string platform) => platform == "osx" ? MacReaderProtocol : ReaderProtocol;
+    public const int ReaderProtocol = 2;
     public const string PayloadFormat = "velopack-full-v1", DataPolicy = "profiles2-lab3-prefs1";
     public static ReleaseRequirements Legacy(string platform) => new(PlatformRequirements.MinimumVersion(platform).ToString(), 1, PayloadFormat, "legacy-preserved-v1");
 
@@ -49,10 +48,10 @@ public static class ReleaseCompatibility
             throw new CryptographicException("Invalid release compatibility requirements");
     }
 
-    public static void Require(ReleaseRequirements requirements, string platform, int? readerProtocol = null, Func<string, Version, bool>? hostProbe = null)
+    public static void Require(ReleaseRequirements requirements, string platform, int readerProtocol = ReaderProtocol, Func<string, Version, bool>? hostProbe = null)
     {
         Validate(requirements, platform);
-        if (requirements.MinimumUpdaterProtocol > (readerProtocol ?? ReaderFor(platform)))
+        if (requirements.MinimumUpdaterProtocol > readerProtocol)
             throw new ReleaseCompatibilityException("Для этого обновления требуется новый установщик Star Tournament.");
         if (requirements.PayloadFormat != PayloadFormat || requirements.UserDataPolicy is not (DataPolicy or "legacy-preserved-v1"))
             throw new ReleaseCompatibilityException("Формат пакета или данных этого обновления не поддерживается установленной игрой.");

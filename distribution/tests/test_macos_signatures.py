@@ -39,6 +39,24 @@ class ArtifactGate(unittest.TestCase):
             with self.assertRaises(ValueError):
                 dmg.verify_packages(Path(temporary))
 
+    def test_update_links_restore_exact_directory_target(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            app = Path(temporary)/'Fixture.app'
+            base = app/'Contents/MacOS'; base.mkdir(parents=True)
+            resources = app/'Contents/Resources/payload'; resources.mkdir(parents=True)
+            (resources/'game').mkdir()
+            (base/'game.__symlink').write_text('../Resources/payload/game/')
+            dmg.restore_update_links(app)
+            import os
+            self.assertEqual(os.readlink(base/'game'), '../Resources/payload/game/')
+            self.assertTrue((base/'game').is_dir())
+
+    def test_update_link_escape_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            app = Path(temporary)/'Fixture.app'; app.mkdir()
+            (app/'escape.__symlink').write_text('../')
+            with self.assertRaises(ValueError): dmg.restore_update_links(app)
+
     def test_invalid_signature_stops_before_dmg_builder(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary)/'fixture.dmg'
