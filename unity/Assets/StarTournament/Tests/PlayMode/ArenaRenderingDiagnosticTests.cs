@@ -50,6 +50,39 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         foreach(var behavior in root.GetComponentsInChildren<MonoBehaviour>())behavior.enabled=false;
                         var optimizer=root.GetComponent<ArenaRenderChunks>();
                         File.AppendAllText(Path.Combine(directory,"preparation.txt"),$"{map}: owned native mesh count={optimizer.ReadOwnedMeshes().Length}, bytes={optimizer.ReadOwnedMeshes().Sum(mesh=>UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(mesh))}\n");
+                        if(map==LunarLaboratoryCatalog.Id)
+                        {
+                            var presentation=root.GetComponentInChildren<LunarLaboratoryPresentation>();
+                            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                            var field=typeof(LunarLaboratoryPresentation).GetField("starMesh",flags)??typeof(LunarLaboratoryPresentation).GetField("sphere",flags);
+                            var template=(Mesh)field.GetValue(presentation);
+                            var ownedField=typeof(LunarLaboratoryPresentation).GetField("owned",flags);
+                            var presentationMeshes=((System.Collections.IEnumerable)ownedField.GetValue(presentation)).Cast<UnityEngine.Object>().OfType<Mesh>().Where(m=>m).ToArray();
+                            var optimizerMeshes=optimizer.ReadOwnedMeshes().Where(m=>m).ToArray();
+                            var filterMeshes=root.GetComponentsInChildren<MeshFilter>(true).Select(f=>f.sharedMesh).Where(m=>m).ToArray();
+                            var allMeshes=filterMeshes.Concat(optimizerMeshes).Concat(presentationMeshes).Distinct().ToArray();
+                            long Bytes(IEnumerable<Mesh> meshes)=>meshes.Distinct().Sum(m=>(long)UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(m));
+                            File.WriteAllLines(Path.Combine(directory,"unique-mesh-memory.txt"),new[]
+                            {
+                                $"meshfilter_unique_count={filterMeshes.Distinct().Count()}",$"meshfilter_unique_bytes={Bytes(filterMeshes)}",
+                                $"optimizer_owned_count={optimizerMeshes.Distinct().Count()}",$"optimizer_owned_bytes={Bytes(optimizerMeshes)}",
+                                $"presentation_owned_count={presentationMeshes.Distinct().Count()}",$"presentation_owned_bytes={Bytes(presentationMeshes)}",
+                                $"all_unique_mesh_count={allMeshes.Length}",$"all_unique_mesh_bytes={Bytes(allMeshes)}"
+                            });
+                            var whiteBatches=root.GetComponentsInChildren<MeshRenderer>().Where(r=>r.sharedMaterial&&r.sharedMaterial.name=="Neutral light diffuser").ToArray();
+                            long templateTriangles=Enumerable.Range(0,template.subMeshCount).Sum(i=>(long)template.GetIndexCount(i)/3);
+                            long batchTriangles=whiteBatches.Sum(r=>{var m=r.GetComponent<MeshFilter>()?.sharedMesh;return m?Enumerable.Range(0,m.subMeshCount).Sum(i=>(long)m.GetIndexCount(i)/3):0;});
+                            File.WriteAllLines(Path.Combine(directory,"lunar-star-geometry.txt"),new[]
+                            {
+                                "instances=450", "seed=42026", $"template={field.Name}",
+                                $"template_vertices={template.vertexCount}", $"template_triangles={templateTriangles}",
+                                $"template_bounds={template.bounds.extents}", $"template_runtime_bytes={UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(template)}",
+                                $"star_expanded_vertices={template.vertexCount*450L}", $"star_expanded_triangles={templateTriangles*450L}",
+                                $"star_expanded_indices={templateTriangles*3*450L}",
+                                $"white_batch_renderer_count={whiteBatches.Length}", $"white_batch_triangles_including_other_white_geometry={batchTriangles}",
+                                "material=Neutral light diffuser", "shadows=Off", "textures=none", "lod=none"
+                            });
+                        }
                         Assert.That(optimizer.SourceCount,Is.GreaterThan(0),map+" has no candidate source");
                         var visuals=root.AddComponent<NativeVisualPresentation>();visuals.Bind(profile,root.transform,light,new[]{camera});
                         File.WriteAllLines(Path.Combine(directory,map+"-settings.txt"),new[]{"profile="+profile.Id+"@"+profile.Version,"AA="+NativeVisualPreferences.AntialiasingLevel,"exposure="+NativeVisualPreferences.Adjustment(profile,NativeVisualPreferences.ExposurePath),"saturation="+NativeVisualPreferences.Adjustment(profile,NativeVisualPreferences.SaturationPath)}.Concat(System.Enum.GetValues(typeof(VisualEffect)).Cast<VisualEffect>().Select(effect=>effect+"="+NativeVisualPreferences.Effective(profile,effect))));
@@ -58,7 +91,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         File.WriteAllLines(Path.Combine(directory,map+"-inventory.csv"),new[]{"name,vertices,triangles,extent,materials,enabled"}.Concat(all.Where(r=>r.GetComponent<MeshFilter>()).Select(r=>{var m=r.GetComponent<MeshFilter>().sharedMesh;return $"{r.name.Replace(',',' ')},{m.vertexCount},{(r.isPartOfStaticBatch?(long)m.GetIndexCount(r.subMeshStartIndex)/3:Enumerable.Range(0,m.subMeshCount).Sum(i=>(long)m.GetIndexCount(i)/3))},{r.bounds.size.ToString().Replace(',',';')},{r.sharedMaterials.Length},{r.enabled}";})));
                         Vector3[] eyes,looks;
                         if(map==WellArenaCatalog.Id){eyes=new[]{new Vector3(7,1.7f,-7),new Vector3(-21,9.7f,-13)};looks=new[]{new Vector3(-5,12,5),new Vector3(-21,9.7f,13)};}
-                        else if(map==LunarLaboratoryCatalog.Id){eyes=new[]{new Vector3(0,1.7f,-9),new Vector3(0,1.7f,-25)};looks=new[]{new Vector3(0,1.7f,9),new Vector3(0,1.7f,0)};}
+                        else if(map==LunarLaboratoryCatalog.Id){eyes=new[]{new Vector3(0,1.7f,-9),new Vector3(0,1.7f,-25),new Vector3(0,1.7f,-25)};looks=new[]{new Vector3(0,1.7f,9),new Vector3(0,1.7f,0),new Vector3(0,100,-25)};}
                         else if(map==IndustrialTunnelsCatalog.Id){eyes=new[]{arena.Spawns[0]+Vector3.up*1.7f,new Vector3(-20,1.1f,16)};looks=new[]{new Vector3(-16,1.1f,13),new Vector3(-14,1.1f,16)};}
                         else {eyes=new[]{new Vector3(0,1.7f,-8),new Vector3(-20,1.7f,16)};looks=new[]{new Vector3(0,1.7f,8),Vector3.up*1.7f};}
                         for(int pose=0;pose<eyes.Length;pose++)
