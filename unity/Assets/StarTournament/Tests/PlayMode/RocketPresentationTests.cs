@@ -42,9 +42,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         public IEnumerator P5BaselineCapturesPulseEffectsCostAndFrame()
         {
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RENDER_COST_OUTPUT");Assert.That(directory,Is.Not.Null.And.Not.Empty);Directory.CreateDirectory(directory);
-            Contact(Flight());presentation.Render();
+            var flight=Flight();presentation.Render();
+            // Preserve construction-owned flight materials in the inventory after contact removes the rocket renderers.
+            var flightMaterials=owner.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).ToArray();
+            Contact(flight);presentation.Render();
             var systems=owner.GetComponentsInChildren<ParticleSystem>(true);var particleRenderers=systems.Select(s=>s.GetComponent<ParticleSystemRenderer>()).Where(r=>r).Cast<Renderer>().Concat(owner.GetComponentsInChildren<LineRenderer>(true)).ToArray();
-            SecondaryRenderingCostDiagnostics.Write(directory,"pulse-vfx",particleRenderers);SecondaryRenderingCostDiagnostics.WriteParticles(directory,"pulse-vfx",systems);
+            SecondaryRenderingCostDiagnostics.Write(directory,"pulse-vfx",particleRenderers,flightMaterials);SecondaryRenderingCostDiagnostics.WriteParticles(directory,"pulse-vfx",systems);
             File.WriteAllLines(Path.Combine(directory,"pulse-vfx-settings.txt"),new[]{"profile="+effectsIdentity(),"active_bursts="+presentation.ActiveBursts,"pooled_bursts="+presentation.PooledBursts,"active_lights="+presentation.ActiveLights,"live_particles="+presentation.LiveParticles,"editor="+Application.unityVersion,"gpu="+SystemInfo.graphicsDeviceName,"graphics="+SystemInfo.graphicsDeviceType,"quality="+QualitySettings.names[QualitySettings.GetQualityLevel()],"resolution=1280x720 DefaultHDR","timing=NotRun; this test inventories native objects and renders one frame only"});
             var cameraGo=new GameObject("P5 pulse VFX baseline camera");cameraGo.transform.position=new Vector3(0,2.3f,-7);cameraGo.transform.LookAt(new Vector3(0,.8f,0));var camera=cameraGo.AddComponent<Camera>();camera.enabled=false;camera.fieldOfView=55;camera.nearClipPlane=.05f;camera.farClipPlane=100;
             SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"pulse-vfx.png"));UnityEngine.Object.Destroy(cameraGo);yield return null;

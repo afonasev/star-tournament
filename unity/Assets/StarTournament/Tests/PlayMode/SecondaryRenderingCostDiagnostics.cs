@@ -27,11 +27,13 @@ namespace StarTournament.ProvingGround.Tests
             return Enumerable.Range(0,mesh.subMeshCount).Sum(i=>(long)mesh.GetIndexCount(i)/3);
         }
         public static void Write(string directory,string category,IEnumerable<Renderer> source)
+            =>Write(directory,category,source,null);
+        public static void Write(string directory,string category,IEnumerable<Renderer> source,IEnumerable<Material> extraMaterials)
         {
             Directory.CreateDirectory(directory);
             var renderers=source.Where(r=>r).Distinct().ToArray();
             var meshes=renderers.Select(MeshFor).Where(m=>m).GroupBy(m=>m.GetInstanceID()).Select(g=>g.First()).ToArray();
-            var materials=renderers.SelectMany(r=>r.sharedMaterials).Where(m=>m).GroupBy(m=>m.GetInstanceID()).Select(g=>g.First()).ToArray();
+            var materials=renderers.SelectMany(r=>r.sharedMaterials).Concat(extraMaterials??Enumerable.Empty<Material>()).Where(m=>m).GroupBy(m=>m.GetInstanceID()).Select(g=>g.First()).ToArray();
             var textures=materials.SelectMany(m=>m.GetTexturePropertyNames().Select(p=>m.GetTexture(p))).Where(t=>t).GroupBy(t=>t.GetInstanceID()).Select(g=>g.First()).ToArray();
             long meshBytes=meshes.Sum(m=>UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(m));
             long materialBytes=materials.Sum(m=>UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(m));
