@@ -39,6 +39,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
+            if(ground)typeof(ProvingGround).GetMethod("CancelHistoryLoading",Private).Invoke(ground,new object[]{true});
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
             if(ownedProfilePath!=null&&File.Exists(ownedProfilePath))File.Delete(ownedProfilePath);
             if(qaKeyboard!=null&&qaKeyboard.added)InputSystem.RemoveDevice(qaKeyboard);
@@ -300,7 +301,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);
                 EventSystem.current.SetSelectedGameObject(B("lobby-map").gameObject);yield return null;
                 var hint=B("lobby-map").GetComponent<MenuActionHint>();hint.Refresh();
-                Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo("Нижняя"));
+                Assert.That(hint.HideFocusedConfirm,Is.True);Assert.That(hint.GlyphLabel.enabled,Is.False,"Lobby hides redundant confirm even for generic pads");
+                var shortcut=B("roster-add-bot").GetComponent<MenuActionHint>();shortcut.Refresh();
+                Assert.That(shortcut.GlyphLabel.enabled,Is.True);Assert.That(shortcut.GlyphLabel.text,Is.EqualTo("Левая"));
                 yield return Capture("01-cold-lobby-generic");
             }
             finally{InputSystem.RemoveDevice(generic);}
