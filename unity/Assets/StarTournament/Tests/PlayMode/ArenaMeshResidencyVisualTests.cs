@@ -19,7 +19,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class ArenaMeshResidencyVisualTests
     {
-        [UnityTest] public IEnumerator BulkReleasePairedControlsReportNoiseAndPreserveLiveMeshState()
+        [UnityTest, Explicit("Focused graphical Editor diagnostic; requires a GPU and STAR_TOURNAMENT_RESIDENCY_EVIDENCE output directory; excluded from default headless runs")]
+        public IEnumerator BulkReleasePairedControlsReportNoiseAndPreserveLiveMeshState()
         {
             Assert.That(SystemInfo.graphicsDeviceType,Is.Not.EqualTo(GraphicsDeviceType.Null));
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RESIDENCY_EVIDENCE");
@@ -158,7 +159,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         static string ImageHash(Color32[] image){var bytes=new byte[image.Length*4];for(var i=0;i<image.Length;i++){var offset=i*4;bytes[offset]=image[i].r;bytes[offset+1]=image[i].g;bytes[offset+2]=image[i].b;bytes[offset+3]=image[i].a;}return Sha256(bytes);}
         static string Sha256(byte[] bytes){using(var sha=SHA256.Create())return string.Concat(sha.ComputeHash(bytes).Select(value=>value.ToString("x2",CultureInfo.InvariantCulture)));}
 
-        [UnityTest] public IEnumerator PruningPreservesSourceFallbackAndChunkPixelsForAllArenas()
+        [UnityTest, Explicit("Focused graphical Editor diagnostic; requires a GPU and STAR_TOURNAMENT_RESIDENCY_EVIDENCE output directory; excluded from default headless runs")]
+        public IEnumerator PruningPreservesSourceFallbackAndChunkPixelsForAllArenas()
         {
             Assert.That(SystemInfo.graphicsDeviceType,Is.Not.EqualTo(GraphicsDeviceType.Null));
             var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RESIDENCY_EVIDENCE");
