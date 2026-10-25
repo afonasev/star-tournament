@@ -18,6 +18,19 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [SetUp]public void Setup(){directory=Path.Combine(Path.GetTempPath(),"st-lab-tests-"+Guid.NewGuid());Directory.CreateDirectory(directory);path=Path.Combine(directory,"history.json");}
         [TearDown]public void Cleanup(){Directory.Delete(directory,true);}
+        [Test]public void LobbyRemovalHoldUpgradePreservesVersionOneBytesAndValues()
+        {
+            var shipped=Shipped();shipped.Profiles.Add(ProvingProfile.CreateLobbyDefault());
+            var old=shipped.Clone();var lobby=old.Profiles.Single(p=>p.Id=="single-screen-lobby-v1");
+            var before=typeof(ProvingProfile).GetMethod("BeforeLobbyRemovalHold",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            old.Profiles[old.Profiles.IndexOf(lobby)]=(ProvingProfile)before.Invoke(lobby,null);
+            var history=new DesignLabHistory(path,old);history.Create("Лобби v1");var draft=history.Selected.Snapshot;draft.Set("lobby.durationMinutes",7);history.Save(draft);
+            var previous=history.Selected;string hash=previous.Hash;
+            var upgraded=new DesignLabHistory(path,shipped);Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("lobby.durationMinutes"),Is.EqualTo(7));Assert.That(upgraded.Selected.Snapshot.Get("lobby.removeHoldSeconds"),Is.EqualTo(1));
+            Assert.That(upgraded.SelectedProfile.Revisions.Single(r=>r.Number==previous.Number).Hash,Is.EqualTo(hash));
+            Assert.That(upgraded.Selected.Snapshot.Validate(),Is.Empty);
+        }
         [TestCase(13)][TestCase(14)]public void SmoothLtUpgradePreservesLegacyDelayAndHistoricalHash(int previousVersion)
         {
             var prior=typeof(ProvingProfile).GetMethod(previousVersion==14?"BeforeSmoothGamepadTap":"BeforeGamepadTriggerAim",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);

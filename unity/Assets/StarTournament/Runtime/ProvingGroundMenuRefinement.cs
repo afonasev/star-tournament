@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround
                     else BeginLobbyJoin(pad);
                     return;
                 }
-                if(pad.buttonWest.wasPressedThisFrame){SetSetupNavigationMode(true);BeginLobbyBot();return;}
+                if(pad.buttonWest.wasPressedThisFrame&&!InlineWestOwns(pad)){SetSetupNavigationMode(true);BeginLobbyBot();return;}
             }
         }
         void PollSetupStart()
