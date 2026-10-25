@@ -44,12 +44,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             InputSystem.settings.editorInputBehaviorInPlayMode=oldEditor;InputSystem.settings.backgroundBehavior=oldBackground;
         }
         IEnumerator Capture(string name,int width=1920,int height=1080)
-        {string dir=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LOBBY_QA_DIR");if(string.IsNullOrEmpty(dir))yield break;Directory.CreateDirectory(dir);yield return new WaitForSecondsRealtime(B("setup-previous").colors.fadeDuration);yield return EditorUiCapture.Capture(ground,Path.Combine(dir,name+".png"),width,height);}
+        {string dir=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LOBBY_QA_DIR");if(string.IsNullOrEmpty(dir))yield break;Directory.CreateDirectory(dir);yield return new WaitForSecondsRealtime(ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="setup-previous").colors.fadeDuration);yield return EditorUiCapture.Capture(ground,Path.Combine(dir,name+".png"),width,height);}
         HashSet<string> Reachable()
         {
             var seen=new HashSet<Selectable>();var stack=new Stack<Selectable>();stack.Push(B("lobby-map"));
             while(stack.Count>0){var b=stack.Pop();if(b==null||!seen.Add(b))continue;var n=b.navigation;foreach(var next in new[]{n.selectOnUp,n.selectOnDown,n.selectOnLeft,n.selectOnRight})if(next!=null)stack.Push(next);}
             return new HashSet<string>(seen.Select(b=>b.name));
+        }
+        [UnityTest] public IEnumerator F05DisconnectedDeviceRemainsExplicit()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                InputSystem.DisableDevice(pad);yield return null;yield return null;
+                try
+                {
+                    var card=B("roster-card-0");Assert.That(card.transform.Find("participant-detail").GetComponent<Text>().text,Is.EqualTo("Устройство отключено"));
+                    Assert.That(card.transform.Find("participant-device-glyph").gameObject.activeSelf,Is.True);
+                    Assert.That(Field<SeatInputCoordinator>("input").IsConnected(0),Is.False);
+                    yield return Capture("74-disconnected-device");
+                }
+                finally{InputSystem.EnableDevice(pad);}
+            }
         }
         [UnityTest] public IEnumerator EmptySlotsUseAtomicBotFlowAndRemainReachable()
         {
@@ -89,8 +104,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(human.transform.Find("participant-device-glyph").gameObject.activeSelf,Is.True);
             Assert.That(human.transform.Find("participant-screen-slot").gameObject.activeSelf,Is.True);
             var slots=human.transform.Find("participant-screen-slot").GetComponentsInChildren<Image>(true);
-            Assert.That(slots.Length,Is.EqualTo(4));Assert.That((Color32)slots[0].color,Is.EqualTo(new Color32(93,220,225,255)));
-            Assert.That(slots.All(i=>i.GetComponent<Outline>()!=null),Is.True);Assert.That(slots.Skip(1).All(i=>i.color!=slots[0].color),Is.True);
+            Assert.That(slots.Length,Is.EqualTo(4));Assert.That(slots[0].sprite,Is.SameAs(LobbyVisualAssets.ScreenCell(true)));
+            Assert.That(slots.All(i=>((Color32)i.color).Equals(new Color32(93,220,225,255))),Is.True);
+            Assert.That(slots.Skip(1).All(i=>i.sprite==LobbyVisualAssets.ScreenCell(false)),Is.True);
+            var hollow=LobbyVisualAssets.ScreenCell(false).texture;var filled=LobbyVisualAssets.ScreenCell(true).texture;
+            Assert.That(hollow.GetPixel(32,32).a,Is.Zero,"Unassigned cells have a hollow center");Assert.That(filled.GetPixel(32,32).a,Is.EqualTo(1),"Assigned cell is filled");
+            Assert.That(hollow.GetPixel(2,32).a,Is.GreaterThan(.9f),"Hollow cell retains a visible stroke");
             var slotRects=slots.Select(i=>i.rectTransform).ToArray();Assert.That(slotRects.All(r=>Mathf.Abs(r.rect.width-r.rect.height)<.1f),Is.True,"Screen glyphs use square cells");
             Assert.That(Vector2.Distance(slotRects[0].anchoredPosition,slotRects[1].anchoredPosition),Is.GreaterThan(slotRects[0].rect.width),"Screen columns have a visible gap");
             Assert.That(Vector2.Distance(slotRects[0].anchoredPosition,slotRects[2].anchoredPosition),Is.GreaterThan(slotRects[0].rect.height),"Screen rows have a visible gap");
@@ -104,8 +123,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             typeof(ProvingGround).GetMethod("OpenRosterEditor",Private).Invoke(ground,new object[]{1});
             typeof(ProvingGround).GetMethod("SetRosterBotView",Private).Invoke(ground,new object[]{true});yield return null;
             var promoted=B("roster-card-1").transform.Find("participant-screen-slot");Assert.That(promoted.gameObject.activeSelf,Is.True);
-            var promotedSlots=promoted.GetComponentsInChildren<Image>(true);Assert.That((Color32)promotedSlots[0].color,Is.Not.EqualTo(new Color32(93,220,225,255)));
-            Assert.That((Color32)promotedSlots[1].color,Is.EqualTo(new Color32(93,220,225,255)),"Promoted AI seat shows its assigned screen position");
+            var promotedSlots=promoted.GetComponentsInChildren<Image>(true);Assert.That(promotedSlots[0].sprite,Is.SameAs(LobbyVisualAssets.ScreenCell(false)));
+            Assert.That(promotedSlots[1].sprite,Is.SameAs(LobbyVisualAssets.ScreenCell(true)),"Promoted AI seat shows its assigned screen position");
             typeof(ProvingGround).GetMethod("SetRosterBotView",Private).Invoke(ground,new object[]{false});yield return null;
             Assert.That(B("roster-card-1").transform.Find("participant-screen-slot").gameObject.activeSelf,Is.False,"Demoted bot returns to no-screen roster state");
         }
@@ -305,6 +324,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(Reachable(),Does.Contain("roster-empty-3"));
                 EventSystem.current.SetSelectedGameObject(B("roster-card-2").gameObject);yield return null;
                 Assert.That(B("roster-card-2").GetComponent<MenuPresentation>().FocusVisible,Is.True,"Focused bot card retains the gold frame");
+                Assert.That(B("lobby-map").transform.Find("label").GetComponent<Text>().text,Is.EqualTo(AuthoredArenaCatalog.Name(ground.SelectedMapId)),"The real map title survives artwork/hint layer ordering");
                 yield return Capture("concept-v3-keyboard-gamepad-two-bots");
                 var generic=InputSystem.AddDevice<Gamepad>();
                 try
@@ -335,7 +355,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(confirms[i]));
                     var backing=hint.transform.Find("gamepad-action-button").GetComponent<Image>();Assert.That(backing.enabled,Is.True);Assert.That((Color32)backing.color,Is.EqualTo(expectedColors[i]));
                     hint.ColoredLobbyGlyph=true;hint.ShortcutActive=()=>true;
-                    for(int j=0;j<shortcuts.Length;j++){hint.Shortcut=shortcuts[j];hint.Refresh();var secondary=hint.transform.Find("gamepad-shortcut-hint").GetComponent<Text>();var primary=hint.transform.Find("gamepad-action-hint").GetComponent<Text>();var shortcutBg=hint.transform.Find("gamepad-shortcut-button").GetComponent<Image>();var primaryBg=hint.transform.Find("gamepad-action-button").GetComponent<Image>();if(secondary.enabled){Assert.That(secondary.text,Is.EqualTo(shortcutGlyphs[i][j]));Assert.That((Color32)shortcutBg.color,Is.EqualTo(shortcutColors[j]));}else{Assert.That(primary.text,Is.EqualTo(shortcutGlyphs[i][j]));Assert.That((Color32)primaryBg.color,Is.EqualTo(shortcutColors[j]),"Fallback glyph keeps its logical action color");}}
+                    for(int j=0;j<shortcuts.Length;j++){hint.Shortcut=shortcuts[j];hint.Refresh();var secondary=hint.transform.Find("gamepad-shortcut-hint").GetComponent<Text>();var primary=hint.transform.Find("gamepad-action-hint").GetComponent<Text>();var shortcutBg=hint.transform.Find("gamepad-shortcut-button").GetComponent<Image>();var primaryBg=hint.transform.Find("gamepad-action-button").GetComponent<Image>();if(secondary.enabled){Assert.That(secondary.text,Is.EqualTo(shortcutGlyphs[i][j]));Assert.That((Color32)shortcutBg.color,Is.EqualTo(shortcutColors[j]));}else{Assert.That(primary.text,Is.EqualTo(confirms[i]));Assert.That((Color32)primaryBg.color,Is.EqualTo(expectedColors[i]),"Focused confirm remains visible when the optional shortcut cannot fit");}}
                     hint.Shortcut=null;hint.Refresh();yield return Capture("glyph-"+layouts[i]);
                 }
                 finally{InputSystem.RemoveDevice(device);}

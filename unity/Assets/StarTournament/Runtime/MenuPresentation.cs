@@ -16,6 +16,7 @@ namespace StarTournament.ProvingGround
         Text optionCaption;
         public float Height = ButtonHeight;
         Outline border;
+        Image lobbyRim;
         Button button;
         GameObject focusFrame;
         public bool FocusVisible => focusFrame && focusFrame.activeSelf;
@@ -35,7 +36,22 @@ namespace StarTournament.ProvingGround
             focusFrame.GetComponent<MenuFocusGraphic>().raycastTarget=false;
             Paint();
         }
-        void LateUpdate(){Paint();}
+        void LateUpdate()
+        {
+            // Hierarchy changes cannot run from OnEnable/OnDisable during parent activation.
+            if(LobbySurface&&button)
+            {
+                if(!lobbyRim)
+                {
+                    var node=new GameObject("lobby-surface-rim",typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));node.transform.SetParent(transform,false);
+                    lobbyRim=node.GetComponent<Image>();lobbyRim.sprite=LobbyVisualAssets.Rim;lobbyRim.type=Image.Type.Sliced;lobbyRim.raycastTarget=false;
+                    var rect=lobbyRim.rectTransform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
+                    lobbyRim.transform.SetAsLastSibling();focusFrame.transform.SetAsLastSibling();
+                }
+            }
+            focusFrame.GetComponent<MenuFocusGraphic>().LobbyStyle=LobbySurface;
+            Paint();
+        }
         void Paint()
         {
             if(!border)return;
@@ -50,7 +66,12 @@ namespace StarTournament.ProvingGround
             }
             else if(LobbySurface&&button)
             {
-                button.GetComponent<Image>().color=enabledButton?(hover?new Color32(15,30,43,205):new Color32(4,9,15,185)):new Color32(4,9,15,160);
+                var surface=button.GetComponent<Image>();surface.sprite=LobbyVisualAssets.Panel;surface.type=Image.Type.Simple;
+                surface.color=enabledButton?(hover?new Color(1.16f,1.16f,1.16f,1):Color.white):new Color(.68f,.68f,.68f,.85f);
+                // Outline duplicates the entire translucent quad four times. A real hollow
+                // border preserves the authored material and avoids timing-dependent opacity.
+                border.enabled=false;
+                if(lobbyRim)lobbyRim.color=hover?Gold:new Color32(105,139,157,205);
             }
             if(focusFrame && focusFrame.activeSelf!=focus)focusFrame.SetActive(focus);
             border.effectColor=enabledButton&&hover?Gold:LobbySurface?new Color32(84,111,132,210):Line;
@@ -80,6 +101,8 @@ namespace StarTournament.ProvingGround
     // The gold rim and dark gap scale together in split-screen Canvas space.
     public sealed class MenuFocusGraphic : MaskableGraphic
     {
+        bool lobbyStyle;
+        public bool LobbyStyle {get=>lobbyStyle;set{if(lobbyStyle==value)return;lobbyStyle=value;SetVerticesDirty();}}
         public static float StrokeWidth(float height)=>Mathf.Min(7,height*.08f);
         public static float GapWidth(float height)=>Mathf.Min(6,height*.06f);
         static readonly Color32 Gold=new Color32(231,187,114,255);
@@ -90,8 +113,16 @@ namespace StarTournament.ProvingGround
             if(outer.width<=0||outer.height<=0)return;
             float stroke=StrokeWidth(outer.height),gap=GapWidth(outer.height);
             var middle=Inset(outer,stroke);var inner=Inset(middle,gap);
-            Ring(mesh,outer,middle,10,Mathf.Max(1,10-stroke),Gold);
-            Ring(mesh,middle,inner,Mathf.Max(1,10-stroke),Mathf.Max(1,10-stroke-gap),Ink);
+            if(LobbyStyle)
+            {
+                Ring(mesh,outer,Inset(outer,3.5f),10,6.5f,new Color32(231,187,114,40));
+                Ring(mesh,outer,Inset(outer,2),10,8,Gold);
+            }
+            else
+            {
+                Ring(mesh,outer,middle,10,Mathf.Max(1,10-stroke),Gold);
+                Ring(mesh,middle,inner,Mathf.Max(1,10-stroke),Mathf.Max(1,10-stroke-gap),Ink);
+            }
             float cy=outer.center.y,h=Mathf.Min(15,outer.height*.18f);
             int v=mesh.currentVertCount;
             mesh.AddVert(new Vector3(outer.xMin-16,cy-h,0),Gold,Vector2.zero);
