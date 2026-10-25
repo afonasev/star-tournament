@@ -378,8 +378,8 @@ namespace StarTournament.ProvingGround
                 if(historicalCache.TryGetValue(key,out var warm))
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
-            var shipped=this.shipped;
-            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)<p.Version?p.BeforeForgePickups():p).ToList()};
+            var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgePickupsIfNeeded(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
             if(!sought.Profiles.Any(p=>p.Id=="forge-plasma-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="forge-plasma-v1").ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??2)<2)

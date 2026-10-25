@@ -2,11 +2,26 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeForgePlacement(int soughtVersion)
+        {
+            if(id=="combat-bowl-ring-r7-authoring-v1"&&version>=14&&soughtVersion<14)
+                return CreateCombatBowlAuthoringDefault(CombatBowlCatalog.Draft(true));
+            if(id=="lunar-laboratory-authoring-v1"&&version>=4&&soughtVersion<4)
+                return CreateLunarAuthoring(LunarLaboratoryCatalog.Draft(previousForgePlacement:true),3);
+            if(id=="well-authoring-v1"&&version>=7&&soughtVersion<7)
+                return WellArenaCatalog.AuthoringProfile(true);
+            return this;
+        }
+        internal ProvingProfile BeforeForgePickupsIfNeeded(int soughtVersion)
+        {
+            int first=id=="combat-bowl-ring-r7-authoring-v1"?13:id=="industrial-tunnels-authoring-v1"?2:id=="lunar-laboratory-authoring-v1"?3:id=="well-authoring-v1"?6:0;
+            return soughtVersion<first?BeforeForgePickups():this;
+        }
         internal ProvingProfile BeforeForgePickups()
         {
             int previous=id=="combat-bowl-ring-r7-authoring-v1"?12:id=="industrial-tunnels-authoring-v1"?1:id=="lunar-laboratory-authoring-v1"?2:id=="well-authoring-v1"?5:0;
             if(previous==0||version<=previous)return this;
-            var p=DetachedCopy();p.version=previous;
+            var p=BeforeForgePlacement(0).DetachedCopy();p.version=previous;
             bool Added(string path)=>path.StartsWith("forge-")||path.Contains(".forge-");
             p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));return p;
         }
