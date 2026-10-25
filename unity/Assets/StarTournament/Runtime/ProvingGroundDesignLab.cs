@@ -73,12 +73,23 @@ namespace StarTournament.ProvingGround
         public string LabHistoryLoadError=>historyLoadError;
         public LabRevisionReference ActiveLabReference=>activeLabReference?.Clone();
         public LabHistoryStartupDiagnostics LabHistoryDiagnostics=>labHistory?.StartupDiagnostics;
-        void CancelHistoryLoading()
+        void OnApplicationQuit()=>CancelHistoryLoading(true);
+        void CancelHistoryLoading(bool waitForCompletion=false)
         {
             var cancellation=historyCancellation;if(cancellation==null)return;
             historyCancellation=null;cancellation.Cancel();
             var pending=historyLoading;historyLoading=null;
             if(pending==null){cancellation.Dispose();return;}
+            if(waitForCompletion)
+            {
+                // JsonUtility is allowed on this worker, but Unity's serializer must
+                // remain alive until its cancelled work has actually stopped.
+                try{pending.GetAwaiter().GetResult();}
+                catch(OperationCanceledException){}
+                catch(Exception error){Debug.LogWarning("Lab shutdown: "+error.Message);}
+                finally{cancellation.Dispose();}
+                return;
+            }
             pending.ContinueWith(done=>{var observed=done.Exception;cancellation.Dispose();},TaskScheduler.Default);
         }
         IEnumerator InitializeDesignLabAsync()

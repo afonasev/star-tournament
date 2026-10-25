@@ -145,7 +145,8 @@ namespace StarTournament.ProvingGround
             }
             if(!textEntryPanel)
             {
-                var field=EventSystem.current?.currentSelectedGameObject?.GetComponent<InputField>();
+                var selected=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;
+                var field=selected?selected.GetComponent<InputField>():null;
                 if(!field||!field.IsInteractable())return false;
                 var binding=field.GetComponent<NativeGamepadTextField>();
                 var pressed=Gamepad.all.FirstOrDefault(p=>p.enabled&&p.buttonSouth.wasPressedThisFrame);
