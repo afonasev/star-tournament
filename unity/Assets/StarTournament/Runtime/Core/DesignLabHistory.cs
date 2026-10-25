@@ -585,6 +585,7 @@ namespace StarTournament.ProvingGround
                 }
                 var withoutModeTargets=Cached(p=>p.BeforeModeTargets());
                 var beforeMatchAchievements=Cached(p=>p.BeforeMatchAchievements());
+                var beforeBotReactive=Cached(p=>p.BeforeBotReactiveCombat());
                 var beforeBotMovement=Cached(p=>p.BeforeBotCombatMovement());
                 var withoutEvaluation=Cached(p=>p.BeforeBotWeaponEvaluation());
                 var withoutTactics=Cached(p=>p.BeforeBotTactics());var withoutOrigins=Cached(p=>p.BeforeShotOrigins());
@@ -621,6 +622,7 @@ namespace StarTournament.ProvingGround
                 currentGameplay=DistinctRegistries(currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutMenuMusic))));
                 // Blood defaults can be retuned independently of the gameplay registry upgrade.
                 // Include that exact combination without rewriting historical snapshots.
+                currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBotReactive)));
                 currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBotMovement)));
                 currentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,withoutEvaluation)));
                 var recentGameplay=currentGameplay.SelectMany(b=>Closest(b,Change(b,beforeBloodIntensity))).ToArray();
@@ -645,6 +647,7 @@ namespace StarTournament.ProvingGround
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutPulseRefinement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!=ProvingProfile.RocketEffectsId).ToList()})));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,WithoutPickups(b),WithPalette(b),WithPalette(WithoutPickups(b)))));
+                predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeBotReactive))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,beforeBotMovement))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,Change(b,withoutEvaluation))));
                 predecessors=DistinctRegistries(predecessors.SelectMany(b=>Closest(b,new LabBundle{Profiles=b.Profiles.Where(p=>p.Id!="native-bot-evaluation-v1").Select(withoutTactics).ToList()})));

@@ -77,12 +77,76 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(actual.Intent, Is.EqualTo(expected.Intent)); Assert.That(actual.Time, Is.EqualTo(expected.Time));
             Assert.That(actual.NextDecision, Is.EqualTo(expected.NextDecision)); Assert.That(actual.Noticed, Is.EqualTo(expected.Noticed));
             Assert.That(actual.NextStrafe, Is.EqualTo(expected.NextStrafe)); Assert.That(actual.NextJump, Is.EqualTo(expected.NextJump));
+            Assert.That(actual.NextJumpAttempt,Is.EqualTo(expected.NextJumpAttempt));Assert.That(actual.DamageLife,Is.EqualTo(expected.DamageLife));
+            Assert.That(actual.DamageAt,Is.EqualTo(expected.DamageAt));Assert.That(actual.DamageUpdatedAt,Is.EqualTo(expected.DamageUpdatedAt));
+            Assert.That(actual.DamageUntil,Is.EqualTo(expected.DamageUntil));Assert.That(actual.DamageDirection,Is.EqualTo(expected.DamageDirection));
             Assert.That(actual.RetreatUntil, Is.EqualTo(expected.RetreatUntil)); Assert.That(actual.RetreatReady, Is.EqualTo(expected.RetreatReady));
             Assert.That(actual.SupportUntil, Is.EqualTo(expected.SupportUntil)); Assert.That(actual.SupportReady, Is.EqualTo(expected.SupportReady));
             Assert.That(actual.Goal, Is.EqualTo(expected.Goal)); Assert.That(actual.HasGoal, Is.EqualTo(expected.HasGoal));
             Assert.That(actual.DamageBoostActive, Is.EqualTo(expected.DamageBoostActive)); Assert.That(actual.Pressed, Is.EqualTo(expected.Pressed)); Assert.That(actual.Personality, Is.EqualTo(expected.Personality)); Assert.That(actual.AimPhase, Is.EqualTo(expected.AimPhase));
             Assert.That(actual.Navigation.Goal, Is.EqualTo(expected.Navigation.Goal)); Assert.That(actual.Navigation.Cursor, Is.EqualTo(expected.Navigation.Cursor));
             Assert.That(actual.Navigation.Enemy, Is.EqualTo(expected.Navigation.Enemy)); Assert.That(actual.Navigation.EnemyLife, Is.EqualTo(expected.Navigation.EnemyLife));
+        }
+
+        [Test] public void RearDamageCueHasDelayRateLimitNoKnowledgeAndNoBlindFire()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Frame(target:-1);planner.Tick(0,.02f,frame);
+            planner.NoticeDamage(.02,1,Vector3.forward);
+            var before=planner.Tick(.1,.02f,frame);Assert.That(before.LookDegrees.x,Is.EqualTo(0));
+            planner.NoticeDamage(.11,1,Vector3.forward); // Sustained hits cannot restart the reaction delay.
+            var turn=planner.Tick(.15,.02f,frame);
+            Assert.That(Mathf.Abs(turn.LookDegrees.x),Is.EqualTo(230*.02f).Within(.001));
+            Assert.That(turn.Fire||turn.FireHeld,Is.False);Assert.That(frame.Knowledge.Enemies,Is.Empty);
+            Assert.That(planner.Capture().Target,Is.EqualTo(-1));
+            Assert.That(planner.Capture().DamageAt,Is.EqualTo(.02));
+            var expired=planner.Tick(3.2,.02f,frame);Assert.That(planner.Capture().DamageLife,Is.Zero);
+            Assert.That(expired.Fire||expired.FireHeld,Is.False);
+        }
+        [Test] public void DamageCueSurvivesSnapshotAndCannotCrossRespawn()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Frame(target:-1);planner.Tick(0,.02f,frame);
+            planner.NoticeDamage(.02,1,Vector3.forward);planner.NoticeDamage(.1,1,Vector3.forward);
+            var copy=Make(NativeBotDifficulty.Hard);copy.Restore(planner.Capture());
+            Same(copy.Tick(.2,.02f,frame),planner.Tick(.2,.02f,frame));
+            var corrupt=planner.Capture();corrupt.DamageDirection=new Vector3(float.NaN,0,0);
+            string before=JsonUtility.ToJson(planner.Capture());Assert.Throws<ArgumentException>(()=>planner.Restore(corrupt));Assert.That(JsonUtility.ToJson(planner.Capture()),Is.EqualTo(before));
+            planner.Tick(.3,.02f,Frame(ownLife:2,target:-1));Assert.That(planner.Capture().DamageLife,Is.Zero);
+        }
+        [Test] public void DamageSectorTakesPriorityOverUnrelatedVisibleEnemyAndNeedsConfirmation()
+        {
+            var planner=Make(NativeBotDifficulty.Hard);var frame=Frame();planner.Tick(0,.02f,frame);
+            planner.NoticeDamage(.01,1,Vector3.forward);var scan=planner.Tick(.2,.02f,frame);
+            Assert.That(Mathf.Abs(scan.LookDegrees.x),Is.GreaterThan(0));Assert.That(scan.Fire||scan.FireHeld,Is.False);
+            frame.Knowledge.Enemies=frame.Knowledge.Enemies.Append(new NativeBotMemoryEntry{Visible=true,Sighting=new NativeBotSighting(3,1,Vector3.back*15)}).ToArray();
+            planner.Tick(.3,.02f,frame);Assert.That(planner.Capture().Target,Is.EqualTo(3));Assert.That(planner.Capture().DamageLife,Is.Zero);
+        }
+        [TestCase(WeaponId.Rifle,-1)] [TestCase(WeaponId.Plasma,-1)] [TestCase(WeaponId.Shotgun,1)] [TestCase(WeaponId.Cutter,1)] [TestCase(WeaponId.RocketLauncher,-1)]
+        public void WeaponChangesRadialMovementAtSameObservedDistance(WeaponId selected,int sign)
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.cooperation.personalitySpread",0);
+            var policy=new NativeShotgunPolicy(ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault());
+            var planner=Make(NativeBotDifficulty.Normal,behavior:profile,weapon:policy,tactics:new Tactics{JumpAllowed=false});var frame=Frame();
+            frame.Knowledge.Enemies[0].Sighting.Position=Vector3.forward*8;
+            frame.Life.SelectedWeapon=selected;frame.Life.RifleAmmo=selected==WeaponId.Rifle?20:0;frame.Life.ShotgunOwned=selected==WeaponId.Shotgun;frame.Life.ShotgunAmmo=20;frame.Life.PlasmaOwned=selected==WeaponId.Plasma;frame.Life.PlasmaAmmo=20;frame.Life.CutterOwned=selected==WeaponId.Cutter;frame.Life.CutterEnergy=20;frame.Life.RocketOwned=selected==WeaponId.RocketLauncher;frame.Life.RocketAmmo=20;
+            var action=planner.Tick(0,.02f,frame);var world=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+            Assert.That(world.z*sign,Is.GreaterThan(.1f),selected.ToString());
+        }
+        [TestCase(15.5f)] [TestCase(16f)] [TestCase(16.5f)]
+        public void RifleDistanceBandStrafesWithoutRadialOscillation(float distance)
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.cooperation.personalitySpread",0);
+            var planner=Make(NativeBotDifficulty.Normal,behavior:profile,weapon:new NativeShotgunPolicy(ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()),tactics:new Tactics{JumpAllowed=false});
+            var frame=Frame();frame.Life.SelectedWeapon=WeaponId.Rifle;frame.Life.RifleAmmo=20;frame.Knowledge.Enemies[0].Sighting.Position=Vector3.forward*distance;
+            var action=planner.Tick(0,.02f,frame);var world=Quaternion.Euler(0,action.LookDegrees.x,0)*new Vector3(action.Move.x,0,action.Move.y);
+            Assert.That(world.z,Is.EqualTo(0).Within(.001));Assert.That(Mathf.Abs(world.x),Is.GreaterThan(.1f));
+        }
+        [Test] public void JumpRetryDoesNotWaitForNextStrafe()
+        {
+            var profile=ProvingProfile.CreateBotBehaviorDefault();profile.Set("bots.hard.jumpChance",1);profile.Set("bots.hard.surpriseJumpChance",0);
+            var tactics=new Tactics{JumpAllowed=false};var planner=Make(NativeBotDifficulty.Hard,behavior:profile,tactics:tactics);var frame=Frame();
+            planner.Tick(0,.02f,frame);var nextStrafe=planner.Capture().NextStrafe;tactics.JumpAllowed=true;
+            Assert.That(profile.Get("bots.hard.jumpAttemptSeconds"),Is.LessThan(nextStrafe));
+            Assert.That(planner.Tick(.31,.02f,frame).Jump,Is.True);
         }
 
         [TestCase(WeaponId.Rifle)] [TestCase(WeaponId.Shotgun)] [TestCase(WeaponId.Cutter)]
@@ -108,8 +172,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void ProfileCopiesAllBehaviorTuningAndDifficultyDefaultsReachWeaponPolicy()
         {
             var profile=ProvingProfile.CreateBotBehaviorDefault(); Assert.That(profile.Validate(), Is.Empty);
-            Assert.That(profile.Descriptors, Has.Count.EqualTo(82));
-            Assert.That(profile.Descriptors.Any(d=>d.Path.Contains("fieldOfView")||d.Path.Contains("memorySeconds")), Is.False);
+            Assert.That(profile.Descriptors, Has.Count.EqualTo(93));
+            Assert.That(profile.Descriptors.Any(d=>d.Path.Contains("fieldOfView")||d.Path.EndsWith(".memorySeconds")&&!d.Path.StartsWith("bots.damage.")), Is.False);
             var expected = new[] { new[]{.6f,90f,12f,1.4f}, new[]{.28f,160f,5f,1f}, new[]{.12f,230f,1.5f,.7f} };
             for(int i=0;i<3;i++)
             {
@@ -381,6 +445,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     }
                 }
             }
+            Debug.Log($"BOT_JUMP_CADENCE fighter={fighter} veteran={veteran} seeds=16 secondsPerSeed=60");
             Assert.That(fighter,Is.GreaterThan(0));Assert.That(veteran,Is.GreaterThan(fighter));Assert.That(veteran,Is.LessThan(16*21));
         }
         [Test] public void VeteranSurpriseCanJumpBeforeNextStrafeButCannotBypassCooldown()
