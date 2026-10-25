@@ -19,10 +19,13 @@ namespace StarTournament.ProvingGround
         public const uint Seed=20261025;
         public static readonly string[] Maps={CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id};
         public static bool Requested(string[] args)=>args.Contains("-renderingBaseline");
-        public static NativeMatchComposition Composition(int views)
+        public static NativeMatchComposition Composition(int views)=>Composition(CombatBowlCatalog.Id,views);
+        public static NativeMatchComposition Composition(string map,int views)
         {
             if(views!=1&&views!=4)throw new ArgumentOutOfRangeException(nameof(views));
-            return new NativeMatchComposition(NativeMatchRoster.Ffa(8),Enumerable.Range(0,8).Select(n=>new NativeParticipantInfo(NativeParticipantKind.Bot,"Bot "+n,NativeParticipantColors.For(n),(int)NativeBotDifficulty.Hard)).ToArray(),Enumerable.Range(0,views).ToArray());
+            int participants=AuthoredArenaCatalog.Maximum(map);
+            if(views>participants||!AuthoredArenaCatalog.Supports(map,participants))throw new ArgumentException("Unsupported map composition");
+            return new NativeMatchComposition(NativeMatchRoster.Ffa(participants),Enumerable.Range(0,participants).Select(n=>new NativeParticipantInfo(NativeParticipantKind.Bot,"Bot "+n,NativeParticipantColors.For(n),(int)NativeBotDifficulty.Hard)).ToArray(),Enumerable.Range(0,views).ToArray());
         }
         public static NativeMatchConfiguration Configuration(ProvingProfile profile)=>new NativeMatchConfiguration{DurationMinutes=5,TargetEnabled=false,TargetPoints=(int)profile.Get("match.ffaTargetDefault")};
         public static bool ReadyForReview(bool ready,bool splashFinished,bool batchMode)=>ready&&(batchMode||splashFinished);
@@ -51,7 +54,7 @@ namespace StarTournament.ProvingGround
         }
         [Serializable] sealed class Report
         {
-            public string status="INCOMPLETE",unity,device,cpu,gpu,os,graphicsApi,map,pipeline,protocol="v1: 8 Hard bots/FFA seed20261025, 1920x1080, uncapped; ordinary1 warmup5/sample15; fresh frozen1 and frozen4 warmup5/sample8; no asset/light/quality perturbations",source;
+            public string status="INCOMPLETE",unity,device,cpu,gpu,os,graphicsApi,map,pipeline,protocol="v2: authored max Hard bots (Tunnels4, Bowl/Lunar/Well8)/FFA seed20261025, 1920x1080, uncapped; ordinary1 warmup5/sample15; fresh frozen1 and frozen4 warmup5/sample8; no asset/light/quality perturbations",source;
             public List<string> nativeBackgroundEvents=new List<string>();public string focusRoute="ordinary-windowed";public int ownBackgroundWindows;public bool batchMode;public string referenceInput;public uint seed=Seed;public int cpuThreads,systemMemoryMB,graphicsMemoryMB;public bool frameTimingEnabled;public List<Sample> samples=new List<Sample>();
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Bootstrap(){if(Requested(Environment.GetCommandLineArgs()))new GameObject("Rendering baseline QA").AddComponent<NativeRenderingBaseline>();}
@@ -86,8 +89,9 @@ namespace StarTournament.ProvingGround
         IEnumerator Measure(string name,int views,bool live,int duration)
         {
             UnityEngine.Random.InitState((int)Seed);ground.FullHealReviewManualTick=true;ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(map);
-            ground.ConfigureBotTacticsReview(Configuration(ground.MatchProfile));ground.StartBotReview(Composition(views),Seed);
-            while(!ground.Running)yield return null;
+            var composition=Composition(map,views);if(!AuthoredArenaCatalog.Supports(map,composition.ParticipantCount))throw new InvalidOperationException("Unsupported review participants");
+            ground.ConfigureBotTacticsReview(Configuration(ground.MatchProfile));ground.StartBotReview(composition,Seed);
+            if(!ground.Running)throw new InvalidOperationException("Review start failed: "+ground.CombatReviewDiagnostic());
             if(ground.CameraReviewArena.Definition.MapId!=map||ground.Session.ArenaIdentity!=ground.CameraReviewArena.Definition.Identity)throw new InvalidOperationException("Actual map mismatch");
             string expected=null;Sample referenceSample=null;
             if(!live){referenceSample=reference?.samples.Single(s=>s.name==name);expected=referenceSample?.stateStart??JsonUtility.ToJson(ground.Session.Capture());RestoreReference(ground.Session,expected);}
