@@ -112,11 +112,11 @@ def prepare_bundle(stage, output, config, icon):
     shutil.copyfile(icon, resources/'app-icon.icns')
     for path in Path(stage).iterdir():
         # .NET native libraries/apphost already have embedded ad-hoc signatures.
-        if path.is_file() and (path.name == 'StarTournamentLauncher' or path.suffix == '.dylib'):
+        if path.name == 'game' or (path.is_file() and (path.name == 'StarTournamentLauncher' or path.suffix == '.dylib')):
             path.rename(macos/path.name)
         else:
             path.rename(payload/path.name)
-            (macos/path.name).symlink_to('../Resources/payload/'+path.name+('/' if (payload/path.name).is_dir() else ''))
+            (macos/path.name).symlink_to('../Resources/payload/'+path.name)
     return app
 
 
