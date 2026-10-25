@@ -12,7 +12,8 @@ namespace StarTournament.ProvingGround.Tests
         static Mesh MeshFor(Renderer renderer)
         {
             if(renderer is SkinnedMeshRenderer skinned)return skinned.sharedMesh;
-            return renderer.GetComponent<MeshFilter>()?.sharedMesh;
+            var filter=renderer.GetComponent<MeshFilter>();
+            return filter?filter.sharedMesh:null;
         }
         static long RendererTriangles(Renderer renderer,Mesh mesh)
         {
