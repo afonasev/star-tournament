@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Profile the two immutable P6 Well Players; verify never launches Unity.
+"""Focused Well CPU diagnosis or balanced unprofiled qualification.
 
 Requires a fresh human focus deadline. Profiling is diagnosis, not a new FPS
 qualification: capture overhead is present in both variants.
@@ -169,7 +169,9 @@ def main():
     require_guardian(parent, os.getsid(0) == os.getpid())
     args.output.mkdir(parents=True)
     journal = {'authority': args.human_source, 'deadline': args.deadline, 'status': 'RUNNING',
-               'purpose': ('CPU cause diagnosis with profiling overhead' if cpu_profile else 'Matched unprofiled ABBA, descriptive scenario timing only'), 'cases': []}
+               'runnerSource': m['runnerSource'], 'manifestSHA256': hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
+               'measurementMode': m.get('mode', 'cpu'),
+               'purpose': ('CPU cause diagnosis with profiling overhead' if cpu_profile else 'Matched unprofiled balanced variants, descriptive scenario timing only'), 'cases': []}
     def save():
         (args.output/'scenario.json').write_text(json.dumps(journal, indent=2))
     save()
@@ -211,7 +213,9 @@ def main():
         finally:
             if proc is not None:
                 stop_owned(proc)
-    journal['status'] = 'COMPLETE_DIAGNOSIS_CAPTURE_NOT_PERFORMANCE_ACCEPTANCE' if cpu_profile else 'COMPLETE_ABBA_UNPROFILED_DESCRIPTIVE_NOT_ACCEPTANCE'; save()
+    journal['status'] = ('COMPLETE_DIAGNOSIS_CAPTURE_NOT_PERFORMANCE_ACCEPTANCE' if cpu_profile else
+                         'COMPLETE_ABCCBA_UNPROFILED_DESCRIPTIVE_NOT_ACCEPTANCE' if m['mode'] == 'unprofiled-abccba' else
+                         'COMPLETE_ABBA_UNPROFILED_DESCRIPTIVE_NOT_ACCEPTANCE'); save()
     return 0
 
 if __name__ == '__main__':
