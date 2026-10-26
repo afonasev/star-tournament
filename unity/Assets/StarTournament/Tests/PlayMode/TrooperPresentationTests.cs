@@ -171,6 +171,40 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(visual.EquippedWeapon,Is.EqualTo(WeaponId.Rifle));
         }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
+        [UnityTest] public IEnumerator PulseMk2MuzzleTracksBatchedMotionAndRestore()
+        {
+            yield return Load(2);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            var camera=ground.transform.Find("seat-camera-1");var view=camera.Find("trooper-view");
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
+            var baseline=ground.Session.Capture();baseline.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;baseline.Lives[0].RocketOwned=true;baseline.Lives[0].RocketAmmo=20;baseline.Lives[0].Ammo=20;baseline.Lives[0].SwitchRemaining=0;
+            ShotNotice notice=default;ground.Session.ShotResolved+=n=>notice=n;
+            foreach(int side in new[]{0,-1,1})
+            {
+                ground.Session.Restore(baseline);ground.SendMessage("LateUpdate");yield return null;
+                var oldEye=camera.position;var actions=new LocalAction[2];actions[0].Move=new Vector2(side,0);
+                for(int tick=0;tick<5;tick++)ground.Session.Tick(actions,.02f);
+                actions[0].LookDegrees=side==0?Vector2.zero:new Vector2(side*12,4);actions[0].Fire=true;ground.Session.Tick(actions,.02f);ground.Session.ClearInput();
+                var eye=ground.Session.Pose(0).Position+Vector3.up*ground.Profile.Get("camera.eyeHeight");
+                Assert.That(Vector3.Distance(camera.position,eye),Is.LessThan(.0001f),"Shot must sample this tick's camera");
+                if(side!=0)Assert.That(Vector3.Distance(oldEye,eye),Is.GreaterThan(.01f));
+                var muzzle=view.GetComponent<WeaponModelPresentation>().PulseMuzzle;
+                var rocket=ground.Session.Rockets.Single();var offset=muzzle-notice.Origin;
+                string before=JsonUtility.ToJson(ground.Session.Capture());ground.SendMessage("LateUpdate");Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+                var visual=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="Pulse rocket "+rocket.Id);
+                var expected=rocket.Position+offset*(1-Mathf.Clamp01(rocket.Distance/ground.Profile.Get("presentation.rocketMuzzleBlendDistance")));
+                Assert.That(Vector3.Distance(visual.position,expected),Is.LessThan(.0001f));
+                var ignition=ground.GetComponentsInChildren<LineRenderer>().Single(r=>r.name=="Muzzle ignition");
+                Assert.That(Vector3.Distance(ignition.GetPosition(0),muzzle),Is.LessThan(.0001f));
+                Assert.That(Vector3.Dot((ignition.GetPosition(2)-muzzle).normalized,rocket.Direction),Is.GreaterThan(.999f));
+                var frozen=visual.position;ground.SendMessage("LateUpdate");Assert.That(visual.position,Is.EqualTo(frozen));
+                for(int tick=0;tick<10;tick++)ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");
+                if(ground.Session.Rockets.Length>0)Assert.That(Vector3.Distance(visual.position,ground.Session.Rockets[0].Position),Is.LessThan(.0001f));
+                ground.Session.Restore(ground.Session.Capture());yield return null;ground.SendMessage("LateUpdate");
+                if(ground.Session.Rockets.Length>0)Assert.That(Vector3.Distance(ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="Pulse rocket "+rocket.Id).position,ground.Session.Rockets[0].Position),Is.LessThan(.0001f));
+            }
+        }
         [UnityTest] public IEnumerator ShotgunGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Shotgun);
         [UnityTest] public IEnumerator RocketGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.RocketLauncher);
         [UnityTest] public IEnumerator CutterGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Cutter);
