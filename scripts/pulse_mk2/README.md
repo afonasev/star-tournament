@@ -7,8 +7,8 @@ Approved A concept and grip study are preserved in the canonical planning store 
 - `pulse-mk2-projectile-master.blend`: full-detail rocket parts and packed materials.
 - `build.py`: deterministic Blender 5.2 recipe, semantic attachment frame retained.
 - `render.py`: studio renders of the **exported GLBs**.
-- `bake_effects.py`: deterministic smoke/exhaust texture source; does not overwrite selected fire art.
-- `fire-art-source.json`: imagegen provenance and SHA for the detailed 4x4 fire atlas.
+- `bake_effects.py`: deterministic smoke and earlier exhaust recipe; does not overwrite selected fire/exhaust art.
+- `fire-art-source.json` / `exhaust-art-source.json`: imagegen provenance and SHA for the fire atlas and turbulent jet.
 
 ```sh
 blender -b -noaudio --python-exit-code 1 --python scripts/pulse_mk2/build.py
@@ -30,3 +30,5 @@ is authored. Other weapons and the character source remain untouched.
 
 Real native grips, effects and deviations from the concept must be reviewed separately;
 asset validity, tests and studio images do not establish human acceptance.
+
+Pulse fire/smoke use an isolated soft-particle shader. An input-only URP pass requests depth before transparent rendering, only on owned cameras with an active burst; original per-camera depth options are restored on expiration/restore/dispose. Other particle shaders and global renderer assets are unchanged. Surface fade and fire radiance are profile v4 metadata; v1-v3 registries remain byte/hash compatible.

@@ -90,6 +90,10 @@ def label(text,pos,size,mat,side=1):
  o=bpy.data.objects.new('Pulse engraved '+text,curve);bpy.context.collection.objects.link(o)
  o.matrix_world=Matrix(((0,0,side,pos[0]),(0,1,0,pos[1]),(-side,0,0,pos[2]),(0,0,0,1)))
  curve.materials.append(mat);bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o;bpy.ops.object.convert(target='MESH')
+ # Conform the engraving to the ceramic cylinder, avoiding a floating flat plaque.
+ inverse=o.matrix_world.inverted()
+ for v in o.data.vertices:
+  q=o.matrix_world@v.co;q.x=side*(math.sqrt(max(0,.122**2-(q.y-.08)**2))+.0002);v.co=inverse@q
 
 def uv_all():
  for o in list(bpy.context.scene.objects):
@@ -231,8 +235,7 @@ for i in range(8):
 ring('muzzle lip machined edge',.597,.007,.104,STEEL)
 for side in (-1,1):
  # Small physical engravings on a recessed ceramic identification pad.
- profile('receiver identity pad',[(.137,-.137),(.152,-.137),(.154,-.040),(.138,-.031)],.0012,WHITE,x=side*.098,bevel=.001)
- label('A / PULSE MK II',(side*.101,.140,-.085),.008,DARK,side)
+ label('A / PULSE MK II',(side*.101,.153,-.085),.007,DARK,side)
  label('CAUTION  //  HOT',(side*.113,.035,.335),.004,DARK,side)
  profile('orange collar identity delta',[(.067,.16),(.093,.16),(.080,.183)],.001,WHITE,x=side*.124,bevel=.0002)
 # Ergonomic grip profile fits the original right-hand contact frame.

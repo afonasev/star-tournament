@@ -51,4 +51,5 @@ u=(x+1)/2;width=.46*(1-u)**.7+.025;n=noise(x*7,y*11,.7)
 alpha=np.clip((width-np.abs(y))*9,0,1)*(1-u)**.7
 heat=np.clip(1-u*.7-np.abs(y)*1.8+n*.15,0,1)
 rgb=np.stack([np.ones_like(x),.20+.75*heat**2,.015+.7*heat**5],axis=-1)
-save('Exhaust',np.concatenate([rgb,alpha[...,None]],axis=-1))
+# Selected Exhaust.png is imagegen art, immutable provenance in exhaust-art-source.json.
+# Keep the deterministic earlier recipe above for reference; do not overwrite it.
