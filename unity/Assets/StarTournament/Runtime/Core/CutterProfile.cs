@@ -2,6 +2,15 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Project the exact v4 registry before historical hash validation.
+        internal ProvingProfile BeforeSeamPresentation()
+        {
+            if(id!="cutter-beam-v1"||version<5)return this;
+            var p=DetachedCopy();p.version=4;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam."));
+            p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam."));
+            return p;
+        }
         // Exact first-release registry for immutable Lab history compatibility.
         internal ProvingProfile BeforeCutterThickness()
         {
@@ -29,7 +38,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=4 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=5 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -59,6 +68,28 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.arcWidth","cutter-effects","Толщина ветвей","Толщина электрических изломов вокруг сердцевины.","m",0.001f,0.1f,0.001f,0.004f);
             p.Add("cutter.coreWhiten","cutter-effects","Белая сердцевина","Смешивание цвета сердцевины с белым.","ratio",0f,1f,0.01f,0.85f);
             p.Add("cutter.nearFade","cutter-effects","Зазор камеры","Лучи плавно исчезают вблизи камеры, сохраняя gameplay контакт.","m",0.01f,2f,0.01f,0.35f);
+            p.Add("cutter.seam.coronaScale","cutter-effects","SEAM: корона","Ширина мягкой оболочки относительно сердцевины.","ratio",1,8,.1f,3);
+            p.Add("cutter.seam.coronaAlpha","cutter-effects","SEAM: плотность короны","Прозрачность мягкой оболочки.","ratio",0,1,.01f,.16f);
+            p.Add("cutter.seam.sparkCount","cutter-effects","SEAM: искры","Число коротких лучей в локальном контакте.","count",0,32,1,14);
+            p.Add("cutter.seam.sparkReach","cutter-effects","SEAM: разлёт искр","Максимальная длина визуального следа; без урона.","m",.01f,1,.01f,.23f);
+            p.Add("cutter.seam.sparkSeconds","cutter-effects","SEAM: цикл искр","Время движения искр по часам матча.","s",.02f,1,.01f,.14f);
+            p.Add("cutter.seam.contactSeconds","cutter-effects","SEAM: след контакта","Короткое затухание после фактического попадания.","s",.01f,.5f,.01f,.065f);
+            p.Add("cutter.seam.shieldRadius","cutter-effects","SEAM: рябь щита","Радиус локальной ряби вместо непрозрачного купола.","m",.01f,1,.01f,.18f);
+            p.Add("cutter.seam.muzzleRadius","cutter-effects","SEAM: сопло","Радиус мягкого свечения активного сопла.","m",.01f,.3f,.005f,.065f);
+            p.Add("cutter.seam.grip.supportRoll","cutter-effects","SEAM: Разворот ладони","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","degrees",-90f,90f,1f,49f);
+            p.Add("cutter.seam.grip.supportYaw","cutter-effects","SEAM: Направление ладони","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","degrees",-100f,100f,1f,22f);
+            p.Add("cutter.seam.grip.supportCurl","cutter-effects","SEAM: Обхват передней рукояти","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","degrees",-30f,90f,1f,45f);
+            p.Add("cutter.seam.grip.thumbOpposition","cutter-effects","SEAM: Оппозиция большого пальца","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","degrees",-90f,90f,1f,-78f);
+            p.Add("cutter.seam.grip.supportX","cutter-effects","SEAM: Контакт X","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","rig-units",-0.8f,0.8f,0.005f,-0.11f);
+            p.Add("cutter.seam.grip.supportY","cutter-effects","SEAM: Контакт Y","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","rig-units",-0.8f,0.8f,0.005f,-0.155f);
+            p.Add("cutter.seam.grip.supportZ","cutter-effects","SEAM: Контакт Z","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","rig-units",-0.8f,0.8f,0.005f,0.415f);
+            p.Add("cutter.seam.shieldRed","cutter-effects","SEAM: щит R","Цвет локальной ряби щита.","ratio",0,2,.01f,.13f);
+            p.Add("cutter.seam.shieldGreen","cutter-effects","SEAM: щит G","Цвет локальной ряби щита.","ratio",0,2,.01f,.7f);
+            p.Add("cutter.seam.shieldBlue","cutter-effects","SEAM: щит B","Цвет локальной ряби щита.","ratio",0,2,.01f,1.3f);
+            p.Add("cutter.seam.shieldRingWidth","cutter-effects","SEAM: толщина ряби","Видимая толщина кольца щита без изменения hit volume.","m",.001f,.1f,.001f,.012f);
+            p.Add("cutter.seam.muzzleBlendDistance","cutter-effects","SEAM: согласование дула","Короткое соединение видимого сопла с authoritative лучом; контакты и дальность неизменны.","m",.1f,3,.05f,.8f);
+            p.Add("cutter.seam.sparkWidth","cutter-effects","SEAM: толщина искр","Ширина коротких контактных следов.","m",.001f,.03f,.001f,.006f);
+            p.Add("cutter.seam.contactGlow","cutter-effects","SEAM: яркость контакта","Яркость локальной точки соприкосновения.","ratio",0,5,.1f,2.5f);
             return p;
         }
     }

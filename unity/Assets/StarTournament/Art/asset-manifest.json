@@ -126,24 +126,24 @@
     {
       "key": "cutter-lod0",
       "path": "Assets/StarTournament/Art/cutter-lod0.glb",
-      "sha256": "52c72a6e3b0e706e4ecb6651e3a897a34586f72bf89d85968ca8d66a72f2ed84",
+      "sha256": "ded5f51f37cfd66c9ab2c668c4ae1c05652f4c0dd2e29d55a52a5d225e4b9f3c",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 0,
-      "source": "Original industrial Cutter direction 01; scripts/trooper/build_cutter.py; renderer-only, no collision proxy."
+      "source": "SEAM approved concept 01; scripts/trooper/seam-cutter.blend + build_cutter.py; renderer-only, no collision proxy."
     },
     {
       "key": "cutter-lod1",
       "path": "Assets/StarTournament/Art/cutter-lod1.glb",
-      "sha256": "6122e5d44c90b4d088fc0cdf949ae9be0d197a185f767d13be07baf26177fcde",
+      "sha256": "c5a8dcb9d98dcef73b5f34b61764175fc0ed8f8d0f8816a553ec54b94963fafd",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 1,
-      "source": "Original industrial Cutter direction 01; scripts/trooper/build_cutter.py; renderer-only, no collision proxy."
+      "source": "SEAM approved concept 01; scripts/trooper/seam-cutter.blend + build_cutter.py; renderer-only, no collision proxy."
     },
     {
       "key": "pulse-projectile",

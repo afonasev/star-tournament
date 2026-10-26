@@ -117,9 +117,25 @@ namespace StarTournament.ProvingGround
                         joint.rotation=Quaternion.RotateTowards(Quaternion.identity,turn,12)*joint.rotation;
                     }
         }
-        public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1)
+        ProvingProfile seamRig,seamInput,seamEquipment;
+        // Immutable match profiles: cache equipment fit without changing saved rig values.
+        ProvingProfile SeamRig(ProvingProfile rig,ProvingProfile equipment)
+        {
+            if(seamRig!=null&&ReferenceEquals(rig,seamInput)&&ReferenceEquals(equipment,seamEquipment))return seamRig;
+            seamInput=rig;seamEquipment=equipment;seamRig=rig.DetachedCopy();
+            var defaults=ProvingProfile.CreateCutterDefault();
+            foreach(string key in new[]{"supportRoll","supportYaw","supportCurl","thumbOpposition","supportX","supportY","supportZ"})
+            {
+                string path="cutter.seam.grip."+key;
+                float value=equipment!=null&&equipment.Descriptors.Any(d=>d.Path==path)?equipment.Get(path):defaults.Get(path);
+                seamRig.Set("grip.Cutter."+key,value);
+            }
+            return seamRig;
+        }
+        public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1,ProvingProfile cutter=null)
         {
             if(!wrist)return;
+            if(weapon==WeaponId.Cutter&&cutter!=null)profile=SeamRig(profile,cutter);
             foreach(var bone in sampledBones)
                 restored.Add((bone,bone.localPosition,bone.localRotation));
             string fit="grip."+weapon+".";
