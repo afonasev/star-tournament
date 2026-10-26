@@ -3,10 +3,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeCobaltGrip()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<22)return this;
+            var p=DetachedCopy();p.version=21;
+            foreach(var pair in new[]{("grip.Rifle.supportZ",.42f),("grip.Rifle.supportY",-.12f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
         internal ProvingProfile BeforeForgeGrip()
         {
             if(id!="unity-trooper-presentation-v1"||version<21)return this;
-            var p=DetachedCopy();p.version=20;
+            var p=BeforeCobaltGrip().DetachedCopy();p.version=20;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.Plasma."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.Plasma."));return p;
         }
         // Reconstruct exact @19 digit defaults/ranges for saved Lab snapshots.
@@ -207,6 +215,9 @@ namespace StarTournament.ProvingGround
         }
         internal static float SafeSwitchUpgrade(NumericDescriptor old,NumericDescriptor current,float value)
         {
+            // Untouched Rifle contacts follow the COBALT fore-end; explicit Lab tuning survives.
+            if(old.Path.StartsWith("grip.Rifle.",System.StringComparison.Ordinal))
+                return value==old.DefaultValue?current.DefaultValue:value;
             // Untouched equipment defaults adopt the revised fill in serialized scenes and Lab;
             // explicit off and other custom strengths stay unchanged. Historical snapshots are never edited.
             if(old.Path=="view.fillIntensity")return value==old.DefaultValue?current.DefaultValue:value;
@@ -540,6 +551,8 @@ namespace StarTournament.ProvingGround
                 foreach(var d in p.descriptors.Where(d=>d.Path.StartsWith("grip.Cutter.")).ToArray())
                     p.Add(d.Path.Replace("grip.Cutter.","grip.Plasma."),"plasma-grip",d.Label,"FORGE: "+d.Description,d.Unit,d.Minimum,d.Maximum,d.Step,p.Get(d.Path));
                 Fit("grip.Plasma.supportZ",.62f);Fit("grip.Plasma.supportY",-.10f);
+                p.version=22;
+                Fit("grip.Rifle.supportZ",.60f);Fit("grip.Rifle.supportY",-.15f);
             }
             return p;
         }

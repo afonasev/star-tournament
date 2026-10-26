@@ -13,6 +13,7 @@ namespace StarTournament.ProvingGround
         public float PlasmaViewScale { get; private set; }=1;
         public Vector3 PlasmaMuzzle=>plasmaMuzzle?plasmaMuzzle.position:transform.position;
         public Vector3 PulseMuzzle=>pulseMuzzle?pulseMuzzle.position:transform.position;
+        public ProvingProfile CutterGripProfile {get;private set;}
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
         public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null,GameObject plasmaPrefab=null,ProvingProfile plasmaProfile=null,GameObject plasmaLod1Prefab=null)
@@ -29,7 +30,11 @@ namespace StarTournament.ProvingGround
             {
                 if(gameObject.layer>=15)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
                 var imported=renderer.sharedMaterials;
-                for(int i=0;i<imported.Length;i++)imported[i]=RifleMaterial(imported[i]?.name);
+                // COBALT carries its authored PBR maps and distinct metal/rubber finishes.
+                // Retain legacy mapping only for historical rifle assets.
+                for(int i=0;i<imported.Length;i++)
+                    if(imported[i] && !imported[i].name.StartsWith("cobalt",System.StringComparison.Ordinal))
+                        imported[i]=RifleMaterial(imported[i].name);
                 renderer.sharedMaterials=imported;
             }
             rifleMuzzle=rifle.GetComponentsInChildren<Transform>(true).Single(x=>x.name=="rifle-muzzle");
@@ -45,7 +50,7 @@ namespace StarTournament.ProvingGround
             }
             if(cutterPrefab)
             {
-                var cp=cutterProfile??ProvingProfile.CreateCutterDefault();
+                var cp=cutterProfile??ProvingProfile.CreateCutterDefault();CutterGripProfile=cp;
                 cutter=Object.Instantiate(cutterPrefab,mount);cutter.name="cutter";
                 cutter.transform.localPosition=new Vector3(cp.Get("cutter.modelX"),cp.Get("cutter.modelY"),cp.Get("cutter.modelZ"));
                 cutter.transform.localRotation=Quaternion.Euler(cp.Get("cutter.modelPitch"),cp.Get("cutter.modelYaw"),cp.Get("cutter.modelRoll"));cutter.transform.localScale=Vector3.one*cp.Get("cutter.modelScale");

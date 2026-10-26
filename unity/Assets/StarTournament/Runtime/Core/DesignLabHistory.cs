@@ -379,6 +379,8 @@ namespace StarTournament.ProvingGround
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??4)<5)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamPresentation()).ToList()};
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgePickupsIfNeeded(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.RocketEffectsId)?.Version??3)<4)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePulseMk2()).ToList()};
@@ -391,6 +393,8 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??22)<22)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCobaltGrip()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??21)<21)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeGrip()).ToList()};
             // Reconstruct exact trusted pre-unification metadata before older additive transforms.
@@ -818,6 +822,11 @@ namespace StarTournament.ProvingGround
                 }
                 // Authoring and runtime Default share the approved radius migration.
                 // Named profiles and immutable source revisions retain their saved values.
+                // Published pre-COBALT Default contains the old scene grip values even
+                // where descriptor metadata was already newer. Retune only this reserved
+                // shipped profile; named/custom profiles and source revisions stay exact.
+                if(isDefault&&d.Path.StartsWith("grip.Rifle.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<22)
+                    value=currentDescriptor.DefaultValue;
                 if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 if(isDefault&&preserveSavedValues)value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 if(isDefault&&preserveSavedValues&&snapshot.Profile(d.Path).Version>=3&&snapshot.Profile(d.Path).Version<=4)value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);

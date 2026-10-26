@@ -74,22 +74,22 @@
     {
       "key": "rifle-lod0",
       "path": "Assets/StarTournament/Art/automatic-rifle-lod0.glb",
-      "sha256": "042456059164630b7fa4b7d37b5190a96ef3963eea297d493219bc1b743bb6c0",
+      "sha256": "1177440a5214f1644853a811f037e1c16b2c974d68274cdbec2d20f05d16f94e",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "rifle-grip",
-      "source": "Original cobalt/lime compact rifle from scripts/trooper/build_rifle.py; selected direction 02; renderer-only, no collision proxy."
+      "source": "COBALT approved concept 01, 2026-10-26; scripts/trooper/build_cobalt.py and cobalt-rifle.blend; full detail, lossless material batching, no collision"
     },
     {
       "key": "rifle-lod1",
       "path": "Assets/StarTournament/Art/automatic-rifle-lod1.glb",
-      "sha256": "831e76388bf323b83133aa3f1b1cf3eb358ee1579d24e05f0a150ccbac1266f2",
+      "sha256": "1177440a5214f1644853a811f037e1c16b2c974d68274cdbec2d20f05d16f94e",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "rifle-grip",
-      "source": "Original cobalt/lime compact rifle from scripts/trooper/build_rifle.py; selected direction 02; renderer-only, no collision proxy."
+      "source": "COBALT approved concept 01, 2026-10-26; scripts/trooper/build_cobalt.py and cobalt-rifle.blend; full detail, lossless material batching, no collision"
     },
     {
       "key": "heal-pickup",
@@ -126,24 +126,24 @@
     {
       "key": "cutter-lod0",
       "path": "Assets/StarTournament/Art/cutter-lod0.glb",
-      "sha256": "52c72a6e3b0e706e4ecb6651e3a897a34586f72bf89d85968ca8d66a72f2ed84",
+      "sha256": "ded5f51f37cfd66c9ab2c668c4ae1c05652f4c0dd2e29d55a52a5d225e4b9f3c",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 0,
-      "source": "Original industrial Cutter direction 01; scripts/trooper/build_cutter.py; renderer-only, no collision proxy."
+      "source": "SEAM approved concept 01; scripts/trooper/seam-cutter.blend + build_cutter.py; renderer-only, no collision proxy."
     },
     {
       "key": "cutter-lod1",
       "path": "Assets/StarTournament/Art/cutter-lod1.glb",
-      "sha256": "6122e5d44c90b4d088fc0cdf949ae9be0d197a185f767d13be07baf26177fcde",
+      "sha256": "c5a8dcb9d98dcef73b5f34b61764175fc0ed8f8d0f8816a553ec54b94963fafd",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 1,
-      "source": "Original industrial Cutter direction 01; scripts/trooper/build_cutter.py; renderer-only, no collision proxy."
+      "source": "SEAM approved concept 01; scripts/trooper/seam-cutter.blend + build_cutter.py; renderer-only, no collision proxy."
     },
     {
       "key": "pulse-projectile",
@@ -179,23 +179,23 @@
     {
       "key": "forge-lod0",
       "path": "Assets/StarTournament/Art/forge-plasma-lod0.glb",
-      "sha256": "462780b4561c099048bef275c64d33635d2d80b025b63b7ffde7c9e1b3fdb196",
+      "sha256": "9ce4c0f71aa604da7f6dc454bab3323a77f18267dac06ea80232d9a0119d3de6",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Original FORGE concept 01; scripts/trooper/build_forge.py; rigid material-merged mesh; no collision proxies.",
+      "source": "Detailed FORGE concept 01; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 0
     },
     {
       "key": "forge-lod1",
       "path": "Assets/StarTournament/Art/forge-plasma-lod1.glb",
-      "sha256": "67a5bd8dc82f28621b2ce612951fd36c14aa42bbbfa3c9722ef668f42492bba7",
+      "sha256": "9ce4c0f71aa604da7f6dc454bab3323a77f18267dac06ea80232d9a0119d3de6",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Original FORGE concept 01; scripts/trooper/build_forge.py; rigid material-merged mesh; no collision proxies.",
+      "source": "Detailed FORGE concept 01; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 1
     }
   ]
