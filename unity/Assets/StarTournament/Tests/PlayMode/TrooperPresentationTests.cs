@@ -119,6 +119,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 System.IO.Directory.CreateDirectory(directory);CaptureSingleView(directory,"PulseMk2",camera);CaptureGrip(directory,"RocketLauncher",visual,camera);
             }
             Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+            var actions=new LocalAction[2];actions[0].Fire=true;ground.Session.Tick(actions,.02f);ground.Session.ClearInput();ground.SendMessage("LateUpdate");
+            Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1));
+            var ignition=ground.GetComponentsInChildren<LineRenderer>().Single(r=>r.name=="Muzzle ignition");
+            Assert.That(ignition.gameObject.activeInHierarchy,Is.True);
+            if(!string.IsNullOrEmpty(directory))CaptureSingleView(directory,"PulseMk2-launch",camera);
         }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
         [UnityTest] public IEnumerator ShotgunGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Shotgun);

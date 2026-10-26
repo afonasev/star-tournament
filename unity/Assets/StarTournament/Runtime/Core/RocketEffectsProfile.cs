@@ -7,7 +7,8 @@ namespace StarTournament.ProvingGround
         {
             if(id!=RocketEffectsId||version<4)return this;
             var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
-            p.descriptors.RemoveAll(d=>d.Path.StartsWith("pulseFx.ignition"));p.values.RemoveAll(v=>v.Path.StartsWith("pulseFx.ignition"));p.version=3;return p;
+            bool Added(string path)=>path.StartsWith("pulseFx.ignition")||path=="pulseFx.surfaceFadeMeters"||path=="pulseFx.fireRadiance";
+            p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));p.version=3;return p;
         }
         public ProvingProfile BeforePulseVisibility()
         {
@@ -74,6 +75,8 @@ namespace StarTournament.ProvingGround
             p.Add("pulseFx.ignitionSeconds","rocket-effects","Pulse Mk II · вспышка запуска","Время короткой вспышки из дула по часам матча.","seconds",.02f,.4f,.01f,.09f);
             p.Add("pulseFx.ignitionSize","rocket-effects","Pulse Mk II · размер запуска","Поперечный размер огня при запуске, без изменения collision.","meters",.02f,.5f,.01f,.16f);
             p.Add("pulseFx.ignitionLength","rocket-effects","Pulse Mk II · длина запуска","Длина горячего выброса вперёд от дула.","meters",.02f,1,.01f,.32f);
+            p.Add("pulseFx.surfaceFadeMeters","rocket-effects","Pulse Mk II · мягкий контакт","Расстояние плавного затухания облака у непрозрачной поверхности; не меняет радиус урона.","meters",.01f,1,.01f,.6f);
+            p.Add("pulseFx.fireRadiance","rocket-effects","Pulse Mk II · яркость огня","Яркость горячих деталей текстуры огня; не меняет свет на окружении.","ratio",.1f,4,.1f,2);
             return p;
         }
     }

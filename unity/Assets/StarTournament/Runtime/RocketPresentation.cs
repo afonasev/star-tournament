@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.RenderGraphModule;
 
 namespace StarTournament.ProvingGround
 {
@@ -39,9 +41,28 @@ namespace StarTournament.ProvingGround
         readonly List<Burst> bursts=new List<Burst>();
         readonly List<uint> removed=new List<uint>();
         readonly HashSet<uint> liveIds=new HashSet<uint>();
-        readonly Material fireMaterial,exhaustMaterial,smokeMaterial,glowMaterial;
+        readonly Material fireMaterial,exhaustMaterial,smokeMaterial,burstSmokeMaterial,glowMaterial;
         readonly Texture2D fireTexture,exhaustTexture,smokeTexture,glowTexture;
         readonly ParticleSystem.Particle[] particles;
+        // Depth is requested only on this presentation's cameras while a burst is alive.
+        // Remember the tri-state option, including UsePipelineSettings, for exact restoration.
+        readonly Dictionary<UniversalAdditionalCameraData,CameraOverrideOption> depthOptions=new Dictionary<UniversalAdditionalCameraData,CameraOverrideOption>();
+        readonly List<UniversalAdditionalCameraData> addedCameraData=new List<UniversalAdditionalCameraData>();
+        sealed class SoftDepthInput:ScriptableRenderPass
+        {
+            // This renderer normally copies depth AFTER transparent objects. Declare
+            // Pulse's earlier read so URP schedules the copy before our billboards.
+            public SoftDepthInput(){renderPassEvent=RenderPassEvent.BeforeRenderingTransparents;ConfigureInput(ScriptableRenderPassInput.Depth);}
+            public override void RecordRenderGraph(RenderGraph graph,ContextContainer frameData){}
+            public override void Execute(ScriptableRenderContext context,ref RenderingData renderingData){}
+        }
+        readonly SoftDepthInput softDepthInput=new SoftDepthInput();
+        void BeforeCamera(ScriptableRenderContext context,Camera camera)
+        {
+            if(ActiveBursts==0)return;
+            var data=camera.GetComponent<UniversalAdditionalCameraData>();
+            if(data&&depthOptions.ContainsKey(data))data.scriptableRenderer.EnqueuePass(softDepthInput);
+        }
         public int ActiveFlights=>flights.Count;
         public int ActiveBursts {get {int n=0;foreach(var b in bursts)if(b.Active)n++;return n;}}
         public int PooledBursts=>bursts.Count;
@@ -57,19 +78,37 @@ namespace StarTournament.ProvingGround
             exhaustTexture=RequiredArt("Exhaust");
             smokeTexture=RequiredArt("Smoke");
             glowTexture=CloudTexture("Pulse hot core",false,true);
-            fireMaterial=Material(fireTexture);exhaustMaterial=Material(exhaustTexture);smokeMaterial=Material(smokeTexture);glowMaterial=Material(glowTexture);
+            fireMaterial=Material(fireTexture,true);exhaustMaterial=Material(exhaustTexture);smokeMaterial=Material(smokeTexture);burstSmokeMaterial=Material(smokeTexture,true);glowMaterial=Material(glowTexture);
             particles=new ParticleSystem.Particle[Mathf.Max(1,Mathf.Max((int)F("fireCount"),Mathf.Max((int)F("sparkCount"),Mathf.Max((int)F("smokeCount"),(int)F("trailSmokeCount")))))];
-            session.RocketExploded+=Explode;session.StateRestored+=Clear;
+            session.RocketExploded+=Explode;session.StateRestored+=Clear;RenderPipelineManager.beginCameraRendering+=BeforeCamera;
         }
         float P(string key)=>profile.Get("presentation."+key);
         float F(string key)=>effects.Get("pulseFx."+key);
         Color Hot=>new Color(P("rocketRed"),P("rocketGreen"),P("rocketBlue"));
         Color CoreColor(float alpha){var color=Color.Lerp(Color.white,Hot,F("coreWarmth"));color.a=alpha;return color;}
-        Material Material(Texture2D texture)
+        Material Material(Texture2D texture,bool soft=false)
         {
-            var shader=Shader.Find("StarTournament/VectorParticle");
+            var shader=Shader.Find(soft?"StarTournament/PulseSoftParticle":"StarTournament/VectorParticle");
             if(!shader)throw new InvalidOperationException("Pulse particle shader missing from build");
-            return new Material(shader){name=texture.name,mainTexture=texture};
+            var material=new Material(shader){name=texture.name,mainTexture=texture};
+            if(soft){material.SetFloat("_FadeDistance",F("surfaceFadeMeters"));material.SetFloat("_Radiance",texture==fireTexture?F("fireRadiance"):1);}
+            return material;
+        }
+        void UpdateDepthRequests()
+        {
+            if(ActiveBursts==0){RestoreDepthRequests();return;}
+            foreach(var camera in owner.GetComponentsInChildren<Camera>(true))
+            {
+                var data=camera.GetComponent<UniversalAdditionalCameraData>();
+                if(!data){data=camera.gameObject.AddComponent<UniversalAdditionalCameraData>();addedCameraData.Add(data);}
+                if(depthOptions.ContainsKey(data))continue;
+                depthOptions.Add(data,data.requiresDepthOption);data.requiresDepthTexture=true;
+            }
+        }
+        void RestoreDepthRequests()
+        {
+            foreach(var pair in depthOptions)if(pair.Key)pair.Key.requiresDepthOption=pair.Value;
+            depthOptions.Clear();
         }
         static Texture2D CloudTexture(string name,bool fire,bool glow)
         {
@@ -126,7 +165,7 @@ namespace StarTournament.ProvingGround
             var lightObject=new GameObject("Explosion light");lightObject.transform.SetParent(root.transform,false);b.Light=lightObject.AddComponent<Light>();b.Light.type=LightType.Point;b.Light.shadows=LightShadows.None;b.Light.renderMode=LightRenderMode.ForcePixel;b.Light.enabled=false;
             b.Core=System("Hot core",root.transform,glowMaterial,1);
             b.Sparks=System("Sparse sparks",root.transform,glowMaterial,(int)F("sparkCount"),true);
-            b.Smoke=System("Dissipating smoke",root.transform,smokeMaterial,(int)F("smokeCount"));
+            b.Smoke=System("Dissipating smoke",root.transform,burstSmokeMaterial,(int)F("smokeCount"));
             bursts.Add(b);return b;
         }
         void Explode(RocketExplosion e)
@@ -143,7 +182,7 @@ namespace StarTournament.ProvingGround
                 chosen=bursts[0];foreach(var b in bursts)if(b.Time<chosen.Time)chosen=b;
             }
             chosen.Id=e.Rocket.Id;chosen.Time=e.Time;chosen.Center=e.Position;chosen.Radius=session.RocketBlastRadius;chosen.Root.transform.position=e.Position;chosen.Light.transform.localPosition=-e.Rocket.Direction*chosen.Radius*F("lightOffsetScale");chosen.Light.enabled=false;chosen.Active=true;chosen.Root.SetActive(true);
-            DrawBurst(chosen);SelectLights();
+            DrawBurst(chosen);SelectLights();UpdateDepthRequests();
         }
         public void Launch(uint id,Vector3 offset)=>launchOffsets[id]=offset;
         public void Launch(uint id,Vector3 offset,Vector3 muzzle,Vector3 direction)
@@ -263,19 +302,22 @@ namespace StarTournament.ProvingGround
                 Set(flight.Smoke,count);
             }
             foreach(var item in ignitions)if(item.Active)DrawIgnition(item);
-            foreach(var b in bursts)if(b.Active)DrawBurst(b);SelectLights();
+            foreach(var b in bursts)if(b.Active)DrawBurst(b);SelectLights();UpdateDepthRequests();
         }
         void Clear()
         {
+            RestoreDepthRequests();
             foreach(var item in ignitions){item.Active=false;if(item.Root)item.Root.SetActive(false);}
             launchOffsets.Clear();foreach(var f in flights.Values)if(f.Root)UnityEngine.Object.Destroy(f.Root);flights.Clear();
             foreach(var b in bursts){b.Active=false;b.Light.enabled=false;if(b.Root)b.Root.SetActive(false);}
         }
         public void Dispose()
         {
+            RenderPipelineManager.beginCameraRendering-=BeforeCamera;
             session.RocketExploded-=Explode;session.StateRestored-=Clear;Clear();
             foreach(var b in bursts)if(b.Root)UnityEngine.Object.Destroy(b.Root);bursts.Clear();
-            UnityEngine.Object.Destroy(fireMaterial);UnityEngine.Object.Destroy(exhaustMaterial);UnityEngine.Object.Destroy(smokeMaterial);UnityEngine.Object.Destroy(glowMaterial);
+            UnityEngine.Object.Destroy(fireMaterial);UnityEngine.Object.Destroy(exhaustMaterial);UnityEngine.Object.Destroy(smokeMaterial);UnityEngine.Object.Destroy(burstSmokeMaterial);UnityEngine.Object.Destroy(glowMaterial);
+            foreach(var data in addedCameraData)if(data)UnityEngine.Object.Destroy(data);addedCameraData.Clear();
             foreach(var item in ignitions)if(item.Root)UnityEngine.Object.Destroy(item.Root);ignitions.Clear();
             UnityEngine.Object.Destroy(glowTexture);
         }

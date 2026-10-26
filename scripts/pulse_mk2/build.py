@@ -19,10 +19,16 @@ def material(name,color,metal,rough,texture=True):
  n=m.node_tree.nodes;p=n.get('Principled BSDF') or n.new('ShaderNodeBsdfPrincipled');out=n.get('Material Output') or n.new('ShaderNodeOutputMaterial');m.node_tree.links.new(p.outputs['BSDF'],out.inputs['Surface']);p.inputs['Base Color'].default_value=(*color,1);p.inputs['Metallic'].default_value=metal;p.inputs['Roughness'].default_value=rough
  PALETTE[name]={'baseColorFactor':[*color,1],'metallicFactor':metal,'roughnessFactor':rough}
  if texture:
-  size=512;rng=np.random.default_rng(41+len(PALETTE));noise=rng.normal(0,.015,(size,size,1));a=np.ones((size,size,4),dtype=np.float32);a[:,:,:3]=np.clip(np.array(color)[None,None,:]*(1+noise),0,1)
+  size=1024;rng=np.random.default_rng(41+len(PALETTE));noise=rng.normal(0,.028,(size,size,1));a=np.ones((size,size,4),dtype=np.float32);a[:,:,:3]=np.clip(np.array(color)[None,None,:]*(1+noise),0,1)
   # Fine authored coating/scratch tile. Subtle: large form remains primary.
-  for i in range(90):
-   x,y=rng.integers(0,size,2);length=int(rng.integers(2,16));a[y:y+1,x:min(size,x+length),:3]*=.74 if i%3 else 1.12
+  for i in range(1200):
+   x,y=rng.integers(0,size,2);length=int(rng.integers(2,24));a[y:y+1,x:min(size,x+length),:3]*=.50 if i%3 else 1.25
+  # Sparse coating chips and broad mottling remain visible in native closeups.
+  yy,xx=np.mgrid[0:size,0:size]
+  mottling=(np.sin(xx*.021+np.cos(yy*.017))*np.sin(yy*.031+xx*.004))[:,:,None]
+  a[:,:,:3]*=(1+mottling*.045)
+  for i in range(180):
+   x,y=rng.integers(0,size,2);r=int(rng.integers(1,4));a[max(0,y-r):y+1,max(0,x-r):x+r,:3]*=.45
   im=bpy.data.images.new(name+' surface',width=size,height=size,alpha=True);im.pixels.foreach_set(a.ravel());im.update();im.filepath_raw=str(TMP/(name.replace(' ','-')+'.png'));im.file_format='PNG';im.save();im.pack();TEXTURES[name]=Path(im.filepath_raw)
   t=n.new('ShaderNodeTexImage');t.image=im;m.node_tree.links.new(t.outputs['Color'],p.inputs['Base Color']);PALETTE[name]['baseColorFactor']=[1,1,1,1]
  return m
@@ -79,6 +85,12 @@ def bolt(name,pos,axis='X',r=.005):
  size=(.0035,.0012,r*1.3) if axis=='X' else (r*1.3,.0035,.0012)
  box(name+' hex recess',pos,size,BLACK,.0004)
 
+def label(text,pos,size,mat,side=1):
+ curve=bpy.data.curves.new('engraved identity','FONT');curve.body=text;curve.size=size;curve.align_x='CENTER';curve.extrude=.00005
+ o=bpy.data.objects.new('Pulse engraved '+text,curve);bpy.context.collection.objects.link(o)
+ o.matrix_world=Matrix(((0,0,side,pos[0]),(0,1,0,pos[1]),(-side,0,0,pos[2]),(0,0,0,1)))
+ curve.materials.append(mat);bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o;bpy.ops.object.convert(target='MESH')
+
 def uv_all():
  for o in list(bpy.context.scene.objects):
   if o.type!='MESH':continue
@@ -94,6 +106,18 @@ def export(name,keys):
  for o in bpy.context.scene.objects:o.matrix_world=axis@o.matrix_world
  bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE/(name+'.blend')))
  # Join only by material, lossless topology. Editable source retains named objects.
+ # Boolean cut walls may introduce another material on the same mesh. Split those
+ # first so identical black cavity faces do not survive as extra draw primitives.
+ for o in list(bpy.context.scene.objects):
+  if o.type!='MESH' or len(o.data.materials)<2:continue
+  bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o
+  bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.mesh.separate(type='MATERIAL');bpy.ops.object.mode_set(mode='OBJECT')
+ for o in list(bpy.context.scene.objects):
+  if o.type!='MESH' or not o.data.polygons:continue
+  slots={p.material_index for p in o.data.polygons}
+  if len(slots)==1:
+   mat=o.data.materials[next(iter(slots))];o.data.materials.clear();o.data.materials.append(mat)
+   for p in o.data.polygons:p.material_index=0
  for mat in list(bpy.data.materials):
   obs=[o for o in bpy.context.scene.objects if o.type=='MESH' and o.data.materials and o.data.materials[0]==mat]
   if not obs:continue
@@ -125,13 +149,16 @@ lathe('continuous graphite barrel',[(-.30,.097),(-.285,.105),(.55,.105),(.588,.1
 ring('front recessed steel bore',.591,.018,.100,STEEL)
 ring('muzzle shadow groove',.565,.012,.108,BLACK)
 for z,w in [(.505,.055),(.17,.047),(-.215,.044)]:
- ring('stepped orange collar',z,w,.123,ORANGE)
+ collar=ring('stepped orange collar',z,w,.123,ORANGE)
  ring('collar inner gasket',z-w/2-.004,.008,.115,BLACK)
  ring('collar edge lip',z+w/2-.003,.005,.124,ORANGE)
  for i in range(8):
   a=i*math.tau/8;x,y=.124*math.cos(a),.08+.124*math.sin(a)
-  o=box('collar inset', (x,y,z),(.004,.018,.027),BLACK,.0016);o.rotation_euler[2]=a
-  if i in (0,4):bolt('collar fastener',(x*1.018,y,z),r=.004)
+  # Real recessed cooling slot, with dark wall behind the rounded opening.
+  o=box('collar slot cutter',(x,y,z),(.018,.012,w*.65),BLACK,.003);o.rotation_euler[2]=a;cut(collar,o)
+  o=box('collar pocket floor',(x*.94,.08+(y-.08)*.94,z),(.003,.010,w*.66),BLACK,.002);o.rotation_euler[2]=a
+  for dz in (-w*.32,w*.32):
+   o=box('collar segment seam',(x,y,z+dz),(.001,.032,.0012),DARK,.0004);o.rotation_euler[2]=a
 # Complete continuous shells with real recessed windows cut through ceramic.
 for za,zb in [(.212,.462),(-.178,.118)]:
  sh=lathe('sculpted ceramic shell',[(za,.112),(za+.012,.121),(zb-.015,.121),(zb,.113),(zb,.107),(za,.107)],WHITE,closed=True)
@@ -152,18 +179,62 @@ for side in (-1,1):
  for i in range(5):
   box('front collar cooling inset',(side*.122,.075,.487+i*.008),(.0028,.016,.003),BLACK,.0008)
 # Rear breech sculpt with cooling recesses; consistent closed rear face.
-lathe('rear breech', [(-.312,.08),(-.30,.108),(-.25,.111),(-.246,.103)],DARK)
-ring('rear end collar',-.286,.02,.113,ORANGE)
-lathe('rear inset end cap',[(-.318,.071),(-.309,.08)],BLACK)
+lathe('rear breech', [(-.385,.083),(-.377,.102),(-.35,.107),(-.255,.108),(-.246,.103)],DARK)
+ring('rear steel end rim',-.373,.018,.109,STEEL)
+ring('rear ceramic retention band',-.347,.025,.115,WHITE)
+ring('rear end gasket',-.328,.011,.112,BLACK)
+lathe('rear inset end cap',[(-.389,.071),(-.381,.084)],BLACK)
+ring('rear cap inner ring',-.390,.008,.078,DARK)
 for s in (-1,1):
- profile('breech ceramic side',[(.02,-.27),(.14,-.27),(.178,-.235),(.165,-.13),(.13,-.10),(.016,-.135)],.012,WHITE,x=s*.103)
- box('identity recess',(s*.119,.08,-.23),(.004,.041,.018),BLACK,.002)
- box('cyan owner indicator',(s*.122,.08,-.23),(.003,.025,.007),CYAN,.002)
- for z in [-.25,-.18]:bolt('rear assembly bolt',(s*.118,.03,z),r=.004)
+ # Stepped, forked receiver plate leaves the rear graphite cylinder exposed.
+ profile('breech ceramic fork',[(.015,-.337),(.041,-.337),(.05,-.296),(.125,-.284),(.151,-.255),(.177,-.226),(.171,-.166),(.15,-.145),(.127,-.155),(.134,-.213),(.105,-.25),(.025,-.262)],.007,WHITE,x=s*.104,bevel=.003)
+ profile('breech lower structural gusset',[(.014,-.264),(.025,-.193),(-.02,-.149),(-.058,-.076),(-.047,-.023),(-.01,-.05),(.014,-.117),(.056,-.167),(.06,-.25)],.008,DARK,x=s*.080,bevel=.004)
+ box('cyan indicator recess',(s*.110,.064,-.30),(.004,.025,.026),BLACK,.003)
+ for sign in (-1,1):
+  o=box('cyan V indicator',(s*.113,.065+sign*.003,-.300+sign*.004),(.0015,.003,.012),CYAN,.001);o.rotation_euler[0]=sign*.65
+ for y,z in [(.03,-.26),(.135,-.19),(-.018,-.126)]:bolt('receiver captive pin',(s*.114,y,z),r=.004)
+ # Real socket and louvered side housing, in the rear ceramic shell.
+ poly=[(.005,-.163),(.082,-.163),(.096,-.149),(.096,-.061),(.082,-.042),(.033,-.042),(.008,-.065)]
+ profile('receiver service socket rim',poly,.004,DARK,x=s*.117,bevel=.004)
+ profile('receiver service socket inset',[(.025,-.144),(.073,-.144),(.081,-.134),(.081,-.069),(.069,-.059),(.034,-.059),(.025,-.073)],.002,STEEL,x=s*.120,bevel=.003)
+ box('receiver service dark cavity',(s*.123,.055,-.101),(.002,.032,.068),BLACK,.004)
+ box('socket inner lower ledge',(s*.125,.040,-.101),(.002,.006,.052),DARK,.0015)
+ for z in (-.132,-.07):bolt('socket screw',(s*.125,.083,z),r=.0028)
+ profile('lower removable receiver plate',[(-.022,-.15),(-.035,-.124),(-.026,-.042),(-.001,-.022),(.012,-.044),(.004,-.139)],.005,DARK,x=s*.087,bevel=.003)
+ for z in (-.123,-.09,-.057):box('lower plate cooling slot',(s*.094,-.01,z),(.003,.012,.020),BLACK,.002)
 # Low sight with a sloping base follows the body; protected rear aperture.
-profile('top sight saddle',[(.18,-.26),(.226,-.235),(.226,-.13),(.196,-.10),(.179,-.12)],.045,DARK,bevel=.006)
-box('sight aperture recess',(0,.217,-.125),(.048,.023,.009),BLACK,.003)
-box('sight ceramic cap',(0,.235,-.185),(.09,.012,.10),WHITE,.004)
+profile('top mechanism saddle',[(.177,-.23),(.202,-.23),(.212,-.19),(.209,-.035),(.189,.003),(.175,-.015)],.040,WHITE,bevel=.004)
+lathe('top mechanism cylinder',[(-.227,.024),(-.218,.030),(-.045,.030),(-.028,.023)],DARK,n=64,center=(0,.210))
+lathe('top mechanism ceramic sleeve',[(-.207,.031),(-.198,.035),(-.126,.035),(-.120,.031)],WHITE,n=64,center=(0,.210))
+for z in (-.221,-.115,-.043):lathe('upper assembly steel ring',[(z-.004,.031),(z+.004,.031)],STEEL,n=64,center=(0,.210))
+profile('upper sight rail',[(.229,-.20),(.252,-.18),(.252,-.073),(.238,-.044),(.229,-.044)],.027,DARK,bevel=.002)
+for z in (-.17,-.145,-.12,-.095):box('sight rail machining slot',(0,.252,z),(.058,.004,.008),BLACK,.0008)
+for s in (-1,1):
+ for z in (-.182,-.145):bolt('upper sleeve screw',(s*.034,.212,z),r=.004)
+
+# Sculpted shell overlaps, recessed keyways and tube retaining sleeves.
+for za,zb in [(.212,.462),(-.178,.118)]:
+ for side in (-1,1):
+  for z in (za+.03,zb-.035):
+   profile('shell recessed elongated keyway',[(.166,z-.009),(.176,z-.009),(.179,z+.014),(.174,z+.020),(.166,z+.018)],.0015,BLACK,x=side*.074,bevel=.002)
+   profile('keyway inner metal',[(.169,z-.004),(.173,z-.004),(.174,z+.011),(.170,z+.013)],.0018,STEEL,x=side*.076,bevel=.001)
+  profile('sculpted lower shell overlay',[(.023,za+.02),(.001,za+.045),(-.014,za+.082),(-.011,zb-.072),(.013,zb-.041),(.035,zb-.026),(.042,zb-.043),(.024,zb-.070),(.013,za+.085),(.030,za+.045)],.003,WHITE,x=side*.105,bevel=.002)
+  for z in (za+.07,zb-.07):bolt('overlay flush pin',(side*.110,.012,z),r=.0028)
+ # Thin sleeve details inside the exposed long window.
+ for z in (za+.045,zb-.044):ring('tube sleeve rib',z,.006,.106,DARK)
+# Front muzzle housing with real radial vents and retaining hardware.
+front=ring('muzzle outer graphite housing',.573,.036,.113,DARK)
+for i in range(8):
+ a=i*math.tau/8;x,y=.113*math.cos(a),.08+.113*math.sin(a)
+ o=box('muzzle vent cutter',(x,y,.573),(.019,.014,.019),BLACK,.003);o.rotation_euler[2]=a;cut(front,o)
+ o=box('muzzle vent floor',(x*.94,.08+(y-.08)*.94,.573),(.003,.010,.020),BLACK,.002);o.rotation_euler[2]=a
+ring('muzzle lip machined edge',.597,.007,.104,STEEL)
+for side in (-1,1):
+ # Small physical engravings on a recessed ceramic identification pad.
+ profile('receiver identity pad',[(.137,-.137),(.152,-.137),(.154,-.040),(.138,-.031)],.0012,WHITE,x=side*.098,bevel=.001)
+ label('A / PULSE MK II',(side*.101,.140,-.085),.008,DARK,side)
+ label('CAUTION  //  HOT',(side*.113,.035,.335),.004,DARK,side)
+ profile('orange collar identity delta',[(.067,.16),(.093,.16),(.080,.183)],.001,WHITE,x=side*.124,bevel=.0002)
 # Ergonomic grip profile fits the original right-hand contact frame.
 profile('rear grip structural spine',[(-.024,-.058),(-.038,.025),(-.18,.002),(-.213,-.018),(-.205,-.063),(-.17,-.073)],.029,DARK,bevel=.006)
 for s in (-1,1):
