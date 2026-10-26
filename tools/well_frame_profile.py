@@ -35,6 +35,12 @@ def reference_identity(reference, expected_source):
     assert reference['source'] == expected_source and reference['map'] == 'well-laboratory-v1'
     assert reference['status'] == 'COMPLETE_DIAGNOSTIC_NOT_ACCEPTANCE'
 
+def case_order(manifest):
+    order = tuple(manifest.get('cases', ORDER))
+    if order not in (ORDER, ('optimized',)):
+        raise ValueError('Only the complete pair or its unexecuted optimized case is permitted')
+    return order
+
 def command(app, output, reference):
     with (app/'Contents/Info.plist').open('rb') as stream:
         executable = plistlib.load(stream)['CFBundleExecutable']
@@ -60,6 +66,14 @@ def inputs(manifest):
         assert validator.inventory(Path(m[kind]['app']))['tree_sha256'] == m[kind]['tree_sha256']
     reference = json.loads(Path(m['reference']).read_text())
     reference_identity(reference, m['referenceSource'])
+    if case_order(m) == ('optimized',):
+        baseline = validator.validate(Path(m['qualifiedControl']), m['control']['source'], 'well-laboratory-v1')
+        assert baseline == reference, 'Current comparison reference must be the unchanged completed control report'
+        original = json.loads(Path(m['originalReference']).read_text())
+        for actual, previous in zip(baseline['samples'], original['samples']):
+            if actual['name'].startswith('frozen'):
+                for field in ('stateStart', 'stateEnd', 'camerasStart', 'camerasEnd'):
+                    assert actual[field] == previous[field], 'Original frozen contract changed: '+field
     return m, validator
 
 def host(pid):
@@ -109,10 +123,11 @@ def main():
     parser.add_argument('--admitted', action='store_true', help=argparse.SUPPRESS)
     args = parser.parse_args()
     m, validator = inputs(args.manifest)
+    order = case_order(m)
     if args.operation == 'verify':
         assert not args.admitted
         print(json.dumps({'PlayerLaunched': False, 'retainedArtifactsVerified': True,
-                          'cases': ORDER, 'requestedWindowSeconds': 360,
+                          'cases': order, 'requestedWindowSeconds': m.get('requestedWindowSeconds', 360),
                           'freeBytes': shutil.disk_usage('/System/Volumes/Data').free}))
         return 0
     assert args.output and args.output.is_absolute() and not args.output.exists()
@@ -120,11 +135,11 @@ def main():
     date = datetime.datetime.fromisoformat(args.deadline.replace('Z', '+00:00'))
     assert date.tzinfo is not None, 'Timezone-aware deadline required'
     deadline = date.timestamp()
-    if not permitted(time.time(), deadline, len(ORDER), shutil.disk_usage('/System/Volumes/Data').free):
+    if not permitted(time.time(), deadline, len(order), shutil.disk_usage('/System/Volumes/Data').free):
         print('NotRun: complete scenario budget or storage headroom')
         return 75
     if not args.admitted:
-        wait = deadline-time.time()-len(ORDER)*PER_CASE
+        wait = deadline-time.time()-len(order)*PER_CASE
         cmd = [str(REAL), '--exclusive', '--timeout', str(wait), '--', sys.executable, '-B',
                str(Path(__file__).resolve()), 'run', '--admitted', '--manifest', str(args.manifest),
                '--output', str(args.output), '--deadline', args.deadline, '--human-source', args.human_source]
@@ -137,8 +152,8 @@ def main():
     def save():
         (args.output/'scenario.json').write_text(json.dumps(journal, indent=2))
     save()
-    for number, kind in enumerate(ORDER):
-        if not permitted(time.time(), deadline, len(ORDER)-number, shutil.disk_usage('/System/Volumes/Data').free):
+    for number, kind in enumerate(order):
+        if not permitted(time.time(), deadline, len(order)-number, shutil.disk_usage('/System/Volumes/Data').free):
             journal['status'] = 'NotRun_REMAINING_BUDGET_OR_STORAGE'; save(); return 75
         output = args.output/kind
         output.mkdir()

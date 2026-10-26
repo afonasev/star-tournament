@@ -33,6 +33,12 @@ class ProfileRunnerTests(unittest.TestCase):
             changed=dict(reference);changed[field]=value
             with self.assertRaises(AssertionError):runner.reference_identity(changed,'original-control')
 
+    def test_resume_only_unexecuted_optimized_case(self):
+        self.assertEqual(runner.case_order({}),('control','optimized'))
+        self.assertEqual(runner.case_order({'cases':['optimized']}),('optimized',))
+        for order in [[],['control'],['optimized','control'],['control','control'],['optimized','optimized']]:
+            with self.assertRaises(ValueError):runner.case_order({'cases':order})
+
     def test_immutable_player_command_silent_and_exact_profile_reference(self):
         with tempfile.TemporaryDirectory() as d:
             app = Path(d)/'old QA.app';(app/'Contents').mkdir(parents=True)
