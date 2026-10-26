@@ -34,9 +34,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 pads[seat]=InputSystem.AddDevice<Gamepad>();Assert.That(input.Assign(seat,pads[seat]),Is.True);
                 yield return null;
-                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();yield return null;
-                ground.GetComponentsInChildren<Button>().Single(b=>b.name=="lobby-profile-none").onClick.Invoke();yield return null;
-                Button("roster-done").onClick.Invoke();yield return null;
+                // This fixture tests pause/settings, not the former roster editor.
+                // Author the same guest identity directly; keep the original settle frames.
+                NativeSetupFixture.GuestIdentity(ground,seat,pads[seat]);yield return null;
+                yield return null;
+                yield return null;
             }
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);

@@ -170,7 +170,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             pads[0]=InputSystem.AddDevice<Gamepad>();
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
-            Assert.That(ground.LocalSeatCount,Is.EqualTo(1));ground.RemoveBot(0);
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(1));
+            while(ground.SetupBotCount>0)ground.RemoveBot(0);
             Assert.That(ground.Running,Is.False);
             var next=ground.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name=="setup-next");
             next.onClick.Invoke();next.onClick.Invoke();
