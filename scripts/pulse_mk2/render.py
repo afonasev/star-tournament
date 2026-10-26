@@ -20,5 +20,5 @@ bpy.ops.object.camera_add(location=(1.15,-1.10,.55) if not projectile else (1.4,
 # matte floor for shape contact, never part of export
 bpy.ops.mesh.primitive_plane_add(size=200,location=(0,0,-.23 if not projectile else -.36));floor=bpy.context.object
 m=bpy.data.materials.new('studio neutral');m.diffuse_color=(.075,.08,.09,1);m.use_nodes=True;n=m.node_tree.nodes;p=n.get('Principled BSDF') or n.new('ShaderNodeBsdfPrincipled');out=n.get('Material Output') or n.new('ShaderNodeOutputMaterial');m.node_tree.links.new(p.outputs['BSDF'],out.inputs['Surface']);p.inputs['Base Color'].default_value=(.075,.08,.09,1);p.inputs['Roughness'].default_value=.8;floor.data.materials.append(m)
-for name,loc in [('hero',camera.location.copy()),('opposite',Vector((-1.15,.9,.45)))]:
+for name,loc in [('hero',camera.location.copy()),('opposite',Vector((-1.15,.9,.45))),('side',Vector((1.8,-.15,.12)))]:
  camera.location=loc;aim(camera,target);scene.render.filepath=str(OUT/(('projectile-' if projectile else 'launcher-')+name+'.png'));bpy.ops.render.render(write_still=True)

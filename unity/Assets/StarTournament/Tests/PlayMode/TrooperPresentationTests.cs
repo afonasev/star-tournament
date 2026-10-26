@@ -104,11 +104,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator PulseMk2StaticGripReview()
         {
             yield return Load(2);
+            // The async Lab validation uses JsonUtility; finish it before this short scene witness can tear down the Editor.
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Assert.That(ground.CombatReviewDiagnostic(),Does.Contain("phase=Running"),"Native review must enter the match before selecting a weapon");
             typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
             var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
             var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
             foreach(var descriptor in ProvingProfile.CreateTrooperDefault().Descriptors)visual.Tuning.Set(descriptor.Path,descriptor.DefaultValue);
-            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-10,0,14),12,90);
             for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
             var snapshot=ground.Session.Capture();snapshot.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].RocketAmmo=20;snapshot.Lives[0].Ammo=20;snapshot.Lives[0].SwitchRemaining=0;
             ground.Session.Restore(snapshot);visual.ResetPose(snapshot.Time);ground.SendMessage("LateUpdate");yield return null;
@@ -117,7 +120,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_PULSE_EVIDENCE");
             if(!string.IsNullOrEmpty(directory))
             {
-                System.IO.Directory.CreateDirectory(directory);CaptureSingleView(directory,"PulseMk2",camera);CaptureGrip(directory,"RocketLauncher",visual,camera);
+                System.IO.Directory.CreateDirectory(directory);CaptureSingleView(directory,"PulseMk2-initial-upload",camera);CaptureGrip(directory,"RocketLauncher",visual,camera);
+                // Allow queued texture uploads and temporary review objects to finish before the final seat frame.
+                yield return null;ground.SendMessage("LateUpdate");CaptureSingleView(directory,"PulseMk2",camera);
             }
             Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
             var actions=new LocalAction[2];actions[0].Fire=true;ground.Session.Tick(actions,.02f);ground.Session.ClearInput();ground.SendMessage("LateUpdate");
@@ -125,6 +130,39 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var ignition=ground.GetComponentsInChildren<LineRenderer>().Single(r=>r.name=="Muzzle ignition");
             Assert.That(ignition.gameObject.activeInHierarchy,Is.True);
             if(!string.IsNullOrEmpty(directory))CaptureSingleView(directory,"PulseMk2-launch",camera);
+            if(!string.IsNullOrEmpty(directory))
+            {
+                // Native arena witness: actual session rocket and collision, no replacement backdrop.
+                var shot=ground.Session.Rockets.Single();var side=Vector3.Cross(Vector3.up,shot.Direction).normalized;
+                var reviewGo=new GameObject("Pulse arena projectile review");reviewGo.transform.SetParent(ground.transform);
+                var review=reviewGo.AddComponent<Camera>();review.CopyFrom(camera);review.enabled=false;review.rect=new Rect(0,0,1,1);review.nearClipPlane=.01f;review.fieldOfView=45;
+                // Match the world camera while omitting all first-person-only layers.
+                review.cullingMask&=~((1<<15)|(1<<16)|(1<<17)|(1<<18));
+                Vector3 contact=Vector3.zero;bool contacted=false;
+                System.Action<RocketExplosion> onContact=e=>{contact=e.Position;contacted=true;};
+                ground.Session.RocketExploded+=onContact;
+                try
+                {
+                    for(int tick=0;tick<8;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1),"Review needs a real unobstructed flight before contact");
+                    shot=ground.Session.Rockets.Single();
+                    review.transform.position=shot.Position+side*.70f+Vector3.up*.12f-shot.Direction*.08f;
+                    review.transform.LookAt(shot.Position-shot.Direction*.10f);
+                    CaptureSingleView(directory,"PulseMk2-projectile-arena",review,1800,1100);
+                    review.transform.position=shot.Position+side*3+Vector3.up*1.1f-shot.Direction*1.2f;review.transform.LookAt(shot.Position);
+                    CaptureSingleView(directory,"PulseMk2-flight-arena",review,1800,1100);
+                    for(int tick=0;tick<250&&!contacted;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    Assert.That(contacted,Is.True,"One fired rocket must hit the authored arena");
+                    yield return null; // Destroyed flight renderers must leave the actual impact frame.
+                    review.transform.position=contact-shot.Direction*5+side*2.2f+Vector3.up*1.8f;review.transform.LookAt(contact+Vector3.up*.35f);
+                    for(int tick=0;tick<6;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    CaptureSingleView(directory,"PulseMk2-impact-arena",review,1800,1100);
+                    for(int tick=0;tick<18;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    CaptureSingleView(directory,"PulseMk2-smoke-arena",review,1800,1100);
+                    System.IO.File.WriteAllText(System.IO.Path.Combine(directory,"arena-witness.txt"),"Map="+ground.SelectedMapId+". " +"Actual native fired rocket; collision event at "+contact+". No arena renderer hidden. No replacement plane. Session ticks fixed .02 s. Visual witness, not performance/device acceptance.");
+                }
+                finally{ground.Session.RocketExploded-=onContact;Object.Destroy(reviewGo);}
+            }
         }
         [UnityTest] public IEnumerator CobaltRifleRetainsAuthoredSurfacesAndNativeGrip()
         {

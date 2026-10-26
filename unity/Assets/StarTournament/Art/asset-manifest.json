@@ -104,7 +104,7 @@
     {
       "key": "pulse-lod0",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod0.glb",
-      "sha256": "fffc793b43063b72d0b07d92a504a87f34ddcf82da5e612f10bfe25362886304",
+      "sha256": "cb5de14b57eb64db5cabe659fec4af1a14942492a113723d0af6a8d5e8fe2f81",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -115,7 +115,7 @@
     {
       "key": "pulse-lod1",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod1.glb",
-      "sha256": "fffc793b43063b72d0b07d92a504a87f34ddcf82da5e612f10bfe25362886304",
+      "sha256": "cb5de14b57eb64db5cabe659fec4af1a14942492a113723d0af6a8d5e8fe2f81",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -148,7 +148,7 @@
     {
       "key": "pulse-projectile",
       "path": "Assets/StarTournament/Art/pulse-projectile.glb",
-      "sha256": "142e8f2699a6a57f9e1891d049a3a326cb82b3acdc4696d77f0a33333d0bbd48",
+      "sha256": "4e208a6e8c5ca2563b544aa96ff5140854582c8621dee7aed42069256301bee4",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
