@@ -45,11 +45,30 @@ namespace StarTournament.ProvingGround
         [Serializable] sealed class CameraSet{public CameraInfo[] items;}
         [Serializable] sealed class CameraInfo{public string name;public Vector3 position,euler;public Rect viewport;public float fov,near,far;public bool postProcessing;public int antialiasing;}
         [Serializable] sealed class MeshInfo{public string renderer,mesh,material;public int vertices;public long indices,bytes;public bool readable;public Vector3 bounds;}
+        [Serializable] public sealed class AssetScope
+        {
+            public long inclusiveOwnerMeshBytes,unreferencedOwnerMeshBytes,loadedMaterialBytes,loadedTextureBytes;
+            public int inclusiveOwnerMeshCount,unreferencedOwnerMeshCount,loadedTextureCount;
+        }
+        // Values only escape this call: no retained Unity asset references, mutation or lifetime changes.
+        public static AssetScope ReadAssetScope(Transform arena)
+        {
+            var inclusive=ArenaMeshResidency.ReadInclusiveOwnedMeshes(arena);
+            var unused=ArenaMeshResidency.ReadUnreferencedOwnedMeshes(arena);
+            var materials=Resources.FindObjectsOfTypeAll<Material>();var textures=Resources.FindObjectsOfTypeAll<Texture>();
+            return new AssetScope{inclusiveOwnerMeshCount=inclusive.Length,inclusiveOwnerMeshBytes=inclusive.Sum(m=>Profiler.GetRuntimeMemorySizeLong(m)),unreferencedOwnerMeshCount=unused.Length,unreferencedOwnerMeshBytes=unused.Sum(m=>Profiler.GetRuntimeMemorySizeLong(m)),loadedMaterialBytes=materials.Sum(m=>Profiler.GetRuntimeMemorySizeLong(m)),loadedTextureCount=textures.Length,loadedTextureBytes=textures.Sum(t=>Profiler.GetRuntimeMemorySizeLong(t))};
+        }
+        [Serializable] public sealed class PresentationClock
+        {
+            public double realtime,scaled,unscaled;public int frame;
+        }
+        static PresentationClock ReadClock()=>new PresentationClock{realtime=Time.realtimeSinceStartupAsDouble,scaled=Time.timeAsDouble,unscaled=Time.unscaledTimeAsDouble,frame=Time.frameCount};
         [Serializable] sealed class Sample
         {
             public string name,status="DIAGNOSTIC_NOT_ACCEPTANCE",stateStart,stateEnd,referenceState,actualMap,visualStart,visualEnd,gpuStatus="NotRun",cpuStatus="NotRun";
             public int views,width,height,quality,aa,vsync,frameCap,unfocusedFrames,nonRunningFrames;public string qualityName,shadows;public float renderScale;public double simulationStart,simulationEnd;
             public NativeCompositionSnapshot composition;public float shadowDistance;public int shadowCascades;public string pipelineSettings;public CameraInfo[] camerasStart,camerasEnd;public long allocated,reserved,mono,workingSet,meshBytes;public int meshCount,materialCount;
+            public AssetScope assetScope;public PresentationClock presentationStart,presentationEnd;
             public Distribution frameMs,cpuMs,gpuMs;public string[] counterNames;public bool[] counterAvailable;public Distribution[] counters;public List<MeshInfo> meshes=new List<MeshInfo>();
         }
         [Serializable] sealed class Report
@@ -100,7 +119,7 @@ namespace StarTournament.ProvingGround
             double warm=Time.realtimeSinceStartupAsDouble+5;while(Time.realtimeSinceStartupAsDouble<warm){FrameTimingManager.CaptureFrameTimings();yield return null;}
             var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             if(background&&Application.isFocused)throw new InvalidOperationException("QA Player did not enter background focus condition");
-            var sample=new Sample{actualMap=ground.CameraReviewArena.Definition.Identity,referenceState=expected,visualStart=Visuals(),composition=ground.Composition.Read(),shadowDistance=QualitySettings.shadowDistance,shadowCascades=QualitySettings.shadowCascades,pipelineSettings=pipeline?JsonUtility.ToJson(pipeline):"none",name=name,views=views,width=Screen.width,height=Screen.height,quality=QualitySettings.GetQualityLevel(),qualityName=QualitySettings.names[QualitySettings.GetQualityLevel()],aa=QualitySettings.antiAliasing,shadows=QualitySettings.shadows.ToString(),vsync=QualitySettings.vSyncCount,frameCap=Application.targetFrameRate,renderScale=pipeline?pipeline.renderScale:1,stateStart=JsonUtility.ToJson(ground.Session.Capture()),simulationStart=ground.Session.Time,camerasStart=Cameras(),counterNames=Names,counterAvailable=recorders.Select(r=>r.Valid).ToArray()};
+            var sample=new Sample{presentationStart=ReadClock(),actualMap=ground.CameraReviewArena.Definition.Identity,referenceState=expected,visualStart=Visuals(),composition=ground.Composition.Read(),shadowDistance=QualitySettings.shadowDistance,shadowCascades=QualitySettings.shadowCascades,pipelineSettings=pipeline?JsonUtility.ToJson(pipeline):"none",name=name,views=views,width=Screen.width,height=Screen.height,quality=QualitySettings.GetQualityLevel(),qualityName=QualitySettings.names[QualitySettings.GetQualityLevel()],aa=QualitySettings.antiAliasing,shadows=QualitySettings.shadows.ToString(),vsync=QualitySettings.vSyncCount,frameCap=Application.targetFrameRate,renderScale=pipeline?pipeline.renderScale:1,stateStart=JsonUtility.ToJson(ground.Session.Capture()),simulationStart=ground.Session.Time,camerasStart=Cameras(),counterNames=Names,counterAvailable=recorders.Select(r=>r.Valid).ToArray()};
             if(!live&&(sample.stateStart!=expected||!MotorsMatch()))throw new InvalidOperationException("Restored state/physics transform mismatch");
             if(referenceSample!=null&&JsonUtility.ToJson(new CameraSet{items=sample.camerasStart})!=JsonUtility.ToJson(new CameraSet{items=referenceSample.camerasStart}))throw new InvalidOperationException("Restored camera mismatch");
             var frame=new List<double>();var cpu=new List<double>();var gpu=new List<double>();var counters=Names.Select(_=>new List<double>()).ToArray();
@@ -115,8 +134,9 @@ namespace StarTournament.ProvingGround
                 if(!Application.isFocused)sample.unfocusedFrames++;if(!ground.Running)sample.nonRunningFrames++;
                 focusedRows.Add(Application.isFocused);runningRows.Add(ground.Running);timestamps.Add(fresh?timestamp:0);
             }
-            sample.frameMs=new Distribution(frame);sample.cpuMs=new Distribution(cpu);sample.gpuMs=new Distribution(gpu);sample.cpuStatus=cpu.Count>0?"AVAILABLE":"NotRun";sample.gpuStatus=gpu.Count>0?"AVAILABLE":"NotRun";sample.counters=counters.Select(v=>new Distribution(v)).ToArray();sample.simulationEnd=ground.Session.Time;sample.stateEnd=JsonUtility.ToJson(ground.Session.Capture());sample.camerasEnd=Cameras();sample.visualEnd=Visuals();
+            sample.presentationEnd=ReadClock();sample.frameMs=new Distribution(frame);sample.cpuMs=new Distribution(cpu);sample.gpuMs=new Distribution(gpu);sample.cpuStatus=cpu.Count>0?"AVAILABLE":"NotRun";sample.gpuStatus=gpu.Count>0?"AVAILABLE":"NotRun";sample.counters=counters.Select(v=>new Distribution(v)).ToArray();sample.simulationEnd=ground.Session.Time;sample.stateEnd=JsonUtility.ToJson(ground.Session.Capture());sample.camerasEnd=Cameras();sample.visualEnd=Visuals();
             sample.allocated=Profiler.GetTotalAllocatedMemoryLong();sample.reserved=Profiler.GetTotalReservedMemoryLong();sample.mono=Profiler.GetMonoUsedSizeLong();sample.workingSet=System.Diagnostics.Process.GetCurrentProcess().WorkingSet64;
+            sample.assetScope=ReadAssetScope(ground.CameraReviewArena.transform);
             var meshes=Resources.FindObjectsOfTypeAll<Mesh>();sample.meshCount=meshes.Length;sample.meshBytes=meshes.Sum(m=>Profiler.GetRuntimeMemorySizeLong(m));sample.materialCount=Resources.FindObjectsOfTypeAll<Material>().Length;
             foreach(var r in ground.CameraReviewArena.GetComponentsInChildren<MeshRenderer>()){var m=r.GetComponent<MeshFilter>()?.sharedMesh;if(!m)continue;sample.meshes.Add(new MeshInfo{renderer=r.name,mesh=m.name,material=string.Join(";",r.sharedMaterials.Select(x=>x?x.name:"null")),vertices=m.vertexCount,indices=Enumerable.Range(0,m.subMeshCount).Sum(i=>(long)m.GetIndexCount(i)),bytes=Profiler.GetRuntimeMemorySizeLong(m),readable=m.isReadable,bounds=r.bounds.size});}
             if(frame.Count==0||(background&&sample.unfocusedFrames!=frame.Count)||sample.nonRunningFrames>0||sample.camerasStart.Length!=views||sample.width!=1920||sample.height!=1080||(!live&&(sample.simulationEnd!=sample.simulationStart||sample.stateEnd!=expected||!MotorsMatch()))||(live&&sample.simulationEnd<=sample.simulationStart))sample.status="FAIL_CONTRACT";
