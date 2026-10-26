@@ -1,4 +1,4 @@
-"""FORGE concept 01, detailed authored source. Blender --background --python this_file.
+"""FORGE concept 01 with F3 asymmetric FPS housing. Blender --background --python this_file.
 All coordinates authored Y-up / Z-forward, grip origin; source retains separate parts.
 Export batches rigid geometry by material WITHOUT reducing geometry or detail.
 """
@@ -10,6 +10,7 @@ ART=ROOT/'unity/Assets/StarTournament/Art'
 OUT=ROOT/'.local/forge';OUT.mkdir(parents=True,exist_ok=True)
 SOURCE=ROOT/'assets/source/forge';SOURCE.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.context.preferences.filepaths.save_version=0
 random.seed(31)
 palette={}
 
@@ -130,19 +131,29 @@ def text_mark(text,pos,size,side=1):
 panel('continuous dark chassis',0,.21,[(-.37,-.03),(-.38,.17),(-.28,.25),(-.12,.28),(.29,.27),(.41,.20),(.42,-.04),(.29,-.105),(-.17,-.105),(-.30,-.08)],dark,.012)
 # Expose both cylinders by replacing the center with slender structural rails; center chassis only at rear.
 bpy.data.objects.remove(bpy.data.objects['continuous dark chassis'],do_unlink=True)
-panel('forged rear receiver',0,.225,[(-.37,-.03),(-.39,.16),(-.30,.25),(-.17,.26),(-.105,.19),(-.10,-.08),(-.28,-.105)],dark,.012)
+panel('forged rear receiver',-.042,.132,[(-.37,-.03),(-.39,.075),(-.30,.12),(-.17,.18),(-.105,.19),(-.10,-.08),(-.28,-.105)],dark,.012)
 panel('lower sculpted spine',0,.19,[(-.31,-.035),(.36,-.035),(.41,-.07),(.30,-.13),(.03,-.14),(-.21,-.11)],dark,.008)
-panel('upper sculpted spine',0,.13,[(-.35,.23),(-.25,.295),(.27,.295),(.37,.24),(.25,.23),(-.12,.25)],dark,.008)
+panel('upper sculpted spine',-.057,.067,[(-.35,.11),(-.25,.20),(-.12,.277),(.27,.295),(.37,.24),(.25,.23),(-.12,.236),(-.26,.15)],dark,.008)
 # Two protected plasma chambers, layered end seals, silver ferrules, bronze coil ribs.
-for y in (.035,.185):
- ring('plasma chamber',.055,.061,.001,.34,green,y)
- for z in (-.133,.245):
+for y,x,back,front in ((.035,0,-.133,.245),(.215,.067,-.285,.245)):
+ chamber_parts=set(bpy.context.scene.objects)
+ ring('plasma chamber',(back+front)/2,.061,.001,front-back-.038,green,y)
+ for z in (back,front):
   ring('capsule rubber seal',z,.071,.058,.025,black,y)
   ring('capsule titanium coupling',z+.014,.078,.06,.025,steel,y)
   ring('capsule shoulder',z-.015,.08,.061,.019,dark,y)
   for dz in (-.021,-.012,0):ring('induction winding',z+dz,.0805,.075,.0028,copper,y,n=64)
  for side in (-1,1):
-  wire('capsule protective rail',[(side*.055,y+.047,-.11),(side*.067,y+.048,.02),(side*.067,y+.048,.15),(side*.055,y+.047,.22)],.0055,steel)
+  wire('capsule protective rail',[(side*.055,y+.047,back+.025),(side*.067,y+.048,back+.10),(side*.067,y+.048,front-.10),(side*.055,y+.047,front-.025)],.0055,steel)
+ for o in set(bpy.context.scene.objects)-chamber_parts:o.location.x+=x
+ if x:
+  # Sealed rear terminal, not a second muzzle. Exposes the chamber from the eye camera.
+  ring('upper capsule terminal',back-.027,.070,.001,.015,dark,y,x)
+  ring('upper capsule terminal rim',back-.037,.061,.050,.009,steel,y,x)
+  for dx in (-.017,.0,.017):box('upper capsule charge strip',(x+dx,y,back-.043),(.005,.030,.003),led,.001)
+  for z in (-.19,.02,.17):
+   # Sparse split ribs leave a broad window instead of hiding the energy behind armor.
+   wire('upper split ceramic rib',[(x-.052,y+.053,z),(x-.025,y+.073,z),(x+.025,y+.073,z),(x+.049,y+.058,z)],.008,ivory)
 # Segmented contoured shells. Negative space shows the capsules; panel silhouette matches concept 01.
 for side in (-1,1):
  x=side*.128
@@ -150,7 +161,8 @@ for side in (-1,1):
  panel('rear ceramic shell',x+side*.015,.034,[(-.365,.04),(-.335,.215),(-.248,.266),(-.15,.235),(-.128,.173),(-.14,-.018),(-.225,-.085),(-.325,-.054)],ivory,.006)
  panel('front armor gasket',side*.139,.045,[(.20,-.08),(.18,.02),(.205,.23),(.255,.292),(.335,.265),(.388,.18),(.39,.025),(.34,-.095),(.25,-.13)],black,.008)
  panel('front ceramic collar',side*.155,.038,[(.222,-.055),(.207,.025),(.23,.225),(.267,.27),(.321,.246),(.367,.17),(.369,.03),(.325,-.073),(.255,-.105)],ivory,.005)
- panel('capsule bridge armor',side*.084,.037,[(-.20,.28),(-.13,.315),(.16,.315),(.245,.275),(.195,.265),(-.12,.285)],ivory,.006)
+ if side<0:
+  panel('capsule bridge armor',side*.084,.037,[(-.20,.245),(-.13,.295),(.16,.315),(.245,.275),(.195,.265),(-.12,.265)],ivory,.006)
  panel('lower ceramic keel',side*.10,.026,[(-.10,-.125),(.15,-.145),(.24,-.113),(.18,-.09),(-.065,-.087)],ivory,.004)
  # Recessed rear service module, segmented cooling vanes and visible inset hardware.
  panel('service recess',side*.166,.012,[(-.317,.015),(-.316,.16),(-.266,.192),(-.18,.16),(-.18,.015),(-.24,-.035)],dark,.005)
@@ -180,16 +192,30 @@ for side in (-1,1):
  # Segmented muzzle adapter fins, each visibly independent.
  for z in (.365,.388,.411):
   panel('front heat fin',side*.125,.024,[(z,.24),(z+.012,.215),(z+.012,-.015),(z,-.04)],steel,.001)
-# Top identity spine and detailed rear cap, shaped to be worth seeing in FPS.
-for z in (-.23,-.10,.03,.16):
- box('top ceramic segment',(0,.309,z),(.125,.025,.105),ivory,.006)
- box('top inset slot',(0,.324,z),(.067,.004,.064),dark,.002)
- for x in (-.047,.047):box('machined spine bevel',(x,.326,z),(.008,.004,.082),steel,.001)
-box('rear inset gasket',(0,.10,-.389),(.186,.21,.024),black,.014)
-box('rear inset frame',(0,.10,-.407),(.154,.171,.021),steel,.012)
-box('rear service lid',(0,.10,-.42),(.13,.148,.016),dark,.010)
-for x in (-.036,0,.036):box('rear green diagnostics',(x,.136,-.43),(.012,.034,.005),led,.002)
-for y in (.055,.07,.085):box('rear recessed vents',(0,y,-.43),(.079,.005,.005),black,.001)
+# The F3 rear is a lowered wedge with its top spine offset away from the eye.
+# Preserve side-panel identity, but lower the rear shoulders to reveal the near capsule.
+rear_names=('rear armor gasket','rear ceramic shell','service recess','radiator channel','radiator fin','status bezel','status green bar')
+for o in list(bpy.context.scene.objects):
+ if any(o.name.startswith(n) for n in rear_names) or (abs(o.location.x)>.155 and o.location.z<-.12):
+  for v in o.data.vertices:
+   world=o.matrix_world@v.co
+   drop=max(0,min(1,(-world.z-.12)/.25))*.075
+   world.y-=drop;v.co=o.matrix_world.inverted()@world
+for z,y in ((-.23,.205),(-.10,.286),(.03,.309),(.16,.309)):
+ o=box('top ceramic segment',(-.057,y,z),(.072,.021,.098),ivory,.005)
+ if z<-.15:o.rotation_euler.x=-.50
+ box('top inset slot',(-.057,y+.012,z),(.032,.004,.060),dark,.002)
+ for x in (-.081,-.033):box('machined spine bevel',(x,y+.014,z),(.005,.004,.075),steel,.001)
+panel('rear sloping ceramic cover',-.043,.102,[(-.411,.067),(-.35,.13),(-.27,.17),(-.235,.15),(-.345,.095),(-.403,.037)],ivory,.005)
+box('rear inset gasket',(-.046,.024,-.389),(.122,.126,.024),black,.010)
+box('rear inset frame',(-.046,.024,-.407),(.100,.108,.021),steel,.009)
+box('rear service lid',(-.046,.024,-.42),(.080,.089,.016),dark,.007)
+for x in (-.068,-.046,-.024):box('rear green diagnostics',(x,.044,-.43),(.007,.022,.005),led,.0015)
+for y in (-.006,.005,.016):box('rear recessed vents',(-.046,y,-.43),(.048,.004,.005),black,.001)
+wire('upper armored power cable',[(-.027,.085,-.382),(-.018,.155,-.30),(-.025,.216,-.23),(-.026,.258,-.15),(-.026,.286,-.07)],.009,black)
+for z,y in ((-.345,.125),(-.26,.19),(-.17,.25)):
+ box('cable retention clasp',(-.022,y,z),(.026,.014,.019),steel,.002)
+ box('cable index stripe',(-.022,y+.008,z),(.015,.002,.007),led,.0005)
 # Deep concentric emitter. Recess is physically open, focus small and well inside muzzle.
 ring('emitter rear body',.405,.174,.118,.12,dark)
 ring('emitter ceramic armor',.457,.184,.142,.075,ivory)
@@ -270,7 +296,7 @@ for lod in (0,1):
 manifest=ART/'asset-manifest.json';doc=json.loads(manifest.read_text())
 for entry in doc['entries']:
  if entry['key'] in ('forge-lod0','forge-lod1'):
-  path=ART/f"forge-plasma-lod{entry['lod']}.glb";entry['sha256']=hashlib.sha256(path.read_bytes()).hexdigest();entry['source']='Detailed FORGE concept 01; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.'
+  path=ART/f"forge-plasma-lod{entry['lod']}.glb";entry['sha256']=hashlib.sha256(path.read_bytes()).hexdigest();entry['source']='Detailed FORGE concept 01 + F3 asymmetric FPS housing; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.'
 manifest.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+'\n')
 report={'triangles_before':triangles,'triangles_after':sum(len(p.vertices)-2 for o in bpy.context.scene.objects if o.type=='MESH' for p in o.data.polygons),'renderers_before':before,'renderers_after':len(groups),'materials':len(groups),'textures':3,'texture_size':512,'lod_policy':'both full detail; decimation explicitly deferred','geometry_preserved':True}
 (OUT/'asset-metrics.json').write_text(json.dumps(report,indent=2));print(report)

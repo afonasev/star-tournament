@@ -104,7 +104,7 @@
     {
       "key": "pulse-lod0",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod0.glb",
-      "sha256": "fffc793b43063b72d0b07d92a504a87f34ddcf82da5e612f10bfe25362886304",
+      "sha256": "cb5de14b57eb64db5cabe659fec4af1a14942492a113723d0af6a8d5e8fe2f81",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -115,7 +115,7 @@
     {
       "key": "pulse-lod1",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod1.glb",
-      "sha256": "fffc793b43063b72d0b07d92a504a87f34ddcf82da5e612f10bfe25362886304",
+      "sha256": "cb5de14b57eb64db5cabe659fec4af1a14942492a113723d0af6a8d5e8fe2f81",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -126,29 +126,29 @@
     {
       "key": "cutter-lod0",
       "path": "Assets/StarTournament/Art/cutter-lod0.glb",
-      "sha256": "ded5f51f37cfd66c9ab2c668c4ae1c05652f4c0dd2e29d55a52a5d225e4b9f3c",
+      "sha256": "60ae9330995f68fbe99e333e9bb1a3f18cf51148e4a8519cf2aa8b33ef48afda",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 0,
-      "source": "SEAM approved concept 01; scripts/trooper/seam-cutter.blend + build_cutter.py; renderer-only, no collision proxy."
+      "source": "SEAM concept-fidelity rework; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy."
     },
     {
       "key": "cutter-lod1",
       "path": "Assets/StarTournament/Art/cutter-lod1.glb",
-      "sha256": "c5a8dcb9d98dcef73b5f34b61764175fc0ed8f8d0f8816a553ec54b94963fafd",
+      "sha256": "60ae9330995f68fbe99e333e9bb1a3f18cf51148e4a8519cf2aa8b33ef48afda",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 1,
-      "source": "SEAM approved concept 01; scripts/trooper/seam-cutter.blend + build_cutter.py; renderer-only, no collision proxy."
+      "source": "SEAM concept-fidelity rework; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy."
     },
     {
       "key": "pulse-projectile",
       "path": "Assets/StarTournament/Art/pulse-projectile.glb",
-      "sha256": "142e8f2699a6a57f9e1891d049a3a326cb82b3acdc4696d77f0a33333d0bbd48",
+      "sha256": "4e208a6e8c5ca2563b544aa96ff5140854582c8621dee7aed42069256301bee4",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -179,23 +179,23 @@
     {
       "key": "forge-lod0",
       "path": "Assets/StarTournament/Art/forge-plasma-lod0.glb",
-      "sha256": "9ce4c0f71aa604da7f6dc454bab3323a77f18267dac06ea80232d9a0119d3de6",
+      "sha256": "98668431826bed108942513d23b11336fa4f30485a0c53573dcaec141d41c2aa",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Detailed FORGE concept 01; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
+      "source": "Detailed FORGE concept 01 + F3 asymmetric FPS housing; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 0
     },
     {
       "key": "forge-lod1",
       "path": "Assets/StarTournament/Art/forge-plasma-lod1.glb",
-      "sha256": "9ce4c0f71aa604da7f6dc454bab3323a77f18267dac06ea80232d9a0119d3de6",
+      "sha256": "98668431826bed108942513d23b11336fa4f30485a0c53573dcaec141d41c2aa",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Detailed FORGE concept 01; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
+      "source": "Detailed FORGE concept 01 + F3 asymmetric FPS housing; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 1
     }
   ]

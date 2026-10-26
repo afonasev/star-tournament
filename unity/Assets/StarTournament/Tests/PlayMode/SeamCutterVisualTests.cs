@@ -39,6 +39,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(prefab.GetComponentsInChildren<Collider>(true),Is.Empty);
             Assert.That(prefab.GetComponentsInChildren<Transform>(true).Count(t=>t.name=="cutter-muzzle"),Is.EqualTo(1));
             Assert.That(prefab.GetComponentsInChildren<MeshRenderer>(true).Length,Is.EqualTo(7));
+            Assert.That(prefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).All(m=>m&&m.mainTexture),Is.True,"F1 authored surface maps must survive the GLB import");
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
             ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
             var roster=NativeMatchRoster.Ffa(4);
@@ -86,8 +87,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(beams.Count(x=>x.enabled),Is.GreaterThanOrEqualTo(3));
             foreach(var core in beams.Where(x=>x.enabled&&x.name.StartsWith("Core ")))
             {
-                var axis=(core.GetPosition(2)-core.GetPosition(1)).normalized;
-                foreach(var point in hitPoints)Assert.That(Vector3.Cross(point-core.GetPosition(1),axis).magnitude,Is.LessThan(.001f),"Visible beam must pass through real contact after muzzle compensation");
+                Assert.That(core.positionCount,Is.EqualTo(2),"Straight authoritative section has no billboard miter");
+                var axis=(core.GetPosition(1)-core.GetPosition(0)).normalized;
+                foreach(var point in hitPoints)Assert.That(Vector3.Cross(point-core.GetPosition(0),axis).magnitude,Is.LessThan(.001f),"Visible beam must pass through real contact after muzzle compensation");
             }
             var meshes=ground.GetComponentsInChildren<MeshFilter>(true).Where(m=>m.name.StartsWith("SEAM contacts")).ToArray();
             Assert.That(meshes.Any(m=>m.sharedMesh.vertexCount>0),Is.True);
