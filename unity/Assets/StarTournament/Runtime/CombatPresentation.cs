@@ -197,7 +197,11 @@ namespace StarTournament.ProvingGround
                 return;
             }
             if(notice.Weapon==WeaponId.RocketLauncher)
-                rocketPresentation.Launch(notice.Sequence,Muzzle(notice.Shooter,0,notice.Weapon)-notice.Origin);
+                {
+                    var muzzle=Muzzle(notice.Shooter,0,notice.Weapon);
+                    var direction=session.Rockets.Single(r=>r.Id==notice.Sequence).Direction;
+                    rocketPresentation.Launch(notice.Sequence,muzzle-notice.Origin,muzzle,direction);
+                }
             int capacity=(int)movement.Get("presentation.shotMaxEffects");
             for(int pelletIndex=0;pelletIndex<notice.Pellets.Length;pelletIndex++)
             {

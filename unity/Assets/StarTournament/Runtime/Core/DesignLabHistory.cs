@@ -380,6 +380,8 @@ namespace StarTournament.ProvingGround
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgePickupsIfNeeded(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.RocketEffectsId)?.Version??3)<4)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePulseMk2()).ToList()};
             if(!sought.Profiles.Any(p=>p.Id=="forge-plasma-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="forge-plasma-v1").ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??2)<2)

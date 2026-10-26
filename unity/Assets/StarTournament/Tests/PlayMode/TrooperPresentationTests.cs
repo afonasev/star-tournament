@@ -100,6 +100,26 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<100;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
             Assert.That(Vector3.Distance(first.transform.localPosition,rest),Is.LessThan(.00001f));
         }
+        [UnityTest] public IEnumerator PulseMk2StaticGripReview()
+        {
+            yield return Load(2);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            foreach(var descriptor in ProvingProfile.CreateTrooperDefault().Descriptors)visual.Tuning.Set(descriptor.Path,descriptor.DefaultValue);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
+            var snapshot=ground.Session.Capture();snapshot.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].RocketAmmo=20;snapshot.Lives[0].Ammo=20;snapshot.Lives[0].SwitchRemaining=0;
+            ground.Session.Restore(snapshot);visual.ResetPose(snapshot.Time);ground.SendMessage("LateUpdate");yield return null;
+            Assert.That(visual.EquippedWeapon,Is.EqualTo(WeaponId.RocketLauncher));
+            string before=JsonUtility.ToJson(ground.Session.Capture());
+            string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_PULSE_EVIDENCE");
+            if(!string.IsNullOrEmpty(directory))
+            {
+                System.IO.Directory.CreateDirectory(directory);CaptureSingleView(directory,"PulseMk2",camera);CaptureGrip(directory,"RocketLauncher",visual,camera);
+            }
+            Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+        }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
         [UnityTest] public IEnumerator ShotgunGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Shotgun);
         [UnityTest] public IEnumerator RocketGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.RocketLauncher);

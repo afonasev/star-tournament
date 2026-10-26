@@ -104,23 +104,23 @@
     {
       "key": "pulse-lod0",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod0.glb",
-      "sha256": "a105e145b0f566a818892657d861304a7aa4f6ea11c4bf576127bedd87a3dfa1",
+      "sha256": "de7b4d59d7cfd0d24b8df2d64937ca04109b338de5b5aca78ae34eed5971fc10",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "pulse-grip",
-      "source": "Original Pulse concept 03 adaptation; scripts/trooper/build_pulse.py; renderer-only, no collision proxy.",
+      "source": "Original Pulse Mk II; scripts/pulse_mk2/build.py; high detail source preserved; reduction deferred",
       "lod": 0
     },
     {
       "key": "pulse-lod1",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod1.glb",
-      "sha256": "35616098b0292ba74389e2529b243bdc73644d5e9d2683950e5bdea2f781969d",
+      "sha256": "de7b4d59d7cfd0d24b8df2d64937ca04109b338de5b5aca78ae34eed5971fc10",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "pulse-grip",
-      "source": "Original Pulse concept 03 adaptation; scripts/trooper/build_pulse.py; renderer-only, no collision proxy.",
+      "source": "Original Pulse Mk II; scripts/pulse_mk2/build.py; high detail source preserved; reduction deferred",
       "lod": 1
     },
     {
@@ -148,12 +148,12 @@
     {
       "key": "pulse-projectile",
       "path": "Assets/StarTournament/Art/pulse-projectile.glb",
-      "sha256": "01d29994ac3e9b61d83fe840e958cab6fb4477128a82d783f04b8e5effc688b0",
+      "sha256": "4c970f63b5dbbc66ec316d0b9c74c9181679e9489a15c65f3935cb00e9354410",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "center",
-      "source": "Original build_pulse_projectile.py; hot impulse concept 1 selected 2026-10-02; no collision proxy, no gameplay LOD. Shared four-material mesh."
+      "source": "Original Pulse Mk II; scripts/pulse_mk2/build.py; high detail source preserved; reduction deferred"
     },
     {
       "key": "industrial-tunnel-panels",

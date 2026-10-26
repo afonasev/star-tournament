@@ -14,6 +14,12 @@ namespace StarTournament.ProvingGround
             public LineRenderer Flame,Core;
             public ParticleSystem Smoke;
         }
+        sealed class Ignition
+        {
+            public GameObject Root;public LineRenderer Flame;public double Time;public Vector3 Position,Direction;public uint Id;public bool Active;
+        }
+        readonly List<Ignition> ignitions=new List<Ignition>();
+        public int ActiveIgnitions {get {int n=0;foreach(var i in ignitions)if(i.Active)n++;return n;}}
         sealed class Burst
         {
             public GameObject Root;
@@ -47,9 +53,9 @@ namespace StarTournament.ProvingGround
             this.session=session;this.profile=profile;this.owner=owner;this.prefab=prefab;
             this.effects=effects??ProvingProfile.CreateRocketEffectsDefault();
             // Fixed procedural sprite sampling/motif is authored art, independent of visual size/lifetime.
-            fireTexture=FireAtlas();
-            exhaustTexture=CloudTexture("Pulse exhaust",true,false);
-            smokeTexture=CloudTexture("Pulse soft smoke",false,false);
+            fireTexture=RequiredArt("FireAtlas");
+            exhaustTexture=RequiredArt("Exhaust");
+            smokeTexture=RequiredArt("Smoke");
             glowTexture=CloudTexture("Pulse hot core",false,true);
             fireMaterial=Material(fireTexture);exhaustMaterial=Material(exhaustTexture);smokeMaterial=Material(smokeTexture);glowMaterial=Material(glowTexture);
             particles=new ParticleSystem.Particle[Mathf.Max(1,Mathf.Max((int)F("fireCount"),Mathf.Max((int)F("sparkCount"),Mathf.Max((int)F("smokeCount"),(int)F("trailSmokeCount")))))];
@@ -84,26 +90,11 @@ namespace StarTournament.ProvingGround
             }
             texture.Apply(false,true);return texture;
         }
-        static Texture2D FireAtlas()
+        static Texture2D RequiredArt(string name)
         {
-            // Authored 4x4, 128px motifs: fixed art sampling, independent of gameplay and user scale.
-            const int tile=128,grid=4;var texture=new Texture2D(tile*grid,tile*grid,TextureFormat.RGBA32,false){name="Pulse animated fire atlas",wrapMode=TextureWrapMode.Clamp};
-            var pixels=new Color[tile*grid*tile*grid];
-            for(int frame=0;frame<grid*grid;frame++)for(int y=0;y<tile;y++)for(int x=0;x<tile;x++)
-            {
-                float u=(x+.5f)/tile,v=(y+.5f)/tile,phase=frame*.23f;
-                float warp=Mathf.PerlinNoise(u*4+phase,v*4+11)-.5f;
-                float a=Mathf.PerlinNoise(u*5+warp+phase,v*5+19-phase),b=Mathf.PerlinNoise(u*13+phase,v*13+warp+3),c=Mathf.PerlinNoise(u*31-phase,v*31+phase);
-                float r=new Vector2(u*2-1,v*2-1).magnitude;
-                float edge=Mathf.Clamp01((.86f+.12f*a-r)*12);
-                float heat=Mathf.Clamp01(a*.7f+b*.5f+c*.18f-.28f+(1-r)*.2f);
-                float veins=Mathf.Pow(Mathf.Clamp01(1-Mathf.Abs(b-.55f)*6),3)*Mathf.Clamp01(a*2-.55f);
-                var color=Color.Lerp(new Color(.35f,.018f,.003f),new Color(1,.3f,.015f),Mathf.Clamp01(heat*1.5f));
-                color=Color.Lerp(color,new Color(1,.94f,.62f),Mathf.Clamp01((heat-.5f)*2+veins*.55f));
-                color.a=Mathf.SmoothStep(0,1,edge)*Mathf.Clamp01(.2f+heat*.9f+veins*.15f);
-                int px=frame%grid*tile+x,py=frame/grid*tile+y;pixels[py*tile*grid+px]=color;
-            }
-            texture.SetPixels(pixels);texture.Apply(false,true);return texture;
+            var texture=Resources.Load<Texture2D>("PulseMk2/"+name);
+            if(!texture)throw new InvalidOperationException("Pulse Mk II art missing: "+name);
+            return texture; // Shared imported art: this presentation does not destroy it.
         }
         LineRenderer Line(string name,Transform parent,Material material,float width)
         {
@@ -155,6 +146,27 @@ namespace StarTournament.ProvingGround
             DrawBurst(chosen);SelectLights();
         }
         public void Launch(uint id,Vector3 offset)=>launchOffsets[id]=offset;
+        public void Launch(uint id,Vector3 offset,Vector3 muzzle,Vector3 direction)
+        {
+            Launch(id,offset);
+            foreach(var existing in ignitions)if(existing.Id==id&&existing.Active)return;
+            Ignition chosen=null;foreach(var item in ignitions)if(!item.Active){chosen=item;break;}
+            if(chosen==null&&ignitions.Count<(int)F("maxBursts"))
+            {
+                var root=new GameObject("Pulse Mk II ignition");root.transform.SetParent(owner,false);
+                chosen=new Ignition{Root=root,Flame=Line("Muzzle ignition",root.transform,exhaustMaterial,F("ignitionSize"))};ignitions.Add(chosen);
+            }
+            if(chosen==null){chosen=ignitions[0];foreach(var item in ignitions)if(item.Time<chosen.Time)chosen=item;}
+            chosen.Id=id;chosen.Position=muzzle;chosen.Direction=direction.normalized;chosen.Time=session.Time;chosen.Active=true;chosen.Root.SetActive(true);DrawIgnition(chosen);
+        }
+        void DrawIgnition(Ignition item)
+        {
+            float age=Mathf.Max(0,(float)(session.Time-item.Time)),t=Mathf.Clamp01(age/F("ignitionSeconds"));
+            item.Active=t<1;item.Root.SetActive(item.Active);if(!item.Active)return;
+            item.Flame.widthMultiplier=F("ignitionSize")*(1-t);
+            var length=F("ignitionLength")*(1-t*t);
+            item.Flame.SetPosition(0,item.Position);item.Flame.SetPosition(1,item.Position+item.Direction*length*.3f);item.Flame.SetPosition(2,item.Position+item.Direction*length);
+        }
         Vector3 Offset(uint id,float distance)=>launchOffsets.TryGetValue(id,out var offset)?offset*(1-Mathf.Clamp01(distance/P("rocketMuzzleBlendDistance"))):Vector3.zero;
         static Vector3 Direction(int index,int count,uint seed)
         {
@@ -250,10 +262,12 @@ namespace StarTournament.ProvingGround
                 }
                 Set(flight.Smoke,count);
             }
+            foreach(var item in ignitions)if(item.Active)DrawIgnition(item);
             foreach(var b in bursts)if(b.Active)DrawBurst(b);SelectLights();
         }
         void Clear()
         {
+            foreach(var item in ignitions){item.Active=false;if(item.Root)item.Root.SetActive(false);}
             launchOffsets.Clear();foreach(var f in flights.Values)if(f.Root)UnityEngine.Object.Destroy(f.Root);flights.Clear();
             foreach(var b in bursts){b.Active=false;b.Light.enabled=false;if(b.Root)b.Root.SetActive(false);}
         }
@@ -262,7 +276,8 @@ namespace StarTournament.ProvingGround
             session.RocketExploded-=Explode;session.StateRestored-=Clear;Clear();
             foreach(var b in bursts)if(b.Root)UnityEngine.Object.Destroy(b.Root);bursts.Clear();
             UnityEngine.Object.Destroy(fireMaterial);UnityEngine.Object.Destroy(exhaustMaterial);UnityEngine.Object.Destroy(smokeMaterial);UnityEngine.Object.Destroy(glowMaterial);
-            UnityEngine.Object.Destroy(fireTexture);UnityEngine.Object.Destroy(exhaustTexture);UnityEngine.Object.Destroy(smokeTexture);UnityEngine.Object.Destroy(glowTexture);
+            foreach(var item in ignitions)if(item.Root)UnityEngine.Object.Destroy(item.Root);ignitions.Clear();
+            UnityEngine.Object.Destroy(glowTexture);
         }
     }
 }
