@@ -39,6 +39,17 @@ class ProfileRunnerTests(unittest.TestCase):
         for order in [[],['control'],['optimized','control'],['control','control'],['optimized','optimized']]:
             with self.assertRaises(ValueError):runner.case_order({'cases':order})
 
+    def test_unprofiled_qualification_keeps_abba_and_admission_budget(self):
+        m={'mode':'unprofiled-abba','cases':['A1','B1','B2','A2']}
+        self.assertEqual(runner.case_order(m),('A1','B1','B2','A2'))
+        self.assertEqual([runner.case_variant(x) for x in runner.case_order(m)],['control','optimized','optimized','control'])
+        self.assertEqual(runner.case_budget(m),120)
+        self.assertTrue(runner.permitted(0,480,4,13*runner.GIB,runner.case_budget(m)))
+        self.assertFalse(runner.permitted(0,479,4,13*runner.GIB,runner.case_budget(m)))
+        for order in [[],['A1','B1'],['A1','B1','A2','B2']]:
+            with self.assertRaises(ValueError):runner.case_order({'mode':'unprofiled-abba','cases':order})
+        with self.assertRaises(ValueError):runner.case_order({'mode':'unknown'})
+
     def test_immutable_player_command_silent_and_exact_profile_reference(self):
         with tempfile.TemporaryDirectory() as d:
             app = Path(d)/'old QA.app';(app/'Contents').mkdir(parents=True)
@@ -54,5 +65,10 @@ class ProfileRunnerTests(unittest.TestCase):
             self.assertNotIn('-nographics',cmd)
             self.assertNotIn('-batchmode',cmd)
             self.assertNotIn('-deepProfiling',cmd)
+            unprofiled=runner.command(app,output,ref,cpu_profile=False)
+            self.assertNotIn('-baselineCpuProfile',unprofiled)
+            for flag in ['-noaudio','-muted','-renderingBaseline','-baselineReference']:self.assertIn(flag,unprofiled)
+            self.assertNotIn('-profiler-enable',unprofiled)
+            self.assertNotIn('-profiler-log-file',unprofiled)
 
 if __name__ == '__main__':unittest.main()
