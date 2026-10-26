@@ -23,7 +23,7 @@ public static class WellProfileReadback
             if(!ProfilerDriver.LoadProfile(input,false))throw new IOException("ProfilerDriver rejected raw");
             int first=ProfilerDriver.firstFrameIndex,last=ProfilerDriver.lastFrameIndex;
             if(first<0||last<first)throw new IOException("No readable CPU frames");
-            var summary=new Dictionary<string,Stat>();long frameThreads=0,totalSamples=0,negativeSelf=0;
+            var summary=new Dictionary<string,Stat>();long frameThreads=0,totalSamples=0,negativeSelf=0,unnamedSamples=0;
             using(var frames=new StreamWriter(Path.Combine(output,"frames.csv")))
             using(var markers=new StreamWriter(Path.Combine(output,"markers.csv")))
             {
@@ -40,7 +40,8 @@ public static class WellProfileReadback
                     for(int i=0;i<view.sampleCount;i++)
                     {
                         int id=view.GetSampleMarkerId(i);
-                        if(!names.TryGetValue(id,out var name)){name=view.GetSampleName(i);names[id]=name;}
+                        if(!names.TryGetValue(id,out var name)){name=view.GetSampleName(i)??("<unnamed marker "+id+">");names[id]=name;}
+                        if(name.StartsWith("<unnamed marker "))unnamedSamples++;
                         double duration=view.GetSampleTimeMs(i),self=duration;
                         int child=i+1;
                         for(int c=0;c<view.GetSampleChildrenCount(i);c++)
@@ -67,7 +68,7 @@ public static class WellProfileReadback
                 all.WriteLine("thread_marker,calls,inclusive_ms,self_ms");
                 foreach(var p in summary.OrderByDescending(p=>p.Value.self))all.WriteLine(Q(p.Key)+","+p.Value.calls+","+N(p.Value.inclusive)+","+N(p.Value.self));
             }
-            File.WriteAllText(Path.Combine(output,"status.json"),"{\"status\":\"READBACK_COMPLETE_NOT_PERFORMANCE_ACCEPTANCE\",\"first\":"+first+",\"last\":"+last+",\"frameThreads\":"+frameThreads+",\"totalSamples\":"+totalSamples+",\"negativeSelfClamped\":"+negativeSelf+"}");
+            File.WriteAllText(Path.Combine(output,"status.json"),"{\"status\":\"READBACK_COMPLETE_NOT_PERFORMANCE_ACCEPTANCE\",\"first\":"+first+",\"last\":"+last+",\"frameThreads\":"+frameThreads+",\"totalSamples\":"+totalSamples+",\"unnamedSamples\":"+unnamedSamples+",\"negativeSelfClamped\":"+negativeSelf+"}");
             Debug.Log("WELL_PROFILE_READBACK_PASS frames="+(last-first+1));EditorApplication.Exit(0);
         }
         catch(Exception e){Debug.LogException(e);EditorApplication.Exit(1);}

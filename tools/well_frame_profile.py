@@ -60,11 +60,18 @@ def inputs(manifest):
     return m, validator
 
 def host(pid):
+    started = time.time()
     def read(args):
         result = subprocess.run(args, capture_output=True, text=True, timeout=5)
         return {'exit': result.returncode, 'output': result.stdout}
-    return {'unix': time.time(), 'player': read(['/bin/ps', '-p', str(pid), '-o', 'pid=,pcpu=,rss=,etime=']),
-            'vm': read(['/usr/bin/vm_stat']), 'swap': read(['/usr/sbin/sysctl', 'vm.swapusage'])}
+    processes = read(['/bin/ps', '-A', '-o', 'pcpu=,comm='])
+    top = sorted((line for line in processes['output'].splitlines() if line.strip()),
+                 key=lambda line: float(line.split(maxsplit=1)[0]), reverse=True)[:8]
+    result = {'unix': started, 'player': read(['/bin/ps', '-p', str(pid), '-o', 'pid=,pcpu=,rss=,etime=']),
+              'vm': read(['/usr/bin/vm_stat']), 'swap': read(['/usr/sbin/sysctl', 'vm.swapusage', 'vm.loadavg']),
+              'topProcessCPU': top}
+    result['telemetryCostSeconds'] = time.time()-started
+    return result
 
 def stop_owned(proc):
     if proc.poll() is None:
@@ -146,7 +153,10 @@ def main():
             assert record['exit'] == 0, 'Player exit '+str(record['exit'])
             assert time.time() <= deadline, 'Human window exceeded'
             validator.validate(output, m[kind]['source'], 'well-laboratory-v1', Path(m['reference']))
-            assert (output/'cpu.raw').stat().st_size > 0, 'Profiler output missing/empty'
+            report = json.loads((output/'report.json').read_text())
+            assert [s.get('cpuProfile') or None for s in report['samples']] == [None, None, str(output/'cpu.raw')], 'Unexpected profiler sample scope'
+            assert 0 < (output/'cpu.raw').stat().st_size <= MAX_PROFILE, 'Profiler output missing/empty/over cap'
+            assert 'Skipping profile frame' not in (output/'player.log').read_text(errors='replace'), 'Profiler dropped frames'
             record['status'] = 'STRICT_PROTOCOL_PASS_PROFILE_READBACK_PENDING'
             record['finishedUnix'] = time.time(); save()
             print(kind, record['status'], flush=True)
