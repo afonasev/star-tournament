@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     /// <summary>Additive equipment fit after clip evaluation; never changes gameplay or camera state.</summary>
     internal sealed class OrbitalGripPose
     {
-        readonly Transform wrist,primaryWrist,mount,upper,lower,palm,rigRoot;
+        readonly Transform wrist,primaryWrist,mount,upper,lower,palm,rightUpper,rightLower,rightPalm,rigRoot;
         readonly List<(Transform proximal,Transform middle,Transform distal,Transform target)> forgeContacts=new List<(Transform,Transform,Transform,Transform)>();
         readonly Transform[] sampledBones;
         readonly List<(Transform bone,Vector3 position,Quaternion rotation)> restored=new List<(Transform,Vector3,Quaternion)>();
@@ -46,6 +46,7 @@ namespace StarTournament.ProvingGround
                 }
             if(!bones.TryGetValue("RightHand",out primaryWrist))return;
             upper=bones["LeftUpperArm"];lower=bones["LeftLowerArm"];palm=bones["LeftMiddleProximal"];
+            rightUpper=bones["RightUpperArm"];rightLower=bones["RightLowerArm"];rightPalm=bones["RightMiddleProximal"];
             mount=root.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="trooper:rig:weapon-mount");
             var primaryRow=(bones["RightIndexProximal"].position-bones["RightLittleProximal"].position).normalized;
             foreach(var digit in new[]{"Thumb","Index","Middle","Ring","Little"})
@@ -56,7 +57,7 @@ namespace StarTournament.ProvingGround
                     spreadAxes[bone]=bone.InverseTransformDirection(Vector3.Cross(primaryRow,(bones["RightMiddleProximal"].position-primaryWrist.position).normalized));
                     primaryDigits.Add((bone,bone.InverseTransformDirection(primaryRow),"grip.primary"+segment+"Curl",digit=="Thumb"));
                 }
-            sampledBones=new[]{upper,lower,wrist}.Concat(digits.Select(d=>d.bone)).Concat(primaryDigits.Select(d=>d.bone)).ToArray();
+            sampledBones=new[]{upper,lower,wrist,rightUpper,rightLower}.Concat(digits.Select(d=>d.bone)).Concat(primaryDigits.Select(d=>d.bone)).ToArray();
         }
         // Some clips have no wrist/attachment channel. Undo our previous additive
         // correction before the graph samples; never capture a corrected bind pose.
@@ -69,7 +70,8 @@ namespace StarTournament.ProvingGround
             mount.localPosition=mountPosition;mount.localRotation=mountRotation;
             primaryApplied=false;
         }
-        void Reach(Vector3 target,Vector3 handDirection,float wristAlignment)
+        void Reach(Vector3 target,Vector3 handDirection,float wristAlignment)=>ReachArm(upper,lower,wrist,target,handDirection,wristAlignment);
+        static void ReachArm(Transform upper,Transform lower,Transform wrist,Vector3 target,Vector3 handDirection,float wristAlignment)
         {
             var a=upper.position;var b=lower.position;var c=wrist.position;
             // Numerical guard only: avoid a singular straight elbow, not an art parameter.
@@ -145,6 +147,14 @@ namespace StarTournament.ProvingGround
             var position=mount.position;var rotation=mount.rotation;
             primaryWrist.rotation=Quaternion.AngleAxis((profile.Get("grip.primaryWristYaw")+profile.Get(fit+"primaryYaw")),mount.up)*primaryWrist.rotation;
             mount.SetPositionAndRotation(position,rotation);primaryApplied=true;
+            if(weapon==WeaponId.Shotgun&&profile.Version>=23)
+            {
+                // Move the elbow around the shoulder/wrist circle instead of bending the wrist.
+                // Hand and weapon world poses, bone lengths and all other weapons remain unchanged.
+                var primaryHandRotation=primaryWrist.rotation;
+                ReachArm(rightUpper,rightLower,primaryWrist,primaryWrist.position,(rightPalm.position-primaryWrist.position).normalized,profile.Get(fit+"primaryWristAlignment"));
+                primaryWrist.rotation=primaryHandRotation;mount.SetPositionAndRotation(position,rotation);
+            }
             // glTF-to-Unity handedness reflection reverses authored axial rotations.
             wrist.localRotation*=Quaternion.AngleAxis(-(profile.Get("grip.supportRoll")+profile.Get(fit+"supportRoll")),rollAxis);
             // Rotate around the palm contact, then solve the elbow without stretching bones.

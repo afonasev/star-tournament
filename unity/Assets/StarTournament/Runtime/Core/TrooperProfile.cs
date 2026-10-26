@@ -3,10 +3,19 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeVectorGrip()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<23)return this;
+            var p=DetachedCopy();p.version=22;
+            p.descriptors.RemoveAll(d=>d.Path=="grip.Shotgun.primaryWristAlignment");p.values.RemoveAll(v=>v.Path=="grip.Shotgun.primaryWristAlignment");
+            foreach(var old in CreateTrooperDefault(true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Shotgun.")))
+            {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
+            return p;
+        }
         internal ProvingProfile BeforeCobaltGrip()
         {
             if(id!="unity-trooper-presentation-v1"||version<22)return this;
-            var p=DetachedCopy();p.version=21;
+            var p=BeforeVectorGrip().DetachedCopy();p.version=21;
             foreach(var pair in new[]{("grip.Rifle.supportZ",.42f),("grip.Rifle.supportY",-.12f)})
             {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
             return p;
@@ -216,7 +225,7 @@ namespace StarTournament.ProvingGround
         internal static float SafeSwitchUpgrade(NumericDescriptor old,NumericDescriptor current,float value)
         {
             // Untouched Rifle contacts follow the COBALT fore-end; explicit Lab tuning survives.
-            if(old.Path.StartsWith("grip.Rifle.",System.StringComparison.Ordinal))
+            if((old.Path.StartsWith("grip.Rifle.",System.StringComparison.Ordinal)||old.Path.StartsWith("grip.Shotgun.",System.StringComparison.Ordinal)))
                 return value==old.DefaultValue?current.DefaultValue:value;
             // Untouched equipment defaults adopt the revised fill in serialized scenes and Lab;
             // explicit off and other custom strengths stay unchanged. Historical snapshots are never edited.
@@ -226,7 +235,7 @@ namespace StarTournament.ProvingGround
             return value==old.DefaultValue?current.DefaultValue:UnityEngine.Mathf.Clamp(value,current.Minimum,current.Maximum);
         }
         public static ProvingProfile CreateTrooperDefault()=>CreateTrooperDefault(true);
-        static ProvingProfile CreateTrooperDefault(bool articulated)
+        static ProvingProfile CreateTrooperDefault(bool articulated,bool vectorGrip=true)
         {
             var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=19};
             p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
@@ -553,6 +562,59 @@ namespace StarTournament.ProvingGround
                 Fit("grip.Plasma.supportZ",.62f);Fit("grip.Plasma.supportY",-.10f);
                 p.version=22;
                 Fit("grip.Rifle.supportZ",.60f);Fit("grip.Rifle.supportY",-.15f);
+            }
+            if(articulated&&vectorGrip)
+            {
+                p.version=23;
+                void VectorFit(string path,float value)
+                {var d=p.FindDescriptor(path);d.Minimum=System.Math.Min(d.Minimum,value);d.Maximum=System.Math.Max(d.Maximum,value);d.DefaultValue=value;p.Set(path,value);}
+                p.Add("grip.Shotgun.primaryWristAlignment","trooper-grip-Shotgun","Выпрямление правого запястья","Поворот локтя к продолжению правой ладони без изменения позы оружия или длины костей.","ratio",0,1,.05f,1);
+                VectorFit("grip.Shotgun.wristAlignment",1);
+                VectorFit("grip.Shotgun.supportYaw",45);
+                VectorFit("grip.Shotgun.supportX",0.005f);
+                VectorFit("grip.Shotgun.supportY",-0.19f);
+                VectorFit("grip.Shotgun.supportZ",0.43f);
+                VectorFit("grip.Shotgun.left.Index.Proximal",-8);
+                VectorFit("grip.Shotgun.left.Index.Intermediate",-16);
+                VectorFit("grip.Shotgun.left.Index.Distal",13);
+                VectorFit("grip.Shotgun.left.Index.Spread",-23);
+                VectorFit("grip.Shotgun.left.Middle.Proximal",-10);
+                VectorFit("grip.Shotgun.left.Middle.Intermediate",23);
+                VectorFit("grip.Shotgun.left.Middle.Distal",-17);
+                VectorFit("grip.Shotgun.left.Middle.Spread",-14);
+                VectorFit("grip.Shotgun.left.Ring.Proximal",6);
+                VectorFit("grip.Shotgun.left.Ring.Intermediate",27);
+                VectorFit("grip.Shotgun.left.Ring.Distal",-20);
+                VectorFit("grip.Shotgun.left.Ring.Spread",-14);
+                VectorFit("grip.Shotgun.left.Little.Proximal",-6);
+                VectorFit("grip.Shotgun.left.Little.Intermediate",31);
+                VectorFit("grip.Shotgun.left.Little.Distal",-20);
+                VectorFit("grip.Shotgun.left.Little.Spread",-2);
+                VectorFit("grip.Shotgun.left.Thumb.Proximal",-38);
+                VectorFit("grip.Shotgun.left.Thumb.Intermediate",35);
+                VectorFit("grip.Shotgun.left.Thumb.Distal",-4);
+                VectorFit("grip.Shotgun.left.Thumb.Spread",-45);
+                VectorFit("grip.Shotgun.thumbOpposition",67);
+                VectorFit("grip.Shotgun.right.Index.Proximal",-41);
+                VectorFit("grip.Shotgun.right.Index.Intermediate",-2);
+                VectorFit("grip.Shotgun.right.Index.Distal",30);
+                VectorFit("grip.Shotgun.right.Index.Spread",6);
+                VectorFit("grip.Shotgun.right.Middle.Proximal",-30);
+                VectorFit("grip.Shotgun.right.Middle.Intermediate",-5);
+                VectorFit("grip.Shotgun.right.Middle.Distal",-6);
+                VectorFit("grip.Shotgun.right.Middle.Spread",3);
+                VectorFit("grip.Shotgun.right.Ring.Proximal",-48);
+                VectorFit("grip.Shotgun.right.Ring.Intermediate",-8);
+                VectorFit("grip.Shotgun.right.Ring.Distal",-15);
+                VectorFit("grip.Shotgun.right.Ring.Spread",0);
+                VectorFit("grip.Shotgun.right.Little.Proximal",-24);
+                VectorFit("grip.Shotgun.right.Little.Intermediate",-25);
+                VectorFit("grip.Shotgun.right.Little.Distal",-20);
+                VectorFit("grip.Shotgun.right.Little.Spread",-11);
+                VectorFit("grip.Shotgun.right.Thumb.Proximal",-20);
+                VectorFit("grip.Shotgun.right.Thumb.Intermediate",-3);
+                VectorFit("grip.Shotgun.right.Thumb.Distal",0);
+                VectorFit("grip.Shotgun.right.Thumb.Spread",-5);
             }
             return p;
         }

@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static ProvingProfile Previous()=> (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCobaltGrip",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
         [Test] public void DefaultContactsUpgradeButCustomFitAndOtherWeaponsSurvive()
         {
-            var before=Previous();var current=ProvingProfile.CreateTrooperDefault();
+            var before=Previous();var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeVectorGrip",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
             Assert.That(before.Version,Is.EqualTo(21));Assert.That(current.Version,Is.EqualTo(22));
             foreach(var d in before.Descriptors.Where(d=>d.Path!="grip.Rifle.supportZ"&&d.Path!="grip.Rifle.supportY"))
                 Assert.That(current.Get(d.Path),Is.EqualTo(before.Get(d.Path)),d.Path);
@@ -51,7 +51,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(old.Get("grip.Rifle.supportX"),Is.EqualTo(.07f));
             foreach(var d in factory.Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.")&&d.Path!="grip.Rifle.supportX"))
                 Assert.That(old.Get(d.Path),Is.EqualTo(d.DefaultValue),d.Path);
-            foreach(var pair in other)Assert.That(old.Get(pair.Key),Is.EqualTo(pair.Value),pair.Key);
+            // @23 intentionally upgrades untouched Shotgun defaults too; preserve the
+            // same exact comparison for every other weapon and shared grip value.
+            foreach(var pair in other)Assert.That(old.Get(pair.Key),Is.EqualTo(pair.Key.StartsWith("grip.Shotgun.")?factory.Get(pair.Key):pair.Value),pair.Key);
         }
     }
 }
