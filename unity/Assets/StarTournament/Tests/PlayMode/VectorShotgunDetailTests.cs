@@ -60,7 +60,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // Magnify the actual emitted core without scaling or replacing its mesh.
             var pelletCamera=new GameObject("pellet-review-camera").AddComponent<Camera>();pelletCamera.transform.SetParent(ground.transform,false);pelletCamera.nearClipPlane=.0001f;pelletCamera.farClipPlane=.05f;pelletCamera.orthographic=true;pelletCamera.orthographicSize=cores[0].transform.lossyScale.x*.8f;pelletCamera.clearFlags=CameraClearFlags.SolidColor;pelletCamera.backgroundColor=new Color(.08f,.10f,.13f);
             pelletCamera.transform.position=cores[0].transform.position+camera.transform.TransformDirection(new Vector3(.012f,.008f,-.018f));pelletCamera.transform.LookAt(cores[0].transform.position);
-            var pelletLight=new GameObject("pellet-review-fill").AddComponent<Light>();pelletLight.transform.SetParent(pelletCamera.transform,false);pelletLight.type=LightType.Point;pelletLight.range=.08f;pelletLight.intensity=.15f;
+            var pelletLight=new GameObject("pellet-review-fill").AddComponent<Light>();pelletLight.transform.SetParent(pelletCamera.transform,false);pelletLight.transform.localPosition=new Vector3(-.012f,.015f,0);pelletLight.type=LightType.Point;pelletLight.range=.08f;pelletLight.intensity=.00015f;
             yield return Capture(pelletCamera,"10-pellet-detail");Object.Destroy(pelletCamera.gameObject);
 
             ground.Session.Tick(actions,.02f);Render();yield return Capture(camera,"06-muzzle-and-pellets");

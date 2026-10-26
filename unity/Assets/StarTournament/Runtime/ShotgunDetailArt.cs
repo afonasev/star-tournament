@@ -91,16 +91,24 @@ namespace StarTournament.ProvingGround
         static Mesh MakePellet()
         {
             // Authored steel shot: round silhouette, shallow machining seam and micro-pitting.
-            const int longitude=48,latitude=24;var v=new List<Vector3>();var uv=new List<Vector2>();var indices=new List<int>();
+            const int longitude=48,latitude=24;var v=new List<Vector3>();var normals=new List<Vector3>();var uv=new List<Vector2>();var indices=new List<int>();
             for(int y=0;y<=latitude;y++)for(int x=0;x<=longitude;x++)
             {
                 float theta=y*Mathf.PI/latitude,phi=x*2*Mathf.PI/longitude;
                 float seam=Mathf.Exp(-Mathf.Pow((theta-Mathf.PI/2)*35,2))*.012f;
                 float radius=.5f-seam+.0015f*Mathf.Sin(phi*13)*Mathf.Sin(theta*17);
-                v.Add(new Vector3(Mathf.Sin(theta)*Mathf.Cos(phi),Mathf.Cos(theta),Mathf.Sin(theta)*Mathf.Sin(phi))*radius);uv.Add(new Vector2((float)x/longitude,(float)y/latitude));
+                var radial=new Vector3(Mathf.Sin(theta)*Mathf.Cos(phi),Mathf.Cos(theta),Mathf.Sin(theta)*Mathf.Sin(phi));
+                var tangent=new Vector3(Mathf.Cos(theta)*Mathf.Cos(phi),-Mathf.Sin(theta),Mathf.Cos(theta)*Mathf.Sin(phi));
+                float derivative=2*35*35*(theta-Mathf.PI/2)*seam+.0015f*17*Mathf.Sin(phi*13)*Mathf.Cos(theta*17);
+                float azimuth=.0015f*13*Mathf.Cos(phi*13)*Mathf.Sin(theta*17);
+                var normal=radial-tangent*(derivative/radius);
+                if(y>0&&y<latitude)normal-=new Vector3(-Mathf.Sin(phi),0,Mathf.Cos(phi))*(azimuth/(radius*Mathf.Sin(theta)));
+                // Shared analytic normals avoid a split UV seam and pinched duplicate pole vertices.
+                normals.Add(y==0||y==latitude?radial:normal.normalized);
+                v.Add(radial*radius);uv.Add(new Vector2((float)x/longitude,(float)y/latitude));
                 if(y<latitude&&x<longitude){int a=y*(longitude+1)+x,b=a+longitude+1;indices.AddRange(new[]{a,a+1,b,a+1,b+1,b});}
             }
-            var m=new Mesh{name="Vector detailed steel shot"};m.SetVertices(v);m.SetUVs(0,uv);m.SetTriangles(indices,0);m.RecalculateNormals();m.RecalculateBounds();return m;
+            var m=new Mesh{name="Vector detailed steel shot"};m.SetVertices(v);m.SetUVs(0,uv);m.SetTriangles(indices,0);m.SetNormals(normals);m.RecalculateBounds();return m;
         }
         static Mesh MakeChip()
         {
