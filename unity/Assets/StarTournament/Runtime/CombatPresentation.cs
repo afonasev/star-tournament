@@ -29,7 +29,11 @@ namespace StarTournament.ProvingGround
             {
                 if(gameObject.layer>=15)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
                 var imported=renderer.sharedMaterials;
-                for(int i=0;i<imported.Length;i++)imported[i]=RifleMaterial(imported[i]?.name);
+                // COBALT carries its authored PBR maps and distinct metal/rubber finishes.
+                // Retain legacy mapping only for historical rifle assets.
+                for(int i=0;i<imported.Length;i++)
+                    if(imported[i] && !imported[i].name.StartsWith("cobalt",System.StringComparison.Ordinal))
+                        imported[i]=RifleMaterial(imported[i].name);
                 renderer.sharedMaterials=imported;
             }
             rifleMuzzle=rifle.GetComponentsInChildren<Transform>(true).Single(x=>x.name=="rifle-muzzle");
