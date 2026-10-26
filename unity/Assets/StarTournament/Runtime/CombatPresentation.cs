@@ -124,7 +124,7 @@ namespace StarTournament.ProvingGround
     public sealed class CombatPresentation : System.IDisposable
     {
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; public DeathRagdoll Ragdoll; }
-        sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
+        sealed class PelletEffect { public GameObject Root, Trace, Core; public ParticleSystem[] ImpactParticles; public float ImpactTime; public PelletContact Surface; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
         readonly NativeCombatSession session;
         readonly BloodPresentation bloodPresentation;
         readonly RocketPresentation rocketPresentation;
@@ -151,6 +151,7 @@ namespace StarTournament.ProvingGround
         readonly List<Corpse> corpses = new List<Corpse>();
         readonly List<PelletEffect> pellets = new List<PelletEffect>();
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
+        readonly ShotgunDetailArt shotgunArt;
         public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount+plasmaPresentation.ActiveCount;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
             Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null,GameObject rocketPrefab=null,ProvingProfile rocketEffects=null,ProvingProfile hitProfile=null)
@@ -160,6 +161,7 @@ namespace StarTournament.ProvingGround
                 throw new System.ArgumentException("Presentation ownership mismatch");
             this.deathProfile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(deathProfile??ProvingProfile.CreateDeathDefault()));
             this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
+            shotgunArt=new ShotgunDetailArt(movement);
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
             weaponSwitches=new FirstPersonWeaponSwitch[views.Length];
@@ -223,7 +225,7 @@ namespace StarTournament.ProvingGround
                 if(contact)
                     foreach(var existing in pellets)
                         if(existing.Contact && Vector3.Distance(existing.End,pellet.Endpoint)<movement.Get("presentation.shotImpactSize")*2f) { contact=false;break; }
-                pellets.Add(new PelletEffect{Root=root,Trace=trace,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon,Shooter=notice.Shooter,Barrel=pelletIndex});
+                pellets.Add(new PelletEffect{Root=root,Trace=trace,Core=notice.Weapon==WeaponId.Shotgun?shotgunArt.Core(root.transform,root.layer):null,Surface=pellet.Contact,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon,Shooter=notice.Shooter,Barrel=pelletIndex});
             }
         }
         Material ShotMaterial()
@@ -296,6 +298,7 @@ namespace StarTournament.ProvingGround
             // Its age is derived from the configured fixed tick and existing trace window, not another timer setting.
             effect.Begins=session.Time-Mathf.Min(1f/movement.Get("simulation.fixedTickHz"),flight*TraceWindowFraction);
             effect.Emitted=true;effect.Trace.GetComponent<Renderer>().enabled=true;
+            if(effect.Core)effect.Core.GetComponent<Renderer>().enabled=true;
         }
         void RenderPellets()
         {
@@ -309,14 +312,26 @@ namespace StarTournament.ProvingGround
                     float progress=Mathf.Clamp01(elapsed/flight);var head=Vector3.Lerp(effect.Start,effect.TraceEnd,progress);
                     var tail=Vector3.Lerp(effect.Start,effect.TraceEnd,Mathf.Max(0,progress-TraceWindowFraction));
                     Vector3 delta=head-tail;effect.Trace.transform.SetPositionAndRotation((head+tail)*.5f,Quaternion.FromToRotation(Vector3.up,delta.normalized));
-                    float width=movement.Get(effect.Weapon==WeaponId.Rifle?"presentation.rifleTracerWidth":"presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);continue;
+                    float width=movement.Get(effect.Weapon==WeaponId.Rifle?"presentation.rifleTracerWidth":"presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);
+                    if(effect.Core){effect.Core.transform.position=head;effect.Core.transform.localScale=Vector3.one*width;}
+                    continue;
                 }
-                if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Contact)CreateImpact(effect);}
+                if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Core){Object.Destroy(effect.Core);effect.Core=null;}if(effect.Contact)CreateImpact(effect);}
+                if(effect.ImpactParticles!=null)
+                {
+                    float age=Mathf.Clamp(elapsed-flight,0,impact),delta=age-effect.ImpactTime;
+                    if(delta>0)foreach(var ps in effect.ImpactParticles){ps.Simulate(delta,true,false);ps.Pause();}
+                    effect.ImpactTime=age;
+                }
                 if(elapsed>=flight+impact){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
             }
         }
         void CreateImpact(PelletEffect effect)
         {
+            if(effect.Weapon==WeaponId.Shotgun)
+            {
+                effect.ImpactParticles=shotgunArt.Impact(effect.Root.transform,effect.End,effect.Normal,effect.Surface,movement,(uint)(effect.Barrel+1));return;
+            }
             var impact=GameObject.CreatePrimitive(PrimitiveType.Sphere);impact.name="shot-impact";impact.transform.SetParent(effect.Root.transform,false);
             impact.transform.position=effect.End+effect.Normal*.01f;impact.transform.localScale=Vector3.one*movement.Get("presentation.shotImpactSize");
             var collider=impact.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
@@ -324,6 +339,10 @@ namespace StarTournament.ProvingGround
         }
         void OnStateRestored()
         {
+            foreach(var pellet in pellets)if(pellet.Root){pellet.Root.SetActive(false);Object.Destroy(pellet.Root);}
+            pellets.Clear();
+            foreach(var body in bodies)if(body)body.GetComponent<VectorShotPresentation>()?.Clear(session.Time);
+            foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Clear(session.Time);
             foreach(var corpse in corpses)if(corpse.Root){corpse.Root.SetActive(false);Object.Destroy(corpse.Root);}
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
             System.Array.Clear(tracking,0,tracking.Length);
@@ -346,7 +365,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
+            shotgunArt.Dispose();hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;

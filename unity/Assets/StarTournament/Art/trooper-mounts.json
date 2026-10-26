@@ -8,11 +8,11 @@
   "pivot": "feet-center",
   "body": {
     "path": "trooper-body-animated.glb",
-    "sha256": "87affcd8566a2721c7df10014e0d1947369c75111a4c777ba3a14316d85cfe73"
+    "sha256": "309f37ca697fc8e2b92e9ae01ada2971eb7a4d15205018db34706e173e578bbb"
   },
   "arms": {
     "path": "trooper-arms-animated.glb",
-    "sha256": "ad952ee03fcd4b11449bdbf80be2da9631eb1873bb1d232ff4191cb7d121d62f"
+    "sha256": "5ddd36273dc5e93a0f4ac585030e363bdc081a2aa278189946c10974a623bdaf"
   },
   "clips": [
     "idle",
@@ -1297,6 +1297,6 @@
   },
   "maxTextureDimension": 1024,
   "rootMotion": "death skeleton Root only; applyRootMotion=false on visual Animator; motor authoritative",
-  "equipment": "strata-oxblood-equipment-v2-f5; Strata weapon with Orbital F3/F2 FPS hands; right grip corrected; attributed gloves and clips preserved",
+  "equipment": "Vector/Petrol detailed source, unchanged compatible rig/gloves; newly fitted weapon contact surfaces",
   "character": "vector-fighter-v2"
 }
