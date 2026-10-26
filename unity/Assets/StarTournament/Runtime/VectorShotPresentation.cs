@@ -34,6 +34,9 @@ namespace StarTournament.ProvingGround
         ParticleSystem Create(string label,Transform muzzle,float life,float size,float speed,int count,Color color,float angle)
         {
             var obj=new GameObject(label);obj.layer=gameObject.layer;obj.transform.SetParent(muzzle,false);
+            // The flash extends from the actual muzzle mouth; place its centre half a
+            // diameter forward so the detailed bore collar does not swallow the billboard.
+            if(label=="vector-flash")obj.transform.position=muzzle.position+muzzle.forward*(size*.5f);
             // GLB front is +Z. Ignore the imported mount's authored scale for particle sizing.
             var ps=obj.AddComponent<ParticleSystem>();ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
             var main=ps.main;main.loop=false;main.playOnAwake=false;main.duration=life;main.startLifetime=life;main.startSize=size;main.startSpeed=speed;main.startColor=color;main.maxParticles=Mathf.Max(1,count);main.simulationSpace=ParticleSystemSimulationSpace.World;main.scalingMode=ParticleSystemScalingMode.Shape;
