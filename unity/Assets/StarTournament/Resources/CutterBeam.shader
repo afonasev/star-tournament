@@ -23,7 +23,7 @@ Shader "StarTournament/CutterBeam"
    {
     // Smooth envelope over one clearance-length. This is view-only clipping, not a hit-volume change.
     float near=smoothstep(_NearFade,_NearFade+_NearFade,distance(i.world,GetCameraPositionWS()));
-    float edge=lerp(saturate(1-abs(i.uv.y*2-1)),pow(saturate(1-length(i.uv*2-1)),2),_Radial);
+    float edge=lerp(saturate(1-abs(i.uv.y*2-1)),pow(saturate(1-length(i.uv*2-1)),2),_Radial*i.color.r);
     return half4(_Tint.rgb,_Tint.a*near*edge*i.color.a);
    }
    ENDHLSL

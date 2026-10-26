@@ -2,6 +2,15 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // F1 adds renderer controls without rewriting any v5 revision or value.
+        internal ProvingProfile BeforeSeamFidelity()
+        {
+            if(id!="cutter-beam-v1"||version<6)return this;
+            var p=DetachedCopy();p.version=5;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.detail."));
+            p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.detail."));
+            return p;
+        }
         // Project the exact v4 registry before historical hash validation.
         internal ProvingProfile BeforeSeamPresentation()
         {
@@ -38,7 +47,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=5 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=6 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -90,6 +99,13 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.muzzleBlendDistance","cutter-effects","SEAM: согласование дула","Короткое соединение видимого сопла с authoritative лучом; контакты и дальность неизменны.","m",.1f,3,.05f,.8f);
             p.Add("cutter.seam.sparkWidth","cutter-effects","SEAM: толщина искр","Ширина коротких контактных следов.","m",.001f,.03f,.001f,.006f);
             p.Add("cutter.seam.contactGlow","cutter-effects","SEAM: яркость контакта","Яркость локальной точки соприкосновения.","ratio",0,5,.1f,2.5f);
+            p.Add("cutter.seam.detail.arcSubdivisions","cutter-effects","SEAM: детализация разрядов","Подсегменты электрической нити, не gameplay луча.","count",1,12,1,6);
+            p.Add("cutter.seam.detail.sparkLayers","cutter-effects","SEAM: слои искр","Число независимых фаз россыпи.","count",1,4,1,3);
+            p.Add("cutter.seam.detail.sparkSpread","cutter-effects","SEAM: ширина россыпи","Множитель видимого разлёта.","ratio",.5f,3,.1f,1.8f);
+            p.Add("cutter.seam.detail.shieldSpread","cutter-effects","SEAM: поле щита","Множитель локального поля контакта.","ratio",1,4,.1f,2.4f);
+            p.Add("cutter.seam.detail.arcRadiusScale","cutter-effects","SEAM: размах разрядов","Масштаб мелких изломов относительно сохранённого радиуса.","ratio",.05f,1,.05f,.25f);
+            p.Add("cutter.seam.detail.arcWidthScale","cutter-effects","SEAM: тонкие нити","Масштаб толщины электрических нитей.","ratio",.1f,1,.05f,.5f);
+            p.Add("cutter.seam.detail.warmth","cutter-effects","SEAM: тёплое свечение","Смешивание линейного оттенка для оранжевых разрядов.","ratio",0,1,.05f,1);
             return p;
         }
     }
