@@ -36,10 +36,11 @@ def reference_identity(reference, expected_source):
     assert reference['status'] == 'COMPLETE_DIAGNOSTIC_NOT_ACCEPTANCE'
 
 def case_order(manifest):
-    if manifest.get('mode') == 'unprofiled-abba':
+    if manifest.get('mode') in ('unprofiled-abba', 'unprofiled-abccba'):
         order = tuple(manifest.get('cases', ()))
-        if order != ('A1', 'B1', 'B2', 'A2'):
-            raise ValueError('Unprofiled qualification requires exact complete ABBA')
+        expected = ('A1', 'B1', 'C1', 'C2', 'B2', 'A2') if manifest['mode'] == 'unprofiled-abccba' else ('A1', 'B1', 'B2', 'A2')
+        if order != expected:
+            raise ValueError('Unprofiled qualification requires the exact complete balanced order')
         return order
     if manifest.get('mode', 'cpu') != 'cpu':
         raise ValueError('Unknown measurement mode')
@@ -51,10 +52,10 @@ def case_order(manifest):
 def case_variant(label):
     if label in ORDER:
         return label
-    return {'A1': 'control', 'B1': 'optimized', 'B2': 'optimized', 'A2': 'control'}[label]
+    return {'A1': 'control', 'B1': 'optimized', 'C1': 'corrected', 'C2': 'corrected', 'B2': 'optimized', 'A2': 'control'}[label]
 
 def case_budget(manifest):
-    return 120 if manifest.get('mode') == 'unprofiled-abba' else PER_CASE
+    return 120 if manifest.get('mode') in ('unprofiled-abba', 'unprofiled-abccba') else PER_CASE
 
 def command(app, output, reference, cpu_profile=True):
     with (app/'Contents/Info.plist').open('rb') as stream:
@@ -79,11 +80,12 @@ def inputs(manifest):
     spec = importlib.util.spec_from_file_location('strict_p6', repo/'tools/p6_player_compare.py')
     validator = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(validator)
-    for kind in ORDER:
+    variants = (*ORDER, 'corrected') if m.get('mode') == 'unprofiled-abccba' else ORDER
+    for kind in variants:
         assert validator.inventory(Path(m[kind]['app']))['tree_sha256'] == m[kind]['tree_sha256']
     reference = json.loads(Path(m['reference']).read_text())
     reference_identity(reference, m['referenceSource'])
-    if case_order(m) == ('optimized',) or m.get('mode') == 'unprofiled-abba':
+    if case_order(m) == ('optimized',) or m.get('mode') in ('unprofiled-abba', 'unprofiled-abccba'):
         baseline = validator.validate(Path(m['qualifiedControl']), m['control']['source'], 'well-laboratory-v1')
         assert baseline == reference, 'Current comparison reference must be the unchanged completed control report'
         original = json.loads(Path(m['originalReference']).read_text())

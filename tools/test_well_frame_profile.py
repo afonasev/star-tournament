@@ -50,6 +50,14 @@ class ProfileRunnerTests(unittest.TestCase):
             with self.assertRaises(ValueError):runner.case_order({'mode':'unprofiled-abba','cases':order})
         with self.assertRaises(ValueError):runner.case_order({'mode':'unknown'})
 
+    def test_three_variant_causal_control_is_balanced_and_complete(self):
+        m={'mode':'unprofiled-abccba','cases':['A1','B1','C1','C2','B2','A2']}
+        self.assertEqual([runner.case_variant(x) for x in runner.case_order(m)],['control','optimized','corrected','corrected','optimized','control'])
+        self.assertTrue(runner.permitted(0,720,6,17*runner.GIB,runner.case_budget(m)))
+        self.assertFalse(runner.permitted(0,719,6,17*runner.GIB,runner.case_budget(m)))
+        for order in [['A1','B1','B2','A2'],['A1','C1','B1','C2','B2','A2']]:
+            with self.assertRaises(ValueError):runner.case_order({'mode':'unprofiled-abccba','cases':order})
+
     def test_immutable_player_command_silent_and_exact_profile_reference(self):
         with tempfile.TemporaryDirectory() as d:
             app = Path(d)/'old QA.app';(app/'Contents').mkdir(parents=True)
