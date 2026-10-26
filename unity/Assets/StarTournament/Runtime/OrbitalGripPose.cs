@@ -7,7 +7,8 @@ namespace StarTournament.ProvingGround
     /// <summary>Additive equipment fit after clip evaluation; never changes gameplay or camera state.</summary>
     internal sealed class OrbitalGripPose
     {
-        readonly Transform wrist,primaryWrist,mount,upper,lower,palm;
+        readonly Transform wrist,primaryWrist,mount,upper,lower,palm,rigRoot;
+        readonly List<(Transform proximal,Transform middle,Transform distal,Transform target)> forgeContacts=new List<(Transform,Transform,Transform,Transform)>();
         readonly Transform[] sampledBones;
         readonly List<(Transform bone,Vector3 position,Quaternion rotation)> restored=new List<(Transform,Vector3,Quaternion)>();
         Vector3 mountPosition;
@@ -30,6 +31,7 @@ namespace StarTournament.ProvingGround
         readonly List<(Transform bone,Vector3 axis,string path,bool thumb)> primaryDigits=new List<(Transform,Vector3,string,bool)>();
         public OrbitalGripPose(Transform root)
         {
+            rigRoot=root;
             var bones=root.GetComponentsInChildren<Transform>(true).Where(t=>t.name.StartsWith("Left")||t.name.StartsWith("Right")).ToDictionary(t=>t.name,t=>t);
             if(!bones.TryGetValue("LeftHand",out wrist))return;
             var row=(bones["LeftLittleProximal"].position-bones["LeftIndexProximal"].position).normalized;
@@ -87,6 +89,34 @@ namespace StarTournament.ProvingGround
             upper.rotation=Quaternion.FromToRotation(b-a,elbow-a)*upper.rotation;
             lower.rotation=Quaternion.FromToRotation(wrist.position-lower.position,target-lower.position)*lower.rotation;
         }
+        // Authored joint targets sit just outside the grip surface to account for glove pads.
+        // Small CCD rotations preserve every bone length and the existing palm/wrist pose.
+        void FitForgeDigits(ProvingProfile profile)
+        {
+            // A saved/custom Lab pose remains authoritative. Surface fitting is the factory pose only.
+            foreach(var d in profile.Descriptors)
+                if((d.Path.StartsWith("grip.Plasma.")||(d.Path.StartsWith("grip.")&&d.Path.IndexOf('.',5)<0))&&!Mathf.Approximately(profile.Get(d.Path),d.DefaultValue))return;
+            if(forgeContacts.Count==0)
+            {
+                var all=rigRoot.GetComponentsInChildren<Transform>(true);
+                foreach(var side in new[]{"Left","Right"})foreach(var digit in new[]{"Index","Middle","Ring","Little","Thumb"})
+                {
+                    var target=all.FirstOrDefault(t=>t.name=="forge-contact-"+side.ToLowerInvariant()+"-"+digit);
+                    if(!target)continue;
+                    forgeContacts.Add((all.First(t=>t.name==side+digit+"Proximal"),all.First(t=>t.name==side+digit+"Intermediate"),all.First(t=>t.name==side+digit+"Distal"),target));
+                }
+            }
+            foreach(var c in forgeContacts)
+                for(int step=0;step<4;step++)
+                    for(int link=0;link<2;link++)
+                    {
+                        var joint=link==0?c.middle:c.proximal;
+                        var from=c.distal.position-joint.position;var to=c.target.position-joint.position;
+                        if(from.sqrMagnitude<.0000001f||to.sqrMagnitude<.0000001f)continue;
+                        var turn=Quaternion.FromToRotation(from,to);
+                        joint.rotation=Quaternion.RotateTowards(Quaternion.identity,turn,12)*joint.rotation;
+                    }
+        }
         public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1)
         {
             if(!wrist)return;
@@ -123,6 +153,7 @@ namespace StarTournament.ProvingGround
                     item.bone.localRotation*=Quaternion.AngleAxis(profile.Get(spreadPath),spreadAxes[item.bone]);
                 item.bone.localRotation*=Quaternion.AngleAxis(-(angle+profile.Get(jointPaths[(weapon,item.bone)])),item.axis);
             }
+            if(weapon==WeaponId.Plasma)FitForgeDigits(profile);
         }
     }
 }

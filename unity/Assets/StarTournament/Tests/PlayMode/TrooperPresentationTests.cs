@@ -66,7 +66,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
             {
                 var life=snapshot.Lives[0];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;life.Ammo=CombatLife.AmmoFor(life,weapon);
-                life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;snapshot.Lives[0]=life;
+                life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
+                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}snapshot.Lives[0]=life;
                 snapshot.Time=start;ground.Session.Restore(snapshot);first.ResetPose(start);previous=Vector3.zero;float maximumOffset=0;
                 for(int tick=0;tick<=65;tick++)
                 {
@@ -148,6 +149,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator ShotgunGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Shotgun);
         [UnityTest] public IEnumerator RocketGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.RocketLauncher);
         [UnityTest] public IEnumerator CutterGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Cutter);
+        [UnityTest] public IEnumerator PlasmaGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Plasma);
         IEnumerator NativeGripPhases(WeaponId selectedWeapon)
         {
             yield return Load(2);
@@ -166,6 +168,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var snapshot=ground.Session.Capture();var life=snapshot.Lives[0];
                 life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
                 life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
+                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}
                 life.ShotgunAmmo=life.RocketAmmo=20;life.CutterEnergy=30;life.Ammo=CombatLife.AmmoFor(life,weapon);
                 snapshot.Lives[0]=life;ground.Session.Restore(snapshot);visual.ResetPose(snapshot.Time);
                 var captured=new System.Collections.Generic.HashSet<string>();

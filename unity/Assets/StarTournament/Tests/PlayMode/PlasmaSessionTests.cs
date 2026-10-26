@@ -52,6 +52,23 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             session.ApplyDamage(0,1,100);Ticks(25);Assert.That(session.Life(1).Health,Is.EqualTo(80));session.Restore(JsonUtility.FromJson<NativeCombatSessionSnapshot>(JsonUtility.ToJson(saved)));Ticks(25);Assert.That(session.Life(1).Health,Is.EqualTo(80));
             var old=session.Capture();old.Version=9;old.PlasmaBolts=null;session.Restore(old);Assert.That(session.PlasmaBolts,Is.Empty);
         }
+        [UnityTest]public IEnumerator PresentationFreezesWithSessionAndClearsEveryFilamentOnRestore()
+        {
+            Setup();yield return null;
+            using(var visual=new PlasmaPresentation(session,owner.transform,seat=>new Vector3(-8,1.4f,0)))
+            {
+                session.ShotResolved+=shot=>{if(shot.Weapon==WeaponId.Plasma)visual.Launch(shot.Sequence,shot.Shooter);};
+                Fire();visual.Render();Assert.That(visual.ActiveCount,Is.GreaterThan(1),"Flight and muzzle corona both exist");
+                var lines=owner.GetComponentsInChildren<LineRenderer>();
+                var before=lines.SelectMany(line=>Enumerable.Range(0,line.positionCount).Select(line.GetPosition)).ToArray();
+                string state=JsonUtility.ToJson(session.Capture());yield return new WaitForSecondsRealtime(.05f);visual.Render();
+                Assert.That(JsonUtility.ToJson(session.Capture()),Is.EqualTo(state));
+                CollectionAssert.AreEqual(before,lines.SelectMany(line=>Enumerable.Range(0,line.positionCount).Select(line.GetPosition)).ToArray());
+                session.Restore(session.Capture());Assert.That(visual.ActiveCount,Is.Zero);
+                Assert.That(owner.GetComponentsInChildren<LineRenderer>().Length,Is.Zero,"Restore hides all pooled effect renderers");
+                visual.Render();Assert.That(visual.ActiveCount,Is.EqualTo(session.PlasmaBolts.Length),"Restore rebuilds flights, never old muzzle flashes");
+            }
+        }
         [UnityTest]public IEnumerator InvalidBoltSetIsRejectedBeforeStateMutation()
         {
             Setup();yield return null;Fire();var saved=session.Capture();string json=JsonUtility.ToJson(saved);saved.PlasmaBolts=new[]{saved.PlasmaBolts[0],saved.PlasmaBolts[0]};
