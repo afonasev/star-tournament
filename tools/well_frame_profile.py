@@ -24,8 +24,8 @@ PER_CASE = 150
 ORDER = ('control', 'optimized')
 MAX_PROFILE = 2*GIB
 
-def permitted(now, deadline, remaining, free, per_case=PER_CASE):
-    return deadline-now >= remaining*per_case and free >= (2*remaining+5)*GIB
+def permitted(now, deadline, remaining, free, per_case=PER_CASE, reserve_per_case=2*GIB):
+    return deadline-now >= remaining*per_case and free >= 5*GIB+remaining*reserve_per_case
 
 def require_guardian(parent, session_leader):
     if str(REAL) not in parent or '--exclusive' not in parent or not session_leader:
@@ -56,6 +56,11 @@ def case_variant(label):
 
 def case_budget(manifest):
     return 120 if manifest.get('mode') in ('unprofiled-abba', 'unprofiled-abccba') else PER_CASE
+
+def case_storage(manifest):
+    # Unprofiled output has no large .raw file: reserve 512MiB per case plus
+    # the unchanged 5GiB live floor. CPU capture still reserves full 2GiB each.
+    return GIB//2 if manifest.get('mode') in ('unprofiled-abba', 'unprofiled-abccba') else 2*GIB
 
 def command(app, output, reference, cpu_profile=True):
     with (app/'Contents/Info.plist').open('rb') as stream:
@@ -145,6 +150,7 @@ def main():
     order = case_order(m)
     cpu_profile = m.get('mode', 'cpu') == 'cpu'
     budget = case_budget(m)
+    reserve = case_storage(m)
     if args.operation == 'verify':
         assert not args.admitted
         print(json.dumps({'PlayerLaunched': False, 'retainedArtifactsVerified': True,
@@ -156,7 +162,7 @@ def main():
     date = datetime.datetime.fromisoformat(args.deadline.replace('Z', '+00:00'))
     assert date.tzinfo is not None, 'Timezone-aware deadline required'
     deadline = date.timestamp()
-    if not permitted(time.time(), deadline, len(order), shutil.disk_usage('/System/Volumes/Data').free, budget):
+    if not permitted(time.time(), deadline, len(order), shutil.disk_usage('/System/Volumes/Data').free, budget, reserve):
         print('NotRun: complete scenario budget or storage headroom')
         return 75
     if not args.admitted:
@@ -177,7 +183,7 @@ def main():
     save()
     for number, label in enumerate(order):
         kind = case_variant(label)
-        if not permitted(time.time(), deadline, len(order)-number, shutil.disk_usage('/System/Volumes/Data').free, budget):
+        if not permitted(time.time(), deadline, len(order)-number, shutil.disk_usage('/System/Volumes/Data').free, budget, reserve):
             journal['status'] = 'NotRun_REMAINING_BUDGET_OR_STORAGE'; save(); return 75
         output = args.output/label
         output.mkdir()
