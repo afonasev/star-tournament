@@ -32,9 +32,11 @@ class ProfileRunnerTests(unittest.TestCase):
             output=Path(d)/'new evidence';ref=Path(d)/'reference.json'
             cmd=runner.command(app,output,ref)
             self.assertEqual(cmd[0],str(app/'Contents/MacOS/Retained Player'))
-            for flag in ['-noaudio','-muted','-renderingBaseline','-profiler-enable']:self.assertIn(flag,cmd)
+            for flag in ['-noaudio','-muted','-renderingBaseline','-baselineCpuProfile']:self.assertIn(flag,cmd)
             self.assertEqual(cmd[cmd.index('-baselineReference')+1],str(ref))
-            self.assertEqual(cmd[cmd.index('-profiler-log-file')+1],str(output/'cpu.raw'))
+            self.assertEqual(cmd[cmd.index('-baselineCpuProfile')+1],str(output))
+            self.assertNotIn('-profiler-enable',cmd)
+            self.assertNotIn('-profiler-log-file',cmd)
             self.assertNotIn('-nographics',cmd)
             self.assertNotIn('-batchmode',cmd)
             self.assertNotIn('-deepProfiling',cmd)

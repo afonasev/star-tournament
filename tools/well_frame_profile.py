@@ -38,9 +38,8 @@ def command(app, output, reference):
             '-renderingBaseline', '-baselineMap', 'well-laboratory-v1',
             '-baselineEvidence', str(output), '-baselineReference', str(reference),
             '-screen-width', '1920', '-screen-height', '1080',
-            '-logFile', str(output/'player.log'), '-profiler-enable',
-            '-profiler-log-file', str(output/'cpu.raw'),
-            '-profiler-maxusedmemory', str(256*1024**2)]
+            '-logFile', str(output/'player.log'),
+            '-baselineCpuProfile', str(output)]
 
 def inputs(manifest):
     m = json.loads(manifest.read_text())
