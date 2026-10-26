@@ -145,10 +145,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var actual=rifle.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
             CollectionAssert.AreEquivalent(authored,actual,"Mounted rifle must retain the imported PBR surfaces");
             Assert.That(actual.All(m=>m && m.name.StartsWith("cobalt") && m.mainTexture),Is.True,"All authored finishes include their texture");
+            foreach(var material in actual)
+            {
+                Assert.That(material.GetTexture("normalTexture"),Is.Not.Null,material.name+" tangent relief must reach the runtime shader");
+                Assert.That(material.GetTexture("metallicRoughnessTexture"),Is.Not.Null,material.name+" surface response must reach the runtime shader");
+            }
             Assert.That(rifle.GetComponentsInChildren<Collider>(true),Is.Empty,"Visual rifle cannot affect physical combat");
             var muzzle=rifle.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="rifle-muzzle");
             Assert.That(camera.transform.InverseTransformPoint(muzzle.position).z,Is.GreaterThan(camera.nearClipPlane));
             var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            AssertCobaltRenderedCoating(camera);
             if(!string.IsNullOrEmpty(directory))
             {
                 CaptureSingleView(directory,"COBALT-rest",camera,1600,900);
@@ -169,6 +175,29 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
             }
             Assert.That(visual.EquippedWeapon,Is.EqualTo(WeaponId.Rifle));
+        }
+        static void AssertCobaltRenderedCoating(Camera camera)
+        {
+            var target=new RenderTexture(800,450,24);target.Create();
+            var pixels=new Texture2D(800,450,TextureFormat.RGB24,false);
+            var active=RenderTexture.active;var oldTarget=camera.targetTexture;var rect=camera.rect;
+            try
+            {
+                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;
+                // The first manual offscreen submission can show a uniform imported
+                // surface. A controlled pair at identical pose/lighting proved the
+                // second submission resolves the textures; yielding frames or disabling
+                // SRP batching did not. Check rendered pixels after that first submission.
+                camera.Render();camera.Render();
+                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,800,450),0,0);pixels.Apply();
+                // Upper stock is inside this stable native pose ROI; hands and HUD
+                // lie outside. This catches a bound-but-not-rendered PBR surface.
+                int blue=0,total=0;
+                for(int y=95;y<110;y++)for(int x=575;x<615;x++)
+                {var c=pixels.GetPixel(x,y);total++;if(c.b>c.r*1.3f&&c.b>c.g*1.15f)blue++;}
+                Assert.That((float)blue/total,Is.GreaterThan(.35f),"Native camera must render COBALT blue coating, not a transient flat material");
+            }
+            finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=active;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
         }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
         [UnityTest] public IEnumerator PulseMk2MuzzleTracksBatchedMotionAndRestore()

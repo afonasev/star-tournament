@@ -4,7 +4,7 @@ User-selected concept 01, 2026-10-26. Reference is retained in shared planning a
 `docs/evidence/refine-cobalt-rifle-and-grip/approved-cobalt-concept.png`.
 
 `cobalt-rifle.blend` is the editable detailed source, with individually named parts,
-packed surface textures and the original mount-space basis. Rebuild from this directory's
+editable procedural PBR surfaces and the original mount-space basis. Rebuild from this directory's
 `build_cobalt.py` with Blender; `build_rifle.py` forwards to the current generator.
 
 ```sh
@@ -19,7 +19,7 @@ art review. 280 authored objects are batched by seven surface materials without
 removing triangles. Geometry uses metres, Y up, Z forward, original mount origin;
 `rifle-grip` and `rifle-muzzle` retain their API identities. No collision mesh.
 
-PBR base-color maps are packed and exported. The runtime preserves the imported
+F1 correction (2026-10-27): real per-material UV atlases replace the original 512px micrograin. Each of seven surfaces has base color, packed roughness/metallic and tangent-space normal maps: 2048px for main blue armor, 1024px for the others. Editable source shaders are in the Blender source and `cobalt_surfaces.py`; exported PNGs are in `assets/source/cobalt/textures/`. Edge wear is masked to authored bevel faces, flat panels carry broader polish and sparse scratches, and rubber has cellular relief. Standard glTF images are packed into each GLB. The runtime preserves the imported
 COBALT materials; player identity color and boost must not permanently recolor them.
 The model does not change bullet simulation, firing cadence, ammo, audio or VFX.
 

@@ -12,22 +12,8 @@ args=p.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 OUT.mkdir(parents=True,exist_ok=True)
 bpy.context.preferences.filepaths.save_version=0
 bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
-def mat(name,color,metal,rough,grain=.025):
- m=bpy.data.materials.new('cobalt / '+name);m.diffuse_color=(*color,1);m.use_nodes=True
- p=next(n for n in m.node_tree.nodes if n.type=='BSDF_PRINCIPLED');out=next(n for n in m.node_tree.nodes if n.type=='OUTPUT_MATERIAL');m.node_tree.links.new(p.outputs['BSDF'],out.inputs['Surface']);p.inputs['Base Color'].default_value=(*color,1)
- p.inputs['Metallic'].default_value=metal;p.inputs['Roughness'].default_value=rough
- rng=np.random.default_rng(sum(map(ord,name)));size=512;noise=rng.normal(0,grain,(size,size))
- if metal>.7:noise+=rng.normal(0,grain*.6,(size,1))
- if name=='grip rubber':
-  yy,xx=np.indices((size,size));noise+=(((xx+yy)//5%2)*2-1)*.035
- pix=np.ones((size,size,4),dtype=np.float32)
- for i,c in enumerate(color):
-  # Packed PNG stores sRGB bytes; the shader decodes back to the linear material color.
-  srgb=12.92*c if c<=.0031308 else 1.055*c**(1/2.4)-.055
-  pix[:,:,i]=np.clip(srgb*(1+noise),0,1)
- image=bpy.data.images.new('COBALT '+name,width=size,height=size);image.pixels.foreach_set(pix.ravel());image.pack()
- tex=m.node_tree.nodes.new('ShaderNodeTexImage');tex.image=image;m.node_tree.links.new(tex.outputs['Color'],p.inputs['Base Color'])
- return m
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from cobalt_surfaces import material as mat, bake_atlas
 blue=mat('blue anodized armor',(.045,.13,.42),.25,.48)
 blue2=mat('blue bevel inserts',(.055,.16,.48),.3,.43)
 dark=mat('graphite chassis',(.035,.045,.055),.35,.55)
@@ -173,6 +159,11 @@ for z in np.linspace(-.105,-.079,6):box('rear breech rib',(0,.111,z),(.095,.003,
 for name,point in [('rifle-grip',(0,-.09,0)),('rifle-muzzle',(0,.062,.54)),('cobalt-support',(0,-.05,.29))]:
  bpy.ops.object.empty_add(type='PLAIN_AXES',location=point);bpy.context.object.name=name
 axis=Matrix.Rotation(math.pi/2,4,'X')
+for o in [o for o in bpy.context.scene.objects if o.type=='MESH']:
+ wear=o.data.attributes.new('cobalt_edge_wear','FLOAT','CORNER')
+ for face in o.data.polygons:
+  value=1.0 if max(abs(c) for c in face.normal)<.999 and face.area<.0003 else 0.0
+  for loop in face.loop_indices:wear.data[loop].value=value
 for o in bpy.context.scene.objects:o.matrix_world=axis@o.matrix_world
 meshes=[o for o in bpy.context.scene.objects if o.type=='MESH']
 def counts(objects):
@@ -188,6 +179,12 @@ for m in materials:
  for o in group:o.select_set(True)
  bpy.context.view_layer.objects.active=group[0];bpy.ops.object.join();group[0].name='cobalt-'+m.name.split(' / ')[1].replace(' ','-')
 after=counts([o for o in bpy.context.scene.objects if o.type=='MESH']);assert before['triangles']==after['triangles']
+texture_dir=(OUT/'textures') if args.preview_only else ROOT/'assets/source/cobalt/textures'
+texture_dir.mkdir(parents=True,exist_ok=True)
+atlases=[]
+for o in [o for o in bpy.context.scene.objects if o.type=='MESH']:
+ atlases.append(bake_atlas(o,o.data.materials[0],texture_dir))
+
 dest=OUT if args.preview_only else ART
 bpy.ops.object.select_all(action='SELECT');bpy.ops.export_scene.gltf(filepath=str(dest/'automatic-rifle-lod0.glb'),export_format='GLB',use_selection=True,export_apply=True)
 shutil.copy2(dest/'automatic-rifle-lod0.glb',dest/'automatic-rifle-lod1.glb')
@@ -198,7 +195,7 @@ if not args.preview_only:
   if entry['key'] in ('rifle-lod0','rifle-lod1'):
    entry['sha256']=hashlib.sha256((ROOT/'unity'/entry['path']).read_bytes()).hexdigest();entry['source']='COBALT approved concept 01, 2026-10-26; scripts/trooper/build_cobalt.py and cobalt-rifle.blend; full detail, lossless material batching, no collision'
  path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
-report={'before_batching':before,'after_batching':after,'lossless':True,'lod1':'same detailed geometry; simplification deferred by user','units':'meters','up':'+Y','forward':'+Z','collision':'none','source':str(source),'textures':{'count':len(materials),'dimensions':'512x512 packed microfinish'},'muzzle':[0,.062,.54]}
+report={'before_batching':before,'after_batching':after,'lossless':True,'lod1':'same detailed geometry; simplification deferred by user','units':'meters','up':'+Y','forward':'+Z','collision':'none','source':str(source),'textures':{'count':len(materials)*3,'atlases':atlases,'channels':'basecolor + packed roughness/metallic + tangent normal'},'muzzle':[0,.062,.54]}
 (OUT/'asset-pass.json').write_text(json.dumps(report,indent=2))
 scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=32;scene.cycles.use_denoising=True
 scene.render.resolution_x=1800;scene.render.resolution_y=1000;scene.render.resolution_percentage=100
