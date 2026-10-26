@@ -39,7 +39,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var camera=ground.GetComponentsInChildren<Camera>().Single(c=>c.name=="seat-camera-1");var view=camera.transform.Find("trooper-view");
             var gun=view.GetComponentsInChildren<Renderer>(true).Single(r=>r.name=="weapon:joined");
             Assert.That(gun.sharedMaterials.Any(m=>m.name=="vector-petrol-enamel"),Is.True);
-            var muzzle=view.GetComponent<VectorShotPresentation>();Assert.That(muzzle.MuzzleCount,Is.EqualTo(2));Assert.That(muzzle.LiveParticles,Is.Zero);
+            var muzzle=view.GetComponent<VectorShotPresentation>();
+            var authoredParticleMaterials=muzzle.GetComponentsInChildren<ParticleSystemRenderer>().ToDictionary(r=>r,r=>r.sharedMaterial);
+            foreach(bool active in new[]{false,true})
+            {
+                view.gameObject.SetActive(active);TrooperIdentityPresentation.ApplyBody(view.gameObject,Color.cyan,ground.ParticipantPaletteProfile);
+                foreach(var pair in authoredParticleMaterials){Assert.That(pair.Key.sharedMaterial,Is.SameAs(pair.Value));Assert.That(pair.Value.shader.name,Is.EqualTo("StarTournament/VectorParticle"));}
+            }
+            Assert.That(muzzle.MuzzleCount,Is.EqualTo(2));Assert.That(muzzle.LiveParticles,Is.Zero);
             yield return Capture(camera,"01-fps-idle");
             if(!string.IsNullOrEmpty(output))typeof(TrooperPresentationTests).GetMethod("CaptureGrip",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(new TrooperPresentationTests(),new object[]{output,"Shotgun",view.GetComponent<TrooperVisual>(),camera});
             // Same native sampled pose, isolated camera layer: inspect both sides without changing bones.
