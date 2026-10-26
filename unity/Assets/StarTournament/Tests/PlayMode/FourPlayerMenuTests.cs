@@ -167,6 +167,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             scene=SceneManager.GetSceneByName("ProvingGround");
             yield return null;
             var ground=Object.FindFirstObjectByType<ProvingGround>(); Assert.That(ground,Is.Not.Null);
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             pads[0]=InputSystem.AddDevice<Gamepad>();
             InputSystem.QueueStateEvent(pads[0],new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;
             InputSystem.QueueStateEvent(pads[0],new GamepadState());yield return null;
@@ -181,6 +182,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 InputSystem.QueueStateEvent(pads[i],new GamepadState().WithButton(GamepadButton.North));
                 yield return null;yield return null;
                 InputSystem.QueueStateEvent(pads[i],new GamepadState());yield return null;
+                Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("lobby-profile-none"),"A new guest is confirmed in the current profile chooser");
+                yield return PressBotMenu(pads[i],GamepadButton.South);
                 Assert.That(ground.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b=>b.name=="roster-done"),Is.False,"Y joins directly without opening an editor");
             }
             Assert.That(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("roster-card-3"));

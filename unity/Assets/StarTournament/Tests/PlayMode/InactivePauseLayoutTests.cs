@@ -22,6 +22,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
             var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             const BindingFlags flags=BindingFlags.NonPublic|BindingFlags.Instance;
             var cards=(GameObject[])typeof(ProvingGround).GetField("seatPauseCards",flags).GetValue(ground);
             var roots=(GameObject[])typeof(ProvingGround).GetField("seatPauseRoots",flags).GetValue(ground);
