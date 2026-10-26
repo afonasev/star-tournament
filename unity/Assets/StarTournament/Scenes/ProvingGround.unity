@@ -1405,7 +1405,7 @@ MonoBehaviour:
       Minimum: -100
       Maximum: 100
       Step: 1
-      DefaultValue: 80
+      DefaultValue: 45
     - Path: grip.Shotgun.supportCurl
       Group: trooper-grip-Shotgun
       Label: "\u041E\u0431\u0445\u0432\u0430\u0442 \u0446\u0435\u0432\u044C\u044F"
@@ -1441,7 +1441,7 @@ MonoBehaviour:
       Minimum: -90
       Maximum: 90
       Step: 1
-      DefaultValue: 75
+      DefaultValue: 67
     - Path: grip.Shotgun.supportX
       Group: trooper-grip-Shotgun
       Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
@@ -1455,7 +1455,7 @@ MonoBehaviour:
       Minimum: -0.8
       Maximum: 0.8
       Step: 0.005
-      DefaultValue: 0.06
+      DefaultValue: 0.005
     - Path: grip.Shotgun.supportY
       Group: trooper-grip-Shotgun
       Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
@@ -1469,7 +1469,7 @@ MonoBehaviour:
       Minimum: -0.8
       Maximum: 0.8
       Step: 0.005
-      DefaultValue: -0.15
+      DefaultValue: -0.19
     - Path: grip.Shotgun.supportZ
       Group: trooper-grip-Shotgun
       Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
@@ -1483,7 +1483,7 @@ MonoBehaviour:
       Minimum: -0.8
       Maximum: 0.8
       Step: 0.005
-      DefaultValue: 0.42
+      DefaultValue: 0.43
     - Path: grip.RocketLauncher.primaryYaw
       Group: trooper-grip-RocketLauncher
       Label: "\u0414\u043E\u0432\u043E\u0440\u043E\u0442 \u043F\u0440\u0430\u0432\u043E\u0439
@@ -1834,19 +1834,19 @@ MonoBehaviour:
     - Path: grip.Shotgun.supportRoll
       Value: -55
     - Path: grip.Shotgun.supportYaw
-      Value: 80
+      Value: 45
     - Path: grip.Shotgun.supportCurl
       Value: 20
     - Path: grip.Shotgun.supportThumb
       Value: -5
     - Path: grip.Shotgun.thumbOpposition
-      Value: 75
+      Value: 67
     - Path: grip.Shotgun.supportX
-      Value: 0.06
+      Value: 0.005
     - Path: grip.Shotgun.supportY
-      Value: -0.15
+      Value: -0.19
     - Path: grip.Shotgun.supportZ
-      Value: 0.42
+      Value: 0.43
     - Path: grip.RocketLauncher.primaryYaw
       Value: 0
     - Path: grip.RocketLauncher.primaryCurl
