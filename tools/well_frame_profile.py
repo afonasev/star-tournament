@@ -31,6 +31,10 @@ def require_guardian(parent, session_leader):
     if str(REAL) not in parent or '--exclusive' not in parent or not session_leader:
         raise RuntimeError('NotRun: real exclusive guardian required')
 
+def reference_identity(reference, expected_source):
+    assert reference['source'] == expected_source and reference['map'] == 'well-laboratory-v1'
+    assert reference['status'] == 'COMPLETE_DIAGNOSTIC_NOT_ACCEPTANCE'
+
 def command(app, output, reference):
     with (app/'Contents/Info.plist').open('rb') as stream:
         executable = plistlib.load(stream)['CFBundleExecutable']
@@ -55,8 +59,7 @@ def inputs(manifest):
     for kind in ORDER:
         assert validator.inventory(Path(m[kind]['app']))['tree_sha256'] == m[kind]['tree_sha256']
     reference = json.loads(Path(m['reference']).read_text())
-    assert reference['source'] == m['control']['source'] and reference['map'] == 'well-laboratory-v1'
-    assert reference['status'] == 'COMPLETE_DIAGNOSTIC_NOT_ACCEPTANCE'
+    reference_identity(reference, m['referenceSource'])
     return m, validator
 
 def host(pid):

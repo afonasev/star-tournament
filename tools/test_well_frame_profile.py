@@ -25,6 +25,14 @@ class ProfileRunnerTests(unittest.TestCase):
             with self.assertRaises(RuntimeError): runner.require_guardian(parent, leader)
         runner.require_guardian(str(runner.REAL)+' --exclusive -- python', True)
 
+    def test_reference_preserves_original_source_binding(self):
+        reference={'source':'original-control','map':'well-laboratory-v1','status':'COMPLETE_DIAGNOSTIC_NOT_ACCEPTANCE'}
+        runner.reference_identity(reference,'original-control')
+        with self.assertRaises(AssertionError):runner.reference_identity(reference,'rebuilt-control')
+        for field,value in [('map','other-map'),('status','INCOMPLETE')]:
+            changed=dict(reference);changed[field]=value
+            with self.assertRaises(AssertionError):runner.reference_identity(changed,'original-control')
+
     def test_immutable_player_command_silent_and_exact_profile_reference(self):
         with tempfile.TemporaryDirectory() as d:
             app = Path(d)/'old QA.app';(app/'Contents').mkdir(parents=True)
