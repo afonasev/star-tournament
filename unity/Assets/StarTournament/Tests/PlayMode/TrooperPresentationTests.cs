@@ -129,6 +129,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator CobaltRifleRetainsAuthoredSurfacesAndNativeGrip()
         {
             yield return Load(1);
+            // Complete the existing JsonUtility background reader before this short
+            // visual witness can unload its scene or the batch Editor can exit.
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
             ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
             var actions=new LocalAction[ground.Session.ParticipantCount];
