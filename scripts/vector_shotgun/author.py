@@ -2,7 +2,7 @@
 Offline mesh dimensions in original equipment coordinates (Z up, -Y forward).
 Fits contact surfaces to the unchanged native hand pose. No decimation; source stays editable.
 """
-import bpy, math, json, sys, subprocess, random
+import bpy, bmesh, math, json, sys, subprocess, random
 from pathlib import Path
 from mathutils import Vector
 ROOT=Path(__file__).resolve().parents[2]
@@ -49,6 +49,11 @@ def finish(o,name,m,bevel=.004):
  o.name=name;bpy.context.view_layer.objects.active=o
  bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
  o.data.materials.append(m)
+ # Closed authored solids must render from outside under Unity back-face culling.
+ bm=bmesh.new();bm.from_mesh(o.data)
+ if all(e.is_manifold for e in bm.edges) and bm.calc_volume(signed=True)<0:
+  bmesh.ops.reverse_faces(bm,faces=list(bm.faces));bm.to_mesh(o.data)
+ bm.free()
  if not o.data.uv_layers:
   layer=o.data.uv_layers.new(name='Vector authored planar UV')
   for face in o.data.polygons:
@@ -156,7 +161,7 @@ for y in [-.70+i*.035 for i in range(9)]:
 # One ergonomic rear grip replaces the old overlapping rectangular primitives.
 # Cross sections follow the palm/backstrap and fingertip envelope; the ring
 # and little fingers curl around its forward face, thumb rests above the heel.
-sections=[(-.035,-.022,.092,.12),(-.13,-.018,.11,.151),(-.22,-.012,.113,.158),(-.30,.003,.105,.145),(-.36,.027,.089,.117)]
+sections=[(.045,-.022,.092,.12),(-.13,-.018,.11,.151),(-.22,-.012,.113,.158),(-.30,.003,.105,.145),(-.36,.027,.089,.117)]
 verts=[];N=16
 for z,cy,w,d in sections:
  for i in range(N):
@@ -168,7 +173,14 @@ faces=[tuple(range(N-1,-1,-1)),tuple(range((len(sections)-1)*N,len(sections)*N))
 for j in range(len(sections)-1):
  for i in range(N):faces.append((j*N+i,j*N+(i+1)%N,(j+1)*N+(i+1)%N,(j+1)*N+i))
 me=bpy.data.meshes.new('Fitted rear grip');me.from_pydata(verts,[],faces);me.update();ob=bpy.data.objects.new('Vector single contoured pistol grip',me);bpy.context.collection.objects.link(ob);finish(ob,ob.name,rubber,.005)
-box('Pistol grip upper ferrule',(-.025,-.022,-.046),(.11,.14,.038),chassis,.01)
+box('Pistol grip upper ferrule',(-.025,-.022,.006),(.11,.14,.086),chassis,.01)
+# A continuous bowed trigger guard and separate curved trigger meet the index pad.
+curve=bpy.data.curves.new('Vector trigger guard path','CURVE');curve.dimensions='3D';curve.bevel_depth=.006;curve.bevel_resolution=4
+spline=curve.splines.new('BEZIER');path=[(-.025,.035,.018),(-.025,-.18,.018),(-.025,-.19,-.125),(-.025,-.125,-.17),(-.025,-.075,-.15)]
+spline.bezier_points.add(len(path)-1)
+for p,co in zip(spline.bezier_points,path):p.co=co;p.handle_left_type='AUTO';p.handle_right_type='AUTO'
+o=bpy.data.objects.new('Vector bowed trigger guard',curve);bpy.context.collection.objects.link(o);bpy.context.view_layer.objects.active=o;o.select_set(True);bpy.ops.object.convert(target='MESH');finish(bpy.context.object,'Vector bowed trigger guard',steel,0);bpy.ops.object.select_all(action='DESELECT')
+panel('Curved trigger blade',-.025,[(-.085,.024),(-.108,.014),(-.105,-.065),(-.080,-.128),(-.066,-.143),(-.057,-.137),(-.075,-.069)],.018,steel,.003)
 # Rear strap details stay outside the finger-contact face.
 for z in (-.14,-.17,-.20,-.23,-.26,-.29):
  box('Grip backstrap traction',(-.025,.064+(abs(z)-.2)*.06,z),(.076,.006,.006),rubber,.002)

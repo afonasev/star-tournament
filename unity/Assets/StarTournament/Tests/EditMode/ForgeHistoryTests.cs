@@ -30,7 +30,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void PreviousGripRegistryHasNoForgeAndRetainsEveryOtherDescriptor()
         {
-            var current=ProvingProfile.CreateTrooperDefault();var old=Before(current,"BeforeForgeGrip");Assert.That(current.Version,Is.EqualTo(21));Assert.That(old.Version,Is.EqualTo(20));
+            var current=Before(ProvingProfile.CreateTrooperDefault(),"BeforeCobaltGrip");var old=Before(current,"BeforeForgeGrip");Assert.That(current.Version,Is.EqualTo(21));Assert.That(old.Version,Is.EqualTo(20));
             Assert.That(old.Descriptors.Any(d=>d.Path.StartsWith("grip.Plasma.")),Is.False);
             foreach(var d in old.Descriptors){Assert.That(JsonUtility.ToJson(current.Descriptors.Single(x=>x.Path==d.Path)),Is.EqualTo(JsonUtility.ToJson(d)));Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)));}
             Assert.That(Before(current,"BeforeArticulatedFingerGrips").Descriptors.Any(d=>d.Path.StartsWith("grip.Plasma.")),Is.False);

@@ -57,6 +57,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var state=JsonUtility.ToJson(ground.Session.Capture());var positions=cores.Select(c=>c.transform.position).ToArray();var particles=muzzle.GetComponentsInChildren<ParticleSystem>().Select(p=>p.time).ToArray();Render();Render();
             Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(state));CollectionAssert.AreEqual(positions,cores.Select(c=>c.transform.position).ToArray());CollectionAssert.AreEqual(particles,muzzle.GetComponentsInChildren<ParticleSystem>().Select(p=>p.time).ToArray());
             yield return Capture(camera,"05-shot-birth");
+            // Magnify the actual emitted core without scaling or replacing its mesh.
+            var pelletCamera=new GameObject("pellet-review-camera").AddComponent<Camera>();pelletCamera.transform.SetParent(ground.transform,false);pelletCamera.nearClipPlane=.0001f;pelletCamera.farClipPlane=.05f;pelletCamera.orthographic=true;pelletCamera.orthographicSize=cores[0].transform.lossyScale.x*.8f;pelletCamera.clearFlags=CameraClearFlags.SolidColor;pelletCamera.backgroundColor=new Color(.08f,.10f,.13f);
+            pelletCamera.transform.position=cores[0].transform.position+camera.transform.TransformDirection(new Vector3(.012f,.008f,-.018f));pelletCamera.transform.LookAt(cores[0].transform.position);
+            var pelletLight=new GameObject("pellet-review-fill").AddComponent<Light>();pelletLight.transform.SetParent(pelletCamera.transform,false);pelletLight.type=LightType.Point;pelletLight.range=.08f;pelletLight.intensity=.15f;
+            yield return Capture(pelletCamera,"10-pellet-detail");Object.Destroy(pelletCamera.gameObject);
+
             ground.Session.Tick(actions,.02f);Render();yield return Capture(camera,"06-muzzle-and-pellets");
             for(int i=0;i<5;i++)ground.Session.Tick(actions,.02f);Render();yield return null;
             var impacts=ground.GetComponentsInChildren<Transform>().Where(t=>t.name=="shot-impact").ToArray();
@@ -73,7 +79,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Capture(camera,"07-world-contact");
             // Close-up of a real contact; no synthetic event or fabricated endpoint.
             var hit=impacts[0];var normal=hit.forward;var close=new GameObject("contact-review-camera").AddComponent<Camera>();close.transform.SetParent(ground.transform,false);close.clearFlags=CameraClearFlags.SolidColor;close.backgroundColor=new Color(.07f,.08f,.1f);close.nearClipPlane=.001f;close.farClipPlane=20;
-            close.transform.position=hit.position+normal*.7f+Vector3.up*.2f;close.transform.LookAt(hit.position);yield return Capture(close,"08-contact-detail");Object.Destroy(close.gameObject);
+            close.transform.position=hit.position+normal*.23f+Vector3.up*.045f;close.transform.LookAt(hit.position);yield return Capture(close,"08-contact-detail");Object.Destroy(close.gameObject);
             var frozen=ground.Session.Capture();ground.Session.Restore(frozen);Render();yield return null;
             Assert.That(ground.GetComponentsInChildren<Transform>().Any(t=>t.name=="pellet-metal-core"||t.name=="shot-impact"),Is.False);Assert.That(muzzle.LiveParticles,Is.Zero);
             var empty=ground.Session.Capture();empty.Lives[0].ShotgunAmmo=0;empty.Lives[0].Ammo=0;ground.Session.Restore(empty);actions[0].Fire=true;int count=ground.Session.ShotCount;ground.Session.Tick(actions,.02f);Render();Assert.That(ground.Session.ShotCount,Is.EqualTo(count));Assert.That(muzzle.LiveParticles,Is.Zero);

@@ -66,7 +66,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
             {
                 var life=snapshot.Lives[0];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;life.Ammo=CombatLife.AmmoFor(life,weapon);
-                life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;snapshot.Lives[0]=life;
+                life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
+                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}snapshot.Lives[0]=life;
                 snapshot.Time=start;ground.Session.Restore(snapshot);first.ResetPose(start);previous=Vector3.zero;float maximumOffset=0;
                 for(int tick=0;tick<=65;tick++)
                 {
@@ -100,10 +101,55 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<100;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
             Assert.That(Vector3.Distance(first.transform.localPosition,rest),Is.LessThan(.00001f));
         }
+        [UnityTest] public IEnumerator CobaltRifleRetainsAuthoredSurfacesAndNativeGrip()
+        {
+            yield return Load(1);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            var actions=new LocalAction[ground.Session.ParticipantCount];
+            for(int i=0;i<100;i++)ground.Session.Tick(actions,.02f);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            foreach(var descriptor in ProvingProfile.CreateTrooperDefault().Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.")))
+                Assert.That(visual.Tuning.Get(descriptor.Path),Is.EqualTo(descriptor.DefaultValue),"Ordinary scene startup must adopt COBALT defaults: "+descriptor.Path);
+            visual.ResetPose(ground.Session.Time);
+            ground.Session.Tick(actions,.02f);
+            ground.SendMessage("LateUpdate");yield return null;
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var rifle=visual.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="automatic-rifle");
+            var authored=ground.RiflePrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
+            var actual=rifle.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
+            CollectionAssert.AreEquivalent(authored,actual,"Mounted rifle must retain the imported PBR surfaces");
+            Assert.That(actual.All(m=>m && m.name.StartsWith("cobalt") && m.mainTexture),Is.True,"All authored finishes include their texture");
+            Assert.That(rifle.GetComponentsInChildren<Collider>(true),Is.Empty,"Visual rifle cannot affect physical combat");
+            var muzzle=rifle.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="rifle-muzzle");
+            Assert.That(camera.transform.InverseTransformPoint(muzzle.position).z,Is.GreaterThan(camera.nearClipPlane));
+            var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            if(!string.IsNullOrEmpty(directory))
+            {
+                CaptureSingleView(directory,"COBALT-rest",camera,1600,900);
+                CaptureGrip(directory,"COBALT",visual,camera);CaptureWorldModel(directory,"COBALT");
+            }
+            var snapshot=ground.Session.Capture();var life=snapshot.Lives[0];life.ShotgunOwned=true;life.ShotgunAmmo=20;snapshot.Lives[0]=life;ground.Session.Restore(snapshot);
+            foreach(var selection in new[]{WeaponSelection.Shotgun,WeaponSelection.Rifle})
+            {
+                actions[0]=new LocalAction{SelectWeapon=selection};ground.Session.Tick(actions,.02f);actions[0]=default;
+                for(int i=0;i<70;i++)
+                {
+                    ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+                    if(i==12 || i==25 || i==69)
+                    {
+                        yield return null;
+                        if(!string.IsNullOrEmpty(directory))CaptureSingleView(directory,"switch-"+selection+"-"+i,camera,1600,900);
+                    }
+                }
+            }
+            Assert.That(visual.EquippedWeapon,Is.EqualTo(WeaponId.Rifle));
+        }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
         [UnityTest] public IEnumerator ShotgunGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Shotgun);
         [UnityTest] public IEnumerator RocketGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.RocketLauncher);
         [UnityTest] public IEnumerator CutterGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Cutter);
+        [UnityTest] public IEnumerator PlasmaGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Plasma);
         IEnumerator NativeGripPhases(WeaponId selectedWeapon)
         {
             yield return Load(2);
@@ -122,6 +168,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var snapshot=ground.Session.Capture();var life=snapshot.Lives[0];
                 life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
                 life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
+                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}
                 life.ShotgunAmmo=life.RocketAmmo=20;life.CutterEnergy=30;life.Ammo=CombatLife.AmmoFor(life,weapon);
                 snapshot.Lives[0]=life;ground.Session.Restore(snapshot);visual.ResetPose(snapshot.Time);
                 var captured=new System.Collections.Generic.HashSet<string>();
@@ -214,17 +261,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             finally{RenderTexture.active=previous;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
         }
-        static void CaptureSingleView(string directory,string weapon,Camera camera)
+        static void CaptureSingleView(string directory,string weapon,Camera camera,int width=1200,int height=1350)
         {
             System.IO.Directory.CreateDirectory(directory);
             // Same seat projection, rendered alone at higher resolution for visual review.
-            var target=new RenderTexture(1200,1350,24);target.Create();
-            var pixels=new Texture2D(1200,1350,TextureFormat.RGB24,false);
+            var target=new RenderTexture(width,height,24);target.Create();
+            var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
             var old=RenderTexture.active;var oldTarget=camera.targetTexture;var rect=camera.rect;
             try
             {
                 camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;camera.Render();
-                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1200,1350),0,0);pixels.Apply();
+                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-fps.png"),pixels.EncodeToPNG());
             }
             finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=old;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
