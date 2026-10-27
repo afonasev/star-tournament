@@ -16,6 +16,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile CutterGripProfile {get;private set;}
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
+        public Vector3 RifleDirection => rifleMuzzle ? rifleMuzzle.forward : transform.forward;
         public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null,GameObject plasmaPrefab=null,ProvingProfile plasmaProfile=null,GameObject plasmaLod1Prefab=null)
         {
             if(!prefab)throw new System.ArgumentException("Rifle GLB missing",nameof(prefab));
@@ -135,6 +136,8 @@ namespace StarTournament.ProvingGround
         readonly RocketPresentation rocketPresentation;
         internal RocketPresentation RocketEffectsForReview=>rocketPresentation;
         readonly RifleBulletPresentation riflePresentation;
+        readonly CobaltShotPresentation cobaltShot;
+        public CobaltShotPresentation CobaltShotForReview=>cobaltShot;
         readonly PlasmaPresentation plasmaPresentation;
         readonly ForgeReactorPresentation forgeReactor;
         public ForgeReactorPresentation ForgeReactorForReview=>forgeReactor;
@@ -180,7 +183,8 @@ namespace StarTournament.ProvingGround
             rocketPresentation=new RocketPresentation(session,movement,owner,rocketPrefab,rocketEffects);
             plasmaPresentation=new PlasmaPresentation(session,owner,seat=>Muzzle(seat,0,WeaponId.Plasma));
             forgeReactor=new ForgeReactorPresentation(session,owner,bodies,views,local);
-            riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle));
+            cobaltShot=new CobaltShotPresentation(session,movement,owner,bodies,views,local);
+            riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle),cobaltShot);
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
             session.StateRestored+=OnStateRestored;
@@ -203,6 +207,7 @@ namespace StarTournament.ProvingGround
             if(notice.Weapon==WeaponId.Plasma){plasmaPresentation.Launch(notice.Sequence,notice.Shooter);return;}
             if(notice.Weapon==WeaponId.Rifle)
             {
+                cobaltShot.Fire(notice.Shooter);
                 riflePresentation.Launch(notice.Sequence,notice.Shooter);
                 return;
             }
@@ -377,7 +382,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            forgeReactor.Dispose();shotgunArt.Dispose();hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
+            forgeReactor.Dispose();shotgunArt.Dispose();hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();cobaltShot.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
@@ -530,7 +535,7 @@ namespace StarTournament.ProvingGround
                 if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
             // Capture a new trace only after all cameras, animation and weapon-switch joints are final for this frame.
-            RenderPellets();riflePresentation.Render();plasmaPresentation.Render();cutterPresentation.Render();forgeReactor.Render();
+            RenderPellets();riflePresentation.Render();plasmaPresentation.Render();cutterPresentation.Render();cobaltShot.Render();forgeReactor.Render();
         }
     }
 }

@@ -92,6 +92,9 @@ namespace StarTournament.ProvingGround
         LineRenderer Line(string name,int count,float width,Material mat,int layer)
         {
             var obj=new GameObject(name);obj.transform.SetParent(root.transform,false);obj.layer=layer;var line=obj.AddComponent<LineRenderer>();
+            // Setup previews do not tick combat presentation. Never expose Unity's
+            // initial line segment before an authoritative active beam is rendered.
+            line.enabled=false;
             line.sharedMaterial=mat;line.useWorldSpace=true;line.positionCount=count;line.startWidth=line.endWidth=width;
             line.numCornerVertices=4;line.numCapVertices=4;
             line.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;line.receiveShadows=false;return line;

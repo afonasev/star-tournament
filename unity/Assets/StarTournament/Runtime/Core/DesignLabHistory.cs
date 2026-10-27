@@ -487,6 +487,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
             // Project the exact trusted predecessor before the existing legacy search.
             // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.CobaltFxPrefix+"enabled"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCobaltShotEffects()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="presentation.shotTracerRed"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeShotgunTracerColor()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.BotBanterIntervalPath))

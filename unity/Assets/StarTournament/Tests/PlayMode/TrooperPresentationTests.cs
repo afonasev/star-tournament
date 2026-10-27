@@ -12,17 +12,30 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     public sealed class TrooperPresentationTests
     {
         Scene scene; ProvingGround ground; readonly Gamepad[] pads=new Gamepad[4];
+#if UNITY_EDITOR
+        bool previousAsyncCompilation;
+#endif
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Load(int count)
         {
+#if UNITY_EDITOR
+            previousAsyncCompilation=UnityEditor.ShaderUtil.allowAsyncCompilation;UnityEditor.ShaderUtil.allowAsyncCompilation=false;
+#endif
             yield return NativeLoadingTestScene.Load(); scene=SceneManager.GetSceneByName("ProvingGround"); yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Assert.That(ground.GetComponentsInChildren<LineRenderer>(true)
+                .Where(r=>r.transform.parent && r.transform.parent.name=="Cutter beams")
+                .All(r=>!r.enabled),Is.True,"Setup must never expose uninitialized SEAM beam segments");
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
-            ground.StartCombatReview(pads.Take(count).ToArray()); yield return null;
+            ground.StartCombatReview(pads.Take(count).ToArray(),ensureOpponent:count==1); yield return null;
+            Assert.That(ground.Running,Is.True,ground.CombatReviewDiagnostic());
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
+#if UNITY_EDITOR
+            UnityEditor.ShaderUtil.allowAsyncCompilation=previousAsyncCompilation;
+#endif
             foreach(var p in pads)if(p!=null&&p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
@@ -196,6 +209,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var muzzle=rifle.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="rifle-muzzle");
             Assert.That(camera.transform.InverseTransformPoint(muzzle.position).z,Is.GreaterThan(camera.nearClipPlane));
             var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            if(!string.IsNullOrEmpty(directory))CaptureSingleView(directory,"COBALT-before-coating-check",camera,1600,900);
             AssertCobaltRenderedCoating(camera);
             if(!string.IsNullOrEmpty(directory))
             {
@@ -218,6 +232,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             Assert.That(visual.EquippedWeapon,Is.EqualTo(WeaponId.Rifle));
         }
+        static void RenderNative(Camera camera,RenderTexture target)
+        {
+            if(UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline)
+                UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(camera,new UnityEngine.Rendering.RenderPipeline.StandardRequest{destination=target});
+            else camera.Render();
+        }
         static void AssertCobaltRenderedCoating(Camera camera)
         {
             var target=new RenderTexture(800,450,24);target.Create();
@@ -230,18 +250,87 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 // surface. A controlled pair at identical pose/lighting proved the
                 // second submission resolves the textures; yielding frames or disabling
                 // SRP batching did not. Check rendered pixels after that first submission.
-                camera.Render();camera.Render();
+                RenderNative(camera,target);RenderNative(camera,target);
                 RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,800,450),0,0);pixels.Apply();
-                // Upper stock is inside this stable native pose ROI; hands and HUD
-                // lie outside. This catches a bound-but-not-rendered PBR surface.
+                var diagnostic=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+                if(!string.IsNullOrEmpty(diagnostic)){System.IO.Directory.CreateDirectory(diagnostic);System.IO.File.WriteAllBytes(System.IO.Path.Combine(diagnostic,"coating-check.png"),pixels.EncodeToPNG());}
+                // Blue upper-stock strip in the approved closer/lower weapon pose.
+                // Previous x575..615 ROI now samples the dark grip insert.
+                // Keep the original blue-fraction threshold; only move the sampled surface.
                 int blue=0,total=0;
-                for(int y=95;y<110;y++)for(int x=575;x<615;x++)
+                for(int y=90;y<105;y++)for(int x=520;x<540;x++)
                 {var c=pixels.GetPixel(x,y);total++;if(c.b>c.r*1.3f&&c.b>c.g*1.15f)blue++;}
                 Assert.That((float)blue/total,Is.GreaterThan(.35f),"Native camera must render COBALT blue coating, not a transient flat material");
             }
             finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=active;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
         }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
+        [UnityTest] public IEnumerator CobaltShotImpulsesFollowRealBulletsAndClearOnRestore()
+        {
+            yield return Load(1);ground.enabled=false;
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            var actions=new LocalAction[ground.Session.ParticipantCount];
+            for(int i=0;i<100;i++)ground.Session.Tick(actions,.02f);
+            ground.SendMessage("LateUpdate");yield return null;
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var presentation=(CombatPresentation)typeof(ProvingGround).GetField("presentation",flags).GetValue(ground);
+            var fx=presentation.CobaltShotForReview;Assert.That(fx.Enabled,Is.True);Assert.That(fx.LiveParticles,Is.Zero);Assert.That(fx.ActiveLights,Is.Zero);
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            void Capture(string name,int width,int height){if(!string.IsNullOrEmpty(output))CaptureSingleView(output,name,camera,width,height);}
+            Capture("COBALT-idle",1600,900);
+            var saved=ground.Session.Capture();bool contact=false;RifleBulletContact hit=default;
+            System.Action<RifleBulletContact> onContact=e=>{if(e.Bullet.Owner==0){contact=true;hit=e;}};
+            ground.Session.RifleBulletHit+=onContact;
+            try
+            {
+                actions[0].Fire=true;ground.Session.Tick(actions,.02f);actions[0].Fire=false;ground.SendMessage("LateUpdate");yield return null;
+                Assert.That(fx.LiveParticles,Is.GreaterThan(0));Assert.That(fx.ActiveLights,Is.GreaterThan(0));
+                Capture("COBALT-fire",1600,900);
+                var lights=ground.GetComponentsInChildren<Light>().Where(l=>l.name.StartsWith("COBALT muzzle light")&&l.enabled).ToArray();
+                foreach(var light in lights)light.enabled=false;Capture("COBALT-fire-without-light-control",1600,900);foreach(var light in lights)light.enabled=true;
+                double clock=ground.Session.Time;int particles=fx.LiveParticles;yield return new WaitForSecondsRealtime(.05f);ground.SendMessage("LateUpdate");
+                Assert.That(ground.Session.Time,Is.EqualTo(clock));Assert.That(fx.LiveParticles,Is.EqualTo(particles),"Paused session must not advance impulses");
+                for(int tick=0;tick<90&&!contact;tick++)
+                {
+                    ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+                    foreach(var line in ground.GetComponentsInChildren<LineRenderer>().Where(l=>l.name.StartsWith("Rifle flight")))
+                        Assert.That(Vector3.Distance(line.GetPosition(0),line.GetPosition(1)),Is.LessThanOrEqualTo(ground.Profile.Get("presentation.rifleTracerLength")+.05f),"Never a continuous beam to contact");
+                    if(tick==1){yield return null;Capture("COBALT-bullet",1600,900);}
+                }
+                Assert.That(contact,Is.True,"Actual scene geometry must receive the physical bullet");
+                Assert.That(hit.Contact.Contact,Is.EqualTo(PelletContact.World));
+                ground.Session.Tick(actions,.04f);ground.SendMessage("LateUpdate");yield return null;Capture("COBALT-impact",1600,900);
+                Assert.That(fx.ActiveContacts,Is.GreaterThan(0));
+                // A real arena close-up of the same authoritative contact, no replacement backdrop.
+                var position=camera.transform.position;var rotation=camera.transform.rotation;
+                camera.transform.position=hit.Contact.Endpoint+hit.Contact.Normal*1.2f+Vector3.up*.3f;camera.transform.LookAt(hit.Contact.Endpoint);
+                int mask=camera.cullingMask;camera.cullingMask&=~(1<<15);Capture("COBALT-impact-close",1200,900);camera.cullingMask=mask;camera.transform.SetPositionAndRotation(position,rotation);
+                for(int i=0;i<35;i++)ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");Assert.That(fx.ActiveLights,Is.Zero);Assert.That(fx.LiveParticles,Is.Zero);
+                ground.Session.Restore(saved);ground.SendMessage("LateUpdate");Assert.That(fx.ActiveContacts,Is.Zero);Assert.That(fx.ActiveLights,Is.Zero);Assert.That(fx.LiveParticles,Is.Zero);
+                var directions=new System.Collections.Generic.Dictionary<uint,Vector3>();
+                var samples=new System.Collections.Generic.List<string>{"frame,id,directionX,directionY,directionZ,segmentLength"};
+                string sequence=string.IsNullOrEmpty(output)?null:System.IO.Path.Combine(output,"burst");if(sequence!=null)System.IO.Directory.CreateDirectory(sequence);
+                for(int tick=0;tick<55;tick++)
+                {
+                    actions[0].Fire=tick<35;ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+                    foreach(var b in ground.Session.RifleBullets.Where(b=>b.Owner==0))
+                    {
+                        directions[b.Id]=b.Direction;
+                        var line=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+b.Id);
+                        float length=Vector3.Distance(line.GetPosition(0),line.GetPosition(1));
+                        Assert.That(length,Is.LessThanOrEqualTo(ground.Profile.Get("presentation.rifleTracerLength")+.05f));
+                        samples.Add(System.FormattableString.Invariant($"{tick},{b.Id},{b.Direction.x},{b.Direction.y},{b.Direction.z},{length}"));
+                    }
+                    yield return null;if(sequence!=null)CaptureSingleView(sequence,"frame-"+tick.ToString("D3"),camera,960,540);
+                }
+                Assert.That(directions.Count,Is.GreaterThanOrEqualTo(4));
+                Assert.That(directions.Values.Any(d=>Vector3.Angle(d,directions.Values.First())>.1f),Is.True,"Burst must retain physical spread");
+                if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"burst-directions.csv"),samples);
+                if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllText(System.IO.Path.Combine(output,"cobalt-shot-witness.txt"),"Running="+ground.Running+"; contact="+hit.Contact.Endpoint+"; retainedContacts="+fx.RetainedContacts+"; pause/restore=PASS; finiteTrace=PASS");
+            }
+            finally{ground.Session.RifleBulletHit-=onContact;}
+        }
         [UnityTest] public IEnumerator PulseMk2MuzzleTracksBatchedMotionAndRestore()
         {
             yield return Load(2);
@@ -385,7 +474,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var camera in ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled))
                 {
                     var old=camera.targetTexture;
-                    try{camera.targetTexture=target;camera.Render();}finally{camera.targetTexture=old;}
+                    try{camera.targetTexture=target;RenderNative(camera,target);}finally{camera.targetTexture=old;}
                 }
                 RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
@@ -401,7 +490,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var old=RenderTexture.active;var oldTarget=camera.targetTexture;var rect=camera.rect;
             try
             {
-                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;camera.Render();
+                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;RenderNative(camera,target);
                 RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-fps.png"),pixels.EncodeToPNG());
             }
@@ -501,7 +590,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 {
                     var center=bones.Single(t=>t.name==hand+"MiddleProximal").position;
                     camera.transform.position=center+mount.TransformDirection(sign==2?new Vector3(.15f,-.35f,.6f):new Vector3(sign*.5f,.05f,-.2f));
-                    camera.transform.LookAt(center,mount.up);camera.Render();camera.Render();RenderTexture.active=target;
+                    camera.transform.LookAt(center,mount.up);RenderNative(camera,target);RenderNative(camera,target);RenderTexture.active=target;
                     pixels.ReadPixels(new Rect(0,0,1000,1000),0,0);pixels.Apply();
                     System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-"+hand+"-grip-"+sign+".png"),pixels.EncodeToPNG());
                 }
