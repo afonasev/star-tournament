@@ -66,10 +66,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             restore.Invoke(grip,null);
             var all=bones.Values.ToArray();var localPositions=all.Select(b=>b.localPosition).ToArray();var localRotations=all.Select(b=>b.localRotation).ToArray();
             var mount=view.GetComponentsInChildren<Transform>().Single(t=>t.name=="trooper:rig:weapon-mount");var mountPosition=mount.position;var mountRotation=mount.rotation;
-            var previous=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeVectorGrip",flags).Invoke(view.Tuning,null);
+            var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCobaltThumb",flags).Invoke(view.Tuning,null);
+            var previous=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeVectorGrip",flags).Invoke(current,null);
             foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma,WeaponId.Shotgun})
             {
-                apply.Invoke(grip,new object[]{view.Tuning,weapon,1f,null});
+                apply.Invoke(grip,new object[]{current,weapon,1f,null});
                 for(int i=0;i<all.Length;i++)Assert.That(Vector3.Distance(all[i].localPosition,localPositions[i]),Is.LessThan(.00001f),weapon+" "+all[i].name+" bone length");
                 Assert.That(Vector3.Distance(mount.position,mountPosition),Is.LessThan(.00001f),weapon+" mount position");
                 Assert.That(Quaternion.Angle(mount.rotation,mountRotation),Is.LessThan(.05f),weapon+" mount rotation");

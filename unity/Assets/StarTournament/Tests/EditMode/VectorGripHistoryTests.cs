@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static ProvingProfile Previous()=> (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeVectorGrip",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
         [Test] public void OnlyShotgunFactoryPoseChangesAndCustomValuesSurvive()
         {
-            var old=Previous();var current=ProvingProfile.CreateTrooperDefault();Assert.That(old.Version,Is.EqualTo(22));Assert.That(current.Version,Is.EqualTo(23));
+            var old=Previous();var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCobaltThumb",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);Assert.That(old.Version,Is.EqualTo(22));Assert.That(current.Version,Is.EqualTo(23));
             foreach(var d in old.Descriptors.Where(d=>!d.Path.StartsWith("grip.Shotgun.")))Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
             old.Set("grip.Shotgun.supportYaw",-17);old.Set("grip.Shotgun.left.Index.Distal",11);old.EnsureTrooperDescriptors();
             Assert.That(old.Get("grip.Shotgun.supportYaw"),Is.EqualTo(-17));Assert.That(old.Get("grip.Shotgun.left.Index.Distal"),Is.EqualTo(11));

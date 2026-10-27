@@ -395,6 +395,8 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??24)<24)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCobaltThumb()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??23)<23)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVectorGrip()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??22)<22)
@@ -829,6 +831,8 @@ namespace StarTournament.ProvingGround
                 // Published pre-COBALT Default contains the old scene grip values even
                 // where descriptor metadata was already newer. Retune only this reserved
                 // shipped profile; named/custom profiles and source revisions stay exact.
+                if(isDefault&&!preserveSavedValues&&(d.Path.StartsWith("grip.Rifle.left.Thumb.",StringComparison.Ordinal)||d.Path=="grip.Rifle.thumbOpposition")&&snapshot.Profile(d.Path).Version<24)
+                    value=currentDescriptor.DefaultValue;
                 if(isDefault&&d.Path.StartsWith("grip.Rifle.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<22)
                     value=currentDescriptor.DefaultValue;
                 // The packaged Vector Default also contains scene-tuned values.

@@ -500,7 +500,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 {
                     var center=bones.Single(t=>t.name==hand+"MiddleProximal").position;
                     camera.transform.position=center+mount.TransformDirection(sign==2?new Vector3(.15f,-.35f,.6f):new Vector3(sign*.5f,.05f,-.2f));
-                    camera.transform.LookAt(center,mount.up);camera.Render();RenderTexture.active=target;
+                    camera.transform.LookAt(center,mount.up);camera.Render();camera.Render();RenderTexture.active=target;
                     pixels.ReadPixels(new Rect(0,0,1000,1000),0,0);pixels.Apply();
                     System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-"+hand+"-grip-"+sign+".png"),pixels.EncodeToPNG());
                 }

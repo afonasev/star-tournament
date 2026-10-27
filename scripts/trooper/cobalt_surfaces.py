@@ -74,6 +74,30 @@ def material(name, color, metal, rough, grain=.025):
         roughness = mathnode('ADD', rough-.12, mathnode('MULTIPLY', macro, .30, 'Patchy polish'), 'Finish roughness')
         roughness = mathnode('SUBTRACT', roughness, mathnode('MULTIPLY', wear, .18, 'Polished scuffs'), 'Worn roughness')
         metallic = mathnode('ADD', metal, mathnode('MULTIPLY', wear, 1-metal, 'Exposed metallic substrate'), 'Metallic layers')
+    # F2 tactile stock inset: a finite panel in physical metres, not tiled across the gun.
+    stock = node('ShaderNodeAttribute', 'Authored stock surfaces only')
+    stock.attribute_name = 'cobalt_stock_texture'
+    xyz = node('ShaderNodeSeparateXYZ', 'Stock pattern in physical coordinates')
+    links.new(geo.outputs['Position'], xyz.inputs[0])
+    x, y = xyz.outputs['X'], xyz.outputs['Z' if is_rubber else 'Y']
+    mask = stock.outputs['Fac']
+    if not is_rubber:
+        mask = mathnode('MULTIPLY', mask, mathnode('LESS_THAN', mathnode('ABSOLUTE', x, 0, 'Panel width'), .033, 'Blue side border'), 'Inset side mask')
+        mask = mathnode('MULTIPLY', mask, mathnode('GREATER_THAN', y, .170, 'Front blue border'), 'Inset front mask')
+        mask = mathnode('MULTIPLY', mask, mathnode('LESS_THAN', y, .326, 'Rear blue border'), 'Inset rear mask')
+    cuts = []
+    for op in ('ADD', 'SUBTRACT'):
+        diagonal = mathnode(op, x, y, 'Opposed diagonal direction')
+        wave = mathnode('SINE', mathnode('MULTIPLY', diagonal, 1256.637, 'Five millimetre repeat'), 0, 'Diamond tool path')
+        cuts.append(mathnode('LESS_THAN', mathnode('ABSOLUTE', wave, 0, 'Symmetric groove'), .23, 'Narrow recessed cut'))
+    grooves = mathnode('MAXIMUM', cuts[0], cuts[1], 'Crossed diamond knurl')
+    stock_color = mix(grooves, (.027, .040, .052), (.006, .012, .020), 'Graphite diamond lands and dark cuts')
+    base = mix(mask, base, stock_color, 'Stock tactile inset with retained blue frame')
+    roughness = mathnode('ADD', mathnode('MULTIPLY', roughness, mathnode('SUBTRACT', 1, mask, 'Existing finish outside panel'), 'Existing roughness'), mathnode('MULTIPLY', mask, .68, 'Matte tactile panel'), 'Panel roughness')
+    stock_bump = node('ShaderNodeBump', 'Stock diamond relief')
+    stock_bump.inputs['Strength'].default_value = .7
+    stock_bump.inputs['Distance'].default_value = .00055
+    links.new(mathnode('MULTIPLY', mask, mathnode('SUBTRACT', 1, grooves, 'Raised diamond lands'), 'Masked stock relief'), stock_bump.inputs['Height'])
     b = node('ShaderNodeBsdfPrincipled', 'COBALT layered PBR')
     links.new(base, b.inputs['Base Color'])
     links.new(roughness, b.inputs['Roughness'])
@@ -82,7 +106,7 @@ def material(name, color, metal, rough, grain=.025):
     bump = node('ShaderNodeBump', 'Fine tactile relief')
     bump.inputs['Strength'].default_value = .55
     bump.inputs['Distance'].default_value = .00035 if is_rubber else .00018
-    links.new(height, bump.inputs['Height']); links.new(bump.outputs['Normal'], b.inputs['Normal'])
+    links.new(height, bump.inputs['Height']); links.new(bump.outputs['Normal'], stock_bump.inputs['Normal']); links.new(stock_bump.outputs['Normal'], b.inputs['Normal'])
     out = node('ShaderNodeOutputMaterial', 'Authored material output')
     links.new(b.outputs['BSDF'], out.inputs['Surface'])
     return m

@@ -28,3 +28,18 @@ images are authoring evidence only. Native Unity captures and explicit human rev
 are separate gates; polygon counts are not an FPS measurement.
 
 The default Trooper presentation profile is @22. Untouched scene Rifle defaults and the reserved published Default adopt the fitted COBALT grip. Named/custom profiles and immutable historical registries retain their saved values.
+
+### F2: near-stock tactile surface and support thumb
+
+The existing blue stock spine carries a graphite diamond-knurled inset with a
+blue perimeter. The shoulder pad uses the same 5 mm crossed pattern. A named
+`cobalt_stock_texture` corner attribute restricts the relief to these two source
+objects; color, packed roughness/metallic and tangent normals are baked into the
+existing atlases. No additional mesh, material, texture or draw unit is added.
+Both exports retain 97,422 triangles and the original anchors. Source and
+export topology are preserved; simplification remains deferred.
+
+Presentation profile @24 adjusts only the Rifle left thumb articulation and
+opposition. The @23 registry is reconstructed by `BeforeCobaltThumb`; named
+custom poses and immutable history remain readable. The stock surface and hand
+must be reviewed together in native Unity FPS and opposing close-up views.

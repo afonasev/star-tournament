@@ -3,10 +3,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeCobaltThumb()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<24)return this;
+            var p=DetachedCopy();p.version=23;
+            foreach(var old in CreateTrooperDefault(true,true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.left.Thumb.")||d.Path=="grip.Rifle.thumbOpposition"))
+            {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
+            return p;
+        }
         internal ProvingProfile BeforeVectorGrip()
         {
             if(id!="unity-trooper-presentation-v1"||version<23)return this;
-            var p=DetachedCopy();p.version=22;
+            var p=BeforeCobaltThumb().DetachedCopy();p.version=22;
             p.descriptors.RemoveAll(d=>d.Path=="grip.Shotgun.primaryWristAlignment");p.values.RemoveAll(v=>v.Path=="grip.Shotgun.primaryWristAlignment");
             foreach(var old in CreateTrooperDefault(true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Shotgun.")))
             {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
@@ -235,7 +243,7 @@ namespace StarTournament.ProvingGround
             return value==old.DefaultValue?current.DefaultValue:UnityEngine.Mathf.Clamp(value,current.Minimum,current.Maximum);
         }
         public static ProvingProfile CreateTrooperDefault()=>CreateTrooperDefault(true);
-        static ProvingProfile CreateTrooperDefault(bool articulated,bool vectorGrip=true)
+        static ProvingProfile CreateTrooperDefault(bool articulated,bool vectorGrip=true,bool cobaltThumb=true)
         {
             var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=19};
             p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
@@ -615,6 +623,14 @@ namespace StarTournament.ProvingGround
                 VectorFit("grip.Shotgun.right.Thumb.Intermediate",-3);
                 VectorFit("grip.Shotgun.right.Thumb.Distal",0);
                 VectorFit("grip.Shotgun.right.Thumb.Spread",-5);
+            }
+            if(articulated&&vectorGrip&&cobaltThumb)
+            {
+                p.version=24;
+                // F2: distribute flexion smoothly along the support thumb; all other contacts remain exact.
+                foreach(var pair in new[]{("Proximal",-10f),("Intermediate",10f),("Distal",0f),("Spread",-20f)})
+                {var path="grip.Rifle.left.Thumb."+pair.Item1;p.FindDescriptor(path).DefaultValue=pair.Item2;p.Set(path,pair.Item2);}
+                p.FindDescriptor("grip.Rifle.thumbOpposition").DefaultValue=44;p.Set("grip.Rifle.thumbOpposition",44);
             }
             return p;
         }

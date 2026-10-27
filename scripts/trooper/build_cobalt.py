@@ -160,6 +160,8 @@ for name,point in [('rifle-grip',(0,-.09,0)),('rifle-muzzle',(0,.062,.54)),('cob
  bpy.ops.object.empty_add(type='PLAIN_AXES',location=point);bpy.context.object.name=name
 axis=Matrix.Rotation(math.pi/2,4,'X')
 for o in [o for o in bpy.context.scene.objects if o.type=='MESH']:
+ stock=o.data.attributes.new('cobalt_stock_texture','FLOAT','CORNER')
+ for item in stock.data:item.value=1.0 if o.name in ('rear stock upper spine','rubber shoulder butt') else 0.0
  wear=o.data.attributes.new('cobalt_edge_wear','FLOAT','CORNER')
  for face in o.data.polygons:
   value=1.0 if max(abs(c) for c in face.normal)<.999 and face.area<.0003 else 0.0
