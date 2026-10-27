@@ -39,7 +39,7 @@ existing atlases. No additional mesh, material, texture or draw unit is added.
 Both exports retain 97,422 triangles and the original anchors. Source and
 export topology are preserved; simplification remains deferred.
 
-Presentation profile @24 adjusts only the Rifle left thumb articulation and
-opposition. The @23 registry is reconstructed by `BeforeCobaltThumb`; named
+Presentation profile @25 adjusts only the Rifle left thumb articulation and
+opposition. The @24 registry is reconstructed by `BeforeCobaltThumb`; named
 custom poses and immutable history remain readable. The stock surface and hand
 must be reviewed together in native Unity FPS and opposing close-up views.

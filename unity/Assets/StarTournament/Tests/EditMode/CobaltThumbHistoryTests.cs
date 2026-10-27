@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [Test] public void OnlyRifleThumbDefaultsChangeAndCustomAnglesSurvive()
         {
             var old=Previous();var current=ProvingProfile.CreateTrooperDefault();
-            Assert.That(old.Version,Is.EqualTo(23));Assert.That(current.Version,Is.EqualTo(24));
+            Assert.That(old.Version,Is.EqualTo(24));Assert.That(current.Version,Is.EqualTo(25));
             foreach(var d in old.Descriptors.Where(d=>!d.Path.StartsWith("grip.Rifle.left.Thumb.")&&d.Path!="grip.Rifle.thumbOpposition"))
                 Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
             old.Set("grip.Rifle.left.Thumb.Intermediate",12);old.EnsureTrooperDescriptors();

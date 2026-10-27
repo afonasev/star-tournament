@@ -5,16 +5,24 @@ namespace StarTournament.ProvingGround
     {
         internal ProvingProfile BeforeCobaltThumb()
         {
-            if(id!="unity-trooper-presentation-v1"||version<24)return this;
-            var p=DetachedCopy();p.version=23;
+            if(id!="unity-trooper-presentation-v1"||version<25)return this;
+            var p=DetachedCopy();p.version=24;
             foreach(var old in CreateTrooperDefault(true,true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.left.Thumb.")||d.Path=="grip.Rifle.thumbOpposition"))
             {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
+            return p;
+        }
+        internal ProvingProfile BeforeVectorThumb()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<24)return this;
+            var p=BeforeCobaltThumb().DetachedCopy();p.version=23;
+            foreach(var pair in new[]{("grip.Shotgun.left.Thumb.Proximal",-38f),("grip.Shotgun.left.Thumb.Intermediate",35f),("grip.Shotgun.left.Thumb.Spread",-45f),("grip.Shotgun.thumbOpposition",67f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
             return p;
         }
         internal ProvingProfile BeforeVectorGrip()
         {
             if(id!="unity-trooper-presentation-v1"||version<23)return this;
-            var p=BeforeCobaltThumb().DetachedCopy();p.version=22;
+            var p=BeforeVectorThumb().DetachedCopy();p.version=22;
             p.descriptors.RemoveAll(d=>d.Path=="grip.Shotgun.primaryWristAlignment");p.values.RemoveAll(v=>v.Path=="grip.Shotgun.primaryWristAlignment");
             foreach(var old in CreateTrooperDefault(true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Shotgun.")))
             {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
@@ -623,10 +631,16 @@ namespace StarTournament.ProvingGround
                 VectorFit("grip.Shotgun.right.Thumb.Intermediate",-3);
                 VectorFit("grip.Shotgun.right.Thumb.Distal",0);
                 VectorFit("grip.Shotgun.right.Thumb.Spread",-5);
+                // F02: the support thumb follows the fore-end instead of pointing upright.
+                p.version=24;
+                VectorFit("grip.Shotgun.left.Thumb.Proximal",-21);
+                VectorFit("grip.Shotgun.left.Thumb.Intermediate",10);
+                VectorFit("grip.Shotgun.left.Thumb.Spread",-11);
+                VectorFit("grip.Shotgun.thumbOpposition",35);
             }
             if(articulated&&vectorGrip&&cobaltThumb)
             {
-                p.version=24;
+                p.version=25;
                 // F2: distribute flexion smoothly along the support thumb; all other contacts remain exact.
                 foreach(var pair in new[]{("Proximal",-10f),("Intermediate",10f),("Distal",0f),("Spread",-20f)})
                 {var path="grip.Rifle.left.Thumb."+pair.Item1;p.FindDescriptor(path).DefaultValue=pair.Item2;p.Set(path,pair.Item2);}
