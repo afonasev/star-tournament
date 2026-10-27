@@ -40,10 +40,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Art/cutter-lod0.glb");Assert.That(prefab,Is.Not.Null);
             Assert.That(prefab.GetComponentsInChildren<Collider>(true),Is.Empty);
             Assert.That(prefab.GetComponentsInChildren<Transform>(true).Count(t=>t.name=="cutter-muzzle"),Is.EqualTo(1));
-            Assert.That(prefab.GetComponentsInChildren<MeshRenderer>(true).Length,Is.EqualTo(7));
+            Assert.That(prefab.GetComponentsInChildren<MeshRenderer>(true).Length,Is.EqualTo(8));
             Assert.That(prefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).All(m=>m&&m.mainTexture),Is.True,"F1 authored surface maps must survive the GLB import");
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
             ground=scene.GetRootGameObjects().SelectMany(o=>o.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             var roster=NativeMatchRoster.Ffa(4);
             var info=Enumerable.Range(0,4).Select(i=>new NativeParticipantInfo(i==0?NativeParticipantKind.LocalHuman:NativeParticipantKind.Bot,"SEAM "+i,NativeParticipantColors.For(i),i==0?-1:0)).ToArray();
             ground.StartBotReview(new NativeMatchComposition(roster,info,new[]{0}),4193);ground.enabled=false;yield return NativeLoadingTestScene.Wait(ground);
@@ -163,6 +164,63 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             }
             File.WriteAllText(Path.Combine(output,"forearm-comparison.txt"),"Elbow viewport before: "+previousElbow.ToString("F6")+"\nElbow viewport after: "+correctedElbow.ToString("F6")+"\nWrist movement: "+Vector3.Distance(previousWrist,supportWrist.position).ToString("R"));
             Capture(seat,Path.Combine(output,"fps-idle.png"));
+            // F4: actual imported cell topology and native per-participant energy feed.
+            var battery=gun.GetComponentsInChildren<Renderer>(true).Single(r=>r.name=="SEAM battery charge");
+            var batteryMesh=battery.GetComponent<MeshFilter>().sharedMesh;
+            var cellCenters=Enumerable.Range(0,16).Select(cell=>
+            {
+                var indices=Enumerable.Range(0,batteryMesh.vertexCount).Where(i=>Mathf.Abs(batteryMesh.uv[i].x-cell)<.001f).ToArray();
+                Assert.That(indices.Length,Is.GreaterThanOrEqualTo(4),"Every authored cell survives import");
+                return indices.Select(i=>battery.transform.TransformPoint(batteryMesh.vertices[i])).Aggregate(Vector3.zero,(a,b)=>a+b)/indices.Length;
+            }).ToArray();
+            Assert.That(batteryMesh.triangles.Length,Is.EqualTo(16*6));
+            var batteryCenter=cellCenters.Aggregate(Vector3.zero,(a,b)=>a+b)/16;
+            camera.cullingMask=1<<view.gameObject.layer;camera.orthographic=true;camera.aspect=1.6f;
+            camera.orthographicSize=Vector3.Distance(cellCenters[0],cellCenters[15])*.7f;
+            camera.transform.position=batteryCenter-gun.forward*.4f;camera.transform.LookAt(batteryCenter,gun.up);
+            var beforeBattery=ground.Session.Capture();float capacity=ground.Session.CutterProfile.Get("cutter.energyCapacity");
+            var viewWeapon=view.GetComponent<WeaponModelPresentation>();
+            var bodyWeapon=ground.transform.Find("player-1/trooper-presentation").GetComponent<WeaponModelPresentation>();
+            var otherWeapon=ground.transform.Find("player-2/trooper-presentation").GetComponent<WeaponModelPresentation>();
+            var cellEvidence=new List<string>();float[] fullBrightness=null;
+            foreach(var fraction in new[]{1f,.5f,.125f,.03125f,0f})
+            {
+                var chargeState=ground.Session.Capture();chargeState.Lives[0].CutterEnergy=capacity*fraction;chargeState.Lives[1].CutterEnergy=capacity*.25;
+                for(int participant=0;participant<chargeState.Lives.Length;participant++)chargeState.Lives[participant].Ammo=CombatLife.AmmoFor(chargeState.Lives[participant],chargeState.Lives[participant].SelectedWeapon);
+                ground.Session.Restore(chargeState);ground.SendMessage("LateUpdate");yield return null;
+                Assert.That(viewWeapon.CutterChargeFraction,Is.EqualTo(fraction).Within(.000001f));
+                Assert.That(bodyWeapon.CutterChargeFraction,Is.EqualTo(fraction).Within(.000001f));
+                Assert.That(otherWeapon.CutterChargeFraction,Is.EqualTo(.25f).Within(.000001f));
+                Assert.That(battery.sharedMaterial.GetFloat("_Charge"),Is.EqualTo(fraction).Within(.000001f));
+                string stateName=fraction==1?"full":fraction==.5f?"half":fraction==.125f?"two":fraction==0?"empty":"fractional";
+                Capture(seat,Path.Combine(output,"battery-"+stateName+"-fps.png"));
+                string detail=Path.Combine(output,"battery-"+stateName+"-detail.png");Capture(camera,detail);
+                var readback=new Texture2D(2,2);readback.LoadImage(File.ReadAllBytes(detail));
+                var brightness=cellCenters.Select(center=>
+                {
+                    var v=camera.WorldToViewportPoint(center);Assert.That(v.x,Is.InRange(0f,1f));Assert.That(v.y,Is.InRange(0f,1f));
+                    var color=readback.GetPixel(Mathf.RoundToInt(v.x*(readback.width-1)),Mathf.RoundToInt(v.y*(readback.height-1)));
+                    return (color.r+color.g+color.b)/3;
+                }).ToArray();Object.Destroy(readback);
+                int count=fraction==1?16:fraction==.5f?8:fraction==.125f?2:fraction==0?0:1;
+                for(int cell=0;cell<16;cell++)Assert.That(brightness[cell]>.25f,Is.EqualTo(cell<count),stateName+" actual shader cell "+cell);
+                if(fraction==1)fullBrightness=brightness;
+                if(fraction==.03125f)Assert.That(brightness[0],Is.LessThan(fullBrightness[0]),"Fractional cell actually dims in GPU readback");
+                cellEvidence.Add(stateName+"\t"+string.Join(",",brightness.Select(x=>x.ToString("F4",System.Globalization.CultureInfo.InvariantCulture))));
+                var frozenCharge=battery.sharedMaterial.GetFloat("_Charge");ground.SendMessage("LateUpdate");yield return null;
+                Assert.That(battery.sharedMaterial.GetFloat("_Charge"),Is.EqualTo(frozenCharge),"Render without simulation time cannot drain battery");
+            }
+            File.WriteAllLines(Path.Combine(output,"battery-cell-brightness.tsv"),cellEvidence);
+            // Consumption and snapshot refill use the same authoritative ratio, without a second timer.
+            ground.Session.Restore(beforeBattery);var energyBefore=ground.Session.Life(0).CutterEnergy;
+            ground.Session.Tick(actions,.2f);ground.SendMessage("LateUpdate");yield return null;
+            Assert.That(ground.Session.Life(0).CutterEnergy,Is.LessThan(energyBefore));
+            Assert.That(viewWeapon.CutterChargeFraction,Is.EqualTo((float)(ground.Session.Life(0).CutterEnergy/capacity)).Within(.000001f));
+            var switchState=ground.Session.Capture();switchState.Lives[0].SelectedWeapon=WeaponId.Rifle;switchState.Lives[0].Ammo=CombatLife.AmmoFor(switchState.Lives[0],WeaponId.Rifle);ground.Session.Restore(switchState);ground.SendMessage("LateUpdate");yield return null;
+            Assert.That(gun.gameObject.activeInHierarchy,Is.False,"Stowed battery follows cutter visibility");
+            ground.Session.Restore(beforeBattery);ground.SendMessage("LateUpdate");yield return null;
+            Assert.That(gun.gameObject.activeInHierarchy,Is.True);
+            Assert.That(viewWeapon.CutterChargeFraction,Is.EqualTo((float)(beforeBattery.Lives[0].CutterEnergy/capacity)).Within(.000001f));
             File.WriteAllText(Path.Combine(output,"review.json"),"{\"classification\":\"Editor Play Mode, not human/device acceptance\",\"seed\":4193,\"damageNotices\":"+notices+"}");
         }
     }

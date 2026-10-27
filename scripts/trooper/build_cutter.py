@@ -6,7 +6,7 @@ import bpy,bmesh,math,json,hashlib,random
 import numpy as np
 from pathlib import Path
 from mathutils import Matrix,Vector
-ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'.local/seam-f2';OUT.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'.local/seam-f4';OUT.mkdir(parents=True,exist_ok=True)
 bpy.context.preferences.filepaths.save_version=0
 bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
 # Surface maps are authored in physical planar coordinates, not one stretched patch per object.
@@ -44,7 +44,8 @@ def mat(name,color,metal,rough):
  return m
 Y=mat('ochre enamel',(.58,.30,.026),.12,.57);D=mat('graphite titanium',(.033,.04,.048),.55,.53);R=mat('grip rubber',(.012,.016,.019),.02,.76);C=mat('copper exchanger',(.52,.19,.068),.85,.34);S=mat('machined steel',(.27,.30,.33),.75,.46);B=mat('deep recess',(.004,.006,.008),.2,.58);A=mat('amber emitter',(1,.38,.055),.15,.3)
 p=next(n for n in A.node_tree.nodes if n.type=='BSDF_PRINCIPLED');p.inputs['Emission Color'].default_value=(1,.32,.04,1);p.inputs['Emission Strength'].default_value=3
-MATS=[Y,D,R,C,S,B,A]
+E=A.copy();E.name='SEAM battery charge'
+MATS=[Y,D,R,C,S,B,A,E]
 def finish(o,material,width=.002,segments=3):
  bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o;o.data.materials.append(material)
  bm=bmesh.new();bm.from_mesh(o.data);bmesh.ops.recalc_face_normals(bm,faces=bm.faces);bm.to_mesh(o.data);bm.free()
@@ -147,7 +148,45 @@ for z,length,y in [(-.14,.13,.231),(.016,.14,.236),(.186,.095,.232)]:
   box('hatch latch',(side*.045,y+.006,z-length*.33),(.013,.004,.019),S,.001)
 for z in (-.17,.30):
  panel('stamped carry bridge',[(z-.04,.229),(z-.03,.251),(z+.03,.251),(z+.04,.229),(z+.025,.229),(z+.02,.243),(z-.022,.243),(z-.027,.229)],0,.078,D,.0015)
-box('rear status bezel',(0,.059,-.266),(.076,.032,.008),B,.002);box('rear status light',(0,.059,-.271),(.051,.007,.002),A,.001)
+# F4: a recessed, replaceable energy cartridge; 16 cells are the approved asset topology.
+# Keep the original rear silhouette and all three gameplay/grip anchors.
+cut=box('temporary battery cavity',(.020,.101,-.254),(.079,.151,.064),B,.004)
+for name in ['rear battery beveled housing','receiver forged backbone']:
+ body=bpy.data.objects[name];bpy.context.view_layer.objects.active=body
+ mod=body.modifiers.new('battery socket recess','BOOLEAN');mod.operation='DIFFERENCE';mod.solver='EXACT';mod.object=cut;bpy.ops.object.modifier_apply(modifier=mod.name)
+bpy.data.objects.remove(cut,do_unlink=True)
+box('battery socket floor',(.020,.101,-.227),(.076,.148,.004),B,.003)
+# Stepped graphite rails and copper cartridge contacts frame a deep, narrow cavity.
+for x in (.062,-.022):
+ box('battery protective rail',(x,.100,-.269),(.009,.161,.020),D,.002)
+ box('battery rail machined return',(x,.100,-.280),(.002,.145,.002),S,.0005)
+for y in (.020,.180):box('battery protective crossbar',(.020,y,-.270),(.085,.010,.018),D,.002)
+for y in (.028,.172):
+ box('battery copper end contact',(.020,y,-.267),(.061,.008,.012),C,.0015)
+ box('battery contact lip',(.020,y,-.275),(.042,.004,.004),S,.0006)
+box('battery yellow retaining latch',(.020,.185,-.278),(.044,.014,.010),Y,.002)
+# A single separate emissive mesh carries a constant UV.x cell index per quad.
+# Runtime reads energy; the 16 dark sockets remain physical geometry at zero charge.
+verts=[];faces=[]
+for i in range(16):
+ y=.036+i*.0084
+ box('battery cell socket %02d'%i,(.020,y,-.265),(.066,.0078,.013),D,.001)
+ box('battery cell dark inset %02d'%i,(.020,y,-.272),(.058,.0064,.002),B,.0005)
+ n=len(verts);verts.extend([(-.008,y-.0028,-.2732),(.048,y-.0028,-.2732),(.048,y+.0028,-.2732),(-.008,y+.0028,-.2732)]);faces.append((n,n+1,n+2,n+3))
+charge=mesh('SEAM battery charge',verts,faces,E,0)
+for i,face in enumerate(charge.data.polygons):
+ for li in face.loop_indices:charge.data.uv_layers.active.data[li].uv=(float(i),.5)
+# Mechanical quarter-turn release on the narrow side strip, with a yellow pointer.
+for name,r,depth,z,m in [('lock socket',.019,.005,-.264,B),('lock steel rim',.0165,.004,-.269,S),('lock dial',.014,.006,-.273,D)]:
+ bpy.ops.mesh.primitive_cylinder_add(vertices=32,radius=r,depth=depth,location=(-.049,.100,z));o=bpy.context.object;o.name='battery '+name;finish(o,m,.0008)
+box('battery lock handle',(-.049,.100,-.278),(.006,.025,.006),D,.001)
+box('battery lock amber pointer',(-.049,.106,-.2815),(.002,.010,.001),Y,.0004)
+for x in (.056,-.055):
+ for y in (.035,.165):
+  bpy.ops.mesh.primitive_cylinder_add(vertices=24,radius=.006,depth=.002,location=(x,y,-.265));finish(bpy.context.object,B,.0005)
+  bpy.ops.mesh.primitive_cylinder_add(vertices=6,radius=.004,depth=.003,location=(x,y,-.267));finish(bpy.context.object,S,.0004)
+mesh('battery latch arrow',[(.015,.189,-.284),(.025,.189,-.284),(.020,.182,-.284)],[(0,1,2)],B,0)
+
 # Radiator: axial horizontal copper blades at different heights. Black core fills
 # the nose; blade ends disappear into cast collars, no tall free-standing cage.
 loft('radiator internal core',[(.466,.078,.018,.19,.02),(.583,.080,.018,.19,.02)],B,.003)
@@ -235,10 +274,10 @@ def stats():
 def render(path):
  scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=24;scene.cycles.use_denoising=True;scene.render.resolution_x=1600;scene.render.resolution_y=1000;scene.render.resolution_percentage=100
  scene.world.color=(.07,.07,.07);scene.view_settings.view_transform='AgX';made=[]
- target=Vector((0,-.19,.045))
+ target=Vector((0,.04,.075))
  for pos,power,size in [((1,-.1,1.2),48,1),((-.6,-.5,.7),25,.7),((.1,.8,.8),60,.6)]:
   d=bpy.data.lights.new('studio','AREA');d.energy=power;d.size=size;o=bpy.data.objects.new('studio',d);scene.collection.objects.link(o);o.location=pos;o.rotation_euler=(target-o.location).to_track_quat('-Z','Y').to_euler();made.append(o)
- d=bpy.data.cameras.new('review');o=bpy.data.objects.new('review',d);scene.collection.objects.link(o);o.location=(1.35,-.68,.36);o.rotation_euler=(target-o.location).to_track_quat('-Z','Y').to_euler();d.type='ORTHO';d.ortho_scale=1.07;scene.camera=o;made.append(o)
+ d=bpy.data.cameras.new('review');o=bpy.data.objects.new('review',d);scene.collection.objects.link(o);o.location=(.60,1.35,.47);o.rotation_euler=(target-o.location).to_track_quat('-Z','Y').to_euler();d.type='ORTHO';d.ortho_scale=1.07;scene.camera=o;made.append(o)
  scene.render.image_settings.file_format='PNG';scene.render.filepath=str(path);bpy.ops.render.render(write_still=True)
  for o in made:bpy.data.objects.remove(o,do_unlink=True)
 # A monochrome geometry render precedes materials, allowing silhouette review.
@@ -270,5 +309,5 @@ for lod in (0,1):
 manifest=ART/'asset-manifest.json';doc=json.loads(manifest.read_text())
 for e in doc['entries']:
  if e['key'] in ('cutter-lod0','cutter-lod1'):
-  e['sha256']=hashlib.sha256((ART/(e['key']+'.glb')).read_bytes()).hexdigest();e['source']='SEAM F2 volumetric form rework; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy.'
+  e['sha256']=hashlib.sha256((ART/(e['key']+'.glb')).read_bytes()).hexdigest();e['source']='SEAM F4 sixteen-cell rear energy cartridge; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy.'
 manifest.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+'\n');(OUT/'asset-cost.json').write_text(json.dumps(reports,indent=2)+'\n');print('SEAM_REPORT',json.dumps(reports))

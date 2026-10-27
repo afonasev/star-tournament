@@ -9,19 +9,17 @@
 - Explicit model/effort wins. Authorized new chats: Sol 6.1/medium; bounded work/subagents: Luna/medium or higher. Astra needs a specific complex decision or explicit choice. No implied delegation/message permission.
 - Show real visual alternatives before implementation; concepts do not authorize publication.
 - Before finalizing any new or changed map object, model, or map, complete and document its applicable asset-optimization pass; preserve the approved look and gameplay/spatial contracts.
-- Before QA, delivery or finalization read `.agents/references/execution-policy.md`; it includes preservation/cleanup and reporting. Report branch + SHA and integration separately. Read `.agents/references/portability.md` on a new device or missing dependency. Other references below load only on their stated trigger.
+- At first QA, delivery or finalization read `.agents/references/execution-policy.md`; it includes preservation/cleanup and reporting. Report branch + SHA and integration separately. Read `.agents/references/portability.md` on a new device or missing dependency. Other references below load only on their stated trigger.
 - Autonomous games start silent: `-muted`, Unity `-noaudio -muted`, web `?muted=1` before autoplay. Never change system volume; missing support remains an open gate.
 - Player build only by request or justified indispensable minimal QA build. Installer/release/deploy need a separate request; inspect composite commands before running.
 
 - Параллельный Unity: `shared` по умолчанию для автономных проверок, включая UI/EditMode/PlayMode; `exclusive` только для замеров производительности или доступа к общему экрану, фокусу, системному вводу/аудиоустройству. До запуска читай `.agents/references/project-policy/unity.md`; название UI/Player само по себе не требует эксклюзивности.
 
-- Полный прогон всех тестов требует отдельного явного подтверждения человека, включая production/deploy. До проверки записывай baseline, diff/поведение, зависимости, команды и причину минимального набора. Флаг `CONFIRM_FULL_TESTS=1` лишь фиксирует уже полученное подтверждение; агент не выдаёт его себе. Tooling/docs проверяй без Unity, когда движок не затронут.
-- UI/copy/layout и минорные локальные правки не запускают полную игровую QA и длительные симуляции матчей. Выбери UI/affected fixtures; full требует отдельного подтверждения человека; natural matches — конкретного обоснования влиянием изменения. `make check` — локальный набор; `make check-full` — явный полный запуск.
-- Локальная Unity-разработка: `.agents/references/local-development.md` (решение 2026-10-08) отменяет прежние автоматические Player build/deploy gates. Быстрые проверки выбирай по поведению; полный набор — только по отдельному подтверждению, сборка и поставка отдельно.
+- Выбор команд и причины affected QA — в `.agents/references/qa-scope.md`; Player/release/deploy — в `.agents/references/local-development.md`. Эти references содержат действующие gates; docs/tooling без изменения Unity runtime проверяй без запуска движка.
 
 - Planning: `/Users/eaafonasev/Projects/star-tournament/planning`, store `star-tournament-planning`; читай его `workflow/project.json`. Каталог `/planning/` исключён из Git кода и хранит собственный `.git`; все code worktree используют этот единый home в основном checkout, не создают свои planning-копии. Code `openspec/` — исторический snapshot.
 
-Подробные правила вынесены без отмены требований. Загружай только строку с подходящим триггером; не читай все references при старте и не перечитывай неизменившееся в одном срезе.
+Подробные правила вынесены без отмены требований. Загружай только строку с подходящим триггером; не читай все references при старте и повторно читай только изменившийся или недостающий после compaction диапазон.
 
 | Когда читать | Файл |
 |---|---|
