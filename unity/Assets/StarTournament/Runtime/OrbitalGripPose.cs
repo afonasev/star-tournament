@@ -57,7 +57,7 @@ namespace StarTournament.ProvingGround
                     spreadAxes[bone]=bone.InverseTransformDirection(Vector3.Cross(primaryRow,(bones["RightMiddleProximal"].position-primaryWrist.position).normalized));
                     primaryDigits.Add((bone,bone.InverseTransformDirection(primaryRow),"grip.primary"+segment+"Curl",digit=="Thumb"));
                 }
-            sampledBones=new[]{upper,lower,wrist,rightUpper,rightLower}.Concat(digits.Select(d=>d.bone)).Concat(primaryDigits.Select(d=>d.bone)).ToArray();
+            sampledBones=new[]{bones["LeftShoulder"],bones["RightShoulder"],upper,lower,wrist,rightUpper,rightLower}.Concat(digits.Select(d=>d.bone)).Concat(primaryDigits.Select(d=>d.bone)).ToArray();
         }
         // Some clips have no wrist/attachment channel. Undo our previous additive
         // correction before the graph samples; never capture a corrected bind pose.

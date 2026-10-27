@@ -32,13 +32,22 @@ namespace StarTournament.ProvingGround
         readonly Quaternion[] sampled;
         readonly float[] angles;
         readonly Vector3 rest;
+        readonly Camera camera;
+        readonly Transform leftHand,rightHand,mount,leftShoulder,rightShoulder,leftPalm,rightPalm;
+        Vector3 leftShoulderSample,rightShoulderSample;
+        Quaternion leftSample,rightSample,mountSampleRotation;
+        Vector3 mountSamplePosition;
         int revision=-1;
         public FirstPersonWeaponSwitch(GameObject view,Camera camera)
         {
-            root=view.transform;axis=camera.transform;model=view.GetComponent<WeaponModelPresentation>();
+            this.camera=camera;root=view.transform;axis=camera.transform;model=view.GetComponent<WeaponModelPresentation>();
             visual=view.GetComponent<TrooperVisual>();var profile=visual.Tuning;
             rest=new Vector3(profile.Get("view.x"),profile.Get("view.y"),profile.Get("view.z"));root.localPosition=rest;
             var bones=view.GetComponentsInChildren<Transform>(true);
+            leftShoulder=Array.Find(bones,b=>b.name=="LeftShoulder");rightShoulder=Array.Find(bones,b=>b.name=="RightShoulder");
+            leftPalm=Array.Find(bones,b=>b.name=="LeftMiddleProximal");rightPalm=Array.Find(bones,b=>b.name=="RightMiddleProximal");
+            leftHand=Array.Find(bones,b=>b.name=="LeftHand");rightHand=Array.Find(bones,b=>b.name=="RightHand");
+            mount=Array.Find(bones,b=>b.name=="trooper:rig:weapon-mount");
             // Joint names are the imported Humanoid rig contract; pivots never translate.
             joints=new Transform[4];sampled=new Quaternion[4];angles=new float[4];
             string[] names={"LeftUpperArm","RightUpperArm","LeftLowerArm","RightLowerArm"};
@@ -55,13 +64,44 @@ namespace StarTournament.ProvingGround
             if(revision!=visual.PoseRevision)
             {
                 for(int i=0;i<joints.Length;i++)sampled[i]=joints[i].localRotation;
+                leftShoulderSample=leftShoulder.localPosition;rightShoulderSample=rightShoulder.localPosition;
+                leftSample=leftHand.localRotation;rightSample=rightHand.localRotation;
+                mountSamplePosition=mount.localPosition;mountSampleRotation=mount.localRotation;
                 revision=visual.PoseRevision;
             }
             // Start from the sampled clip each time, including repeated render and completion-tick muzzle reads.
             for(int i=0;i<joints.Length;i++)joints[i].localRotation=sampled[i];
+            leftShoulder.localPosition=leftShoulderSample;rightShoulder.localPosition=rightShoulderSample;
+            leftHand.localRotation=leftSample;rightHand.localRotation=rightSample;
+            mount.localPosition=mountSamplePosition;mount.localRotation=mountSampleRotation;
             for(int i=0;i<joints.Length;i++)
                 joints[i].rotation=Quaternion.AngleAxis(-angles[i]*pose.Lift,axis.right)*joints[i].rotation;
             root.localPosition=rest+visual.ViewOffset;model?.Show(pose.Weapon);
+            if(visual.Tuning.Version>=28&&visual.Tuning.Get("view.armEntryEnabled")>0)
+            {
+                var weaponPosition=mount.position;var weaponRotation=mount.rotation;
+                FitEntry(leftShoulder,joints[2],leftHand,leftPalm,visual.Tuning.Get("view.armEntryLeftX"));
+                FitEntry(rightShoulder,joints[3],rightHand,rightPalm,visual.Tuning.Get("view.armEntryRightX"));
+                mount.SetPositionAndRotation(weaponPosition,weaponRotation);
+            }
+        }
+        void FitEntry(Transform shoulder,Transform elbow,Transform hand,Transform palm,float horizontalOffset)
+        {
+            var b=elbow.position;var c=hand.position;var handRotation=hand.rotation;
+            float length=Vector3.Distance(b,c);
+            // Height-relative coordinates preserve the physical ray across split-screen aspect ratios.
+            float viewportX=.5f+horizontalOffset/camera.aspect;
+            var ray=camera.ViewportPointToRay(new Vector3(viewportX,0,0));
+            var normal=Vector3.Cross(c-ray.origin,ray.direction).normalized;
+            var direction=Vector3.ProjectOnPlane(palm.position-c,normal).normalized;
+            // Singular plane guard, not art tuning. No change is safer than a collapsed forearm.
+            if(direction.sqrMagnitude<.000001f)return;
+            var target=c-direction*length;
+            // The first-person sleeve's hidden shoulder attachment may move; upper/lower arm
+            // lengths, palm contact and weapon pose cannot. World-body rigs never use this pass.
+            shoulder.position+=target-b;
+            elbow.rotation=Quaternion.FromToRotation(hand.position-elbow.position,c-elbow.position)*elbow.rotation;
+            hand.rotation=handRotation;
         }
     }
 }

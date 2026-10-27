@@ -3,10 +3,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeStableArmEntry()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<28)return this;
+            var p=DetachedCopy();p.version=27;
+            p.FindDescriptor("view.switchShoulderDegrees").DefaultValue=60;p.Set("view.switchShoulderDegrees",60);
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.armEntry"));
+            p.values.RemoveAll(v=>v.Path.StartsWith("view.armEntry"));p.valueIndex=null;return p;
+        }
         internal ProvingProfile BeforeUnifiedArmGrips()
         {
             if(id!="unity-trooper-presentation-v1"||version<27)return this;
-            var p=DetachedCopy();p.version=26;
+            var p=BeforeStableArmEntry().DetachedCopy();p.version=26;
             foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
             {
                 var prefix="grip."+weapon+".";
@@ -677,6 +685,12 @@ namespace StarTournament.ProvingGround
                     p.FindDescriptor(prefix+"wristAlignment").DefaultValue=1;p.Set(prefix+"wristAlignment",1);
                     p.Add(prefix+"primaryWristAlignment","trooper-grip-"+weapon,"Выпрямление правого запястья","Общая подгонка локтя к продолжению ладони без смещения оружия и растяжения костей.","ratio",0,1,.05f,1);
                 }
+                p.version=28;
+                // A short shared lift keeps wrists below the singular crossing of the viewport edge.
+                p.FindDescriptor("view.switchShoulderDegrees").DefaultValue=10;p.Set("view.switchShoulderDegrees",10);
+                p.Add("view.armEntryEnabled","trooper-view","Общие точки выхода рук","Закрепляет обе оси предплечий у нижней границы своего viewport для всех оружий; выключение сохраняет прежнюю подгонку.","toggle",0,1,1,1);
+                p.Add("view.armEntryLeftX","trooper-view","Выход левой руки","Смещение оси левого предплечья от центра нижнего края в долях высоты viewport; сохраняет подгонку при split-screen.","viewport-height",-.5f,.5f,.005f,0);
+                p.Add("view.armEntryRightX","trooper-view","Выход правой руки","Смещение оси правого предплечья от центра нижнего края в долях высоты viewport; сохраняет подгонку при split-screen.","viewport-height",0,1,.005f,.4f);
             }
             return p;
         }

@@ -407,6 +407,8 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??28)<28)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeStableArmEntry()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??27)<27)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeUnifiedArmGrips()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??26)<26)
@@ -870,6 +872,11 @@ namespace StarTournament.ProvingGround
                 if(isDefault&&preserveSavedValues&&snapshot.Profile(d.Path).Version>=3&&snapshot.Profile(d.Path).Version<=4)value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 next.Set(d.Path,value);
             }
+            // Saved profiles predating the switch controls retain the originally introduced lift.
+            if(preserveSavedValues&&currentDescriptors.ContainsKey("view.switchShoulderDegrees")&&!snapshot.Descriptors.Any(d=>d.Path=="view.switchShoulderDegrees"))
+                next.Set("view.switchShoulderDegrees",60);
+            if(preserveSavedValues&&currentDescriptors.ContainsKey("view.armEntryEnabled")&&!snapshot.Descriptors.Any(d=>d.Path=="view.armEntryEnabled"))
+                next.Set("view.armEntryEnabled",0);
             // New right-arm fitting must not silently reinterpret an intentional saved pose.
             if(preserveSavedValues)
                 foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})

@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static ProvingProfile Previous()=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeUnifiedArmGrips",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
         [Test] public void FactoryUnifiesBothArmsWithoutChangingContactsOrView()
         {
-            var old=Previous();var current=ProvingProfile.CreateTrooperDefault();Assert.That(old.Version,Is.EqualTo(26));Assert.That(current.Version,Is.EqualTo(27));
+            var old=Previous();var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeStableArmEntry",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);Assert.That(old.Version,Is.EqualTo(26));Assert.That(current.Version,Is.EqualTo(27));
             foreach(var d in old.Descriptors.Where(d=>!d.Path.EndsWith(".wristAlignment")))Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
             foreach(WeaponId weapon in Enum.GetValues(typeof(WeaponId)))
             {Assert.That(current.Get("grip."+weapon+".wristAlignment"),Is.EqualTo(1));Assert.That(current.Get("grip."+weapon+".primaryWristAlignment"),Is.EqualTo(1));}
@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     Assert.That(migrated.Selected.Snapshot.Get(prefix+"wristAlignment"),Is.EqualTo(expected),prefix+"left");
                     Assert.That(migrated.Selected.Snapshot.Get(prefix+"primaryWristAlignment"),Is.EqualTo(expected),prefix+"right");
                 }
-                foreach(var d in old.Descriptors.Where(d=>!d.Path.EndsWith(".wristAlignment")))Assert.That(migrated.Selected.Snapshot.Get(d.Path),Is.EqualTo(mode==0&&d.Path.StartsWith("grip.RocketLauncher.")?current.Get(d.Path):source.Get(d.Path)),d.Path);
+                foreach(var d in old.Descriptors.Where(d=>!d.Path.EndsWith(".wristAlignment")))Assert.That(migrated.Selected.Snapshot.Get(d.Path),Is.EqualTo(mode==0&&(d.Path.StartsWith("grip.RocketLauncher.")||d.Path=="view.switchShoulderDegrees")?current.Get(d.Path):source.Get(d.Path)),d.Path);
                 var originals=migrated.Profiles.SelectMany(p=>p.Revisions).Where(r=>r.Hash==hash).ToArray();Assert.That(originals,Is.Not.Empty);
                 foreach(var revision in originals)Assert.That(JsonUtility.ToJson(revision.Snapshot),Is.EqualTo(bytes));
                 var reopened=new DesignLabHistory(path,current,authoring:mode==2);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
