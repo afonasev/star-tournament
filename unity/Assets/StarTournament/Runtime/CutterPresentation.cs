@@ -21,6 +21,8 @@ namespace StarTournament.ProvingGround
         readonly float coronaScale,contactSeconds,sparkSeconds,sparkReach,shieldRadius,muzzleRadius,shieldRingWidth,muzzleBlend,sparkWidth,contactGlow;
         readonly int sparkCount,arcSubdivisions;
         readonly float sparkSpread,shieldSpread,arcRadiusScale,arcWidthScale;
+        readonly float shieldOpacity,sparkGravity,sparkVariance,coreFraction;
+        readonly int rippleCount;
         bool disposed;
         struct Contact {public bool Valid,Shield;public int Life;public double Time;public Vector3 Point,Direction;}
         // One reusable dynamic mesh per colour/layer, regardless of contacts or spark count.
@@ -38,15 +40,15 @@ namespace StarTournament.ProvingGround
                 var r=Object.AddComponent<MeshRenderer>();r.sharedMaterial=material;r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;r.receiveShadows=false;
             }
             public void Begin(){vertices.Clear();uv.Clear();colors.Clear();triangles.Clear();}
-            public void Quad(Vector3 a,Vector3 b,Vector3 c,Vector3 d,float alpha,bool radial=false)
+            public void Quad(Vector3 a,Vector3 b,Vector3 c,Vector3 d,float alpha,bool radial=false,float white=0,bool solid=false)
             {
                 int n=vertices.Count;vertices.Add(a);vertices.Add(b);vertices.Add(c);vertices.Add(d);
                 uv.Add(new Vector2(0,0));uv.Add(new Vector2(1,0));uv.Add(new Vector2(1,1));uv.Add(new Vector2(0,1));
-                var color=new Color(radial?1:0,1,1,alpha);for(int i=0;i<4;i++)colors.Add(color);
+                var color=new Color(radial?1:0,white,solid?0:1,alpha);for(int i=0;i<4;i++)colors.Add(color);
                 triangles.Add(n);triangles.Add(n+1);triangles.Add(n+2);triangles.Add(n);triangles.Add(n+2);triangles.Add(n+3);
             }
-            public void Disc(Vector3 center,Vector3 side,Vector3 up,float radius,float alpha)
-                =>Quad(center-side*radius-up*radius,center+side*radius-up*radius,center+side*radius+up*radius,center-side*radius+up*radius,alpha,true);
+            public void Disc(Vector3 center,Vector3 side,Vector3 up,float radius,float alpha,float white=0)
+                =>Quad(center-side*radius-up*radius,center+side*radius-up*radius,center+side*radius+up*radius,center-side*radius+up*radius,alpha,true,white);
             public void End()
             {
                 Mesh.Clear();Mesh.SetVertices(vertices);Mesh.SetUVs(0,uv);Mesh.SetColors(colors);Mesh.SetTriangles(triangles,0);Mesh.RecalculateBounds();Object.SetActive(vertices.Count>0);
@@ -57,9 +59,10 @@ namespace StarTournament.ProvingGround
             this.session=session;p=session.CutterProfile;
             var defaults=ProvingProfile.CreateCutterDefault();
             float Read(string name){string path="cutter.seam."+name;return p.Descriptors.Any(d=>d.Path==path)?p.Get(path):defaults.Get(path);}
+            shieldOpacity=Read("surface.shieldOpacity");rippleCount=(int)Read("surface.rippleCount");sparkGravity=Read("surface.sparkGravity");sparkVariance=Read("surface.sparkVariance");coreFraction=Read("surface.coreFraction");
             coronaScale=Read("coronaScale");contactSeconds=Read("contactSeconds");sparkSeconds=Read("sparkSeconds");sparkReach=Read("sparkReach");
             arcRadiusScale=Read("detail.arcRadiusScale");arcWidthScale=Read("detail.arcWidthScale");
-            sparkCount=(int)(Read("sparkCount")*Read("detail.sparkLayers"));arcSubdivisions=(int)Read("detail.arcSubdivisions");sparkSpread=Read("detail.sparkSpread");shieldSpread=Read("detail.shieldSpread");shieldRadius=Read("shieldRadius");muzzleRadius=Read("muzzleRadius");shieldRingWidth=Read("shieldRingWidth");muzzleBlend=Read("muzzleBlendDistance");sparkWidth=Read("sparkWidth");contactGlow=Read("contactGlow");
+            sparkCount=(int)(Read("sparkCount")*Read("detail.sparkLayers")*Read("surface.sparkDensity"));arcSubdivisions=(int)Read("detail.arcSubdivisions");sparkSpread=Read("detail.sparkSpread");shieldSpread=Read("detail.shieldSpread");shieldRadius=Read("shieldRadius");muzzleRadius=Read("muzzleRadius");shieldRingWidth=Read("shieldRingWidth");muzzleBlend=Read("muzzleBlendDistance");sparkWidth=Read("sparkWidth");contactGlow=Read("contactGlow");
             root=new GameObject("Cutter beams");root.transform.SetParent(owner,false);
             var shader=Resources.Load<Shader>("CutterBeam");
             var color=new Color(p.Get("cutter.red"),p.Get("cutter.green"),p.Get("cutter.blue"));
@@ -107,45 +110,80 @@ namespace StarTournament.ProvingGround
         {
             Basis(direction,out var side,out var up);
             float phase=(float)session.Time/sparkSeconds;
-            batch.Disc(point-direction*.008f,side,up,p.Get("cutter.impactSize")*.5f,strength*contactGlow);
+            float glowRadius=p.Get("cutter.impactSize")*.5f;
+            batch.Disc(point-direction*.008f,side,up,glowRadius,strength*contactGlow);
+            batch.Disc(point-direction*.009f,side,up,glowRadius*coreFraction,strength*contactGlow,1);
             if(shield)
             {
-                // A local expanding ring, not a full body shield. Straight beam remains untouched.
-                float radius=shieldRadius*shieldSpread*(.65f+.35f*Mathf.Repeat(phase,1));
-                const int facets=32;
-                for(int k=0;k<facets;k++)
+                float radius=shieldRadius*shieldSpread;
+                // Curved local surface, tessellated radially. The fragment envelope
+                // fades into the undisturbed shield; it is never a gameplay volume.
+                const int facets=48;
+                const int bands=8;
+                Vector3 Surface(float r,float a)=>point+(side*Mathf.Cos(a)+up*Mathf.Sin(a))*r+direction*(r*r/(radius*3));
+                for(int band=0;band<bands;band++)for(int k=0;k<facets;k++)
                 {
+                    float inner=radius*band/bands,outer=radius*(band+1)/bands;
                     float a=k*Mathf.PI*2/facets,b=(k+1)*Mathf.PI*2/facets;
-                    var da=side*Mathf.Cos(a)+up*Mathf.Sin(a);var db=side*Mathf.Cos(b)+up*Mathf.Sin(b);
-                    batch.Quad(point+da*radius,point+db*radius,point+db*(radius+shieldRingWidth),point+da*(radius+shieldRingWidth),strength*.65f);
+                    float fade=1-(band+.5f)/bands;
+                    batch.Quad(Surface(inner,a),Surface(inner,b),Surface(outer,b),Surface(outer,a),strength*shieldOpacity*fade,solid:true);
                 }
-                // Fine local lattice shows the field around contact without covering the whole fighter.
-                float cell=radius/4;
-                for(int row=-4;row<=4;row++)for(int col=-4;col<=4;col++)
+                for(int wave=0;wave<rippleCount;wave++)
                 {
-                    var center=point+side*(col*cell*1.5f)+up*((row+(col%2==0?0:.5f))*cell*1.732f);
-                    float fade=Mathf.Clamp01(1-Vector3.Distance(point,center)/radius);
+                    float life=Mathf.Repeat(phase*.5f+(float)wave/rippleCount,1);
+                    float r=radius*life;
+                    for(int k=0;k<facets;k++)
+                    {
+                        float a=k*Mathf.PI*2/facets,b=(k+1)*Mathf.PI*2/facets;
+                        float wa=1+Mathf.Sin(a*7+phase)*shieldRingWidth/radius,wb=1+Mathf.Sin(b*7+phase)*shieldRingWidth/radius;
+                        batch.Quad(Surface(r*wa,a),Surface(r*wb,b),Surface(r*wb+shieldRingWidth,b),Surface(r*wa+shieldRingWidth,a),strength*(1-life));
+                    }
+                }
+                float cell=radius/7;
+                for(int row=-5;row<=5;row++)for(int col=-5;col<=5;col++)
+                {
+                    float x=col*cell*1.5f,y=(row+(col%2==0?0:.5f))*cell*1.732f;
+                    var center=point+side*x+up*y+direction*((x*x+y*y)/(radius*3));
+                    float fade=Mathf.Clamp01(1-Mathf.Sqrt(x*x+y*y)/radius);
                     if(fade<=0)continue;
                     for(int edge=0;edge<6;edge++)
                     {
                         float a=edge*Mathf.PI/3,b=(edge+1)*Mathf.PI/3;
                         var first=center+(side*Mathf.Cos(a)+up*Mathf.Sin(a))*cell;
                         var last=center+(side*Mathf.Cos(b)+up*Mathf.Sin(b))*cell;
-                        var width=Vector3.Cross(direction,last-first).normalized*shieldRingWidth*.15f;
-                        batch.Quad(first-width,last-width,last+width,first+width,strength*fade*.35f);
+                        var width=Vector3.Cross(direction,last-first).normalized*shieldRingWidth*.12f;
+                        batch.Quad(first-width,last-width,last+width,first+width,strength*fade*.5f);
                     }
+                }
+                for(int k=0;k<sparkCount/3;k++)
+                {
+                    float t=Mathf.Repeat(phase+k*.618034f,1),angle=k*2.399963f;
+                    var radial=side*Mathf.Cos(angle)+up*Mathf.Sin(angle);
+                    var center=point+radial*radius*t-direction*shieldRingWidth;
+                    var width=Vector3.Cross(direction,radial)*shieldRingWidth*.15f;
+                    batch.Quad(center-width,center+radial*shieldRingWidth*3-width,center+radial*shieldRingWidth*3+width,center+width,strength*(1-t),white:.5f);
                 }
                 return;
             }
             for(int k=0;k<sparkCount;k++)
             {
-                float t=Mathf.Repeat(phase+k*.618034f+seed*.137f,1);
-                float angle=k*2.399963f+seed;
+                float Random(float salt)=>Mathf.Repeat(Mathf.Sin(k*127.1f+seed*311.7f+salt)*43758.5453f,1);
+                float t=Mathf.Repeat(phase+Random(19),1);
+                float angle=Random(53)*Mathf.PI*2;
                 var radial=side*Mathf.Cos(angle)+up*Mathf.Sin(angle);
-                var velocity=radial*(.35f+.65f*Mathf.Abs(Mathf.Sin(k*17.17f+seed)))-direction*.28f;
-                var end=point+velocity*sparkReach*sparkSpread*t;var start=point+velocity*sparkReach*sparkSpread*Mathf.Max(0,t-.18f);
-                var width=Vector3.Cross(direction,velocity).normalized*sparkWidth;
-                batch.Quad(start-width,end-width,end+width,start+width,strength*(1-t));
+                float speed=Mathf.Lerp(1,.2f+Random(73),sparkVariance);
+                var velocity=radial*speed-direction*(.1f+Random(11)*.45f);
+                // Dense short fragments coexist with a few long, tapered hot streaks.
+                float travel=t*t;
+                float tail=Mathf.Lerp(.18f,.02f+Random(37)*.18f,sparkVariance);
+                float previous=Mathf.Max(0,travel-tail*speed);
+                Vector3 At(float time)=>point+velocity*sparkReach*sparkSpread*time-Vector3.up*sparkGravity*time*time;
+                var end=At(travel);var start=At(previous);
+                var width=Vector3.Cross(direction,velocity).normalized*sparkWidth*Mathf.Lerp(1,.12f+Random(91)*.7f,sparkVariance);
+                float alpha=strength*(1-t)*contactGlow;
+                batch.Quad(start-width,end-width*.15f,end+width*.15f,start+width,alpha,false,1-t);
+                batch.Disc(end,side,up,width.magnitude*1.5f,alpha,1-t);
+                if(k%3==0)batch.Disc(At(travel*.2f),side,up,glowRadius*(.04f+Random(151)*.08f),alpha,1);
             }
         }
         public void Render()

@@ -24,7 +24,10 @@ Shader "StarTournament/CutterBeam"
     // Smooth envelope over one clearance-length. This is view-only clipping, not a hit-volume change.
     float near=smoothstep(_NearFade,_NearFade+_NearFade,distance(i.world,GetCameraPositionWS()));
     float edge=lerp(saturate(1-abs(i.uv.y*2-1)),pow(saturate(1-length(i.uv*2-1)),2),_Radial*i.color.r);
-    return half4(_Tint.rgb,_Tint.a*near*edge*i.color.a);
+    // Contact vertex G carries hot-core whiteness; ordinary LineRenderers keep their material tint.
+    edge=lerp(1,edge,i.color.b);
+    half3 tint=lerp(_Tint.rgb,max(_Tint.rgb,1.0),_Radial*i.color.g);
+    return half4(tint,_Tint.a*near*edge*i.color.a);
    }
    ENDHLSL
   }

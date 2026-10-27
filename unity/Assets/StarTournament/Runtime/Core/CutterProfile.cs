@@ -2,11 +2,20 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // F2 is additive: v6 registries and immutable saved revisions stay exact.
+        internal ProvingProfile BeforeSeamContactSurface()
+        {
+            if(id!="cutter-beam-v1"||version<7)return this;
+            var p=DetachedCopy();p.version=6;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.surface."));
+            p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.surface."));
+            return p;
+        }
         // F1 adds renderer controls without rewriting any v5 revision or value.
         internal ProvingProfile BeforeSeamFidelity()
         {
             if(id!="cutter-beam-v1"||version<6)return this;
-            var p=DetachedCopy();p.version=5;
+            var p=BeforeSeamContactSurface().DetachedCopy();p.version=5;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.detail."));
             p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.detail."));
             return p;
@@ -47,7 +56,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=6 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=7 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -106,6 +115,25 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.detail.arcRadiusScale","cutter-effects","SEAM: размах разрядов","Масштаб мелких изломов относительно сохранённого радиуса.","ratio",.05f,1,.05f,.25f);
             p.Add("cutter.seam.detail.arcWidthScale","cutter-effects","SEAM: тонкие нити","Масштаб толщины электрических нитей.","ratio",.1f,1,.05f,.5f);
             p.Add("cutter.seam.detail.warmth","cutter-effects","SEAM: тёплое свечение","Смешивание линейного оттенка для оранжевых разрядов.","ratio",0,1,.05f,1);
+            p.Add("cutter.seam.surface.gripFitIterations","cutter-effects","SEAM: доводка пальцев","Итерации контакта нижних пальцев; 0 отключает подгонку.","count",0,8,1,4);
+            p.Add("cutter.seam.surface.gripFitStep","cutter-effects","SEAM: шаг подгонки","Максимальный доворот сустава за итерацию без растяжения.","degrees",1,20,1,12);
+            foreach(var digit in new[]{"Ring","Little"})foreach(var axis in new[]{"X","Y","Z"})
+            {
+                float value=axis=="X"?.02f:axis=="Y"?(digit=="Ring"?-.180f:-.202f):(digit=="Ring"?.320f:.304f);
+                p.Add("cutter.seam.surface.left"+digit+axis,"cutter-effects","SEAM: "+(digit=="Ring"?"безымянный":"мизинец")+" "+axis,"Контакт дистального сустава с передней рукоятью с учётом толщины перчатки.","model-m",-.5f,.5f,.001f,value);
+            }
+            p.Add("cutter.seam.surface.gripSupportPitch","cutter-effects","SEAM: наклон передней кисти","Добавочный наклон под ось новой передней рукояти.","degrees",-45,45,1,22);
+            p.Add("cutter.seam.surface.gripSupportZ","cutter-effects","SEAM: сдвиг передней кисти","Поправка точки ладони вдоль оружия; кости не растягиваются.","rig-units",-.2f,.2f,.005f,-.03f);
+            p.Add("cutter.seam.surface.gripPrimaryAlignment","cutter-effects","SEAM: запястье задней кисти","Выравнивание предплечья с ладонью без растяжения костей.","ratio",0,1,.05f,1);
+            p.Add("cutter.seam.surface.gripPrimaryPitch","cutter-effects","SEAM: наклон задней кисти","Наклон ладони под пистолетную рукоять; оружие сохраняет положение.","degrees",-45,45,1,18);
+            p.Add("cutter.seam.surface.gripPrimaryY","cutter-effects","SEAM: высота задней кисти","Подвод ладони по высоте к пистолетной рукояти.","rig-units",-.2f,.2f,.005f,.056f);
+            p.Add("cutter.seam.surface.gripPrimaryZ","cutter-effects","SEAM: сдвиг задней кисти","Подвод ладони вдоль пистолетной рукояти.","rig-units",-.2f,.2f,.005f,-.042f);
+            p.Add("cutter.seam.surface.sparkDensity","cutter-effects","SEAM: плотность фрагментов","Число разноразмерных частиц в каждом слое искр.","count",1,4,1,3);
+            p.Add("cutter.seam.surface.shieldOpacity","cutter-effects","SEAM: поверхность щита","Плотность локального светящегося поля контакта.","ratio",0,1,.01f,.24f);
+            p.Add("cutter.seam.surface.rippleCount","cutter-effects","SEAM: волны щита","Число расходящихся волн на поверхности.","count",1,5,1,3);
+            p.Add("cutter.seam.surface.sparkGravity","cutter-effects","SEAM: оседание искр","Изгиб траектории визуальных частиц; не физика попадания.","m",0,1,.01f,.12f);
+            p.Add("cutter.seam.surface.sparkVariance","cutter-effects","SEAM: разнообразие искр","Различие толщины, длины и скорости частиц.","ratio",0,1,.05f,.8f);
+            p.Add("cutter.seam.surface.coreFraction","cutter-effects","SEAM: ядро контакта","Размер белого центра относительно пятна попадания.","ratio",.05f,1,.05f,.3f);
             return p;
         }
     }

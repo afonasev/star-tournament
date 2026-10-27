@@ -119,6 +119,50 @@ namespace StarTournament.ProvingGround
                         joint.rotation=Quaternion.RotateTowards(Quaternion.identity,turn,12)*joint.rotation;
                     }
         }
+        static readonly ProvingProfile seamDefaults=ProvingProfile.CreateCutterDefault();
+        readonly Dictionary<string,float> seamSurfaceValues=new Dictionary<string,float>();
+        ProvingProfile seamSurfaceEquipment;
+        bool seamSurfaceLoaded;
+        float SeamSurface(ProvingProfile equipment,string key)
+        {
+            // Equipment profiles are immutable for a match. Resolve legacy defaults
+            // once, avoiding descriptor scans and profile allocations per joint/frame.
+            if(!seamSurfaceLoaded||!ReferenceEquals(equipment,seamSurfaceEquipment))
+            {
+                seamSurfaceEquipment=equipment;seamSurfaceLoaded=true;seamSurfaceValues.Clear();
+                const string prefix="cutter.seam.surface.";
+                foreach(var d in seamDefaults.Descriptors.Where(d=>d.Path.StartsWith(prefix)))
+                    seamSurfaceValues[d.Path.Substring(prefix.Length)]=equipment!=null&&equipment.Descriptors.Any(e=>e.Path==d.Path)?equipment.Get(d.Path):seamDefaults.Get(d.Path);
+            }
+            return seamSurfaceValues[key];
+        }
+        readonly List<(Transform proximal,Transform middle,Transform distal,string digit)> seamContacts=new List<(Transform,Transform,Transform,string)>();
+        Transform seamModel;
+        void FitSeamDigits(ProvingProfile rig,ProvingProfile equipment)
+        {
+            // Explicit custom joint controls stay authoritative, as for FORGE.
+            foreach(var d in rig.Descriptors)
+                if(d.Path.StartsWith("grip.Cutter.left.")&&!Mathf.Approximately(rig.Get(d.Path),d.DefaultValue))return;
+            if(!seamModel)
+            {
+                var all=rigRoot.GetComponentsInChildren<Transform>(true);
+                seamModel=all.FirstOrDefault(t=>t.name=="cutter");
+                if(!seamModel)return;
+                foreach(var digit in new[]{"Ring","Little"})
+                    seamContacts.Add((all.First(t=>t.name=="Left"+digit+"Proximal"),all.First(t=>t.name=="Left"+digit+"Intermediate"),all.First(t=>t.name=="Left"+digit+"Distal"),digit));
+            }
+            foreach(var c in seamContacts)
+            {
+                var target=seamModel.TransformPoint(new Vector3(SeamSurface(equipment,"left"+c.digit+"X"),SeamSurface(equipment,"left"+c.digit+"Y"),SeamSurface(equipment,"left"+c.digit+"Z")));
+                for(int step=0;step<(int)SeamSurface(equipment,"gripFitIterations");step++)for(int link=0;link<2;link++)
+                {
+                    var joint=link==0?c.middle:c.proximal;
+                    var from=c.distal.position-joint.position;var to=target-joint.position;
+                    if(from.sqrMagnitude<.0000001f||to.sqrMagnitude<.0000001f)continue;
+                    joint.rotation=Quaternion.RotateTowards(Quaternion.identity,Quaternion.FromToRotation(from,to),SeamSurface(equipment,"gripFitStep"))*joint.rotation;
+                }
+            }
+        }
         ProvingProfile seamRig,seamInput,seamEquipment;
         // Immutable match profiles: cache equipment fit without changing saved rig values.
         ProvingProfile SeamRig(ProvingProfile rig,ProvingProfile equipment)
@@ -132,6 +176,8 @@ namespace StarTournament.ProvingGround
                 float value=equipment!=null&&equipment.Descriptors.Any(d=>d.Path==path)?equipment.Get(path):defaults.Get(path);
                 seamRig.Set("grip.Cutter."+key,value);
             }
+            seamRig.Set("grip.Cutter.supportPitch",rig.Get("grip.Cutter.supportPitch")+SeamSurface(equipment,"gripSupportPitch"));
+            seamRig.Set("grip.Cutter.supportZ",seamRig.Get("grip.Cutter.supportZ")+SeamSurface(equipment,"gripSupportZ"));
             return seamRig;
         }
         public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1,ProvingProfile cutter=null)
@@ -147,6 +193,18 @@ namespace StarTournament.ProvingGround
             var position=mount.position;var rotation=mount.rotation;
             primaryWrist.rotation=Quaternion.AngleAxis((profile.Get("grip.primaryWristYaw")+profile.Get(fit+"primaryYaw")),mount.up)*primaryWrist.rotation;
             mount.SetPositionAndRotation(position,rotation);primaryApplied=true;
+            if(weapon==WeaponId.Cutter&&cutter!=null)
+            {
+                // Rotate about the palm, then solve the arm to its fitted contact.
+                // Keep both bone lengths and the weapon's original world transform.
+                var primaryTurn=Quaternion.AngleAxis(SeamSurface(cutter,"gripPrimaryPitch"),mount.right);
+                var primaryPivot=rightPalm.position;
+                var primaryOffset=mount.TransformVector(new Vector3(0,SeamSurface(cutter,"gripPrimaryY"),SeamSurface(cutter,"gripPrimaryZ")));
+                var primaryHandRotation=primaryTurn*primaryWrist.rotation;
+                var primaryDirection=primaryTurn*(rightPalm.position-primaryWrist.position).normalized;
+                ReachArm(rightUpper,rightLower,primaryWrist,primaryPivot+primaryOffset+primaryTurn*(primaryWrist.position-primaryPivot),primaryDirection,SeamSurface(cutter,"gripPrimaryAlignment"));
+                primaryWrist.rotation=primaryHandRotation;mount.SetPositionAndRotation(position,rotation);
+            }
             if(weapon==WeaponId.Shotgun&&profile.Version>=23)
             {
                 // Move the elbow around the shoulder/wrist circle instead of bending the wrist.
@@ -179,6 +237,7 @@ namespace StarTournament.ProvingGround
                     item.bone.localRotation*=Quaternion.AngleAxis(profile.Get(spreadPath),spreadAxes[item.bone]);
                 item.bone.localRotation*=Quaternion.AngleAxis(-(angle+profile.Get(jointPaths[(weapon,item.bone)])),item.axis);
             }
+            if(weapon==WeaponId.Cutter&&cutter!=null)FitSeamDigits(profile,cutter);
             if(weapon==WeaponId.Plasma)FitForgeDigits(profile);
         }
     }
