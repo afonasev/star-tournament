@@ -8,6 +8,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class SeamCutterProfileTests
     {
+        [Test] public void V9HistoryAndCustomChargeRemainExactWithLegacyBeam()
+        {
+            var current=ProvingProfile.CreateCutterDefault();
+            Assert.That(current.Get("cutter.seam.legacyBeam"),Is.EqualTo(1));
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeLegacyCutterBeam",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(current,null);
+            Assert.That(old.Version,Is.EqualTo(9));Assert.That(old.Descriptors.Any(d=>d.Path=="cutter.seam.legacyBeam"),Is.False);
+            foreach(var d in old.Descriptors){Assert.That(JsonUtility.ToJson(current.Descriptors.Single(x=>x.Path==d.Path)),Is.EqualTo(JsonUtility.ToJson(d)));Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)));}
+            var path=Path.Combine(Path.GetTempPath(),"seam-legacy-history-"+Guid.NewGuid()+".json");
+            try
+            {
+                var first=new DesignLabHistory(path,new LabBundle{Profiles={old}});first.Create("Custom v9");
+                var draft=first.Selected.Snapshot;draft.Set("cutter.width",.05f);draft.Set("cutter.seam.battery.intensity",2);first.Save(draft);
+                string hash=first.Selected.Hash,bytes=JsonUtility.ToJson(first.Selected.Snapshot);
+                var next=new DesignLabHistory(path,new LabBundle{Profiles={current}});Assert.That(next.StorageError,Is.Null);
+                Assert.That(next.Selected.Snapshot.Get("cutter.width"),Is.EqualTo(.05f));Assert.That(next.Selected.Snapshot.Get("cutter.seam.battery.intensity"),Is.EqualTo(2));
+                Assert.That(next.Selected.Snapshot.Get("cutter.seam.legacyBeam"),Is.EqualTo(1));
+                Assert.That(JsonUtility.ToJson(next.Profiles.SelectMany(p=>p.Revisions).Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(bytes));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void V8RegistryAndValuesStayExactWithBatteryControls()
         {
             var current=ProvingProfile.CreateCutterDefault();

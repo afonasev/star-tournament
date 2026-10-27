@@ -23,6 +23,7 @@ namespace StarTournament.ProvingGround
         readonly float sparkSpread,shieldSpread,arcRadiusScale,arcWidthScale;
         readonly float shieldOpacity,sparkGravity,sparkVariance,coreFraction;
         readonly int rippleCount;
+        readonly bool legacyBeam;
         bool disposed;
         struct Contact {public bool Valid,Shield;public int Life;public double Time;public Vector3 Point,Direction;}
         // One reusable dynamic mesh per colour/layer, regardless of contacts or spark count.
@@ -59,6 +60,7 @@ namespace StarTournament.ProvingGround
             this.session=session;p=session.CutterProfile;
             var defaults=ProvingProfile.CreateCutterDefault();
             float Read(string name){string path="cutter.seam."+name;return p.Descriptors.Any(d=>d.Path==path)?p.Get(path):defaults.Get(path);}
+            legacyBeam=Read("legacyBeam")>0;
             shieldOpacity=Read("surface.shieldOpacity");rippleCount=(int)Read("surface.rippleCount");sparkGravity=Read("surface.sparkGravity");sparkVariance=Read("surface.sparkVariance");coreFraction=Read("surface.coreFraction");
             coronaScale=Read("coronaScale");contactSeconds=Read("contactSeconds");sparkSeconds=Read("sparkSeconds");sparkReach=Read("sparkReach");
             arcRadiusScale=Read("detail.arcRadiusScale");arcWidthScale=Read("detail.arcWidthScale");
@@ -67,9 +69,10 @@ namespace StarTournament.ProvingGround
             var shader=Resources.Load<Shader>("CutterBeam");
             var color=new Color(p.Get("cutter.red"),p.Get("cutter.green"),p.Get("cutter.blue"));
             Material Make(Color tint,bool radial=false){var m=new Material(shader);m.SetColor("_Tint",tint);m.SetFloat("_NearFade",p.Get("cutter.nearFade"));m.SetFloat("_Radial",radial?1:0);return m;}
-            var glow=Color.Lerp(color,color.linear,Read("detail.warmth"))*p.Get("cutter.glow");glow.a=1;material=Make(glow);
+            var glow=Color.Lerp(color,color.linear,Read("detail.warmth"))*p.Get("cutter.glow");glow.a=1;
+            var arcColor=legacyBeam?color*p.Get("cutter.glow"):glow;arcColor.a=1;material=Make(arcColor);
             var core=Color.Lerp(color,Color.white,p.Get("cutter.coreWhiten"))*p.Get("cutter.glow");core.a=1;coreMaterial=Make(core);
-            glow.a=Read("coronaAlpha");coronaMaterial=Make(glow);glow.a=1;contactMaterial=Make(glow,true);
+            if(!legacyBeam){glow.a=Read("coronaAlpha");coronaMaterial=Make(glow);}glow.a=1;contactMaterial=Make(glow,true);
             shieldMaterial=Make(new Color(Read("shieldRed"),Read("shieldGreen"),Read("shieldBlue"),1),true);
             sources=bodies.Concat(views).ToArray();participants=Enumerable.Range(0,bodies.Length).Concat(local).ToArray();
             mounts=sources.Select(s=>s.GetComponent<WeaponModelPresentation>()).ToArray();
@@ -80,10 +83,10 @@ namespace StarTournament.ProvingGround
             {
                 int layer=sources[i].layer;
                 cores[i]=Line("Core "+i,2,p.Get("cutter.width"),coreMaterial,layer);
-                coronas[i]=Line("Corona "+i,2,p.Get("cutter.width")*coronaScale,coronaMaterial,layer);
+                if(!legacyBeam)coronas[i]=Line("Corona "+i,2,p.Get("cutter.width")*coronaScale,coronaMaterial,layer);
                 muzzleLinks[i]=Line("Muzzle link "+i,2,p.Get("cutter.width"),coreMaterial,layer);
-                arcs[i]=Line("Arc "+i,(int)p.Get("cutter.segments")*arcSubdivisions+1,p.Get("cutter.arcWidth")*arcWidthScale,material,layer);
-                filaments[i]=Line("Filament "+i,arcs[i].positionCount,p.Get("cutter.arcWidth")*arcWidthScale,material,layer);
+                arcs[i]=Line("Arc "+i,(int)p.Get("cutter.segments")*(legacyBeam?1:arcSubdivisions)+1,p.Get("cutter.arcWidth")*(legacyBeam?1:arcWidthScale),material,layer);
+                if(!legacyBeam)filaments[i]=Line("Filament "+i,arcs[i].positionCount,p.Get("cutter.arcWidth")*arcWidthScale,material,layer);
                 amberBatches[i]=new Batch("SEAM contacts "+i,root.transform,layer,contactMaterial);
                 shieldBatches[i]=new Batch("SEAM shield "+i,root.transform,layer,shieldMaterial);
             }
@@ -96,7 +99,7 @@ namespace StarTournament.ProvingGround
             // initial line segment before an authoritative active beam is rendered.
             line.enabled=false;
             line.sharedMaterial=mat;line.useWorldSpace=true;line.positionCount=count;line.startWidth=line.endWidth=width;
-            line.numCornerVertices=4;line.numCapVertices=4;
+            line.numCornerVertices=legacyBeam?0:4;line.numCapVertices=legacyBeam?0:4;
             line.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;line.receiveShadows=false;return line;
         }
         void Observe(DamageNotice n)
@@ -197,7 +200,8 @@ namespace StarTournament.ProvingGround
                 if(mounts[i])mounts[i].UpdateCutterCharge(session.Life(participants[i]).CutterEnergy,p.Get("cutter.energyCapacity"));
                 var state=session.Beam(participants[i]);var amber=amberBatches[i];var shield=shieldBatches[i];amber.Begin();shield.Begin();
                 bool visible=state.Active&&sources[i]&&sources[i].activeInHierarchy;
-                muzzleLinks[i].enabled=cores[i].enabled=arcs[i].enabled=filaments[i].enabled=coronas[i].enabled=visible;
+                muzzleLinks[i].enabled=cores[i].enabled=arcs[i].enabled=visible;
+                if(!legacyBeam)filaments[i].enabled=coronas[i].enabled=visible;
                 if(visible)
                 {
                     var start=mounts[i]?mounts[i].CutterMuzzle:state.Origin;
@@ -210,23 +214,27 @@ namespace StarTournament.ProvingGround
                     // Separate straight strips avoid a camera-facing miter spike at the parallax bend.
                     muzzleLinks[i].SetPosition(0,start);muzzleLinks[i].SetPosition(1,junction);
                     cores[i].SetPosition(0,junction);cores[i].SetPosition(1,state.Endpoint);
-                    coronas[i].SetPosition(0,junction);coronas[i].SetPosition(1,state.Endpoint);
+                    if(!legacyBeam){coronas[i].SetPosition(0,junction);coronas[i].SetPosition(1,state.Endpoint);}
                     float first=Vector3.Distance(start,junction),total=first+Vector3.Distance(junction,state.Endpoint);
                     // The saved segment budget is for full range. Short beams need fewer
                     // samples, otherwise constant radius with hundreds of points becomes a coil.
-                    int samples=Mathf.Max(3,Mathf.CeilToInt(p.Get("cutter.segments")*arcSubdivisions*Mathf.Clamp01(total/p.Get("cutter.maxRangeMeters")))+1);
-                    arcs[i].positionCount=filaments[i].positionCount=samples;
+                    int samples=legacyBeam?(int)p.Get("cutter.segments")+1:Mathf.Max(3,Mathf.CeilToInt(p.Get("cutter.segments")*arcSubdivisions*Mathf.Clamp01(total/p.Get("cutter.maxRangeMeters")))+1);
+                    arcs[i].positionCount=samples;if(!legacyBeam)filaments[i].positionCount=samples;
                     for(int k=0;k<samples;k++)
                     {
                         float t=(float)k/(arcs[i].positionCount-1);
-                        float phase=Mathf.Floor((float)session.Time*p.Get("cutter.frequency"))*311.7f+k*127.1f;
+                        // Original phase hash is a fixed decorrelation invariant, not a balance value.
+                        float phase=legacyBeam?Mathf.Floor((float)session.Time*p.Get("cutter.frequency"))*78.233f+k*12.9898f:Mathf.Floor((float)session.Time*p.Get("cutter.frequency"))*311.7f+k*127.1f;
                         float Noise(float seed)=>Mathf.Repeat(Mathf.Sin(seed)*43758.5453f,1)*2-1;
-                        var offset=(side*Noise(phase)+up*Noise(phase+73.1f))*p.Get("cutter.jitter")*arcRadiusScale*Mathf.Sin(t*Mathf.PI);
+                        var offset=(legacyBeam?side*Mathf.Sin(phase)+up*Mathf.Cos(phase):(side*Noise(phase)+up*Noise(phase+73.1f))*arcRadiusScale)*p.Get("cutter.jitter")*Mathf.Sin(t*Mathf.PI);
                         float distance=t*total;
                         var center=distance<=first?Vector3.Lerp(start,junction,first>0?distance/first:1):Vector3.Lerp(junction,state.Endpoint,total>first?(distance-first)/(total-first):1);
                         arcs[i].SetPosition(k,center+offset);
-                        var second=(side*Noise(phase+19.4f)+up*Noise(phase+51.8f))*p.Get("cutter.jitter")*arcRadiusScale*Mathf.Sin(t*Mathf.PI);
-                        filaments[i].SetPosition(k,center+second);
+                        if(!legacyBeam)
+                        {
+                            var second=(side*Noise(phase+19.4f)+up*Noise(phase+51.8f))*p.Get("cutter.jitter")*arcRadiusScale*Mathf.Sin(t*Mathf.PI);
+                            filaments[i].SetPosition(k,center+second);
+                        }
                     }
                     amber.Disc(start,side,up,muzzleRadius,1);
                     if(state.Wall)Impact(amber,state.Endpoint,axis,1,false,participants[i]);

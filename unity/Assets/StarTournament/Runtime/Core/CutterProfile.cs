@@ -2,11 +2,20 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // F6 restores the original beam as an additive choice; v9 bytes stay exact.
+        internal ProvingProfile BeforeLegacyCutterBeam()
+        {
+            if(id!="cutter-beam-v1"||version<10)return this;
+            var p=DetachedCopy();p.version=9;
+            p.descriptors.RemoveAll(d=>d.Path=="cutter.seam.legacyBeam");
+            p.values.RemoveAll(v=>v.Path=="cutter.seam.legacyBeam");
+            return p;
+        }
         // F4 adds charge-display controls; historical v8 and earlier hashes stay exact.
         internal ProvingProfile BeforeSeamBattery()
         {
             if(id!="cutter-beam-v1"||version<9)return this;
-            var p=DetachedCopy();p.version=8;
+            var p=BeforeLegacyCutterBeam().DetachedCopy();p.version=8;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.battery."));
             p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.battery."));
             return p;
@@ -74,7 +83,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=9 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=10 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -158,6 +167,7 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.battery.blue","cutter-effects","Батарея: синий","Синяя составляющая янтарных ячеек заряда.","ratio",0,1,.01f,.035f);
             p.Add("cutter.seam.battery.intensity","cutter-effects","Батарея: свечение","Яркость полностью заряженной ячейки; расход не меняется.","ratio",0,4,.05f,1.6f);
             p.Add("cutter.seam.battery.darkLevel","cutter-effects","Батарея: тёмные ячейки","Видимость разряженной поверхности без свечения.","ratio",0,.1f,.001f,.012f);
+            p.Add("cutter.seam.legacyBeam","cutter-effects","Исходный луч","Луч старой модели: сердцевина и одна жёлтая ветвь. Выключите для SEAM-короны и тонких нитей; контактные эффекты и расход не меняются.","boolean",0,1,1,1);
             return p;
         }
     }

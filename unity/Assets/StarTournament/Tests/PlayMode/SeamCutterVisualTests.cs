@@ -115,6 +115,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Capture(camera,Path.Combine(output,"body-contact-detail.png"));
             var beams=ground.GetComponentsInChildren<LineRenderer>(true).Where(x=>x.transform.parent.name=="Cutter beams").ToArray();
             Assert.That(beams.Count(x=>x.enabled),Is.GreaterThanOrEqualTo(3));
+            Assert.That(beams.Any(x=>x.name.StartsWith("Corona ")||x.name.StartsWith("Filament ")),Is.False,"Original beam has one electrical branch and no broad corona");
+            foreach(var arc in beams.Where(x=>x.enabled&&x.name.StartsWith("Arc ")))
+            {
+                Assert.That(arc.startWidth,Is.EqualTo(ground.Session.CutterProfile.Get("cutter.arcWidth")));
+                Assert.That(arc.positionCount,Is.EqualTo((int)ground.Session.CutterProfile.Get("cutter.segments")+1));
+            }
             foreach(var core in beams.Where(x=>x.enabled&&x.name.StartsWith("Core ")))
             {
                 Assert.That(core.positionCount,Is.EqualTo(2),"Straight authoritative section has no billboard miter");
@@ -124,8 +130,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var meshes=ground.GetComponentsInChildren<MeshFilter>(true).Where(m=>m.name.StartsWith("SEAM contacts")).ToArray();
             Assert.That(meshes.Any(m=>m.sharedMesh.vertexCount>0),Is.True);
             // Frozen session render is deterministic even when real time advances.
+            var frozenArcs=beams.Where(x=>x.enabled&&x.name.StartsWith("Arc ")).Select(x=>(line:x,points:Enumerable.Range(0,x.positionCount).Select(x.GetPosition).ToArray())).ToArray();
             var frozen=meshes.Select(m=>m.sharedMesh.vertices).ToArray();yield return null;ground.SendMessage("LateUpdate");
             for(int i=0;i<meshes.Length;i++)Assert.That(meshes[i].sharedMesh.vertices,Is.EqualTo(frozen[i]));
+            foreach(var arc in frozenArcs)Assert.That(Enumerable.Range(0,arc.line.positionCount).Select(arc.line.GetPosition).ToArray(),Is.EqualTo(arc.points),"Original branch freezes with session time");
             ground.Session.Tick(new LocalAction[4],.02f);ground.SendMessage("LateUpdate");
             Assert.That(beams.All(x=>!x.enabled),Is.True);Assert.That(meshes.All(m=>m.sharedMesh.vertexCount==0),Is.True);
             var shieldState=ground.Session.Capture();shieldState.Lives[1].Armor=100;ground.Session.Restore(shieldState);
@@ -230,6 +238,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.Session.Restore(beforeBattery);ground.SendMessage("LateUpdate");yield return null;
             Assert.That(gun.gameObject.activeInHierarchy,Is.True);
             Assert.That(viewWeapon.CutterChargeFraction,Is.EqualTo((float)(beforeBattery.Lives[0].CutterEnergy/capacity)).Within(.000001f));
+            // One second of actual fixed-step rendering makes the restored branch motion reviewable.
+            var motionFolder=Path.Combine(output,"beam-motion");Directory.CreateDirectory(motionFolder);
+            for(int frame=0;frame<24;frame++)
+            {
+                ground.Session.Tick(actions,1f/24);ground.SendMessage("LateUpdate");yield return null;
+                Capture(seat,Path.Combine(motionFolder,"frame-"+frame.ToString("D2")+".png"));
+            }
             File.WriteAllText(Path.Combine(output,"review.json"),"{\"classification\":\"Editor Play Mode, not human/device acceptance\",\"seed\":4193,\"damageNotices\":"+notices+"}");
         }
     }
