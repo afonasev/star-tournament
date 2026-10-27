@@ -8,6 +8,32 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class SeamCutterProfileTests
     {
+        [Test] public void ContactTraceDefaultPassesMatchStartValidationWithoutChangingDuration()
+        {
+            const string path="cutter.seam.contactSeconds";
+            var profile=ProvingProfile.CreateCutterDefault();
+            var descriptor=profile.Descriptors.Single(d=>d.Path==path);
+            Assert.That(profile.Get(path),Is.EqualTo(.065f));
+            Assert.That(descriptor.DefaultValue,Is.EqualTo(.065f));
+            Assert.That(descriptor.Step,Is.EqualTo(.005f));
+            foreach(var item in profile.Descriptors)
+                Assert.DoesNotThrow(()=>NativeMatchConfiguration.ValidateValue(profile,item.Path,profile.Get(item.Path)),item.Path);
+        }
+
+        [TestCase(.01f)] [TestCase(.06f)] [TestCase(.065f)] [TestCase(.07f)] [TestCase(.5f)]
+        public void ContactTraceAcceptsDeclaredStepValues(float value)
+        {
+            var profile=ProvingProfile.CreateCutterDefault();
+            Assert.DoesNotThrow(()=>NativeMatchConfiguration.ValidateValue(profile,"cutter.seam.contactSeconds",value));
+        }
+
+        [TestCase(.066f)] [TestCase(.009f)] [TestCase(.505f)]
+        public void ContactTraceRejectsOffStepAndOutOfRangeValues(float value)
+        {
+            var profile=ProvingProfile.CreateCutterDefault();
+            Assert.Throws<ArgumentException>(()=>NativeMatchConfiguration.ValidateValue(profile,"cutter.seam.contactSeconds",value));
+        }
+
         [Test] public void DefaultProfileValuesMatchTheirDeclaredRangesAndSteps()
         {
             var profile=ProvingProfile.CreateCutterDefault();
