@@ -174,6 +174,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 return indices.Select(i=>battery.transform.TransformPoint(batteryMesh.vertices[i])).Aggregate(Vector3.zero,(a,b)=>a+b)/indices.Length;
             }).ToArray();
             Assert.That(batteryMesh.triangles.Length,Is.EqualTo(16*6));
+            // F5: the whole charge strip, including the lowest cell, fits the native FPS viewport.
+            var chargeViewport=batteryMesh.vertices.Select(v=>seat.WorldToViewportPoint(battery.transform.TransformPoint(v))).ToArray();
+            File.WriteAllLines(Path.Combine(output,"battery-viewport.tsv"),chargeViewport.Select(v=>v.ToString("F6")));
+            foreach(var point in chargeViewport)
+            {
+                Assert.That(point.z,Is.GreaterThan(seat.nearClipPlane));
+                Assert.That(point.x,Is.InRange(.01f,.99f),"F5 battery horizontal framing");
+                Assert.That(point.y,Is.InRange(.015f,.99f),"F5 complete battery has bottom margin");
+            }
             var batteryCenter=cellCenters.Aggregate(Vector3.zero,(a,b)=>a+b)/16;
             camera.cullingMask=1<<view.gameObject.layer;camera.orthographic=true;camera.aspect=1.6f;
             camera.orthographicSize=Vector3.Distance(cellCenters[0],cellCenters[15])*.7f;

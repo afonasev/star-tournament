@@ -6,7 +6,7 @@ import bpy,bmesh,math,json,hashlib,random
 import numpy as np
 from pathlib import Path
 from mathutils import Matrix,Vector
-ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'.local/seam-f4';OUT.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[2];ART=ROOT/'unity/Assets/StarTournament/Art';OUT=ROOT/'.local/seam-f5';OUT.mkdir(parents=True,exist_ok=True)
 bpy.context.preferences.filepaths.save_version=0
 bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
 # Surface maps are authored in physical planar coordinates, not one stretched patch per object.
@@ -257,6 +257,21 @@ for o in list(bpy.context.scene.objects):
     v=a+delta*rng.uniform(.05,.95);tangent=delta.normalized();inward=(center-v).normalized();length=rng.uniform(.0007,.003);width=rng.uniform(.00015,.0005);offset=normal*.00012
     chips.append([v+offset,v+tangent*length+offset,v+tangent*length*.8+inward*width+offset,v+inward*width*.4+offset])
 mesh('edge enamel wear',[tuple(v) for pts in chips for v in pts],[(i*4,i*4+1,i*4+2,i*4+3) for i in range(len(chips))],D,0)
+# F5: authored rear-shell proportions, not a runtime/camera tuning parameter.
+# Raise the belly toward its fixed upper shoulder. Taper into the unchanged
+# receiver before the primary grip; keep all 16 cell UV indices and anchors.
+# The release dial moves as a rigid detail, retaining its circular silhouette.
+for o in bpy.context.scene.objects:
+ if o.type!='MESH':continue
+ inv=o.matrix_world.inverted()
+ for v in o.data.vertices:
+  co=o.matrix_world@v.co
+  if o.name.startswith('battery lock'):
+   co.y+=(.203-.100)*.30
+  elif co.z<-.14 and co.y<.203:
+   blend=min(1.,(-.14-co.z)/.04)
+   co.y+=(.203-co.y)*.30*blend
+  v.co=inv@co
 for name,pos in [('cutter-grip',(0,-.09,0)),('cutter-muzzle',(0,.10,.665)),('cutter-support-grip',(0,-.1,.29))]:bpy.ops.object.empty_add(location=pos);bpy.context.object.name=name
 # Boolean recesses and proportion edits must not leave interpolated normals across broad planes.
 for o in bpy.context.scene.objects:
@@ -309,5 +324,5 @@ for lod in (0,1):
 manifest=ART/'asset-manifest.json';doc=json.loads(manifest.read_text())
 for e in doc['entries']:
  if e['key'] in ('cutter-lod0','cutter-lod1'):
-  e['sha256']=hashlib.sha256((ART/(e['key']+'.glb')).read_bytes()).hexdigest();e['source']='SEAM F4 sixteen-cell rear energy cartridge; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy.'
+  e['sha256']=hashlib.sha256((ART/(e['key']+'.glb')).read_bytes()).hexdigest();e['source']='SEAM F5 compact rear energy cartridge, sixteen cells; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy.'
 manifest.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+'\n');(OUT/'asset-cost.json').write_text(json.dumps(reports,indent=2)+'\n');print('SEAM_REPORT',json.dumps(reports))

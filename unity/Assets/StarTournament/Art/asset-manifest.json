@@ -126,24 +126,24 @@
     {
       "key": "cutter-lod0",
       "path": "Assets/StarTournament/Art/cutter-lod0.glb",
-      "sha256": "9971b7dc02aa63f12e6b247d6033ee44e27f88683ae6a2579e9048a2d5d750b3",
+      "sha256": "2d2bfb4aec9b1af5d475de394e7444ded219291ac2bfe82edf99791d5ae0ad70",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 0,
-      "source": "SEAM F4 sixteen-cell rear energy cartridge; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy."
+      "source": "SEAM F5 compact rear energy cartridge, sixteen cells; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy."
     },
     {
       "key": "cutter-lod1",
       "path": "Assets/StarTournament/Art/cutter-lod1.glb",
-      "sha256": "9971b7dc02aa63f12e6b247d6033ee44e27f88683ae6a2579e9048a2d5d750b3",
+      "sha256": "2d2bfb4aec9b1af5d475de394e7444ded219291ac2bfe82edf99791d5ae0ad70",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "cutter-grip",
       "lod": 1,
-      "source": "SEAM F4 sixteen-cell rear energy cartridge; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy."
+      "source": "SEAM F5 compact rear energy cartridge, sixteen cells; standalone build_cutter.py + seam-cutter.blend; packed PBR maps; no collision proxy."
     },
     {
       "key": "pulse-projectile",
