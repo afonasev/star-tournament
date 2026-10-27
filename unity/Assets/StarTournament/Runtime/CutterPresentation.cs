@@ -191,6 +191,7 @@ namespace StarTournament.ProvingGround
             if(disposed)return;
             for(int i=0;i<cores.Length;i++)
             {
+                if(mounts[i])mounts[i].UpdateCutterCharge(session.Life(participants[i]).CutterEnergy,p.Get("cutter.energyCapacity"));
                 var state=session.Beam(participants[i]);var amber=amberBatches[i];var shield=shieldBatches[i];amber.Begin();shield.Begin();
                 bool visible=state.Active&&sources[i]&&sources[i].activeInHierarchy;
                 muzzleLinks[i].enabled=cores[i].enabled=arcs[i].enabled=filaments[i].enabled=coronas[i].enabled=visible;
