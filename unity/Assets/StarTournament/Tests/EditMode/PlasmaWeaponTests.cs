@@ -9,9 +9,9 @@ namespace StarTournament.ProvingGround.Tests
         [Test] public void ApprovedDefaultsAndEveryParameterHasMetadata()
         {
             var p=ProvingProfile.CreatePlasmaDefault();Assert.That(p.Validate(),Is.Empty);
-            Assert.That(p.Get("plasma.damage")/p.Get("plasma.cooldownSeconds"),Is.EqualTo(100).Within(.001));
-            Assert.That(p.Get("plasma.speed"),Is.EqualTo(24));Assert.That(p.Get("plasma.pickupAmmo"),Is.EqualTo(100));
-            Assert.That(p.Version,Is.EqualTo(4));Assert.That(p.Get("plasma.orbRadius"),Is.EqualTo(.117f));
+            Assert.That(p.Get("plasma.damage")/p.Get("plasma.cooldownSeconds"),Is.EqualTo(120).Within(.001));
+            Assert.That(p.Get("plasma.speed"),Is.EqualTo(14.4f));Assert.That(p.Get("plasma.pickupAmmo"),Is.EqualTo(100));
+            Assert.That(p.Version,Is.EqualTo(5));Assert.That(p.Get("plasma.orbRadius"),Is.EqualTo(.1521f));
             foreach(var d in p.Descriptors){Assert.That(d.Label,Is.Not.Empty);Assert.That(d.Description,Is.Not.Empty);}
         }
         [Test] public void PickupHeldCadenceExhaustionAndRefillAreIndependent()

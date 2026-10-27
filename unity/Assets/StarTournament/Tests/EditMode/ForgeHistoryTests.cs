@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var old=new LabBundle{Profiles={Before(current.Profiles[0],"BeforeForgeGrip")}};
                 var first=new DesignLabHistory(path,old);first.Create("Custom grip");var draft=first.Selected.Snapshot;draft.Set("grip.Cutter.supportZ",.5f);first.Save(draft);
                 string hash=first.Selected.Hash;string bytes=JsonUtility.ToJson(first.Selected.Snapshot);
-                var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);Assert.That(next.Selected.Snapshot.Get("grip.Cutter.supportZ"),Is.EqualTo(.5f));Assert.That(next.Selected.Snapshot.Get("plasma.damage"),Is.EqualTo(20));
+                var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);Assert.That(next.Selected.Snapshot.Get("grip.Cutter.supportZ"),Is.EqualTo(.5f));Assert.That(next.Selected.Snapshot.Get("plasma.damage"),Is.EqualTo(24));
                 var saved=next.Profiles.SelectMany(x=>x.Revisions).Single(x=>x.Hash==hash);Assert.That(JsonUtility.ToJson(saved.Snapshot),Is.EqualTo(bytes));
             }
             finally{if(File.Exists(path))File.Delete(path);}

@@ -3987,7 +3987,7 @@ MonoBehaviour:
       Value: 0.8
   PlasmaProfile:
     id: forge-plasma-v1
-    version: 4
+    version: 5
     descriptors:
     - Path: plasma.damage
       Group: plasma
@@ -4000,7 +4000,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 500
       Step: 1
-      DefaultValue: 20
+      DefaultValue: 24
     - Path: plasma.cooldownSeconds
       Group: plasma
       Label: "\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B FORGE"
@@ -4021,8 +4021,8 @@ MonoBehaviour:
       Unit: m/s
       Minimum: 1
       Maximum: 200
-      Step: 1
-      DefaultValue: 24
+      Step: 0.1
+      DefaultValue: 14.4
     - Path: plasma.pickupAmmo
       Group: plasma
       Label: "\u0417\u0430\u0440\u044F\u0434 \u043F\u0440\u0438 \u043F\u043E\u0434\u0431\u043E\u0440\u0435"
@@ -4053,8 +4053,8 @@ MonoBehaviour:
       Unit: m
       Minimum: 0.01
       Maximum: 0.5
-      Step: 0.001
-      DefaultValue: 0.117
+      Step: 0.0001
+      DefaultValue: 0.1521
     - Path: plasma.trailLength
       Group: plasma-effects
       Label: "\u0414\u043B\u0438\u043D\u0430 \u0441\u043B\u0435\u0434\u0430"
@@ -4134,17 +4134,17 @@ MonoBehaviour:
       DefaultValue: 1
     values:
     - Path: plasma.damage
-      Value: 20
+      Value: 24
     - Path: plasma.cooldownSeconds
       Value: 0.2
     - Path: plasma.speed
-      Value: 24
+      Value: 14.4
     - Path: plasma.pickupAmmo
       Value: 100
     - Path: plasma.modelScale
       Value: 1.4
     - Path: plasma.orbRadius
-      Value: 0.117
+      Value: 0.1521
     - Path: plasma.trailLength
       Value: 0.45
     - Path: plasma.impactSeconds

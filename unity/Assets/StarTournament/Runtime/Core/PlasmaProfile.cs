@@ -25,11 +25,19 @@ namespace StarTournament.ProvingGround
             bool Added(string path)=>path.StartsWith("forge-")||path.Contains(".forge-");
             p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));return p;
         }
+        internal ProvingProfile BeforeForgeHeavyTuning()
+        {
+            if(id!="forge-plasma-v1"||version<5)return this;
+            var p=DetachedCopy();p.version=4;
+            p.RebalanceDefault("plasma.damage",20);p.RebalanceDefault("plasma.speed",24);p.RebalanceDefault("plasma.orbRadius",.117f);
+            p.FindDescriptor("plasma.speed").Step=1;p.FindDescriptor("plasma.orbRadius").Step=.001f;
+            return p;
+        }
         // Trusted pre-tuning registry: historical revisions keep exact values and metadata.
         internal ProvingProfile BeforeForgeCadence()
         {
             if(id!="forge-plasma-v1"||version<4)return this;
-            var p=DetachedCopy();p.version=3;
+            var p=BeforeForgeHeavyTuning().DetachedCopy();p.version=3;
             p.RebalanceDefault("plasma.cooldownSeconds",.1f);
             p.RebalanceDefault("plasma.speed",30);
             p.RebalanceDefault("plasma.orbRadius",.09f);
@@ -59,13 +67,13 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreatePlasmaDefault()
         {
-            var p=new ProvingProfile{id="forge-plasma-v1",version=4};
-            p.Add("plasma.damage","plasma","Урон шара FORGE","Прямой урон одного шара до усиления и союзного коэффициента.","HP",0,500,1,20);
+            var p=new ProvingProfile{id="forge-plasma-v1",version=5};
+            p.Add("plasma.damage","plasma","Урон шара FORGE","Прямой урон одного шара до усиления и союзного коэффициента.","HP",0,500,1,24);
             p.Add("plasma.cooldownSeconds","plasma","Интервал FORGE","Пауза между шарами при удержании огня.","s",.02f,2,.01f,.2f);
-            p.Add("plasma.speed","plasma","Скорость шара","Скорость прямого полёта: меньше — легче увернуться.","m/s",1,200,1,24);
+            p.Add("plasma.speed","plasma","Скорость шара","Скорость прямого полёта: меньше — легче увернуться.","m/s",1,200,.1f,14.4f);
             p.Add("plasma.pickupAmmo","plasma","Заряд при подборе","Подбор пополняет запас до этого значения.","charge",1,500,1,100);
             p.Add("plasma.modelScale","plasma-effects","Масштаб FORGE","Размер модели на существующем хвате.","ratio",.1f,3,.05f,1.4f);
-            p.Add("plasma.orbRadius","plasma-effects","Радиус видимого шара","Радиус шара для видимой оболочки и объёмного контакта; пульсация не меняет gameplay радиус.","m",.01f,.5f,.001f,.117f);
+            p.Add("plasma.orbRadius","plasma-effects","Радиус видимого шара","Радиус шара для видимой оболочки и объёмного контакта; пульсация не меняет gameplay радиус.","m",.01f,.5f,.0001f,.1521f);
             p.Add("plasma.trailLength","plasma-effects","Длина следа","Короткий зелёный след полёта.","m",.01f,3,.01f,.45f);
             p.Add("plasma.impactSeconds","plasma-effects","Длительность вспышки","Время визуального контакта по часам матча.","s",.02f,1,.01f,.16f);
             p.Add("plasma.impactRadius","plasma-effects","Радиус вспышки","Только видимый размер; урона вокруг нет.","m",.01f,1,.01f,.18f);

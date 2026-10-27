@@ -63,7 +63,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
             var ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
             pad=InputSystem.AddDevice<Gamepad>();ground.StartCombatReview(new[]{pad},backgroundDiagnostic:true,ensureOpponent:true);Assert.That(ground.Running,Is.True,ground.CombatReviewDiagnostic());ground.enabled=false;
-            var s=ground.Session;Assert.That(s.PlasmaProfile.Get("plasma.speed"),Is.EqualTo(24));Assert.That(s.PlasmaProfile.Get("plasma.orbRadius"),Is.EqualTo(.117f));
+            var s=ground.Session;Assert.That(s.PlasmaProfile.Get("plasma.speed"),Is.EqualTo(14.4f));Assert.That(s.PlasmaProfile.Get("plasma.orbRadius"),Is.EqualTo(.1521f));
             ground.PlaceCombatReviewSeat(0,new Vector3(-6,4,0),0,90);ground.PlaceCombatReviewSeat(1,new Vector3(4,4,0),0,270);
             // Let native gravity settle both participants before fixing equal torso aim.
             for(int tick=0;tick<100;tick++)s.Tick(new LocalAction[s.ParticipantCount],.02f);
@@ -77,7 +77,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 snapshot.Lives[0].SelectedWeapon=weapon;snapshot.Lives[0].Ammo=weapon==WeaponId.Plasma?100:snapshot.Lives[0].RifleAmmo;s.Restore(snapshot);
                 string frames=Path.Combine(output,weapon.ToString());Directory.CreateDirectory(frames);
                 var actions=new LocalAction[s.ParticipantCount];actions[0].FireHeld=true;
-                for(int tick=0;tick<75;tick++)
+                for(int tick=0;tick<100;tick++)
                 {
                     s.Tick(actions,.02f);ground.SendMessage("LateUpdate");yield return null;
                     Capture(camera,Path.Combine(frames,"frame-"+tick.ToString("D3")+".png"));

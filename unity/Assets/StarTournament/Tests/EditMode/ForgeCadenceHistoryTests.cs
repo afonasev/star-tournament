@@ -8,15 +8,17 @@ namespace StarTournament.ProvingGround.Tests
 {
     public sealed class ForgeCadenceHistoryTests
     {
-        [Test] public void PackagedDefaultAdoptsTuningWithoutRewritingPublishedRevision()
+        [TestCase("BeforeForgeCadence")]
+        [TestCase("BeforeForgeHeavyTuning")]
+        public void PackagedDefaultAdoptsTuningWithoutRewritingPublishedRevision(string historical)
         {
             var current=new LabBundle{Profiles={ProvingProfile.CreatePlasmaDefault()}};
-            var previous=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeForgeCadence",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(current.Profiles[0],null);
+            var previous=(ProvingProfile)typeof(ProvingProfile).GetMethod(historical,BindingFlags.Instance|BindingFlags.NonPublic).Invoke(current.Profiles[0],null);
             var old=new LabBundle{Profiles={previous}};var catalogue=LabReleaseCatalog.Factory(old);string bytes=JsonUtility.ToJson(catalogue),hash=catalogue.Entries[0].Hash;
             foreach(var upgraded in new[]{DesignLabHistory.ResolveStartupDefault(current,catalogue),DesignLabHistory.ResolvePublishedDefault(current,catalogue)})
             {
-                Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("plasma.speed"),Is.EqualTo(24));
-                Assert.That(upgraded.Selected.Snapshot.Get("plasma.cooldownSeconds"),Is.EqualTo(.2f));Assert.That(upgraded.Selected.Snapshot.Get("plasma.orbRadius"),Is.EqualTo(.117f));
+                Assert.That(upgraded.StorageError,Is.Null);Assert.That(upgraded.Selected.Snapshot.Get("plasma.damage"),Is.EqualTo(24));Assert.That(upgraded.Selected.Snapshot.Get("plasma.speed"),Is.EqualTo(14.4f));
+                Assert.That(upgraded.Selected.Snapshot.Get("plasma.cooldownSeconds"),Is.EqualTo(.2f));Assert.That(upgraded.Selected.Snapshot.Get("plasma.orbRadius"),Is.EqualTo(.1521f));
                 Assert.That(upgraded.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==hash),Is.True);
             }
             Assert.That(JsonUtility.ToJson(catalogue),Is.EqualTo(bytes));
@@ -37,15 +39,17 @@ namespace StarTournament.ProvingGround.Tests
             origin.x+=radius*.5f;Assert.That(resolver.ResolveTarget(origin,Vector3.forward,target,10,radius).TargetIndex,Is.EqualTo(-1));
             Assert.That(resolver.ResolveTarget(origin,Vector3.forward,target,10).TargetIndex,Is.EqualTo(-1),"Point weapons retain existing geometry");
         }
-        [Test] public void VersionThreeRevisionRetainsBytesHashAndCustomValues()
+        [TestCase("BeforeForgeCadence",3,30f,.09f)]
+        [TestCase("BeforeForgeHeavyTuning",4,24f,.117f)]
+        public void HistoricalRevisionRetainsBytesHashAndCustomValues(string historical,int version,float speed,float radius)
         {
             string path=Path.Combine(Path.GetTempPath(),"forge-cadence-"+Guid.NewGuid()+".json");
             try
             {
                 var current=ProvingProfile.CreatePlasmaDefault();
-                var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeForgeCadence",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(current,null);
-                Assert.That(old.Version,Is.EqualTo(3));Assert.That(old.Get("plasma.cooldownSeconds"),Is.EqualTo(.1f));
-                Assert.That(old.Get("plasma.speed"),Is.EqualTo(30));Assert.That(old.Get("plasma.orbRadius"),Is.EqualTo(.09f));
+                var old=(ProvingProfile)typeof(ProvingProfile).GetMethod(historical,BindingFlags.Instance|BindingFlags.NonPublic).Invoke(current,null);
+                Assert.That(old.Version,Is.EqualTo(version));Assert.That(old.Get("plasma.cooldownSeconds"),Is.EqualTo(version==3?.1f:.2f));
+                Assert.That(old.Get("plasma.speed"),Is.EqualTo(speed));Assert.That(old.Get("plasma.orbRadius"),Is.EqualTo(radius));Assert.That(old.Get("plasma.damage"),Is.EqualTo(20));
                 var history=new DesignLabHistory(path,new LabBundle{Profiles={old}});history.Create("Custom FORGE v3");
                 var draft=history.Selected.Snapshot;draft.Set("plasma.speed",37);draft.Set("plasma.damage",33);history.Save(draft);
                 string hash=history.Selected.Hash,bytes=JsonUtility.ToJson(history.Selected.Snapshot);
