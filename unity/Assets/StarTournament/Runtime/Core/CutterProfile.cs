@@ -2,11 +2,20 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // F4 adds charge-display controls; historical v8 and earlier hashes stay exact.
+        internal ProvingProfile BeforeSeamBattery()
+        {
+            if(id!="cutter-beam-v1"||version<9)return this;
+            var p=DetachedCopy();p.version=8;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.battery."));
+            p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.battery."));
+            return p;
+        }
         // F3 adds an elbow swivel without rewriting the exact v7 registry.
         internal ProvingProfile BeforeSeamForearmSwivel()
         {
             if(id!="cutter-beam-v1"||version<8)return this;
-            var p=DetachedCopy();p.version=7;
+            var p=BeforeSeamBattery().DetachedCopy();p.version=7;
             p.descriptors.RemoveAll(d=>d.Path=="cutter.seam.surface.supportElbowSwivel");
             p.values.RemoveAll(v=>v.Path=="cutter.seam.surface.supportElbowSwivel");
             return p;
@@ -15,7 +24,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeSeamContactSurface()
         {
             if(id!="cutter-beam-v1"||version<7)return this;
-            var p=DetachedCopy();p.version=6;
+            var p=BeforeSeamBattery().DetachedCopy();p.version=6;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.surface."));
             p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.surface."));
             return p;
@@ -65,7 +74,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=8 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=9 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -144,6 +153,11 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.surface.sparkVariance","cutter-effects","SEAM: разнообразие искр","Различие толщины, длины и скорости частиц.","ratio",0,1,.05f,.8f);
             p.Add("cutter.seam.surface.coreFraction","cutter-effects","SEAM: ядро контакта","Размер белого центра относительно пятна попадания.","ratio",.05f,1,.05f,.3f);
             p.Add("cutter.seam.surface.supportElbowSwivel","cutter-effects","SEAM: отведение левого локтя","Поворот плоскости локтя вокруг оси плечо–запястье; отрицательное значение отводит предплечье влево, сохраняя кисть на рукояти.","degrees",-30,30,1,-8);
+            p.Add("cutter.seam.battery.red","cutter-effects","Батарея: красный","Красная составляющая янтарных ячеек заряда.","ratio",0,1,.01f,1);
+            p.Add("cutter.seam.battery.green","cutter-effects","Батарея: зелёный","Зелёная составляющая янтарных ячеек заряда.","ratio",0,1,.01f,.36f);
+            p.Add("cutter.seam.battery.blue","cutter-effects","Батарея: синий","Синяя составляющая янтарных ячеек заряда.","ratio",0,1,.01f,.035f);
+            p.Add("cutter.seam.battery.intensity","cutter-effects","Батарея: свечение","Яркость полностью заряженной ячейки; расход не меняется.","ratio",0,4,.05f,1.6f);
+            p.Add("cutter.seam.battery.darkLevel","cutter-effects","Батарея: тёмные ячейки","Видимость разряженной поверхности без свечения.","ratio",0,.1f,.001f,.012f);
             return p;
         }
     }

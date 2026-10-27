@@ -8,6 +8,9 @@ namespace StarTournament.ProvingGround
     {
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
+        Renderer batteryRenderer;
+        Material batteryMaterial;
+        public float CutterChargeFraction {get;private set;}=0;
         GameObject rifle,pulse,cutter,plasma;
         Transform rifleMuzzle,cutterMuzzle,pulseMuzzle,plasmaMuzzle;
         public float PlasmaViewScale { get; private set; }=1;
@@ -56,6 +59,17 @@ namespace StarTournament.ProvingGround
                 cutter.transform.localPosition=new Vector3(cp.Get("cutter.modelX"),cp.Get("cutter.modelY"),cp.Get("cutter.modelZ"));
                 cutter.transform.localRotation=Quaternion.Euler(cp.Get("cutter.modelPitch"),cp.Get("cutter.modelYaw"),cp.Get("cutter.modelRoll"));cutter.transform.localScale=Vector3.one*cp.Get("cutter.modelScale");
                 cutterMuzzle=cutter.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="cutter-muzzle");
+                batteryRenderer=cutter.GetComponentsInChildren<Renderer>(true).SingleOrDefault(r=>r.name=="SEAM battery charge");
+                if(batteryRenderer)
+                {
+                    var defaults=ProvingProfile.CreateCutterDefault();
+                    float Read(string key){var path="cutter.seam.battery."+key;return cp.Descriptors.Any(d=>d.Path==path)?cp.Get(path):defaults.Get(path);}
+                    batteryMaterial=new Material(Resources.Load<Shader>("CutterBattery")){name="SEAM charge display"};
+                    batteryMaterial.SetColor("_ChargedColor",new Color(Read("red"),Read("green"),Read("blue"))*Read("intensity"));
+                    batteryMaterial.SetColor("_DarkColor",new Color(Read("darkLevel"),Read("darkLevel"),Read("darkLevel"),1));
+                    batteryMaterial.SetFloat("_Charge",0);batteryRenderer.sharedMaterial=batteryMaterial;
+                    batteryRenderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;batteryRenderer.receiveShadows=false;
+                }
                 foreach(var t in cutter.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
                 foreach(var renderer in cutter.GetComponentsInChildren<Renderer>(true))if(gameObject.layer>=15)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
@@ -73,6 +87,15 @@ namespace StarTournament.ProvingGround
             }
             Show(WeaponId.Rifle);
         }
+        // Only the authoritative energy ratio enters presentation. The asset/shader owns
+        // exactly sixteen cells; changing their number would require authoring a new cartridge.
+        public void UpdateCutterCharge(double energy,float capacity)
+        {
+            float next=capacity>0?Mathf.Clamp01((float)(energy/capacity)):0;
+            if(next==CutterChargeFraction)return;
+            CutterChargeFraction=next;if(batteryMaterial)batteryMaterial.SetFloat("_Charge",next);
+        }
+        void OnDestroy(){if(batteryMaterial)Destroy(batteryMaterial);}
         public static void AddForgeLod(GameObject root,GameObject lowPrefab)
         {
             if(!lowPrefab)return;
@@ -103,7 +126,7 @@ namespace StarTournament.ProvingGround
             if(pulse)renderers.AddRange(pulse.GetComponentsInChildren<Renderer>(true));
             if(plasma)renderers.AddRange(plasma.GetComponentsInChildren<Renderer>(true));
             if(cutter)renderers.AddRange(cutter.GetComponentsInChildren<Renderer>(true));
-            foreach(var renderer in renderers)
+            foreach(var renderer in renderers.Where(r=>r!=batteryRenderer))
                 for(int slot=0;slot<renderer.sharedMaterials.Length;slot++)
                 {
                     var material=renderer.sharedMaterials[slot];if(!material)continue;

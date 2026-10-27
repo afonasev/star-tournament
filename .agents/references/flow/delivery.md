@@ -1,7 +1,6 @@
 # Delivery, concurrency and cleanup
 
-**Актуальная политика 2026-10-08:** [локальная разработка](../local-development.md). Проверки выбираются по поведению; Player build, standalone smoke и поставка не являются автоматическими gates каждой фичи. Упоминания обязательной сборки/Player ниже действуют только для явно заказанной сборки/приёмки или обоснованной минимальной QA-сборки. Tooling, не меняющий Unity runtime, не требует реального Unity запуска ради одного маршрута команд.
-
+QA selection: [../qa-scope.md](../qa-scope.md). Player/build/release/deploy authorization: [../local-development.md](../local-development.md). These are the current gates; source/Editor finalization does not require a deployment.
 
 Read project profile; never execute missing or guessed commands. Shared planning root is not the code worktree. Each implementation works on its owned branch/worktree and records ownership at start (session, branch, worktree, baseline main revision, process IDs and paths). Capture pre-existing status. Record exact spec revision used.
 
