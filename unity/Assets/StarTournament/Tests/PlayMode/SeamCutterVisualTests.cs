@@ -29,9 +29,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             finally{camera.rect=rect;camera.targetTexture=previous;RenderTexture.active=active;rt.Release();Object.Destroy(rt);Object.Destroy(texture);}
         }
         [UnityTearDown] public IEnumerator Cleanup()
-        {if(studio)Object.Destroy(studio);if(lightObject)Object.Destroy(lightObject);if(model)Object.Destroy(model);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
+        {UnityEditor.ShaderUtil.allowAsyncCompilation=previousAsync;if(studio)Object.Destroy(studio);if(lightObject)Object.Destroy(lightObject);if(model)Object.Destroy(model);if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
+        bool previousAsync;
         [UnityTest] public IEnumerator ImportedModelGripsBeamContactsAndRelease()
         {
+            previousAsync=UnityEditor.ShaderUtil.allowAsyncCompilation;UnityEditor.ShaderUtil.allowAsyncCompilation=false;
             string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_SEAM_EVIDENCE");
             Assert.That(output,Is.Not.Null.And.Not.Empty);Directory.CreateDirectory(output);
             Assert.That(SystemInfo.graphicsDeviceType,Is.Not.EqualTo(GraphicsDeviceType.Null),"This is a graphical review; headless is NotRun");
@@ -53,7 +55,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<4;i++){state.Lives[i].CutterOwned=true;state.Lives[i].CutterEnergy=30;state.Lives[i].SelectedWeapon=WeaponId.Cutter;state.Lives[i].SwitchRemaining=0;state.Lives[i].PendingWeapon=default;state.Lives[i].Ammo=CombatLife.AmmoFor(state.Lives[i],WeaponId.Cutter);state.Lives[i].CooldownRemaining=0;state.Lives[i].Health=100;}
             ground.Session.Restore(state);ground.SendMessage("LateUpdate");yield return null;
             var seat=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
-            Capture(seat,Path.Combine(output,"fps-idle.png"));
+            Capture(seat,Path.Combine(output,"fps-startup.png"));
             studio=new GameObject("SEAM studio camera");var camera=studio.AddComponent<Camera>();camera.enabled=false;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.11f,.13f,.15f);camera.nearClipPlane=.01f;camera.farClipPlane=100;camera.fieldOfView=36;camera.cullingMask=1<<30;
             lightObject=new GameObject("SEAM studio light");var light=lightObject.AddComponent<Light>();light.type=LightType.Directional;light.intensity=1.3f;lightObject.transform.rotation=Quaternion.Euler(35,-40,0);
             model=Object.Instantiate(prefab);model.transform.position=new Vector3(30,30,30);foreach(var t in model.GetComponentsInChildren<Transform>(true))t.gameObject.layer=30;
@@ -61,6 +63,33 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(int side in new[]{-1,1}){camera.transform.position=center+new Vector3(side*.95f,.35f,.6f);camera.transform.LookAt(center);Capture(camera,Path.Combine(output,"model-side-"+side+".png"));}
             model.SetActive(false);
             var view=ground.transform.Find("seat-camera-1/trooper-view");var gun=view.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="cutter");
+            var bones=view.GetComponentsInChildren<Transform>(true).Where(t=>t.name.StartsWith("Left")||t.name.StartsWith("Right"));
+            var boneArray=bones.ToArray();var frozenPose=boneArray.Select(t=>(t.position,t.rotation)).ToArray();
+            ground.SendMessage("LateUpdate");ground.SendMessage("LateUpdate");
+            for(int j=0;j<boneArray.Length;j++)
+            {
+                Assert.That(Vector3.Distance(frozenPose[j].position,boneArray[j].position),Is.LessThan(.00001f),boneArray[j].name+" frozen SEAM pose");
+                Assert.That(Quaternion.Angle(frozenPose[j].rotation,boneArray[j].rotation),Is.LessThan(.05f),boneArray[j].name+" frozen SEAM rotation");
+            }
+            // Exercise the actual rig correction independently of frame sampling.
+            var visual=view.GetComponent<TrooperVisual>();var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var grip=typeof(TrooperVisual).GetField("equipmentGrip",flags).GetValue(visual);var type=grip.GetType();
+            type.GetMethod("RestorePrimary").Invoke(grip,null);
+            var localPose=boneArray.Select(t=>(t.localPosition,t.localRotation)).ToArray();
+            var mount=view.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="trooper:rig:weapon-mount");var gunPosition=mount.position;var gunRotation=mount.rotation;
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile});
+            Assert.That(Vector3.Distance(mount.position,gunPosition),Is.LessThan(.00001f),"SEAM fitting cannot displace weapon");
+            Assert.That(Quaternion.Angle(mount.rotation,gunRotation),Is.LessThan(.05f));
+            for(int j=0;j<boneArray.Length;j++)Assert.That(Vector3.Distance(localPose[j].localPosition,boneArray[j].localPosition),Is.LessThan(.00001f),boneArray[j].name+" bone length");
+            type.GetMethod("RestorePrimary").Invoke(grip,null);
+            for(int j=0;j<boneArray.Length;j++)
+            {
+                Assert.That(Vector3.Distance(localPose[j].localPosition,boneArray[j].localPosition),Is.LessThan(.00001f));
+                Assert.That(Quaternion.Angle(localPose[j].localRotation,boneArray[j].localRotation),Is.LessThan(.05f),boneArray[j].name+" restoration");
+            }
+            ground.SendMessage("LateUpdate");
+
+            File.WriteAllLines(Path.Combine(output,"grip-bones.tsv"),bones.Select(t=>t.name+"\t"+gun.InverseTransformPoint(t.position).ToString("F5")));
             camera.cullingMask=1<<view.gameObject.layer;
             foreach(var name in new[]{"cutter-grip","cutter-support-grip"})
             {
@@ -106,6 +135,34 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,-5),0,90);
             ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");yield return null;
             Assert.That(ground.Session.Beam(0).Wall,Is.True);Capture(seat,Path.Combine(output,"fps-wall-contact.png"));
+            ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,-5),0,0);
+            ground.Session.Tick(new LocalAction[4],.02f);ground.SendMessage("LateUpdate");yield return null;
+            // Compare F3 to the exact zero-swivel pose in the same settled scene.
+            var zeroSwivel=ProvingProfile.CreateCutterDefault();
+            foreach(var descriptor in ground.Session.CutterProfile.Descriptors)zeroSwivel.Set(descriptor.Path,ground.Session.CutterProfile.Get(descriptor.Path));
+            zeroSwivel.Set("cutter.seam.surface.supportElbowSwivel",0);
+            type.GetMethod("RestorePrimary").Invoke(grip,null);
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,zeroSwivel});
+            var supportWrist=boneArray.Single(t=>t.name=="LeftHand");var elbow=boneArray.Single(t=>t.name=="LeftLowerArm");
+            var contactPose=supportWrist.GetComponentsInChildren<Transform>(true).Select(t=>(bone:t,position:t.position,rotation:t.rotation)).ToArray();
+            var previousElbow=seat.WorldToViewportPoint(elbow.position);var previousWrist=supportWrist.position;
+            var previousWeapon=mount.position;var previousWeaponRotation=mount.rotation;
+            // Skinning is cached within a frame: compare transforms here.
+            // Use the retained F2 capture for the visual before/after comparison.
+            type.GetMethod("RestorePrimary").Invoke(grip,null);
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile});
+            var correctedElbow=seat.WorldToViewportPoint(elbow.position);
+            Assert.That(correctedElbow.x,Is.LessThan(previousElbow.x),"F3 moves the lower left arm screen-left");
+            Assert.That(Vector3.Distance(previousWrist,supportWrist.position),Is.LessThan(.00001f),"F3 keeps wrist contact");
+            Assert.That(Vector3.Distance(previousWeapon,mount.position),Is.LessThan(.00001f));
+            Assert.That(Quaternion.Angle(previousWeaponRotation,mount.rotation),Is.LessThan(.05f));
+            foreach(var pose in contactPose)
+            {
+                Assert.That(Vector3.Distance(pose.position,pose.bone.position),Is.LessThan(.00001f),pose.bone.name+" F3 contact");
+                Assert.That(Quaternion.Angle(pose.rotation,pose.bone.rotation),Is.LessThan(.05f),pose.bone.name+" F3 orientation");
+            }
+            File.WriteAllText(Path.Combine(output,"forearm-comparison.txt"),"Elbow viewport before: "+previousElbow.ToString("F6")+"\nElbow viewport after: "+correctedElbow.ToString("F6")+"\nWrist movement: "+Vector3.Distance(previousWrist,supportWrist.position).ToString("R"));
+            Capture(seat,Path.Combine(output,"fps-idle.png"));
             File.WriteAllText(Path.Combine(output,"review.json"),"{\"classification\":\"Editor Play Mode, not human/device acceptance\",\"seed\":4193,\"damageNotices\":"+notices+"}");
         }
     }
