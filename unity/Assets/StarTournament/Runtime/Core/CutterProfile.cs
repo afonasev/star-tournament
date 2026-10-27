@@ -172,8 +172,8 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.surface.gripSupportZ","cutter-effects","SEAM: сдвиг передней кисти","Поправка точки ладони вдоль оружия; кости не растягиваются.","rig-units",-.2f,.2f,.005f,-.03f);
             p.Add("cutter.seam.surface.gripPrimaryAlignment","cutter-effects","SEAM: запястье задней кисти","Выравнивание предплечья с ладонью без растяжения костей.","ratio",0,1,.05f,1);
             p.Add("cutter.seam.surface.gripPrimaryPitch","cutter-effects","SEAM: наклон задней кисти","Наклон ладони под пистолетную рукоять; оружие сохраняет положение.","degrees",-45,45,1,18);
-            p.Add("cutter.seam.surface.gripPrimaryY","cutter-effects","SEAM: высота задней кисти","Подвод ладони по высоте к пистолетной рукояти.","rig-units",-.2f,.2f,.005f,.056f);
-            p.Add("cutter.seam.surface.gripPrimaryZ","cutter-effects","SEAM: сдвиг задней кисти","Подвод ладони вдоль пистолетной рукояти.","rig-units",-.2f,.2f,.005f,-.042f);
+            p.Add("cutter.seam.surface.gripPrimaryY","cutter-effects","SEAM: высота задней кисти","Подвод ладони по высоте к пистолетной рукояти.","rig-units",-.2f,.2f,.001f,.056f);
+            p.Add("cutter.seam.surface.gripPrimaryZ","cutter-effects","SEAM: сдвиг задней кисти","Подвод ладони вдоль пистолетной рукояти.","rig-units",-.2f,.2f,.001f,-.042f);
             p.Add("cutter.seam.surface.sparkDensity","cutter-effects","SEAM: плотность фрагментов","Число разноразмерных частиц в каждом слое искр.","count",1,4,1,3);
             p.Add("cutter.seam.surface.shieldOpacity","cutter-effects","SEAM: поверхность щита","Плотность локального светящегося поля контакта.","ratio",0,1,.01f,.24f);
             p.Add("cutter.seam.surface.rippleCount","cutter-effects","SEAM: волны щита","Число расходящихся волн на поверхности.","count",1,5,1,3);
@@ -183,7 +183,7 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.surface.supportElbowSwivel","cutter-effects","SEAM: отведение левого локтя","Поворот плоскости локтя вокруг оси плечо–запястье; отрицательное значение отводит предплечье влево, сохраняя кисть на рукояти.","degrees",-30,30,1,-8);
             p.Add("cutter.seam.battery.red","cutter-effects","Батарея: красный","Красная составляющая янтарных ячеек заряда.","ratio",0,1,.01f,1);
             p.Add("cutter.seam.battery.green","cutter-effects","Батарея: зелёный","Зелёная составляющая янтарных ячеек заряда.","ratio",0,1,.01f,.36f);
-            p.Add("cutter.seam.battery.blue","cutter-effects","Батарея: синий","Синяя составляющая янтарных ячеек заряда.","ratio",0,1,.01f,.035f);
+            p.Add("cutter.seam.battery.blue","cutter-effects","Батарея: синий","Синяя составляющая янтарных ячеек заряда.","ratio",0,1,.005f,.035f);
             p.Add("cutter.seam.battery.intensity","cutter-effects","Батарея: свечение","Яркость полностью заряженной ячейки; расход не меняется.","ratio",0,4,.05f,1.6f);
             p.Add("cutter.seam.battery.darkLevel","cutter-effects","Батарея: тёмные ячейки","Видимость разряженной поверхности без свечения.","ratio",0,.1f,.001f,.012f);
             p.Add("cutter.seam.legacyBeam","cutter-effects","Исходный луч","Луч старой модели: сердцевина и одна жёлтая ветвь. Выключите для SEAM-короны и тонких нитей; контактные эффекты и расход не меняются.","boolean",0,1,1,1);
