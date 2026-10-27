@@ -1441,7 +1441,7 @@ MonoBehaviour:
       Minimum: -90
       Maximum: 90
       Step: 1
-      DefaultValue: 67
+      DefaultValue: 35
     - Path: grip.Shotgun.supportX
       Group: trooper-grip-Shotgun
       Label: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0446\u0435\u0432\u044C\u044F
@@ -1840,7 +1840,7 @@ MonoBehaviour:
     - Path: grip.Shotgun.supportThumb
       Value: -5
     - Path: grip.Shotgun.thumbOpposition
-      Value: 67
+      Value: 35
     - Path: grip.Shotgun.supportX
       Value: 0.005
     - Path: grip.Shotgun.supportY

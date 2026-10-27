@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static ProvingProfile Previous()=> (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeVectorGrip",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
         [Test] public void OnlyShotgunFactoryPoseChangesAndCustomValuesSurvive()
         {
-            var old=Previous();var current=ProvingProfile.CreateTrooperDefault();Assert.That(old.Version,Is.EqualTo(22));Assert.That(current.Version,Is.EqualTo(23));
+            var old=Previous();var current=ProvingProfile.CreateTrooperDefault();Assert.That(old.Version,Is.EqualTo(22));Assert.That(current.Version,Is.EqualTo(24));
             foreach(var d in old.Descriptors.Where(d=>!d.Path.StartsWith("grip.Shotgun.")))Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
             old.Set("grip.Shotgun.supportYaw",-17);old.Set("grip.Shotgun.left.Index.Distal",11);old.EnsureTrooperDescriptors();
             Assert.That(old.Get("grip.Shotgun.supportYaw"),Is.EqualTo(-17));Assert.That(old.Get("grip.Shotgun.left.Index.Distal"),Is.EqualTo(11));
@@ -39,6 +39,33 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 }
                 finally{if(File.Exists(path))File.Delete(path);}
             }
+        }
+        [Test] public void F01ReleasedAndCustomThumbHashesRemainReadable()
+        {
+            var current=ProvingProfile.CreateTrooperDefault();
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeVectorThumb",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(current,null);
+            Assert.That(old.Version,Is.EqualTo(23));
+            foreach(var d in old.Descriptors.Where(d=>!d.Path.StartsWith("grip.Shotgun.left.Thumb.")&&d.Path!="grip.Shotgun.thumbOpposition"))
+                Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
+            string path=Path.Combine(Path.GetTempPath(),"vector-thumb-"+Guid.NewGuid()+".json");
+            try
+            {
+                var h=new DesignLabHistory(path,new LabBundle{Profiles=new List<ProvingProfile>{old}});
+                string released=h.Selected.Hash,bytes=UnityEngine.JsonUtility.ToJson(h.Selected.Snapshot);
+                h.Rename("Default");
+                var upgradedDefault=new DesignLabHistory(path,new LabBundle{Profiles=new List<ProvingProfile>{current}});
+                Assert.That(upgradedDefault.StorageError,Is.Null);
+                Assert.That(upgradedDefault.Selected.Snapshot.Get("grip.Shotgun.thumbOpposition"),Is.EqualTo(current.Get("grip.Shotgun.thumbOpposition")));
+                h.Create("Custom thumb");var snapshot=h.Selected.Snapshot;snapshot.Set("grip.Shotgun.thumbOpposition",12);h.Save(snapshot);string custom=h.Selected.Hash;
+                var migrated=new DesignLabHistory(path,new LabBundle{Profiles=new List<ProvingProfile>{current}});
+                Assert.That(migrated.StorageError,Is.Null);Assert.That(migrated.Selected.Snapshot.Get("grip.Shotgun.thumbOpposition"),Is.EqualTo(12));
+                var revisions=migrated.Profiles.SelectMany(p=>p.Revisions).ToArray();
+                Assert.That(revisions.Select(r=>r.Hash),Does.Contain(custom));
+                var originals=revisions.Where(r=>r.Hash==released).ToArray();
+                Assert.That(originals,Is.Not.Empty);
+                foreach(var revision in originals)Assert.That(UnityEngine.JsonUtility.ToJson(revision.Snapshot),Is.EqualTo(bytes));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
         }
         [Test] public void SavedReleaseAndCustomPoseHashesRemainReadable()
         {

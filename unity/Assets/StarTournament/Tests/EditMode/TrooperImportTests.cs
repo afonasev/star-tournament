@@ -57,6 +57,27 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(forearms,Is.Not.SameAs(hands));
             Assert.That(forearms.triangles.Length,Is.LessThan(hands.triangles.Length));
         }
+        [Test] public void FirstPersonSleevesExcludeUpperArmObstructionButWorldRemainsComplete()
+        {
+            int UpperVertices(GameObject prefab)
+            {
+                int total=0;
+                foreach(var skin in prefab.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    var weights=skin.sharedMesh.boneWeights;
+                    foreach(int vertex in skin.sharedMesh.triangles.Distinct())
+                    {
+                        var w=weights[vertex];var ids=new[]{w.boneIndex0,w.boneIndex1,w.boneIndex2,w.boneIndex3};var values=new[]{w.weight0,w.weight1,w.weight2,w.weight3};
+                        int index=0;for(int i=1;i<4;i++)if(values[i]>values[index])index=i;
+                        string name=skin.bones[ids[index]].name;
+                        if(name.EndsWith("UpperArm")||name.EndsWith("Shoulder"))total++;
+                    }
+                }
+                return total;
+            }
+            Assert.That(UpperVertices(AssetDatabase.LoadAssetAtPath<GameObject>(Root+"TrooperArms.prefab")),Is.Zero);
+            Assert.That(UpperVertices(AssetDatabase.LoadAssetAtPath<GameObject>(Root+"TrooperBody.prefab")),Is.GreaterThan(0));
+        }
         [Test] public void ShotgunMetalRetainsOriginalTextureInBodyAndArms()
         {
             foreach(var name in new[]{"TrooperBody.prefab","TrooperArms.prefab"})

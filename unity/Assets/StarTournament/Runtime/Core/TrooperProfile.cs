@@ -3,6 +3,14 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeVectorThumb()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<24)return this;
+            var p=DetachedCopy();p.version=23;
+            foreach(var pair in new[]{("grip.Shotgun.left.Thumb.Proximal",-38f),("grip.Shotgun.left.Thumb.Intermediate",35f),("grip.Shotgun.left.Thumb.Spread",-45f),("grip.Shotgun.thumbOpposition",67f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
         internal ProvingProfile BeforeVectorGrip()
         {
             if(id!="unity-trooper-presentation-v1"||version<23)return this;
@@ -615,6 +623,12 @@ namespace StarTournament.ProvingGround
                 VectorFit("grip.Shotgun.right.Thumb.Intermediate",-3);
                 VectorFit("grip.Shotgun.right.Thumb.Distal",0);
                 VectorFit("grip.Shotgun.right.Thumb.Spread",-5);
+                // F02: the support thumb follows the fore-end instead of pointing upright.
+                p.version=24;
+                VectorFit("grip.Shotgun.left.Thumb.Proximal",-21);
+                VectorFit("grip.Shotgun.left.Thumb.Intermediate",10);
+                VectorFit("grip.Shotgun.left.Thumb.Spread",-11);
+                VectorFit("grip.Shotgun.thumbOpposition",35);
             }
             return p;
         }
