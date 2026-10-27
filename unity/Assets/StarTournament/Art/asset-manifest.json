@@ -179,23 +179,23 @@
     {
       "key": "forge-lod0",
       "path": "Assets/StarTournament/Art/forge-plasma-lod0.glb",
-      "sha256": "98668431826bed108942513d23b11336fa4f30485a0c53573dcaec141d41c2aa",
+      "sha256": "d0bd7c68e84f34a71ce77fd2882d1e5cd01ddac89c12b525d8daacb9ac744ee5",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Detailed FORGE concept 01 + F3 asymmetric FPS housing; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
+      "source": "Detailed FORGE concept 01 + F4 open rear reactor; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 0
     },
     {
       "key": "forge-lod1",
       "path": "Assets/StarTournament/Art/forge-plasma-lod1.glb",
-      "sha256": "98668431826bed108942513d23b11336fa4f30485a0c53573dcaec141d41c2aa",
+      "sha256": "d0bd7c68e84f34a71ce77fd2882d1e5cd01ddac89c12b525d8daacb9ac744ee5",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Detailed FORGE concept 01 + F3 asymmetric FPS housing; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
+      "source": "Detailed FORGE concept 01 + F4 open rear reactor; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 1
     }
   ]
