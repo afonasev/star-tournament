@@ -61,6 +61,7 @@ namespace StarTournament.ProvingGround
             var defaults=ProvingProfile.CreateCutterDefault();
             float Read(string name){string path="cutter.seam."+name;return p.Descriptors.Any(d=>d.Path==path)?p.Get(path):defaults.Get(path);}
             legacyBeam=Read("legacyBeam")>0;
+            float coreWidth=legacyBeam?Read("legacyCoreWidth"):p.Get("cutter.width");
             shieldOpacity=Read("surface.shieldOpacity");rippleCount=(int)Read("surface.rippleCount");sparkGravity=Read("surface.sparkGravity");sparkVariance=Read("surface.sparkVariance");coreFraction=Read("surface.coreFraction");
             coronaScale=Read("coronaScale");contactSeconds=Read("contactSeconds");sparkSeconds=Read("sparkSeconds");sparkReach=Read("sparkReach");
             arcRadiusScale=Read("detail.arcRadiusScale");arcWidthScale=Read("detail.arcWidthScale");
@@ -82,9 +83,9 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<sources.Length;i++)
             {
                 int layer=sources[i].layer;
-                cores[i]=Line("Core "+i,2,p.Get("cutter.width"),coreMaterial,layer);
+                cores[i]=Line("Core "+i,2,coreWidth,coreMaterial,layer);
                 if(!legacyBeam)coronas[i]=Line("Corona "+i,2,p.Get("cutter.width")*coronaScale,coronaMaterial,layer);
-                muzzleLinks[i]=Line("Muzzle link "+i,2,p.Get("cutter.width"),coreMaterial,layer);
+                muzzleLinks[i]=Line("Muzzle link "+i,2,coreWidth,coreMaterial,layer);
                 arcs[i]=Line("Arc "+i,(int)p.Get("cutter.segments")*(legacyBeam?1:arcSubdivisions)+1,p.Get("cutter.arcWidth")*(legacyBeam?1:arcWidthScale),material,layer);
                 if(!legacyBeam)filaments[i]=Line("Filament "+i,arcs[i].positionCount,p.Get("cutter.arcWidth")*arcWidthScale,material,layer);
                 amberBatches[i]=new Batch("SEAM contacts "+i,root.transform,layer,contactMaterial);

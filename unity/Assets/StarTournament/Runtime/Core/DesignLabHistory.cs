@@ -379,6 +379,8 @@ namespace StarTournament.ProvingGround
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??11)<11)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeLegacyCutterCoreWidth()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??10)<10)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeLegacyCutterBeam()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??9)<9)

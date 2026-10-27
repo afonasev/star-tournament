@@ -8,6 +8,26 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class SeamCutterProfileTests
     {
+        [Test] public void V10WideCoreSettingIsPreservedWithoutOverridingThinLegacyCore()
+        {
+            var current=ProvingProfile.CreateCutterDefault();
+            Assert.That(current.Get("cutter.seam.legacyCoreWidth"),Is.LessThan(current.Get("cutter.arcWidth")));
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeLegacyCutterCoreWidth",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(current,null);
+            Assert.That(old.Version,Is.EqualTo(10));Assert.That(old.Descriptors.Any(d=>d.Path=="cutter.seam.legacyCoreWidth"),Is.False);
+            foreach(var d in old.Descriptors){Assert.That(JsonUtility.ToJson(current.Descriptors.Single(x=>x.Path==d.Path)),Is.EqualTo(JsonUtility.ToJson(d)));Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)));}
+            var path=Path.Combine(Path.GetTempPath(),"seam-core-history-"+Guid.NewGuid()+".json");
+            try
+            {
+                var first=new DesignLabHistory(path,new LabBundle{Profiles={old}});first.Create("Wide v10");
+                var draft=first.Selected.Snapshot;draft.Set("cutter.width",.05f);first.Save(draft);
+                string hash=first.Selected.Hash,bytes=JsonUtility.ToJson(first.Selected.Snapshot);
+                var next=new DesignLabHistory(path,new LabBundle{Profiles={current}});Assert.That(next.StorageError,Is.Null);
+                Assert.That(next.Selected.Snapshot.Get("cutter.width"),Is.EqualTo(.05f));
+                Assert.That(next.Selected.Snapshot.Get("cutter.seam.legacyCoreWidth"),Is.EqualTo(current.Get("cutter.seam.legacyCoreWidth")));
+                Assert.That(JsonUtility.ToJson(next.Profiles.SelectMany(p=>p.Revisions).Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(bytes));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void V9HistoryAndCustomChargeRemainExactWithLegacyBeam()
         {
             var current=ProvingProfile.CreateCutterDefault();

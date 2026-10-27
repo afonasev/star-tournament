@@ -108,12 +108,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<10;i++)ground.Session.Tick(actions,.02f);
             ground.SendMessage("LateUpdate");yield return null;
             Assert.That(ground.Session.Beam(0).Active,Is.True);Assert.That(notices,Is.GreaterThan(0),"fixture must produce real body contact");
+            var beams=ground.GetComponentsInChildren<LineRenderer>(true).Where(x=>x.transform.parent.name=="Cutter beams").ToArray();
+            var visibleBeams=beams.Where(x=>x.enabled&&(seat.cullingMask&(1<<x.gameObject.layer))!=0).ToArray();
+            Assert.That(visibleBeams.Length,Is.EqualTo(3),"Only own FP arc and two adjoining core sections are visible; no world duplicate");
+            Assert.That(visibleBeams.Count(x=>x.name.StartsWith("Arc ")),Is.EqualTo(1));
+            var whiteBeams=beams.Where(x=>x.name.StartsWith("Core ")||x.name.StartsWith("Muzzle link ")).ToArray();
+            // Authored scenes can carry immutable pre-v11 profiles; runtime uses the new
+            // presentation default when this additive field is absent, without rewriting them.
+            var cutterProfile=ground.Session.CutterProfile;
+            float thinCore=cutterProfile.Descriptors.Any(d=>d.Path=="cutter.seam.legacyCoreWidth")?cutterProfile.Get("cutter.seam.legacyCoreWidth"):ProvingProfile.CreateCutterDefault().Get("cutter.seam.legacyCoreWidth");
+            File.WriteAllText(Path.Combine(output,"beam-profile.txt"),"version="+cutterProfile.Version+"\npreviousCoreWidth="+cutterProfile.Get("cutter.width").ToString("R")+"\nlegacyCoreWidth="+thinCore.ToString("R"));
+            foreach(var line in whiteBeams)Assert.That(line.startWidth,Is.EqualTo(thinCore));
+            File.WriteAllLines(Path.Combine(output,"beam-layers-widths.tsv"),beams.Select(x=>x.name+"\t"+x.gameObject.layer+"\t"+x.enabled+"\t"+((seat.cullingMask&(1<<x.gameObject.layer))!=0)+"\t"+x.startWidth.ToString("R")));
+            // Same phase, camera and pose: isolate the previous shared-width white overlay.
+            foreach(var line in whiteBeams)line.startWidth=line.endWidth=ground.Session.CutterProfile.Get("cutter.width");
+            Capture(seat,Path.Combine(output,"fps-wide-core-reference.png"));
+            foreach(var line in whiteBeams)line.startWidth=line.endWidth=thinCore;
             Capture(seat,Path.Combine(output,"fps-body-contact.png"));
             camera.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18)|(1<<30));
             var contactCenter=ground.Session.Pose(1).Position+Vector3.up*1.45f;
             camera.transform.position=contactCenter+new Vector3(1.5f,.2f,-1.8f);camera.transform.LookAt(contactCenter);
             Capture(camera,Path.Combine(output,"body-contact-detail.png"));
-            var beams=ground.GetComponentsInChildren<LineRenderer>(true).Where(x=>x.transform.parent.name=="Cutter beams").ToArray();
             Assert.That(beams.Count(x=>x.enabled),Is.GreaterThanOrEqualTo(3));
             Assert.That(beams.Any(x=>x.name.StartsWith("Corona ")||x.name.StartsWith("Filament ")),Is.False,"Original beam has one electrical branch and no broad corona");
             foreach(var arc in beams.Where(x=>x.enabled&&x.name.StartsWith("Arc ")))
