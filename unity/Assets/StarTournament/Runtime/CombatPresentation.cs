@@ -19,7 +19,9 @@ namespace StarTournament.ProvingGround
         public ProvingProfile CutterGripProfile {get;private set;}
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
-        public Vector3 RifleDirection => rifleMuzzle ? rifleMuzzle.forward : transform.forward;
+        // The imported marker locates the bore, but retains Blender's 90-degree
+        // empty rotation. The rifle mesh is authored along its own +Z barrel axis.
+        public Vector3 RifleDirection => rifle ? rifle.transform.forward : transform.forward;
         public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null,GameObject plasmaPrefab=null,ProvingProfile plasmaProfile=null,GameObject plasmaLod1Prefab=null)
         {
             if(!prefab)throw new System.ArgumentException("Rifle GLB missing",nameof(prefab));

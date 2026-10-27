@@ -265,6 +265,38 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=active;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
         }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
+        static int AssertCobaltBoreAlignment(ProvingGround ground,System.Collections.Generic.List<string> samples)
+        {
+            int checkedCount=0;var particle=new ParticleSystem.Particle[1];
+            foreach(var flash in ground.GetComponentsInChildren<ParticleSystem>().Where(p=>p.name.StartsWith("COBALT muzzle ")&&!p.name.StartsWith("COBALT muzzle smoke ")&&p.particleCount>0))
+            {
+                var mount=ground.GetComponentsInChildren<WeaponModelPresentation>().Single(m=>m.gameObject.layer==flash.gameObject.layer);
+                var rifle=mount.transform.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="automatic-rifle");
+                var bore=rifle.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="rifle-muzzle");
+                // Authored bore center/axis from the model, independently of RifleDirection.
+                Assert.That(Vector3.Distance(rifle.InverseTransformPoint(bore.position),new Vector3(0,.062f,.54f)),Is.LessThan(.0001f));
+                var axis=rifle.TransformVector(Vector3.forward).normalized;flash.GetParticles(particle);
+                var offset=particle[0].position-bore.position;float along=Vector3.Dot(offset,axis),side=Vector3.Cross(offset,axis).magnitude;
+                Assert.That(side,Is.LessThan(.0001f),"Flash must stay on the bore axis through recoil");
+                Assert.That(along,Is.EqualTo(ground.Profile.Get("presentation.cobalt.flashOffset")).Within(.0001f),"Flash must be in front of the bore");
+                samples.Add(System.FormattableString.Invariant($"{ground.Session.Time},{flash.gameObject.layer},{along},{side},{Vector3.Angle(bore.forward,axis)}"));checkedCount++;
+            }
+            return checkedCount;
+        }
+        static void CaptureCobaltMuzzleClose(string output,Camera playerCamera,WeaponModelPresentation mount)
+        {
+            if(string.IsNullOrEmpty(output))return;
+            var rifle=mount.transform.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="automatic-rifle");
+            var go=new GameObject("COBALT independent bore inspection");
+            try
+            {
+                var camera=go.AddComponent<Camera>();camera.CopyFrom(playerCamera);camera.enabled=false;camera.fieldOfView=35;camera.nearClipPlane=.01f;
+                camera.transform.position=mount.RifleMuzzle+rifle.forward*.45f+rifle.right*.3f+rifle.up*.15f;
+                camera.transform.LookAt(mount.RifleMuzzle,rifle.up);
+                CaptureSingleView(output,"COBALT-muzzle-close",camera,1200,900);
+            }
+            finally{Object.Destroy(go);}
+        }
         [UnityTest] public IEnumerator CobaltShotImpulsesFollowRealBulletsAndClearOnRestore()
         {
             yield return Load(1);ground.enabled=false;
@@ -279,6 +311,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
             void Capture(string name,int width,int height){if(!string.IsNullOrEmpty(output))CaptureSingleView(output,name,camera,width,height);}
             Capture("COBALT-idle",1600,900);
+            var alignment=new System.Collections.Generic.List<string>{"sessionTime,layer,alongBarrelMeters,offAxisMeters,legacyMarkerAngleDegrees"};int aligned=0;
             var saved=ground.Session.Capture();bool contact=false;RifleBulletContact hit=default;
             System.Action<RifleBulletContact> onContact=e=>{if(e.Bullet.Owner==0){contact=true;hit=e;}};
             ground.Session.RifleBulletHit+=onContact;
@@ -286,7 +319,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 actions[0].Fire=true;ground.Session.Tick(actions,.02f);actions[0].Fire=false;ground.SendMessage("LateUpdate");yield return null;
                 Assert.That(fx.LiveParticles,Is.GreaterThan(0));Assert.That(fx.ActiveLights,Is.GreaterThan(0));
+                aligned+=AssertCobaltBoreAlignment(ground,alignment);Assert.That(aligned,Is.EqualTo(2),"Local and world muzzle must both be checked");
                 Capture("COBALT-fire",1600,900);
+                CaptureCobaltMuzzleClose(output,camera,ground.transform.Find("seat-camera-1/trooper-view").GetComponent<WeaponModelPresentation>());
                 var lights=ground.GetComponentsInChildren<Light>().Where(l=>l.name.StartsWith("COBALT muzzle light")&&l.enabled).ToArray();
                 foreach(var light in lights)light.enabled=false;Capture("COBALT-fire-without-light-control",1600,900);foreach(var light in lights)light.enabled=true;
                 double clock=ground.Session.Time;int particles=fx.LiveParticles;yield return new WaitForSecondsRealtime(.05f);ground.SendMessage("LateUpdate");
@@ -314,6 +349,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int tick=0;tick<55;tick++)
                 {
                     actions[0].Fire=tick<35;ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+                    aligned+=AssertCobaltBoreAlignment(ground,alignment);
                     foreach(var b in ground.Session.RifleBullets.Where(b=>b.Owner==0))
                     {
                         directions[b.Id]=b.Direction;
@@ -324,6 +360,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     }
                     yield return null;if(sequence!=null)CaptureSingleView(sequence,"frame-"+tick.ToString("D3"),camera,960,540);
                 }
+                Assert.That(aligned,Is.GreaterThanOrEqualTo(16),"Check multiple shots/recoil phases in both representations");
+                if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"muzzle-alignment.csv"),alignment);
                 Assert.That(directions.Count,Is.GreaterThanOrEqualTo(4));
                 Assert.That(directions.Values.Any(d=>Vector3.Angle(d,directions.Values.First())>.1f),Is.True,"Burst must retain physical spread");
                 if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"burst-directions.csv"),samples);
