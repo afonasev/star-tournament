@@ -28,6 +28,7 @@ namespace StarTournament.ProvingGround
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
         readonly Text[] hud = new Text[SeatInputCoordinator.SeatCount], names = new Text[SeatInputCoordinator.SeatCount];
         public HitFeedbackPresentation HitFeedbackForReview=>presentation?.HitFeedbackForReview;
+        public ForgeReactorPresentation ForgeReactorForReview=>presentation?.ForgeReactorForReview;
         internal RocketPresentation RocketEffectsForReview=>presentation?.RocketEffectsForReview;
         public ProvingProfile RocketEffectsProfile = ProvingProfile.CreateRocketEffectsDefault();
         public ProvingProfile PlasmaProfile = ProvingProfile.CreatePlasmaDefault();

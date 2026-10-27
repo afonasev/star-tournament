@@ -68,6 +68,7 @@ copper=mat('FORGE bronze conductors',(.24,.13,.055),.85,.3)
 green=mat('FORGE active plasma',(.02,.7,.006),.1,.25,'plasma',1.4)
 led=mat('FORGE indicator',(.11,.8,.015),.25,.3,None,1.1)
 reactor=mat('FORGE contained reactor',(.06,.72,.008),.18,.18,'reactor',1.8)
+flux=mat('FORGE reactor flux',(.12,.8,.025),.1,.3,None,1.2)
 ink=mat('FORGE markings',(.52,.56,.52),.25,.5)
 
 def finish(o,name,material,bevel=.003):
@@ -234,7 +235,7 @@ for arm in range(6):
  for j in range(34):
   t=j/33;r=.012+.074*t;a=arm*math.tau/6+t*2.5+.14*math.sin(t*13+arm)
   points.append((math.cos(a)*r,.10+math.sin(a)*r,-.405+.012*t*t))
- wire('contained flux filament',points,.00085,led if arm%2==0 else green)
+ wire('contained flux filament',points,.00085,flux)
 # Three radial clamps with separate pads and indicators read as a sealed power core.
 for i in range(3):
  a=math.pi/6+i*math.tau/3;x=math.cos(a);y=math.sin(a)
@@ -329,7 +330,7 @@ for lod in (0,1):
 manifest=ART/'asset-manifest.json';doc=json.loads(manifest.read_text())
 for entry in doc['entries']:
  if entry['key'] in ('forge-lod0','forge-lod1'):
-  path=ART/f"forge-plasma-lod{entry['lod']}.glb";entry['sha256']=hashlib.sha256(path.read_bytes()).hexdigest();entry['source']='Detailed FORGE concept 01 + F4 open rear reactor; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.'
+  path=ART/f"forge-plasma-lod{entry['lod']}.glb";entry['sha256']=hashlib.sha256(path.read_bytes()).hexdigest();entry['source']='Detailed FORGE concept 01 + F5 animated open rear reactor (isolated flux material); scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.'
 manifest.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+'\n')
 report={'triangles_before':triangles,'triangles_after':sum(len(p.vertices)-2 for o in bpy.context.scene.objects if o.type=='MESH' for p in o.data.polygons),'renderers_before':before,'renderers_after':len(groups),'materials':len(groups),'textures':4,'texture_size':512,'lod_policy':'both full detail; decimation explicitly deferred','geometry_preserved':True}
 (OUT/'asset-metrics.json').write_text(json.dumps(report,indent=2));print(report)

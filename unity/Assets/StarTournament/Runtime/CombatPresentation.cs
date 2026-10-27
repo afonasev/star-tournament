@@ -136,6 +136,8 @@ namespace StarTournament.ProvingGround
         internal RocketPresentation RocketEffectsForReview=>rocketPresentation;
         readonly RifleBulletPresentation riflePresentation;
         readonly PlasmaPresentation plasmaPresentation;
+        readonly ForgeReactorPresentation forgeReactor;
+        public ForgeReactorPresentation ForgeReactorForReview=>forgeReactor;
         readonly CutterPresentation cutterPresentation;
         readonly ProvingProfile movement, tuning, deathProfile;
         DeathPhysicsWorld deathPhysics;
@@ -177,6 +179,7 @@ namespace StarTournament.ProvingGround
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner,rocketPrefab,rocketEffects);
             plasmaPresentation=new PlasmaPresentation(session,owner,seat=>Muzzle(seat,0,WeaponId.Plasma));
+            forgeReactor=new ForgeReactorPresentation(session,owner,bodies,views,local);
             riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle));
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
@@ -374,7 +377,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            shotgunArt.Dispose();hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
+            forgeReactor.Dispose();shotgunArt.Dispose();hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
@@ -527,7 +530,7 @@ namespace StarTournament.ProvingGround
                 if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
             // Capture a new trace only after all cameras, animation and weapon-switch joints are final for this frame.
-            RenderPellets();riflePresentation.Render();plasmaPresentation.Render();cutterPresentation.Render();
+            RenderPellets();riflePresentation.Render();plasmaPresentation.Render();cutterPresentation.Render();forgeReactor.Render();
         }
     }
 }

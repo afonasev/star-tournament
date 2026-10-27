@@ -179,23 +179,23 @@
     {
       "key": "forge-lod0",
       "path": "Assets/StarTournament/Art/forge-plasma-lod0.glb",
-      "sha256": "d0bd7c68e84f34a71ce77fd2882d1e5cd01ddac89c12b525d8daacb9ac744ee5",
+      "sha256": "029d5eda5aa48c22ec17bdeb72627a296c40949ec5b28d5a6779eec630f505f4",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Detailed FORGE concept 01 + F4 open rear reactor; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
+      "source": "Detailed FORGE concept 01 + F5 animated open rear reactor (isolated flux material); scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 0
     },
     {
       "key": "forge-lod1",
       "path": "Assets/StarTournament/Art/forge-plasma-lod1.glb",
-      "sha256": "d0bd7c68e84f34a71ce77fd2882d1e5cd01ddac89c12b525d8daacb9ac744ee5",
+      "sha256": "029d5eda5aa48c22ec17bdeb72627a296c40949ec5b28d5a6779eec630f505f4",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "forge-grip",
-      "source": "Detailed FORGE concept 01 + F4 open rear reactor; scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
+      "source": "Detailed FORGE concept 01 + F5 animated open rear reactor (isolated flux material); scripts/trooper/build_forge.py; editable assets/source/forge/forge.blend; full detail preserved in both LOD slots per art-first approval.",
       "lod": 1
     }
   ]
