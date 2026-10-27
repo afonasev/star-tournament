@@ -30,7 +30,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     var old=new LabBundle{Profiles=new List<ProvingProfile>{Previous()}};
                     var current=new LabBundle{Profiles=new List<ProvingProfile>{ProvingProfile.CreateTrooperDefault()}};
                     var first=new DesignLabHistory(path,old,authoring:mode==2);
-                    if(mode==1)first.Create("Custom COBALT thumb");
+                    if(mode==1)first.Create("Custom COBALT thumb");else first.Rename(mode==2?"Authored default":"Default");
+                    Assert.That(File.Exists(path),Is.True,"The old history must be persisted before testing migration");
                     if(mode!=0){var draft=first.Selected.Snapshot;draft.Set("grip.Rifle.left.Thumb.Intermediate",12);first.Save(draft);}
                     var source=first.Selected.Snapshot;string hash=first.Selected.Hash,bytes=UnityEngine.JsonUtility.ToJson(source);
                     var migrated=new DesignLabHistory(path,current,authoring:mode==2);Assert.That(migrated.StorageError,Is.Null,"mode="+mode);

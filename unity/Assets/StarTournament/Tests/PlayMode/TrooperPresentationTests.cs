@@ -283,6 +283,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         IEnumerator NativeGripPhases(WeaponId selectedWeapon)
         {
             yield return Load(2);
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
             var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
             var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
