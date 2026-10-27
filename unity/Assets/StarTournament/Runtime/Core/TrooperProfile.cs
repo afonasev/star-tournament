@@ -3,10 +3,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeCloserWeaponView()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<26)return this;
+            var p=DetachedCopy();p.version=25;
+            foreach(var pair in new[]{("view.y",-1.46f),("view.z",.05f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
         internal ProvingProfile BeforeCobaltThumb()
         {
             if(id!="unity-trooper-presentation-v1"||version<25)return this;
-            var p=DetachedCopy();p.version=24;
+            var p=BeforeCloserWeaponView().DetachedCopy();p.version=24;
             foreach(var old in CreateTrooperDefault(true,true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.left.Thumb.")||d.Path=="grip.Rifle.thumbOpposition"))
             {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
             return p;
@@ -245,7 +253,7 @@ namespace StarTournament.ProvingGround
                 return value==old.DefaultValue?current.DefaultValue:value;
             // Untouched equipment defaults adopt the revised fill in serialized scenes and Lab;
             // explicit off and other custom strengths stay unchanged. Historical snapshots are never edited.
-            if(old.Path=="view.fillIntensity")return value==old.DefaultValue?current.DefaultValue:value;
+            if(old.Path=="view.fillIntensity"||old.Path=="view.y"||old.Path=="view.z")return value==old.DefaultValue?current.DefaultValue:value;
             if(old.Path!="view.switchShoulderDegrees"&&old.Path!="view.switchElbowDegrees")return value;
             // Old authored defaults follow the revised gesture; custom values stay within its safe range.
             return value==old.DefaultValue?current.DefaultValue:UnityEngine.Mathf.Clamp(value,current.Minimum,current.Maximum);
@@ -645,6 +653,10 @@ namespace StarTournament.ProvingGround
                 foreach(var pair in new[]{("Proximal",-10f),("Intermediate",10f),("Distal",0f),("Spread",-20f)})
                 {var path="grip.Rifle.left.Thumb."+pair.Item1;p.FindDescriptor(path).DefaultValue=pair.Item2;p.Set(path,pair.Item2);}
                 p.FindDescriptor("grip.Rifle.thumbOpposition").DefaultValue=44;p.Set("grip.Rifle.thumbOpposition",44);
+                // Approved B moves the complete view rig; contact poses and world models stay exact.
+                p.version=26;
+                foreach(var pair in new[]{("view.y",-1.49f),("view.z",.01f)})
+                {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
             }
             return p;
         }
