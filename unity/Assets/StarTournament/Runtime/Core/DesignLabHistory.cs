@@ -379,6 +379,8 @@ namespace StarTournament.ProvingGround
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??12)<12)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeThickerLegacyCutterCore()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??11)<11)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeLegacyCutterCoreWidth()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??10)<10)
@@ -866,6 +868,9 @@ namespace StarTournament.ProvingGround
                 // The packaged Vector Default also contains scene-tuned values.
                 // Migrate that system row only; every intentional authored/named save stays exact.
                 if(isDefault&&!preserveSavedValues&&d.Path.StartsWith("grip.Shotgun.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<24)
+                    value=currentDescriptor.DefaultValue;
+                // Only untouched shipped Default adopts F8; named experiments and historical bytes stay exact.
+                if(isDefault&&d.Path=="cutter.seam.legacyCoreWidth"&&snapshot.Profile(d.Path).Version==11&&Mathf.Approximately(value,.003f))
                     value=currentDescriptor.DefaultValue;
                 if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 if(isDefault&&preserveSavedValues)value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);

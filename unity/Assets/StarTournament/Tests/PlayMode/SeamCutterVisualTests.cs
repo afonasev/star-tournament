@@ -124,6 +124,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var line in whiteBeams)line.startWidth=line.endWidth=ground.Session.CutterProfile.Get("cutter.width");
             Capture(seat,Path.Combine(output,"fps-wide-core-reference.png"));
             foreach(var line in whiteBeams)line.startWidth=line.endWidth=thinCore;
+            // Compare F7 and F8 in exactly the same native frame; keep the old width in the historical registry.
+            var previous=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeThickerLegacyCutterCore",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(ProvingProfile.CreateCutterDefault(),null);
+            foreach(var line in whiteBeams)line.startWidth=line.endWidth=previous.Get("cutter.seam.legacyCoreWidth");
+            Capture(seat,Path.Combine(output,"fps-previous-thin-core.png"));
+            foreach(var line in whiteBeams)line.startWidth=line.endWidth=thinCore;
             Capture(seat,Path.Combine(output,"fps-body-contact.png"));
             camera.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18)|(1<<30));
             var contactCenter=ground.Session.Pose(1).Position+Vector3.up*1.45f;

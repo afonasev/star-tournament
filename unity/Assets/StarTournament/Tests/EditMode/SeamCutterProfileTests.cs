@@ -8,6 +8,34 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class SeamCutterProfileTests
     {
+        [Test] public void V11CoreDefaultAdvancesWhileCustomAndHistoricalValuesStayExact()
+        {
+            var current=ProvingProfile.CreateCutterDefault();
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeThickerLegacyCutterCore",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(current,null);
+            Assert.That(old.Version,Is.EqualTo(11));
+            Assert.That(old.Get("cutter.seam.legacyCoreWidth"),Is.EqualTo(.003f));
+            Assert.That(old.Descriptors.Single(d=>d.Path=="cutter.seam.legacyCoreWidth").DefaultValue,Is.EqualTo(.003f));
+            Assert.That(current.Get("cutter.seam.legacyCoreWidth"),Is.EqualTo(.0035f));
+            var path=Path.Combine(Path.GetTempPath(),"seam-f8-history-"+Guid.NewGuid()+".json");
+            try
+            {
+                var first=new DesignLabHistory(path,new LabBundle{Profiles={old}});first.Rename("Default");
+                string hash=first.Selected.Hash,bytes=JsonUtility.ToJson(first.Selected.Snapshot);
+                var next=new DesignLabHistory(path,new LabBundle{Profiles={current}});
+                Assert.That(next.StorageError,Is.Null);
+                Assert.That(next.Selected.Snapshot.Get("cutter.seam.legacyCoreWidth"),Is.EqualTo(.0035f));
+                Assert.That(JsonUtility.ToJson(next.Profiles.SelectMany(p=>p.Revisions).Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(bytes));
+                File.Delete(path);
+                first=new DesignLabHistory(path,new LabBundle{Profiles={old}});first.Create("Custom v11");
+                var draft=first.Selected.Snapshot;draft.Set("cutter.seam.legacyCoreWidth",.006f);first.Save(draft);
+                hash=first.Selected.Hash;bytes=JsonUtility.ToJson(first.Selected.Snapshot);
+                next=new DesignLabHistory(path,new LabBundle{Profiles={current}});
+                Assert.That(next.StorageError,Is.Null);
+                Assert.That(next.Selected.Snapshot.Get("cutter.seam.legacyCoreWidth"),Is.EqualTo(.006f));
+                Assert.That(JsonUtility.ToJson(next.Profiles.SelectMany(p=>p.Revisions).Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(bytes));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void V10WideCoreSettingIsPreservedWithoutOverridingThinLegacyCore()
         {
             var current=ProvingProfile.CreateCutterDefault();
