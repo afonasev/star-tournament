@@ -251,7 +251,8 @@ namespace StarTournament.ProvingGround
                 var trace=GameObject.CreatePrimitive(PrimitiveType.Capsule);trace.name="pellet-streak";trace.transform.SetParent(root.transform,false);
                 // Destroy is deferred; disable now so another fixed tick cannot collide with a visual.
                 var collider=trace.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
-                var traceRenderer=trace.GetComponent<Renderer>();traceRenderer.material=TraceMaterial(notice.Weapon);
+                var traceRenderer=trace.GetComponent<Renderer>();traceRenderer.sharedMaterial=TraceMaterial(notice.Weapon);
+                traceRenderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;traceRenderer.receiveShadows=false;
                 // No intermediate frame may expose the shot-time pose before the final view pose is sampled.
                 traceRenderer.enabled=false;
                 var muzzle=Muzzle(notice.Shooter,pelletIndex,notice.Weapon);
@@ -281,6 +282,7 @@ namespace StarTournament.ProvingGround
         }
         Material TraceMaterial(WeaponId weapon)
         {
+            if(weapon==WeaponId.Shotgun)return shotgunArt.Metal; // Lit metal, no emission or bloom tracer.
             if(weapon==WeaponId.Rifle)
             {
                 if(rifleTraceMaterial)return rifleTraceMaterial;
@@ -338,21 +340,29 @@ namespace StarTournament.ProvingGround
             }
             // First draw has a nonzero segment whose tail is still at the rendered muzzle.
             // Its age is derived from the configured fixed tick and existing trace window, not another timer setting.
-            effect.Begins=session.Time-Mathf.Min(1f/movement.Get("simulation.fixedTickHz"),flight*TraceWindowFraction);
+            effect.Begins=session.Time-Mathf.Min(1f/movement.Get("simulation.fixedTickHz"),flight*TraceFraction(effect));
             effect.Emitted=true;effect.Trace.GetComponent<Renderer>().enabled=true;
             if(effect.Core)effect.Core.GetComponent<Renderer>().enabled=true;
+        }
+        float TraceFraction(PelletEffect effect)
+        {
+            if(effect.Weapon!=WeaponId.Shotgun)return TraceWindowFraction;
+            var distance=Vector3.Distance(effect.Start,effect.TraceEnd);
+            return distance>0?Mathf.Min(TraceWindowFraction,movement.Get(ProvingProfile.VectorPrecisionPrefix+"traceLength")/distance):TraceWindowFraction;
         }
         void RenderPellets()
         {
             float flight=movement.Get("presentation.shotFlightSeconds"), impact=movement.Get("presentation.shotImpactSeconds");
             for(int i=pellets.Count-1;i>=0;i--)
             {
-                var effect=pellets[i];if(!effect.Emitted)BeginVisiblePellet(effect,flight);
+                var effect=pellets[i];
+                float lifetime=effect.Weapon==WeaponId.Shotgun?impact*Mathf.Max(movement.Get(ProvingProfile.VectorPrecisionPrefix+"chipLifetimeScale"),movement.Get(ProvingProfile.VectorPrecisionPrefix+"dustLifetimeScale")):impact;
+                if(!effect.Emitted)BeginVisiblePellet(effect,flight);
                 float elapsed=(float)(session.Time-effect.Begins);
                 if(elapsed<flight)
                 {
                     float progress=Mathf.Clamp01(elapsed/flight);var head=Vector3.Lerp(effect.Start,effect.TraceEnd,progress);
-                    var tail=Vector3.Lerp(effect.Start,effect.TraceEnd,Mathf.Max(0,progress-TraceWindowFraction));
+                    var tail=Vector3.Lerp(effect.Start,effect.TraceEnd,Mathf.Max(0,progress-TraceFraction(effect)));
                     Vector3 delta=head-tail;effect.Trace.transform.SetPositionAndRotation((head+tail)*.5f,Quaternion.FromToRotation(Vector3.up,delta.normalized));
                     float width=movement.Get(effect.Weapon==WeaponId.Rifle?"presentation.rifleTracerWidth":"presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);
                     if(effect.Core){effect.Core.transform.position=head;effect.Core.transform.localScale=Vector3.one*width;}
@@ -361,11 +371,11 @@ namespace StarTournament.ProvingGround
                 if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Core){Object.Destroy(effect.Core);effect.Core=null;}if(effect.Contact)CreateImpact(effect);}
                 if(effect.ImpactParticles!=null)
                 {
-                    float age=Mathf.Clamp(elapsed-flight,0,impact),delta=age-effect.ImpactTime;
-                    if(delta>0)foreach(var ps in effect.ImpactParticles){ps.Simulate(delta,true,false);ps.Pause();}
+                    float age=Mathf.Clamp(elapsed-flight,0,lifetime),delta=age-effect.ImpactTime;
+                    if(delta>0)foreach(var ps in effect.ImpactParticles){ps.Simulate(delta,true,false,false);ps.Pause();}
                     effect.ImpactTime=age;
                 }
-                if(elapsed>=flight+impact){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
+                if(elapsed>=flight+lifetime){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
             }
         }
         void CreateImpact(PelletEffect effect)

@@ -539,6 +539,7 @@ namespace StarTournament.ProvingGround
         {
             var profile = new ProvingProfile();
             profile.AddCobaltShotDescriptors();
+            profile.AddVectorPrecisionDescriptors();
             profile.AddRoundMusicDescriptors();
             profile.AddIndividualEffectGains();
             profile.Add("audio.musicDefaultPercent", "audio", "Музыка по умолчанию", "Начальная громкость музыкального канала до пользовательского изменения.", "percent", 0f, 100f, 5f, 70f);

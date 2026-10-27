@@ -78,7 +78,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var impacts=ground.GetComponentsInChildren<Transform>().Where(t=>t.name=="shot-impact").ToArray();
             Assert.That(shot.Pellets.Any(p=>p.Contact!=PelletContact.Miss),Is.True,"fixture must hit real architecture");Assert.That(impacts,Is.Not.Empty);
             Assert.That(impacts.All(t=>t.GetComponentsInChildren<Collider>().Length==0),Is.True);
-            Assert.That(impacts.All(t=>t.GetComponentsInChildren<ParticleSystem>().Length==3),Is.True);
+            Assert.That(impacts.All(t=>t.GetComponentsInChildren<ParticleSystem>().Length==4),Is.True);
             Assert.That(impacts.SelectMany(t=>t.GetComponentsInChildren<ParticleSystem>()).All(p=>p.particleCount>0),Is.True);
             foreach(var r in impacts.SelectMany(t=>t.GetComponentsInChildren<ParticleSystemRenderer>()).Where(r=>r.renderMode==ParticleSystemRenderMode.Mesh))
             {
