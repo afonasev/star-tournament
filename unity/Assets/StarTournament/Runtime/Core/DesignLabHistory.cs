@@ -403,6 +403,8 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??27)<27)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeUnifiedArmGrips()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??26)<26)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCloserWeaponView()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??25)<25)
@@ -845,6 +847,10 @@ namespace StarTournament.ProvingGround
                 // Published pre-COBALT Default contains the old scene grip values even
                 // where descriptor metadata was already newer. Retune only this reserved
                 // shipped profile; named/custom profiles and source revisions stay exact.
+                // PULSE's packaged scene still carried the pre-Mk2 palm placement.
+                // Adopt the actual authored grip only for the reserved shipped Default.
+                if(isDefault&&!preserveSavedValues&&d.Path.StartsWith("grip.RocketLauncher.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<27)
+                    value=currentDescriptor.DefaultValue;
                 if(isDefault&&!preserveSavedValues&&(d.Path.StartsWith("grip.Rifle.left.Thumb.",StringComparison.Ordinal)||d.Path=="grip.Rifle.thumbOpposition")&&snapshot.Profile(d.Path).Version<25)
                     value=currentDescriptor.DefaultValue;
                 if(isDefault&&d.Path.StartsWith("grip.Rifle.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<22)
@@ -858,6 +864,13 @@ namespace StarTournament.ProvingGround
                 if(isDefault&&preserveSavedValues&&snapshot.Profile(d.Path).Version>=3&&snapshot.Profile(d.Path).Version<=4)value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 next.Set(d.Path,value);
             }
+            // New right-arm fitting must not silently reinterpret an intentional saved pose.
+            if(preserveSavedValues)
+                foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
+                {
+                    var path="grip."+weapon+".primaryWristAlignment";
+                    if(currentDescriptors.ContainsKey(path)&&!snapshot.Descriptors.Any(d=>d.Path==path))next.Set(path,0);
+                }
             // Version3 used the office controls for both floors and stair annexes.
             // Preserve that custom stair lighting when the controls become independent.
             if(currentDescriptors.ContainsKey("lunar.stairLamp")&&currentDescriptors.ContainsKey("lunar.stairFill")
