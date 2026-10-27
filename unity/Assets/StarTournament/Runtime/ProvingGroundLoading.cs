@@ -78,6 +78,7 @@ namespace StarTournament.ProvingGround
             if(failure==null)yield break;
             if(match)
             {
+                Debug.LogException(failure);
                 // Recover UI without reconstructing a possibly damaged projection/actor.
                 try
                 {

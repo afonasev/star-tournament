@@ -8,6 +8,12 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class SeamCutterProfileTests
     {
+        [Test] public void DefaultProfileValuesMatchTheirDeclaredRangesAndSteps()
+        {
+            var profile=ProvingProfile.CreateCutterDefault();
+            Assert.That(profile.Validate(),Is.Empty);
+        }
+
         [Test] public void V10WideCoreSettingIsPreservedWithoutOverridingThinLegacyCore()
         {
             var current=ProvingProfile.CreateCutterDefault();

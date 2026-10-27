@@ -127,7 +127,7 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.sparkCount","cutter-effects","SEAM: искры","Число коротких лучей в локальном контакте.","count",0,32,1,14);
             p.Add("cutter.seam.sparkReach","cutter-effects","SEAM: разлёт искр","Максимальная длина визуального следа; без урона.","m",.01f,1,.01f,.23f);
             p.Add("cutter.seam.sparkSeconds","cutter-effects","SEAM: цикл искр","Время движения искр по часам матча.","s",.02f,1,.01f,.14f);
-            p.Add("cutter.seam.contactSeconds","cutter-effects","SEAM: след контакта","Короткое затухание после фактического попадания.","s",.01f,.5f,.01f,.065f);
+            p.Add("cutter.seam.contactSeconds","cutter-effects","SEAM: след контакта","Короткое затухание после фактического попадания.","s",.01f,.5f,.005f,.065f);
             p.Add("cutter.seam.shieldRadius","cutter-effects","SEAM: рябь щита","Радиус локальной ряби вместо непрозрачного купола.","m",.01f,1,.01f,.18f);
             p.Add("cutter.seam.muzzleRadius","cutter-effects","SEAM: сопло","Радиус мягкого свечения активного сопла.","m",.01f,.3f,.005f,.065f);
             p.Add("cutter.seam.grip.supportRoll","cutter-effects","SEAM: Разворот ладони","Подгонка кисти к новой рукояти SEAM вместо исторической общей позы; остальные пальцы регулируются профилем бойца.","degrees",-90f,90f,1f,49f);
