@@ -49,9 +49,10 @@ namespace StarTournament.ProvingGround
             signFont.RequestCharactersInTexture("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 /",64,FontStyle.Normal);
             sign=new Material(Shader.Find("StarTournament/OrbitalSurface")){name="Depth-tested league lettering"};owned.Add(sign);RefreshFont(signFont);Font.textureRebuilt+=RefreshFont;
             structuralSolids=definition.Solids;
+            var slice=new LoadingWorkSlice();
             for(int solidIndex=0;solidIndex<definition.Solids.Length;solidIndex++)
             {
-                if(solidIndex%16==0)yield return null;
+                if(slice.Expired){yield return null;slice.Restart();}
                 var s=definition.Solids[solidIndex];
                 structuralIndex=solidIndex;
                 var target=transform.parent.Find(s.Id);if(!target)continue;

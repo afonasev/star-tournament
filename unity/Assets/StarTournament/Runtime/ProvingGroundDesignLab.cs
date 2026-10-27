@@ -121,7 +121,7 @@ namespace StarTournament.ProvingGround
             // Capture trusted baseline before published values change live profile owners.
             historyStartupBaseline=CurrentLabBundle().Clone();
             historyStartupCatalogue=LabReleaseCatalog.Load();
-            var published=DesignLabHistory.ResolvePublishedDefault(historyStartupBaseline,historyStartupCatalogue);
+            var published=DesignLabHistory.ResolveStartupDefault(historyStartupBaseline,historyStartupCatalogue);
             CacheLabIdentity(published);labBaseline=activeLabSnapshot.Clone();labDraft=labBaseline.Clone();
             ApplySavedLabRevision();
             if(labProjectRoot!=null)yield return LoadDesignLabHistory(true);

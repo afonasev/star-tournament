@@ -28,10 +28,10 @@ namespace StarTournament.ProvingGround
             warm=Emissive("Amber service lamp",new Color(1,.56f,.19f));white=Emissive("White base luminaire",new Color(.86f,.94f,1));
             mold=new Material(Shader.Find("StarTournament/TunnelGrime")){name="Lower wall damp / mold"};mold.SetFloat("_Opacity",P("surface.mold"));owned.Add(mold);
             CreateSectorMaterials();
-            int decorated=0;
+            var slice=new LoadingWorkSlice();
             foreach(var s in definition.Solids)
             {
-                if(decorated++%16==0)yield return null;
+                if(slice.Expired){yield return null;slice.Restart();}
                 var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
                 if(s.Surface=="tunnel-grille")
                 {

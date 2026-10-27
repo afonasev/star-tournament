@@ -93,8 +93,8 @@ namespace StarTournament.ProvingGround
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
-            int projected=0;
-            foreach(var solid in Definition.Solids){if(asynchronous&&projected++%32==0)yield return null;var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
+            var slice=new LoadingWorkSlice();
+            foreach(var solid in Definition.Solids){if(asynchronous&&slice.Expired){yield return null;slice.Restart();}var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
             navigationTransitions=Definition.Transitions;Spawns=(Vector3[])Definition.Spawns.Clone();LowerRoutePoint=Definition.RouteAnchors[0];UpperRoutePoint=Definition.RouteAnchors[1];
             Physics.SyncTransforms();
             Surface = gameObject.AddComponent<NavMeshSurface>();
@@ -151,6 +151,7 @@ namespace StarTournament.ProvingGround
             gameObject.AddComponent<ArenaRenderChunks>().Build(transform);
             ArenaMeshResidency.ReleaseUnreferencedOwnedMeshes(transform);
         }
+        internal void SpawnsFromDefinition()=>Spawns=(Vector3[])Definition.Spawns.Clone();
         public bool TryRoute(Vector3 from, Vector3 to, float sampleDistance, out NavMeshPath path)
         {
             path = new NavMeshPath();

@@ -75,7 +75,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var child in children)child.gameObject.layer=5;
                 camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color32(16,28,41,255);camera.cullingMask=1<<5;camera.orthographic=true;camera.targetTexture=target;
                 canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=10;Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;
-                pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/fix-large-lab-startup/editor-views"));Directory.CreateDirectory(output);File.WriteAllBytes(Path.Combine(output,name+".png"),pixels.EncodeToPNG());
+                pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();var output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../.local/unity-evidence/lab-startup-views"));Directory.CreateDirectory(output);File.WriteAllBytes(Path.Combine(output,name+".png"),pixels.EncodeToPNG());
             }
             finally
             {
