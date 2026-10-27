@@ -2,11 +2,21 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // F8 nudges the shipped core from 3 to 3.5 mm; v11 stays byte-exact.
+        internal ProvingProfile BeforeThickerLegacyCutterCore()
+        {
+            if(id!="cutter-beam-v1"||version<12)return this;
+            var p=DetachedCopy();p.version=11;
+            p.Set("cutter.seam.legacyCoreWidth",.003f);
+            p.descriptors.Find(d=>d.Path=="cutter.seam.legacyCoreWidth").DefaultValue=.003f;
+            p.descriptors.Find(d=>d.Path=="cutter.seam.legacyCoreWidth").Step=.001f;
+            return p;
+        }
         // F7 separates legacy core width without changing saved v10 values/hashes.
         internal ProvingProfile BeforeLegacyCutterCoreWidth()
         {
             if(id!="cutter-beam-v1"||version<11)return this;
-            var p=DetachedCopy();p.version=10;
+            var p=BeforeThickerLegacyCutterCore().DetachedCopy();p.version=10;
             p.descriptors.RemoveAll(d=>d.Path=="cutter.seam.legacyCoreWidth");
             p.values.RemoveAll(v=>v.Path=="cutter.seam.legacyCoreWidth");
             return p;
@@ -92,7 +102,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=11 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=12 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -177,7 +187,7 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.battery.intensity","cutter-effects","Батарея: свечение","Яркость полностью заряженной ячейки; расход не меняется.","ratio",0,4,.05f,1.6f);
             p.Add("cutter.seam.battery.darkLevel","cutter-effects","Батарея: тёмные ячейки","Видимость разряженной поверхности без свечения.","ratio",0,.1f,.001f,.012f);
             p.Add("cutter.seam.legacyBeam","cutter-effects","Исходный луч","Луч старой модели: сердцевина и одна жёлтая ветвь. Выключите для SEAM-короны и тонких нитей; контактные эффекты и расход не меняются.","boolean",0,1,1,1);
-            p.Add("cutter.seam.legacyCoreWidth","cutter-effects","Исходный луч: сердцевина","Толщина белой сердцевины и её соединения с дулом в исходном режиме. Малая толщина оставляет жёлтую электрическую ветвь видимой; урон не меняется.","m",.001f,.03f,.001f,.003f);
+            p.Add("cutter.seam.legacyCoreWidth","cutter-effects","Исходный луч: сердцевина","Толщина белой сердцевины и её соединения с дулом в исходном режиме. Малая толщина оставляет жёлтую электрическую ветвь видимой; урон не меняется.","m",.001f,.03f,.0005f,.0035f);
             return p;
         }
     }
