@@ -49,25 +49,27 @@ namespace StarTournament.ProvingGround
             signFont.RequestCharactersInTexture("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 /",64,FontStyle.Normal);
             sign=new Material(Shader.Find("StarTournament/OrbitalSurface")){name="Depth-tested league lettering"};owned.Add(sign);RefreshFont(signFont);Font.textureRebuilt+=RefreshFont;
             structuralSolids=definition.Solids;
+            var clipSolids=definition.Solids.Select(s=>new ClipSolid(s)).ToArray();float tile=p.Get("surface.tile");
+            var targets=new ArenaPresentationLookup(transform.parent);
             var slice=new LoadingWorkSlice();
             for(int solidIndex=0;solidIndex<definition.Solids.Length;solidIndex++)
             {
                 if(slice.Expired){yield return null;slice.Restart();}
                 var s=definition.Solids[solidIndex];
                 structuralIndex=solidIndex;
-                var target=transform.parent.Find(s.Id);if(!target)continue;
+                var target=targets.Find(s.Id);if(!target)continue;
                 if(s.Surface=="grating"){Grating(s,target);continue;}
                 if(s.Surface=="window"){Window(s,target);continue;}
                 bool roof=s.Id.Contains("roof")||s.Id.Contains("ceiling");bool ground=s.Material=="floor";
                 var filter=target.GetComponent<MeshFilter>();
                 // Authored collision boxes intentionally overlap. Their coincident render faces
                 // must be removed without changing the immutable solids or their colliders.
-                var mesh=VisibleSolidMesh(s,definition.Solids,solidIndex)??Instantiate(filter.sharedMesh);owned.Add(mesh);
+                var mesh=VisibleSolidMesh(s,clipSolids,solidIndex)??Instantiate(filter.sharedMesh);owned.Add(mesh);
                 var normals=mesh.normals;var uv=mesh.uv;var vertices=mesh.vertices;
                 for(int i=0;i<uv.Length;i++)
                 {
                     Vector3 v=Vector3.Scale(vertices[i],s.Size);var n=normals[i];
-                    uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/p.Get("surface.tile");
+                    uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/tile;
                 }
                 mesh.uv=uv;
                 if(s.Id.EndsWith("-diagonal",StringComparison.Ordinal))
@@ -181,13 +183,13 @@ namespace StarTournament.ProvingGround
         {
             var m=Flat(name,Color.white);m.SetFloat("_Metallic",p.Get("surface.metallic"));m.SetFloat("_Smoothness",p.Get(isFloor?"surface.floorSmoothness":"surface.smoothness"));
             var t=new Texture2D(TextureSize,TextureSize,TextureFormat.RGBA32,true){name=name+" / panel tile",wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};owned.Add(t);
-            var pixels=new Color[TextureSize*TextureSize];float gap=p.Get("detail.panelGap")/p.Get("surface.tile")*TextureSize;
+            var pixels=new Color[TextureSize*TextureSize];float gap=p.Get("detail.panelGap")/p.Get("surface.tile")*TextureSize;float wear=p.Get("surface.wear");
             for(int y=0;y<TextureSize;y++)for(int x=0;x<TextureSize;x++)
             {
                 // Stable spatial noise: no simulation random state, repeatable authored texture.
                 uint hash=(uint)(x*73856093)^((uint)y*19349663u);hash^=hash>>13;
-                float noise=((hash%1024)/1023f-.5f)*p.Get("surface.wear");
-                float edge=Mathf.Min(x,y,TextureSize-1-x,TextureSize-1-y);
+                float noise=((hash%1024)/1023f-.5f)*wear;
+                float edge=Mathf.Min(Mathf.Min(x,y),Mathf.Min(TextureSize-1-x,TextureSize-1-y));
                 float shade=edge<gap?.32f:edge<gap+1?1.12f:1;
                 bool screw=(Mathf.Pow(x-9,2)+Mathf.Pow(y-9,2)<6)||(Mathf.Pow(x-(TextureSize-10),2)+Mathf.Pow(y-9,2)<6);
                 float v=screw?value*.4f:Mathf.Clamp01(value*shade+noise);
@@ -462,7 +464,16 @@ namespace StarTournament.ProvingGround
         // Render-only union of axis-aligned authored boxes. Subtract covered rectangles
         // directly instead of crossing every X/Y boundary, which would create a dense grid.
         // Later solids own equal outer planes, so repeated slabs have one stable owner.
-        static Mesh VisibleSolidMesh(ArenaSolid solid,ArenaSolid[] all,int index)
+        readonly struct ClipSolid
+        {
+            public readonly Vector3 Min,Max;public readonly bool OpaqueAxisAligned;
+            public ClipSolid(ArenaSolid s)
+            {
+                Min=s.Position-s.Size*.5f;Max=s.Position+s.Size*.5f;
+                OpaqueAxisAligned=s.Surface!="window"&&s.Surface!="grating"&&Quaternion.Angle(s.Rotation,Quaternion.identity)<=.01f;
+            }
+        }
+        static Mesh VisibleSolidMesh(ArenaSolid solid,ClipSolid[] all,int index)
         {
             if(Quaternion.Angle(solid.Rotation,Quaternion.identity)>.01f)return null;
             var vertices=new List<Vector3>();var normals=new List<Vector3>();var uv=new List<Vector2>();var triangles=new List<int>();
@@ -482,14 +493,14 @@ namespace StarTournament.ProvingGround
                 for(int j=0;j<all.Length;j++)
                 {
                     if(j==index)continue;var other=all[j];
-                    if(other.Surface=="window"||other.Surface=="grating"||Quaternion.Angle(other.Rotation,Quaternion.identity)>.01f)continue;
-                    float near=Min(other,axis),far=Max(other,axis);
+                    if(!other.OpaqueAxisAligned)continue;
+                    float near=other.Min[axis],far=other.Max[axis];
                     if(near>plane+tolerance||far<plane-tolerance)continue;
                     bool outside=sign>0?far>plane+tolerance:near<plane-tolerance;
                     bool sameOuter=sign>0?Mathf.Abs(far-plane)<=tolerance:Mathf.Abs(near-plane)<=tolerance;
                     if(!outside && !(sameOuter&&j>index))continue;
-                    float left=Mathf.Max(uMin,Min(other,u)),right=Mathf.Min(uMax,Max(other,u));
-                    float bottom=Mathf.Max(vMin,Min(other,v)),top=Mathf.Min(vMax,Max(other,v));
+                    float left=Mathf.Max(uMin,other.Min[u]),right=Mathf.Min(uMax,other.Max[u]);
+                    float bottom=Mathf.Max(vMin,other.Min[v]),top=Mathf.Min(vMax,other.Max[v]);
                     if(right-left<=tolerance||top-bottom<=tolerance)continue;
                     var remainder=new List<Rect>();
                     foreach(var region in visible)
