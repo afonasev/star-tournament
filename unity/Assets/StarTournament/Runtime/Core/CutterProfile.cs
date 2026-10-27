@@ -2,6 +2,15 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // F3 adds an elbow swivel without rewriting the exact v7 registry.
+        internal ProvingProfile BeforeSeamForearmSwivel()
+        {
+            if(id!="cutter-beam-v1"||version<8)return this;
+            var p=DetachedCopy();p.version=7;
+            p.descriptors.RemoveAll(d=>d.Path=="cutter.seam.surface.supportElbowSwivel");
+            p.values.RemoveAll(v=>v.Path=="cutter.seam.surface.supportElbowSwivel");
+            return p;
+        }
         // F2 is additive: v6 registries and immutable saved revisions stay exact.
         internal ProvingProfile BeforeSeamContactSurface()
         {
@@ -56,7 +65,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=7 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=8 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -134,6 +143,7 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.surface.sparkGravity","cutter-effects","SEAM: оседание искр","Изгиб траектории визуальных частиц; не физика попадания.","m",0,1,.01f,.12f);
             p.Add("cutter.seam.surface.sparkVariance","cutter-effects","SEAM: разнообразие искр","Различие толщины, длины и скорости частиц.","ratio",0,1,.05f,.8f);
             p.Add("cutter.seam.surface.coreFraction","cutter-effects","SEAM: ядро контакта","Размер белого центра относительно пятна попадания.","ratio",.05f,1,.05f,.3f);
+            p.Add("cutter.seam.surface.supportElbowSwivel","cutter-effects","SEAM: отведение левого локтя","Поворот плоскости локтя вокруг оси плечо–запястье; отрицательное значение отводит предплечье влево, сохраняя кисть на рукояти.","degrees",-30,30,1,-8);
             return p;
         }
     }

@@ -70,8 +70,8 @@ namespace StarTournament.ProvingGround
             mount.localPosition=mountPosition;mount.localRotation=mountRotation;
             primaryApplied=false;
         }
-        void Reach(Vector3 target,Vector3 handDirection,float wristAlignment)=>ReachArm(upper,lower,wrist,target,handDirection,wristAlignment);
-        static void ReachArm(Transform upper,Transform lower,Transform wrist,Vector3 target,Vector3 handDirection,float wristAlignment)
+        void Reach(Vector3 target,Vector3 handDirection,float wristAlignment,float elbowSwivel=0)=>ReachArm(upper,lower,wrist,target,handDirection,wristAlignment,elbowSwivel);
+        static void ReachArm(Transform upper,Transform lower,Transform wrist,Vector3 target,Vector3 handDirection,float wristAlignment,float elbowSwivel=0)
         {
             var a=upper.position;var b=lower.position;var c=wrist.position;
             // Numerical guard only: avoid a singular straight elbow, not an art parameter.
@@ -86,6 +86,8 @@ namespace StarTournament.ProvingGround
             var aligned=Vector3.ProjectOnPlane(-handDirection,direction);
             if(aligned.sqrMagnitude>reachEpsilon*reachEpsilon)
                 bend=Vector3.Slerp(bend,aligned.normalized,wristAlignment).normalized;
+            // Swivel only the elbow circle; the fitted palm and bone lengths stay fixed.
+            if(elbowSwivel!=0)bend=Quaternion.AngleAxis(elbowSwivel,direction)*bend;
             float along=(first*first+distance*distance-second*second)/(2*distance);
             var elbow=a+direction*along+bend*Mathf.Sqrt(Mathf.Max(0,first*first-along*along));
             upper.rotation=Quaternion.FromToRotation(b-a,elbow-a)*upper.rotation;
@@ -221,7 +223,8 @@ namespace StarTournament.ProvingGround
             var target=mount.TransformPoint(new Vector3(profile.Get(fit+"supportX"),profile.Get(fit+"supportY"),profile.Get(fit+"supportZ"))*supportScale)+turn*(wrist.position-pivot);
             var handRotation=turn*wrist.rotation;
             var handDirection=turn*(palm.position-wrist.position).normalized;
-            Reach(target,handDirection,profile.Get(fit+"wristAlignment"));wrist.rotation=handRotation;
+            float elbowSwivel=weapon==WeaponId.Cutter&&cutter!=null?SeamSurface(cutter,"supportElbowSwivel"):0;
+            Reach(target,handDirection,profile.Get(fit+"wristAlignment"),elbowSwivel);wrist.rotation=handRotation;
             foreach(var thumb in digits.Where(d=>d.thumb&&d.bone.name.EndsWith("Proximal")))
                 thumb.bone.rotation=Quaternion.AngleAxis(profile.Get(fit+"thumbOpposition"),mount.forward)*thumb.bone.rotation;
             foreach(var item in digits)

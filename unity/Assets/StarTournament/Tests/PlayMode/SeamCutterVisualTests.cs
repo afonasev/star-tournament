@@ -137,6 +137,30 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.Session.Beam(0).Wall,Is.True);Capture(seat,Path.Combine(output,"fps-wall-contact.png"));
             ground.PlaceCombatReviewSeat(0,new Vector3(0,-1.2f,-5),0,0);
             ground.Session.Tick(new LocalAction[4],.02f);ground.SendMessage("LateUpdate");yield return null;
+            // Compare F3 to the exact zero-swivel pose in the same settled scene.
+            var zeroSwivel=ProvingProfile.CreateCutterDefault();
+            foreach(var descriptor in ground.Session.CutterProfile.Descriptors)zeroSwivel.Set(descriptor.Path,ground.Session.CutterProfile.Get(descriptor.Path));
+            zeroSwivel.Set("cutter.seam.surface.supportElbowSwivel",0);
+            type.GetMethod("RestorePrimary").Invoke(grip,null);
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,zeroSwivel});
+            var supportWrist=boneArray.Single(t=>t.name=="LeftHand");var elbow=boneArray.Single(t=>t.name=="LeftLowerArm");
+            var contactPose=supportWrist.GetComponentsInChildren<Transform>(true).Select(t=>(bone:t,position:t.position,rotation:t.rotation)).ToArray();
+            var previousElbow=seat.WorldToViewportPoint(elbow.position);var previousWrist=supportWrist.position;
+            var previousWeapon=mount.position;var previousWeaponRotation=mount.rotation;
+            Capture(seat,Path.Combine(output,"fps-before-swivel.png"));
+            type.GetMethod("RestorePrimary").Invoke(grip,null);
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile});
+            var correctedElbow=seat.WorldToViewportPoint(elbow.position);
+            Assert.That(correctedElbow.x,Is.LessThan(previousElbow.x),"F3 moves the lower left arm screen-left");
+            Assert.That(Vector3.Distance(previousWrist,supportWrist.position),Is.LessThan(.00001f),"F3 keeps wrist contact");
+            Assert.That(Vector3.Distance(previousWeapon,mount.position),Is.LessThan(.00001f));
+            Assert.That(Quaternion.Angle(previousWeaponRotation,mount.rotation),Is.LessThan(.05f));
+            foreach(var pose in contactPose)
+            {
+                Assert.That(Vector3.Distance(pose.position,pose.bone.position),Is.LessThan(.00001f),pose.bone.name+" F3 contact");
+                Assert.That(Quaternion.Angle(pose.rotation,pose.bone.rotation),Is.LessThan(.05f),pose.bone.name+" F3 orientation");
+            }
+            File.WriteAllText(Path.Combine(output,"forearm-comparison.txt"),"Elbow viewport before: "+previousElbow.ToString("F6")+"\nElbow viewport after: "+correctedElbow.ToString("F6")+"\nWrist movement: "+Vector3.Distance(previousWrist,supportWrist.position).ToString("R"));
             Capture(seat,Path.Combine(output,"fps-idle.png"));
             File.WriteAllText(Path.Combine(output,"review.json"),"{\"classification\":\"Editor Play Mode, not human/device acceptance\",\"seed\":4193,\"damageNotices\":"+notices+"}");
         }
