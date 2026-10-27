@@ -416,6 +416,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePulseMk2()).ToList()};
             if(!sought.Profiles.Any(p=>p.Id=="forge-plasma-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="forge-plasma-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??4)<4)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeCadence()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??3)<3)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeReactor()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??2)<2)
@@ -854,6 +856,11 @@ namespace StarTournament.ProvingGround
                 if(!preserveSavedValues)
                 {
                     value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,value);
+                    // Update only the reserved packaged Default; preserve named/author experiments
+                    // and immutable source revisions. Scene defaults alone are overridden at startup.
+                    if(isDefault&&snapshot.Profile(d.Path).Id=="forge-plasma-v1"&&snapshot.Profile(d.Path).Version<4&&
+                        (d.Path=="plasma.cooldownSeconds"||d.Path=="plasma.speed"||d.Path=="plasma.orbRadius"))
+                        value=currentDescriptor.DefaultValue;
                     // The packaged Default adopts this behavior update. Named local
                     // profiles keep their tuning; original release snapshots stay intact.
                     if(isDefault&&ProvingProfile.BotCombatMovementDefaults.Contains(d.Path)&&snapshot.Profile(d.Path).Version<4)
