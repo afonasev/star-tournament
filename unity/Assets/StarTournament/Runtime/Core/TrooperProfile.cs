@@ -3,10 +3,23 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeUnifiedArmGrips()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<27)return this;
+            var p=DetachedCopy();p.version=26;
+            foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
+            {
+                var prefix="grip."+weapon+".";
+                p.descriptors.RemoveAll(d=>d.Path==prefix+"primaryWristAlignment");
+                p.values.RemoveAll(v=>v.Path==prefix+"primaryWristAlignment");
+                p.FindDescriptor(prefix+"wristAlignment").DefaultValue=0;p.Set(prefix+"wristAlignment",0);
+            }
+            return p;
+        }
         internal ProvingProfile BeforeCloserWeaponView()
         {
             if(id!="unity-trooper-presentation-v1"||version<26)return this;
-            var p=DetachedCopy();p.version=25;
+            var p=BeforeUnifiedArmGrips().DetachedCopy();p.version=25;
             foreach(var pair in new[]{("view.y",-1.46f),("view.z",.05f)})
             {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
             return p;
@@ -249,11 +262,11 @@ namespace StarTournament.ProvingGround
         internal static float SafeSwitchUpgrade(NumericDescriptor old,NumericDescriptor current,float value)
         {
             // Untouched Rifle contacts follow the COBALT fore-end; explicit Lab tuning survives.
-            if((old.Path.StartsWith("grip.Rifle.",System.StringComparison.Ordinal)||old.Path.StartsWith("grip.Shotgun.",System.StringComparison.Ordinal)))
+            if((old.Path.StartsWith("grip.Rifle.",System.StringComparison.Ordinal)||old.Path.StartsWith("grip.Shotgun.",System.StringComparison.Ordinal)||old.Path.StartsWith("grip.RocketLauncher.",System.StringComparison.Ordinal)))
                 return value==old.DefaultValue?current.DefaultValue:value;
             // Untouched equipment defaults adopt the revised fill in serialized scenes and Lab;
             // explicit off and other custom strengths stay unchanged. Historical snapshots are never edited.
-            if(old.Path=="view.fillIntensity"||old.Path=="view.y"||old.Path=="view.z")return value==old.DefaultValue?current.DefaultValue:value;
+            if(old.Path=="view.fillIntensity"||old.Path=="view.y"||old.Path=="view.z"||old.Path.EndsWith(".wristAlignment",System.StringComparison.Ordinal))return value==old.DefaultValue?current.DefaultValue:value;
             if(old.Path!="view.switchShoulderDegrees"&&old.Path!="view.switchElbowDegrees")return value;
             // Old authored defaults follow the revised gesture; custom values stay within its safe range.
             return value==old.DefaultValue?current.DefaultValue:UnityEngine.Mathf.Clamp(value,current.Minimum,current.Maximum);
@@ -657,6 +670,13 @@ namespace StarTournament.ProvingGround
                 p.version=26;
                 foreach(var pair in new[]{("view.y",-1.49f),("view.z",.01f)})
                 {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+                p.version=27;
+                foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
+                {
+                    var prefix="grip."+weapon+".";
+                    p.FindDescriptor(prefix+"wristAlignment").DefaultValue=1;p.Set(prefix+"wristAlignment",1);
+                    p.Add(prefix+"primaryWristAlignment","trooper-grip-"+weapon,"Выпрямление правого запястья","Общая подгонка локтя к продолжению ладони без смещения оружия и растяжения костей.","ratio",0,1,.05f,1);
+                }
             }
             return p;
         }

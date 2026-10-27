@@ -51,9 +51,9 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(old.Get("grip.Rifle.supportX"),Is.EqualTo(.07f));
             foreach(var d in factory.Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.")&&d.Path!="grip.Rifle.supportX"))
                 Assert.That(old.Get(d.Path),Is.EqualTo(d.DefaultValue),d.Path);
-            // @23 intentionally upgrades untouched Shotgun defaults too; preserve the
-            // same exact comparison for every other weapon and shared grip value.
-            foreach(var pair in other)Assert.That(old.Get(pair.Key),Is.EqualTo(pair.Key.StartsWith("grip.Shotgun.")?factory.Get(pair.Key):pair.Value),pair.Key);
+            // @23 upgrades untouched Shotgun defaults, @27 also upgrades PULSE and
+            // the shared elbow policy. Every remaining contact stays exactly equal.
+            foreach(var pair in other)Assert.That(old.Get(pair.Key),Is.EqualTo(pair.Key.StartsWith("grip.Shotgun.")||pair.Key.StartsWith("grip.RocketLauncher.")||pair.Key.EndsWith(".wristAlignment")?factory.Get(pair.Key):pair.Value),pair.Key);
         }
     }
 }

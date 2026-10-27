@@ -98,8 +98,10 @@ namespace StarTournament.ProvingGround
         void FitForgeDigits(ProvingProfile profile)
         {
             // A saved/custom Lab pose remains authoritative. Surface fitting is the factory pose only.
+            // Elbow alignment leaves the palm contact unchanged, including in migrated saved poses.
             foreach(var d in profile.Descriptors)
-                if((d.Path.StartsWith("grip.Plasma.")||(d.Path.StartsWith("grip.")&&d.Path.IndexOf('.',5)<0))&&!Mathf.Approximately(profile.Get(d.Path),d.DefaultValue))return;
+                if(!d.Path.EndsWith(".wristAlignment")&&!d.Path.EndsWith(".primaryWristAlignment")&&
+                    (d.Path.StartsWith("grip.Plasma.")||(d.Path.StartsWith("grip.")&&d.Path.IndexOf('.',5)<0))&&!Mathf.Approximately(profile.Get(d.Path),d.DefaultValue))return;
             if(forgeContacts.Count==0)
             {
                 var all=rigRoot.GetComponentsInChildren<Transform>(true);
@@ -207,10 +209,10 @@ namespace StarTournament.ProvingGround
                 ReachArm(rightUpper,rightLower,primaryWrist,primaryPivot+primaryOffset+primaryTurn*(primaryWrist.position-primaryPivot),primaryDirection,SeamSurface(cutter,"gripPrimaryAlignment"));
                 primaryWrist.rotation=primaryHandRotation;mount.SetPositionAndRotation(position,rotation);
             }
-            if(weapon==WeaponId.Shotgun&&profile.Version>=23)
+            if((weapon==WeaponId.Shotgun&&profile.Version>=23)||profile.Version>=27)
             {
                 // Move the elbow around the shoulder/wrist circle instead of bending the wrist.
-                // Hand and weapon world poses, bone lengths and all other weapons remain unchanged.
+                // All weapons share this arm fit; authored hand contacts and bone lengths stay fixed.
                 var primaryHandRotation=primaryWrist.rotation;
                 ReachArm(rightUpper,rightLower,primaryWrist,primaryWrist.position,(rightPalm.position-primaryWrist.position).normalized,profile.Get(fit+"primaryWristAlignment"));
                 primaryWrist.rotation=primaryHandRotation;mount.SetPositionAndRotation(position,rotation);

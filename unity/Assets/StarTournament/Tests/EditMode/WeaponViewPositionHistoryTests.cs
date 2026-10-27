@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static ProvingProfile Previous()=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCloserWeaponView",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
         [Test] public void OnlyViewTranslationChangesAndSerializedCustomCoordinatesSurvive()
         {
-            var old=Previous();var current=ProvingProfile.CreateTrooperDefault();
+            var old=Previous();var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeUnifiedArmGrips",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
             Assert.That(old.Version,Is.EqualTo(25));Assert.That(current.Version,Is.EqualTo(26));
             Assert.That(current.Get("view.y"),Is.EqualTo(-1.49f));Assert.That(current.Get("view.z"),Is.EqualTo(.01f));
             foreach(var d in old.Descriptors.Where(d=>d.Path!="view.y"&&d.Path!="view.z"))Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
