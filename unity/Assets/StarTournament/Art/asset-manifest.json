@@ -4,7 +4,7 @@
     {
       "key": "world-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "3df850e28f2d05bd2fcba8cf29c606e4c6cbdf1439a19861a0d16740dc8c0566",
+      "sha256": "c58b6432ad4b61635b83ee6f22facd7d1b3da80b69be371498401431296b13f7",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -14,7 +14,7 @@
     {
       "key": "view-weapon",
       "path": "Assets/StarTournament/Art/vector-shotgun-lod0.glb",
-      "sha256": "3df850e28f2d05bd2fcba8cf29c606e4c6cbdf1439a19861a0d16740dc8c0566",
+      "sha256": "c58b6432ad4b61635b83ee6f22facd7d1b3da80b69be371498401431296b13f7",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -24,7 +24,7 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "d3f2afdd75a92cc83e9a99d9d9d4498f7d27aeb267da1ed5214d047ef85c3cc1",
+      "sha256": "b61801414f17fdb733847ea7ffa90978444c5e8977bb96801f71d764af0d348b",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -34,7 +34,7 @@
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "d3cd0b20343ddfd78f18031c8a3bf31dd65773b498127b69b8afe3022f427953",
+      "sha256": "092d2ca4b186cebccb4ff854efda82d9076173ce8470c9c45bbc995c52ea15ed",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -74,7 +74,7 @@
     {
       "key": "rifle-lod0",
       "path": "Assets/StarTournament/Art/automatic-rifle-lod0.glb",
-      "sha256": "18364381c0e7b0ab26342a3e21cd79f3eb1ba9980a2163d2bf158f528e491708",
+      "sha256": "a92df949fbd286388be799f9dd87459e42c09a53f5979114dea6f2fade14cc9f",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -84,7 +84,7 @@
     {
       "key": "rifle-lod1",
       "path": "Assets/StarTournament/Art/automatic-rifle-lod1.glb",
-      "sha256": "18364381c0e7b0ab26342a3e21cd79f3eb1ba9980a2163d2bf158f528e491708",
+      "sha256": "a92df949fbd286388be799f9dd87459e42c09a53f5979114dea6f2fade14cc9f",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -104,7 +104,7 @@
     {
       "key": "pulse-lod0",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod0.glb",
-      "sha256": "cb5de14b57eb64db5cabe659fec4af1a14942492a113723d0af6a8d5e8fe2f81",
+      "sha256": "a463e6c1ecae4c18ece56ccc050b7ae4269ada4f94d8639d40cd392991759bd6",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -115,7 +115,7 @@
     {
       "key": "pulse-lod1",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod1.glb",
-      "sha256": "cb5de14b57eb64db5cabe659fec4af1a14942492a113723d0af6a8d5e8fe2f81",
+      "sha256": "a463e6c1ecae4c18ece56ccc050b7ae4269ada4f94d8639d40cd392991759bd6",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -126,7 +126,7 @@
     {
       "key": "cutter-lod0",
       "path": "Assets/StarTournament/Art/cutter-lod0.glb",
-      "sha256": "2d2bfb4aec9b1af5d475de394e7444ded219291ac2bfe82edf99791d5ae0ad70",
+      "sha256": "d60088fb18d7d87dc6703cbfbb3d3e09947bacb117416e24917cd291b75c4709",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -137,7 +137,7 @@
     {
       "key": "cutter-lod1",
       "path": "Assets/StarTournament/Art/cutter-lod1.glb",
-      "sha256": "2d2bfb4aec9b1af5d475de394e7444ded219291ac2bfe82edf99791d5ae0ad70",
+      "sha256": "d60088fb18d7d87dc6703cbfbb3d3e09947bacb117416e24917cd291b75c4709",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -148,7 +148,7 @@
     {
       "key": "pulse-projectile",
       "path": "Assets/StarTournament/Art/pulse-projectile.glb",
-      "sha256": "4e208a6e8c5ca2563b544aa96ff5140854582c8621dee7aed42069256301bee4",
+      "sha256": "882925bcd570118223e7b4bb31f6fa16ad4d5fe983e320b87404f75382595f3b",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
@@ -179,7 +179,7 @@
     {
       "key": "forge-lod0",
       "path": "Assets/StarTournament/Art/forge-plasma-lod0.glb",
-      "sha256": "029d5eda5aa48c22ec17bdeb72627a296c40949ec5b28d5a6779eec630f505f4",
+      "sha256": "2a772fd54ca93f54868325a81c7dcc8881700472dbcc01b4050e47a73328760f",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
@@ -190,7 +190,7 @@
     {
       "key": "forge-lod1",
       "path": "Assets/StarTournament/Art/forge-plasma-lod1.glb",
-      "sha256": "029d5eda5aa48c22ec17bdeb72627a296c40949ec5b28d5a6779eec630f505f4",
+      "sha256": "2a772fd54ca93f54868325a81c7dcc8881700472dbcc01b4050e47a73328760f",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",

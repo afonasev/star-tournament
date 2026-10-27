@@ -8,11 +8,11 @@
   "pivot": "feet-center",
   "body": {
     "path": "trooper-body-animated.glb",
-    "sha256": "d3f2afdd75a92cc83e9a99d9d9d4498f7d27aeb267da1ed5214d047ef85c3cc1"
+    "sha256": "b61801414f17fdb733847ea7ffa90978444c5e8977bb96801f71d764af0d348b"
   },
   "arms": {
     "path": "trooper-arms-animated.glb",
-    "sha256": "d3cd0b20343ddfd78f18031c8a3bf31dd65773b498127b69b8afe3022f427953"
+    "sha256": "092d2ca4b186cebccb4ff854efda82d9076173ce8470c9c45bbc995c52ea15ed"
   },
   "clips": [
     "idle",

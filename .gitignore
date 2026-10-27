@@ -18,3 +18,7 @@ test-results/
 
 # Independent canonical planning repository (shared by all code worktrees)
 /planning/
+
+# Reconstructible lossless weapon QA baselines; never shipping assets.
+unity/Assets/StarTournament/Art/WeaponRenderBaseline/
+unity/Assets/StarTournament/Art/WeaponRenderBaseline.meta
