@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static ProvingProfile Previous() => (ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCobaltThumb",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
         [Test] public void OnlyRifleThumbDefaultsChangeAndCustomAnglesSurvive()
         {
-            var old=Previous();var current=ProvingProfile.CreateTrooperDefault();
+            var old=Previous();var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCloserWeaponView",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
             Assert.That(old.Version,Is.EqualTo(24));Assert.That(current.Version,Is.EqualTo(25));
             foreach(var d in old.Descriptors.Where(d=>!d.Path.StartsWith("grip.Rifle.left.Thumb.")&&d.Path!="grip.Rifle.thumbOpposition"))
                 Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);

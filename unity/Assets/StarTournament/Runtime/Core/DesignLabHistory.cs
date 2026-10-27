@@ -399,6 +399,8 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??26)<26)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCloserWeaponView()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??25)<25)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCobaltThumb()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??24)<24)
