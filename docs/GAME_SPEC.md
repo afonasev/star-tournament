@@ -925,3 +925,5 @@ The neutral glove shell uses a continuous anatomical palm/thenar/finger volume w
 ### Реакция и движение ботов, 2026-10-25
 
 - `improve-bot-reactive-combat`: согласованы поворот по направлению полученного удара, независимые попытки прыжков по сложности и рабочая дистанция по оружию в `unity-bot-behavior-v1@5`; зрительное подтверждение, физика и safety сохраняются.
+
+- F01 static review candidate (trooper@29): first-person forearms share camera-relative position, orientation and depth across all five weapons. Wrist rotation and bounded finger refitting adapt the grip; weapon mount and segment lengths remain unchanged. Native static comparison is separate from pending switching/movement review. Historical authored profiles retain the earlier pose mode.

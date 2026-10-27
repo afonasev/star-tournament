@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static ProvingProfile Previous()=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeStableArmEntry",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
         [Test] public void OnlyViewAnchorsAndShortSwitchLiftChange()
         {
-            var old=Previous();var current=ProvingProfile.CreateTrooperDefault();Assert.That(old.Version,Is.EqualTo(27));Assert.That(current.Version,Is.EqualTo(28));
+            var old=Previous();var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCommonForearms",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);Assert.That(old.Version,Is.EqualTo(27));Assert.That(current.Version,Is.EqualTo(28));
             Assert.That(old.Get("view.switchShoulderDegrees"),Is.EqualTo(60));Assert.That(current.Get("view.switchShoulderDegrees"),Is.EqualTo(10));
             foreach(var d in old.Descriptors.Where(d=>d.Path!="view.switchShoulderDegrees"))Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
             Assert.That(current.Descriptors.Count(d=>d.Path.StartsWith("view.armEntry")),Is.EqualTo(3));Assert.That(current.Validate(),Is.Empty);

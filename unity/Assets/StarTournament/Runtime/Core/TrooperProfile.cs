@@ -3,10 +3,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeCommonForearms()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<29)return this;
+            var p=DetachedCopy();p.version=28;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.common"));p.values.RemoveAll(v=>v.Path.StartsWith("view.common"));p.valueIndex=null;return p;
+        }
         internal ProvingProfile BeforeStableArmEntry()
         {
             if(id!="unity-trooper-presentation-v1"||version<28)return this;
-            var p=DetachedCopy();p.version=27;
+            var p=BeforeCommonForearms().DetachedCopy();p.version=27;
             p.FindDescriptor("view.switchShoulderDegrees").DefaultValue=60;p.Set("view.switchShoulderDegrees",60);
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.armEntry"));
             p.values.RemoveAll(v=>v.Path.StartsWith("view.armEntry"));p.valueIndex=null;return p;
@@ -691,6 +697,22 @@ namespace StarTournament.ProvingGround
                 p.Add("view.armEntryEnabled","trooper-view","Общие точки выхода рук","Закрепляет обе оси предплечий у нижней границы своего viewport для всех оружий; выключение сохраняет прежнюю подгонку.","toggle",0,1,1,1);
                 p.Add("view.armEntryLeftX","trooper-view","Выход левой руки","Смещение оси левого предплечья от центра нижнего края в долях высоты viewport; сохраняет подгонку при split-screen.","viewport-height",-.5f,.5f,.005f,0);
                 p.Add("view.armEntryRightX","trooper-view","Выход правой руки","Смещение оси правого предплечья от центра нижнего края в долях высоты viewport; сохраняет подгонку при split-screen.","viewport-height",0,1,.005f,.4f);
+                p.version=29;
+                p.Add("view.commonForearmsEnabled","trooper-view","Общая поза предплечий","Одинаковые положение, глубина и направление предплечий; кисти и пальцы сохраняют отдельную подгонку.","toggle",0,1,1,1);
+                p.Add("view.commonWristLimit","trooper-view","Предел изгиба кисти","Максимальный угол направления ладони относительно общего предплечья при подгонке к рукояти.","degrees",0,45,1,35);
+                p.Add("view.commonFingerIterations","trooper-view","Подгонка пальцев: итерации","Число малых поправок пальцев к исходным контактам после поворота кисти.","count",0,8,1,4);
+                p.Add("view.commonFingerStep","trooper-view","Подгонка пальцев: шаг","Максимальный поворот фаланги за одну поправку; длины костей сохраняются.","degrees",0,20,1,8);
+                foreach(var side in new[]{"Left","Right"})
+                {
+                    var point=side=="Left"?new[]{.045f,-.28f,.34f}:new[]{.2f,-.3f,.145f};
+                    var direction=side=="Left"?new[]{.65f,.25f,.7f}:new[]{0f,.45f,.9f};
+                    for(int component=0;component<3;component++)
+                    {
+                        string componentName=new[]{"X","Y","Z"}[component];
+                        p.Add("view.common"+side+componentName,"trooper-view","Общее запястье "+side+" "+componentName,"Положение конца предплечья относительно камеры для всех оружий.","meters",-1,1,.005f,point[component]);
+                        p.Add("view.common"+side+"Direction"+componentName,"trooper-view","Направление предплечья "+side+" "+componentName,"Компонент общего направления от локтя к запястью; вектор нормализуется.","ratio",-1,1,.01f,direction[component]);
+                    }
+                }
             }
             return p;
         }

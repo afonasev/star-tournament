@@ -407,6 +407,8 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??29)<29)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCommonForearms()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??28)<28)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeStableArmEntry()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??27)<27)
@@ -875,6 +877,8 @@ namespace StarTournament.ProvingGround
             // Saved profiles predating the switch controls retain the originally introduced lift.
             if(preserveSavedValues&&currentDescriptors.ContainsKey("view.switchShoulderDegrees")&&!snapshot.Descriptors.Any(d=>d.Path=="view.switchShoulderDegrees"))
                 next.Set("view.switchShoulderDegrees",60);
+            if(preserveSavedValues&&currentDescriptors.ContainsKey("view.commonForearmsEnabled")&&!snapshot.Descriptors.Any(d=>d.Path=="view.commonForearmsEnabled"))
+                next.Set("view.commonForearmsEnabled",0);
             if(preserveSavedValues&&currentDescriptors.ContainsKey("view.armEntryEnabled")&&!snapshot.Descriptors.Any(d=>d.Path=="view.armEntryEnabled"))
                 next.Set("view.armEntryEnabled",0);
             // New right-arm fitting must not silently reinterpret an intentional saved pose.
