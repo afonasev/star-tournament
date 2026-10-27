@@ -147,7 +147,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var contactPose=supportWrist.GetComponentsInChildren<Transform>(true).Select(t=>(bone:t,position:t.position,rotation:t.rotation)).ToArray();
             var previousElbow=seat.WorldToViewportPoint(elbow.position);var previousWrist=supportWrist.position;
             var previousWeapon=mount.position;var previousWeaponRotation=mount.rotation;
-            Capture(seat,Path.Combine(output,"fps-before-swivel.png"));
+            // Skinning is cached within a frame: compare transforms here.
+            // Use the retained F2 capture for the visual before/after comparison.
             type.GetMethod("RestorePrimary").Invoke(grip,null);
             type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile});
             var correctedElbow=seat.WorldToViewportPoint(elbow.position);
