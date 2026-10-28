@@ -17,6 +17,7 @@ namespace StarTournament.ProvingGround
         public float CutterChargeFraction {get;private set;}=0;
         GameObject rifle,pulse,cutter,plasma;
         Transform rifleMuzzle,cutterMuzzle,pulseMuzzle,plasmaMuzzle;
+        public float PulseGripScale { get; private set; }=1;
         public float PlasmaViewScale { get; private set; }=1;
         public Vector3 PlasmaMuzzle=>plasmaMuzzle?plasmaMuzzle.position:transform.position;
         public Vector3 PulseMuzzle=>pulseMuzzle?pulseMuzzle.position:transform.position;
@@ -56,7 +57,9 @@ namespace StarTournament.ProvingGround
             {
                 pulse=Object.Instantiate(pulsePrefab,mount);pulse.name="pulse-launcher";
                 pulse.transform.localPosition=Vector3.zero;pulse.transform.localRotation=Quaternion.identity;
-                pulse.transform.localScale=Vector3.one*profile.Get("presentation.rocketModelScale");
+                var rig=GetComponent<TrooperVisual>()?.Tuning;
+                PulseGripScale=rig!=null&&rig.Version>=32?rig.Get("grip.crimson.detail.scale"):1;
+                pulse.transform.localScale=Vector3.one*profile.Get("presentation.rocketModelScale")*PulseGripScale;
                 pulseMuzzle=pulse.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="pulse-muzzle");
                 PulseDisplay=new GameObject("pulse-ammo-display").AddComponent<PulseAmmoDisplay>();
                 PulseDisplay.Initialize(pulse.transform,profile,gameObject.layer);

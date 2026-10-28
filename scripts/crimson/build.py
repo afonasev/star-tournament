@@ -8,14 +8,14 @@ ROOT=Path(__file__).resolve().parents[2]
 legacy=(ROOT/'scripts/pulse_mk2/build.py').read_text()
 # Reuse the established procedural material and mesh primitives, never execute its asset build.
 exec(legacy.split('DARK=material')[0].replace('size=1024','size=512').replace('range(180)', 'range(18)').replace('range(420)', 'range(100)').replace('*=.45', '*=.82').replace("ROOT/'.local/pulse-mk2'","ROOT/'.local/crimson'"))
-exec(legacy[legacy.index('def finish('):legacy.index("exec((SOURCE/'launcher_body.py')")].replace("deferred by explicit user request", "lossless export, separate optimization pass"))
-RED=material('crimson red enamel',(.48,.034,.024),.32,.36)
+exec(legacy[legacy.index('def finish('):legacy.index("exec((SOURCE/'launcher_body.py')")].replace("deferred by explicit user request", "lossless export, separate optimization pass").replace("b.segments=3", "b.segments=1 if o.name.startswith('Crimson stepped') else 3"))
+RED=material('crimson red enamel',(.48,.043,.028),.24,.45)
 DARK=material('crimson graphite',(.055,.061,.068),.62,.39)
 BLACK=material('crimson rubber',(.012,.015,.018),.04,.7)
 STEEL=material('crimson titanium',(.42,.45,.47),.82,.3)
 # A continuous stepped shell. It is deliberately unequal in height and width along its length.
 outline=[(.055,-.105),(.265,-.105),(.285,-.035),(.282,.22),(.325,.255),(.345,.64),(.312,.705),(.025,.705),(.012,.63),(.058,.44),(.085,.31),(.075,.18),(.015,.105),(.015,-.04)]
-body=profile('Crimson stepped enamel monocoque',outline,.135,RED,bevel=.012)
+body=profile('Crimson stepped enamel monocoque',outline,.135,RED,bevel=.024)
 # Deep physical mouth cut into the broad triangular nose.
 bpy.ops.mesh.primitive_cylinder_add(vertices=64,radius=.105,depth=.42,location=(0,.18,.63));cut(body,bpy.context.object)
 lathe('recessed dark bore',[(.708,.111),(.712,.103),(.705,.094),(.465,.094),(.465,.108)],DARK,n=64,center=(0,.18),closed=True)
@@ -23,7 +23,6 @@ lathe('deep throat shadow',[(.465,.094),(.43,.073)],BLACK,n=64,center=(0,.18))
 # Shadowed nose bevel. A flat front face with bevelled corners frames one round opening.
 for side in (-1,1):
  profile('nose side gasket',[(.04,.672),(.31,.672),(.30,.704),(.05,.714)],.003,BLACK,x=side*.136,bevel=.002)
- profile('large diagonal titanium signature',[(.14,.41),(.15,.44),(.268,.49),(.267,.46)],.0025,STEEL,x=side*.141,bevel=.001)
  profile('lower enamel shadow line',[(.055,.10),(.075,.16),(.091,.32),(.069,.44),(.040,.60),(.028,.60),(.055,.43),(.077,.31),(.061,.17),(.041,.11)],.002,BLACK,x=side*.137,bevel=.001)
  # Intentional sparse fasteners, not repetitive surface greeble.
  for y,z in ((.10,-.06),(.245,-.04),(.28,.61),(.066,.61),(.23,.24)):
@@ -65,7 +64,8 @@ for o in bpy.context.scene.objects:
  m=o.matrix_world.copy();inv=m.inverted();center=-.018 if rear else .35
  for v in o.data.vertices:
   q=m@v.co;q.z=center+(q.z-center)*(1.65 if rear else 1.6);v.co=inv@q
-mark('pulse-grip',(0,-.09,0));mark('pulse-muzzle',(0,.18,.715));mark('pulse-support-grip',(0,-.1,.35))
+exec((SOURCE/'details.py').read_text(),globals())
+mark('pulse-grip',(0,-.09,0));mark('pulse-muzzle',(0,.18,.744));mark('pulse-support-grip',(0,-.1,.35))
 mark('crimson-shoulder',(0,.055,-.40));mark('pulse-display-mount',(.158,.039,.014))
 # Runtime builds screen normal from explicit authored marker basis, ignoring Blender empty rotation.
 mark('pulse-display-normal',(.258,.039,.014));mark('pulse-display-up',(.158,.139,.014))

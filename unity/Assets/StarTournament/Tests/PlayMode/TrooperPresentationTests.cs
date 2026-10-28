@@ -133,6 +133,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("08"));
             var bones=body.GetComponentsInChildren<Transform>(true);var shoulder=bones.Single(t=>t.name=="RightUpperArm");var saddle=bones.Single(t=>t.name=="crimson-shoulder");
             Assert.That(Vector3.Distance(saddle.position,shoulder.position),Is.LessThan(.2f),"World saddle is located at shoulder, not chest or outstretched hands");
+            var model=bones.Single(t=>t.name=="pulse-launcher");
+            var renderers=model.GetComponentsInChildren<Renderer>();var bounds=renderers[0].bounds;
+            foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);
+            Assert.That(bounds.size.magnitude,Is.GreaterThan(.70f),"Launcher has increased world mass silhouette");
             string before=JsonUtility.ToJson(ground.Session.Capture());
             if(!string.IsNullOrEmpty(output))
             {
@@ -141,6 +145,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 CaptureSingleView(output,"Crimson-first-person",camera,1600,900);
                 var lines=new System.Collections.Generic.List<string>();
                 foreach(var t in bones.Where(t=>t.name=="RightUpperArm"||t.name=="RightHand"||t.name=="LeftHand"||t.name=="crimson-shoulder"||t.name=="pulse-muzzle"||t.name=="trooper:rig:weapon-mount"))lines.Add(t.name+":"+body.transform.InverseTransformPoint(t.position).ToString("F4"));
+                foreach(var t in view.GetComponentsInChildren<Transform>(true).Where(t=>t.name=="LeftLowerArm"||t.name=="RightLowerArm"||t.name=="LeftHand"||t.name=="RightHand"))lines.Add("FP "+t.name+":"+camera.WorldToViewportPoint(t.position).ToString("F4"));
                 System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"pose.txt"),lines);
                 var go=new GameObject("Crimson scene review camera");var review=go.AddComponent<Camera>();review.enabled=false;review.fieldOfView=42;review.nearClipPlane=.05f;review.farClipPlane=150;review.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18));
                 review.clearFlags=CameraClearFlags.Skybox;

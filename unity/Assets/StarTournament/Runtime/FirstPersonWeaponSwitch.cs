@@ -98,6 +98,11 @@ namespace StarTournament.ProvingGround
                     FitCommon(leftShoulder,joints[2],leftHand,leftPalm,visual.LeftForearmReferenceRotation,0,pose.Lift);
                     FitCommon(rightShoulder,joints[3],rightHand,rightPalm,visual.RightForearmReferenceRotation,1,pose.Lift);
                 }
+                else if(crimson&&visual.Tuning.Version>=32)
+                {
+                    FitCrimsonEntry(leftShoulder,joints[2],leftHand,visual.Tuning.Get("grip.crimson.detail.entryLeftX"));
+                    FitCrimsonEntry(rightShoulder,joints[3],rightHand,visual.Tuning.Get("grip.crimson.detail.entryRightX"));
+                }
                 else
                 {
                     FitEntry(leftShoulder,joints[2],leftHand,leftPalm,visual.Tuning.Get("view.armEntryLeftX"));
@@ -133,6 +138,22 @@ namespace StarTournament.ProvingGround
                 if(from.sqrMagnitude<.0000001f||to.sqrMagnitude<.0000001f)continue;
                 joint.rotation=Quaternion.RotateTowards(Quaternion.identity,Quaternion.FromToRotation(from,to),step)*joint.rotation;
             }
+        }
+        void FitCrimsonEntry(Transform shoulder,Transform elbow,Transform hand,float entryX)
+        {
+            var wrist=hand.position;var rotation=hand.rotation;float length=Vector3.Distance(elbow.position,wrist);
+            var ray=camera.ViewportPointToRay(new Vector3(.5f+entryX/camera.aspect,-visual.Tuning.Get("grip.crimson.detail.entryBelow"),0));
+            var delta=ray.origin-wrist;float along=Vector3.Dot(delta,ray.direction);
+            float discriminant=along*along-delta.sqrMagnitude+length*length;
+            // Intersection of the off-screen entry ray and the fixed forearm-length sphere.
+            // If unreachable, use its nearest point; never stretch bones or move hand contacts.
+            float distance=discriminant>=0?-along-Mathf.Sqrt(discriminant):-along;
+            var direction=(wrist-ray.GetPoint(Mathf.Max(0,distance))).normalized;
+            if(direction.sqrMagnitude<.000001f)return;
+            var target=wrist-direction*length;
+            shoulder.position+=target-elbow.position;
+            elbow.rotation=Quaternion.FromToRotation(hand.position-elbow.position,wrist-elbow.position)*elbow.rotation;
+            hand.rotation=rotation;
         }
         void FitEntry(Transform shoulder,Transform elbow,Transform hand,Transform palm,float horizontalOffset)
         {

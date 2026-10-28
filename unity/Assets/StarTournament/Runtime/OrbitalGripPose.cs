@@ -14,7 +14,7 @@ namespace StarTournament.ProvingGround
         Vector3 mountPosition;
         Quaternion mountRotation,primaryRotation;
         bool primaryApplied;
-        Transform crimsonShoulder;
+        Transform crimsonShoulder,crimsonGrip;
         readonly Vector3 rollAxis;
         readonly Dictionary<(WeaponId weapon,Transform bone),string> jointPaths=new Dictionary<(WeaponId,Transform),string>();
         readonly Dictionary<(WeaponId weapon,Transform bone),string> spreadPaths=new Dictionary<(WeaponId,Transform),string>();
@@ -203,9 +203,11 @@ namespace StarTournament.ProvingGround
                 {
                     var shoulderTarget=rightUpper.position+rigRoot.TransformDirection(new Vector3(profile.Get("grip.crimson.shoulderX"),profile.Get("grip.crimson.shoulderY"),profile.Get("grip.crimson.shoulderZ")));
                     var delta=shoulderTarget-crimsonShoulder.position;var crimsonHandRotation=primaryWrist.rotation;
+                    if(!crimsonGrip)crimsonGrip=rigRoot.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="pulse-grip");
+                    var gripDelta=crimsonGrip?(crimsonGrip.position-mount.position)*(1-1/supportScale):Vector3.zero;
                     var crimsonHandDirection=(rightPalm.position-primaryWrist.position).normalized;
                     position+=delta;
-                    ReachArm(rightUpper,rightLower,primaryWrist,primaryWrist.position+delta,crimsonHandDirection,profile.Get(fit+"primaryWristAlignment"));
+                    ReachArm(rightUpper,rightLower,primaryWrist,primaryWrist.position+delta+gripDelta,crimsonHandDirection,profile.Get(fit+"primaryWristAlignment"));
                     primaryWrist.rotation=crimsonHandRotation;mount.SetPositionAndRotation(position,rotation);
                 }
             }

@@ -3,10 +3,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeCrimsonDetail()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<32)return this;
+            var p=DetachedCopy();p.version=31;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson.detail."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson.detail."));p.valueIndex=null;return p;
+        }
         internal ProvingProfile BeforeCrimsonShoulder()
         {
             if(id!="unity-trooper-presentation-v1"||version<31)return this;
-            var p=DetachedCopy();p.version=30;
+            var p=BeforeCrimsonDetail().DetachedCopy();p.version=30;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson."));p.valueIndex=null;return p;
         }
         internal ProvingProfile BeforeHeavyAgileGait()
@@ -744,6 +750,12 @@ namespace StarTournament.ProvingGround
                 p.Add("grip.crimson.viewX","trooper-grip-RocketLauncher","Crimson · положение FPS X","Сдвигает модель и обе руки вместе; не меняет камеру и мировую модель.","meters",-.3f,.3f,.005f,-.15f);
                 p.Add("grip.crimson.viewY","trooper-grip-RocketLauncher","Crimson · положение FPS Y","Высота плечевой ракетницы в первом лице.","meters",-.3f,.3f,.005f,-.035f);
                 p.Add("grip.crimson.viewZ","trooper-grip-RocketLauncher","Crimson · положение FPS Z","Удаление плечевой ракетницы от камеры.","meters",-.3f,.3f,.005f,.12f);
+                p.version=32;
+                p.Add("grip.crimson.detail.scale","trooper-grip-RocketLauncher","Crimson · размер","Увеличивает модель и расстояние между рукоятями с сохранением плечевой опоры.","ratio",1,1.5f,.05f,1.2f);
+                p.Add("grip.crimson.detail.entryLeftX","trooper-grip-RocketLauncher","Crimson · вход левой руки","Горизонтальная точка входа предплечья под экраном; контакт кисти сохраняется.","ratio",-.7f,.7f,.01f,.08f);
+                p.Add("grip.crimson.detail.entryRightX","trooper-grip-RocketLauncher","Crimson · вход правой руки","Горизонтальная точка входа правого предплечья под экраном.","ratio",-.7f,.7f,.01f,.38f);
+                p.Add("grip.crimson.detail.entryBelow","trooper-grip-RocketLauncher","Crimson · край рук ниже экрана","Смещает локти и открытые края рукавов за нижний край без изменения костей и хвата.","ratio",0,.5f,.01f,.25f);
+
 
             }
             return p;
