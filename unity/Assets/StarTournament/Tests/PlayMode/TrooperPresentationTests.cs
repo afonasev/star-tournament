@@ -115,6 +115,70 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<100;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
             Assert.That(Vector3.Distance(first.transform.localPosition,rest),Is.LessThan(.00001f));
         }
+        [UnityTest] public IEnumerator CrimsonHeavyRecoilNativeReview()
+        {
+            yield return Load(1);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-10,0,14),0,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            foreach(var v in ground.GetComponentsInChildren<TrooperVisual>(true))foreach(var d in ProvingProfile.CreateTrooperDefault().Descriptors)v.Tuning.Set(d.Path,d.DefaultValue);
+            var snapshot=ground.Session.Capture();snapshot.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].RocketAmmo=8;snapshot.Lives[0].Ammo=8;snapshot.Lives[0].SwitchRemaining=0;
+            ground.Session.Restore(snapshot);ground.SendMessage("LateUpdate");yield return null;
+            var view=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var body=ground.transform.Find("player-1/trooper-presentation").GetComponent<TrooperVisual>();
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RECOIL_EVIDENCE");
+            var go=new GameObject("Crimson recoil world camera");var review=go.AddComponent<Camera>();review.enabled=false;review.fieldOfView=42;review.nearClipPlane=.05f;review.farClipPlane=150;review.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18));review.clearFlags=CameraClearFlags.Skybox;
+            var target=body.transform.position+Vector3.up*1.40f;go.transform.position=target+body.transform.right*2.2f+Vector3.up*.15f;go.transform.LookAt(target);
+            var visuals=new[]{view,body};
+            var mounts=visuals.Select(v=>v.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="trooper:rig:weapon-mount")).ToArray();
+            var hands=visuals.Select(v=>new[]{"LeftHand","RightHand"}.Select(n=>v.GetComponentsInChildren<Transform>(true).Single(t=>t.name==n)).ToArray()).ToArray();
+            var quiet=ground.Session.Capture();var actions=new LocalAction[ground.Session.ParticipantCount];bool checkedPeak=false,checkedRest=false;
+            var lines=new System.Collections.Generic.List<string>{"frame,time,fp_pitch,world_pitch,fp_back,world_back"};
+            if(!string.IsNullOrEmpty(output))System.IO.Directory.CreateDirectory(output);
+            for(int frame=0;frame<90;frame++)
+            {
+                actions[0].Fire=frame==15;ground.Session.Tick(actions,1f/60);ground.SendMessage("LateUpdate");
+                if(frame==15){Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1));Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("07"));}
+                if(frame==18||frame==65)
+                {
+                    var positions=mounts.Select(m=>m.position).ToArray();var rotations=mounts.Select(m=>m.rotation).ToArray();
+                    var contacts=hands.Select((pair,index)=>pair.Select(h=>mounts[index].InverseTransformPoint(h.position)).ToArray()).ToArray();
+                    string state=JsonUtility.ToJson(ground.Session.Capture());ground.SendMessage("LateUpdate");ground.SendMessage("LateUpdate");
+                    Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(state),"Presentation cannot advance paused simulation");
+                    for(int v=0;v<2;v++){Assert.That(Vector3.Distance(mounts[v].position,positions[v]),Is.LessThan(.0001f));Assert.That(Quaternion.Angle(mounts[v].rotation,rotations[v]),Is.LessThan(.02f));visuals[v].Tuning.Set("grip.crimson.recoil.enabled",0);}
+                    ground.SendMessage("LateUpdate");
+                    for(int v=0;v<2;v++)
+                    {
+                        float angle=Quaternion.Angle(mounts[v].rotation,rotations[v]);float travel=Vector3.Distance(mounts[v].position,positions[v]);
+                        if(frame==18){Assert.That(angle,Is.GreaterThan(5),"Peak muzzle rise");Assert.That(travel,Is.GreaterThan(.03f),"Heavy impulse moves actual model");}
+                        else {Assert.That(angle,Is.LessThan(.02f));Assert.That(travel,Is.LessThan(.0001f));}
+                        for(int h=0;h<2;h++)Assert.That(Vector3.Distance(mounts[v].InverseTransformPoint(hands[v][h].position),contacts[v][h]),Is.LessThan(.025f),"Hands follow the same rigid recoil without losing grip");
+                        visuals[v].Tuning.Set("grip.crimson.recoil.enabled",1);
+                    }
+                    ground.SendMessage("LateUpdate");if(frame==18)checkedPeak=true;else checkedRest=true;
+                }
+                if(!string.IsNullOrEmpty(output))
+                {
+                    CaptureSingleView(output,"recoil-fp-"+frame.ToString("D3"),camera,960,540);
+                    CaptureSingleView(output,"recoil-world-"+frame.ToString("D3"),review,960,540);
+                    lines.Add(frame+","+ground.Session.Time.ToString("F4",System.Globalization.CultureInfo.InvariantCulture)+","+mounts[0].localEulerAngles.x+","+mounts[1].localEulerAngles.x+","+mounts[0].localPosition.z+","+mounts[1].localPosition.z);
+                }
+                yield return null;
+            }
+            Assert.That(checkedPeak&&checkedRest,Is.True);
+            // A restore at the same active recoil time must clear the transient kick.
+            foreach(var visual in visuals)visual.Fire(ground.Session.Time,WeaponId.RocketLauncher);
+            actions[0].Fire=false;ground.Session.Tick(actions,.05f);ground.SendMessage("LateUpdate");
+            var activeSnapshot=ground.Session.Capture();ground.Session.Restore(activeSnapshot);ground.SendMessage("LateUpdate");
+            var resetPositions=mounts.Select(m=>m.position).ToArray();var resetRotations=mounts.Select(m=>m.rotation).ToArray();
+            foreach(var visual in visuals)visual.Tuning.Set("grip.crimson.recoil.enabled",0);ground.SendMessage("LateUpdate");
+            for(int v=0;v<2;v++){Assert.That(Vector3.Distance(mounts[v].position,resetPositions[v]),Is.LessThan(.0001f));Assert.That(Quaternion.Angle(mounts[v].rotation,resetRotations[v]),Is.LessThan(.02f));visuals[v].Tuning.Set("grip.crimson.recoil.enabled",1);}
+            ground.Session.Restore(quiet);ground.SendMessage("LateUpdate");
+            Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("08"));
+            if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"recoil.csv"),lines);
+            Object.Destroy(go);
+        }
         [UnityTest] public IEnumerator CrimsonShoulderNativeReview()
         {
             yield return Load(1);

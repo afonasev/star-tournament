@@ -245,9 +245,9 @@ namespace StarTournament.ProvingGround
         }
         void OnFire(int seat,float damage)
         {
-            bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
+            bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time,session.Life(seat).SelectedWeapon);
             if(session.Life(seat).SelectedWeapon==WeaponId.Shotgun)bodies[seat].GetComponent<VectorShotPresentation>()?.Fire(session.Time);
-            int view=ViewOf(seat);if(view>=0){views[view].GetComponent<TrooperVisual>()?.Fire(session.Time);if(session.Life(seat).SelectedWeapon==WeaponId.Shotgun)views[view].GetComponent<VectorShotPresentation>()?.Fire(session.Time);}
+            int view=ViewOf(seat);if(view>=0){views[view].GetComponent<TrooperVisual>()?.Fire(session.Time,session.Life(seat).SelectedWeapon);if(session.Life(seat).SelectedWeapon==WeaponId.Shotgun)views[view].GetComponent<VectorShotPresentation>()?.Fire(session.Time);}
         }
         void OnShotResolved(ShotNotice notice)
         {
@@ -335,7 +335,7 @@ namespace StarTournament.ProvingGround
             // so an automatic follow-up cannot freeze the previous shot's animated barrel.
             var visual=source.GetComponent<TrooperVisual>();
             if(visual)visual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
-            visual?.Fire(session.Time);
+            visual?.Fire(session.Time,life.SelectedWeapon);
             visual?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
             if(view>=0)weaponSwitches[view]?.Apply(life,session.WeaponSwitchSeconds);
             else source.GetComponent<WeaponModelPresentation>()?.Show(life.SelectedWeapon);

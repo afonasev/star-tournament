@@ -185,7 +185,7 @@ namespace StarTournament.ProvingGround
             seamRig.Set("grip.Cutter.supportZ",seamRig.Get("grip.Cutter.supportZ")+SeamSurface(equipment,"gripSupportZ"));
             return seamRig;
         }
-        public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1,ProvingProfile cutter=null)
+        public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1,ProvingProfile cutter=null,CrimsonRecoilSample recoil=default)
         {
             if(!wrist)return;
             if(weapon==WeaponId.Cutter&&cutter!=null)profile=SeamRig(profile,cutter);
@@ -261,6 +261,24 @@ namespace StarTournament.ProvingGround
             }
             if(weapon==WeaponId.Cutter&&cutter!=null)FitSeamDigits(profile,cutter);
             if(weapon==WeaponId.Plasma)FitForgeDigits(profile);
+            if(weapon==WeaponId.RocketLauncher&&crimsonShoulder&&recoil.Weight>0)
+                ApplyCrimsonRecoil(recoil,profile,fit);
+        }
+        void ApplyCrimsonRecoil(CrimsonRecoilSample sample,ProvingProfile profile,string fit)
+        {
+            var pivot=crimsonShoulder.position;
+            var turn=Quaternion.AngleAxis(-sample.PitchDegrees,mount.right)*Quaternion.AngleAxis(sample.RollDegrees,mount.forward);
+            var offset=-mount.forward*sample.BackMeters;
+            Vector3 Move(Vector3 point)=>pivot+turn*(point-pivot)+offset;
+            var weaponPosition=Move(mount.position);var weaponRotation=turn*mount.rotation;
+            var rightTarget=Move(primaryWrist.position);var leftTarget=Move(wrist.position);
+            var rightRotation=turn*primaryWrist.rotation;var leftRotation=turn*wrist.rotation;
+            var rightDirection=turn*(rightPalm.position-primaryWrist.position).normalized;
+            var leftDirection=turn*(palm.position-wrist.position).normalized;
+            ReachArm(rightUpper,rightLower,primaryWrist,rightTarget,rightDirection,profile.Get(fit+"primaryWristAlignment"));
+            primaryWrist.rotation=rightRotation;mount.SetPositionAndRotation(weaponPosition,weaponRotation);
+            Reach(leftTarget,leftDirection,profile.Get(fit+"wristAlignment"));wrist.rotation=leftRotation;
+            mount.SetPositionAndRotation(weaponPosition,weaponRotation);
         }
     }
 }

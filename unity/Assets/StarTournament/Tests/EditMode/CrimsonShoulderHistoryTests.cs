@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var current=ProvingProfile.CreateTrooperDefault();
             var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCrimsonShoulder",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(current,null);
-            Assert.That(old.Version,Is.EqualTo(30));Assert.That(current.Version,Is.EqualTo(32));
+            Assert.That(old.Version,Is.EqualTo(30));Assert.That(current.Version,Is.EqualTo(33));
             Assert.That(old.Descriptors.Any(d=>d.Path.StartsWith("grip.crimson.")),Is.False);
             foreach(var d in old.Descriptors)Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
             Assert.That(current.Validate(),Is.Empty);

@@ -3,10 +3,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeCrimsonRecoil()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<33)return this;
+            var p=DetachedCopy();p.version=32;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson.recoil."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson.recoil."));p.valueIndex=null;return p;
+        }
         internal ProvingProfile BeforeCrimsonDetail()
         {
             if(id!="unity-trooper-presentation-v1"||version<32)return this;
-            var p=DetachedCopy();p.version=31;
+            var p=BeforeCrimsonRecoil().DetachedCopy();p.version=31;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson.detail."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson.detail."));p.valueIndex=null;return p;
         }
         internal ProvingProfile BeforeCrimsonShoulder()
@@ -755,6 +761,14 @@ namespace StarTournament.ProvingGround
                 p.Add("grip.crimson.detail.entryLeftX","trooper-grip-RocketLauncher","Crimson · вход левой руки","Горизонтальная точка входа предплечья под экраном; контакт кисти сохраняется.","ratio",-.7f,.7f,.01f,.08f);
                 p.Add("grip.crimson.detail.entryRightX","trooper-grip-RocketLauncher","Crimson · вход правой руки","Горизонтальная точка входа правого предплечья под экраном.","ratio",-.7f,.7f,.01f,.38f);
                 p.Add("grip.crimson.detail.entryBelow","trooper-grip-RocketLauncher","Crimson · край рук ниже экрана","Смещает локти и открытые края рукавов за нижний край без изменения костей и хвата.","ratio",0,.5f,.01f,.25f);
+
+                p.version=33;
+                p.Add("grip.crimson.recoil.enabled","trooper-grip-RocketLauncher","Crimson · тяжёлая отдача","Визуальный импульс ракетницы и обеих рук от фактического выстрела.","toggle",0,1,1,1);
+                p.Add("grip.crimson.recoil.kickSeconds","trooper-grip-RocketLauncher","Crimson · время удара","Время резкого выхода на пиковую отдачу.","seconds",.01f,.15f,.005f,.04f);
+                p.Add("grip.crimson.recoil.recoverySeconds","trooper-grip-RocketLauncher","Crimson · возврат после удара","Более медленное возвращение оружия в плечевой хват.","seconds",.1f,1,.01f,.48f);
+                p.Add("grip.crimson.recoil.backMeters","trooper-grip-RocketLauncher","Crimson · удар в плечо","Пиковое перемещение оружия назад; длины костей и simulation не меняются.","meters",0,.12f,.005f,.055f);
+                p.Add("grip.crimson.recoil.pitchDegrees","trooper-grip-RocketLauncher","Crimson · подброс ствола","Пиковый подъём дула вокруг плечевого упора; не поворачивает игровую камеру.","degrees",0,15,.5f,7.5f);
+                p.Add("grip.crimson.recoil.rollDegrees","trooper-grip-RocketLauncher","Crimson · крен удара","Небольшой крен корпуса при выстреле.","degrees",-4,4,.25f,-.75f);
 
 
             }

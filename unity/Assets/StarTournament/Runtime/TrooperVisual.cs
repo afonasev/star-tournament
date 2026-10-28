@@ -31,6 +31,7 @@ namespace StarTournament.ProvingGround
         int active=-1, life=-1;
         float health;
         double firedAt=double.NegativeInfinity, hitAt=double.NegativeInfinity;
+        WeaponId firedWeapon=WeaponId.Rifle;
         bool firstPerson, corpse;
         ProvingProfile hitProfile;
         Transform chest;
@@ -109,7 +110,8 @@ namespace StarTournament.ProvingGround
             Array.Clear(weights,0,weights.Length); Array.Clear(starts,0,starts.Length);
             Sample(firstPerson?3:0,clock,true);
         }
-        public void Fire(double clock) { if(!corpse) { firedAt=clock; starts[4]=clock; } }
+        public void Fire(double clock)=>Fire(clock,EquippedWeapon);
+        public void Fire(double clock,WeaponId weapon) { if(!corpse) { firedAt=clock;firedWeapon=weapon;starts[4]=clock; } }
         public void BeginDeath(double clock)
         {
             corpse=true; active=-1; Array.Clear(weights,0,weights.Length); Sample(6,clock,true);
@@ -177,7 +179,7 @@ namespace StarTournament.ProvingGround
                 var actorToParent=Quaternion.Inverse(chest.parent.rotation)*transform.rotation;
                 chest.localRotation=(actorToParent*impulse*Quaternion.Inverse(actorToParent))*chest.localRotation;
             }
-            if(!corpse){airborne?.Apply();gait?.Apply(clock,airborne?.LandingDrop??0);equipmentGrip?.Apply(profile,EquippedWeapon,EquippedWeapon==WeaponId.Plasma?(GetComponent<WeaponModelPresentation>()?.PlasmaViewScale??1):EquippedWeapon==WeaponId.RocketLauncher?(GetComponent<WeaponModelPresentation>()?.PulseGripScale??1):1,GetComponent<WeaponModelPresentation>()?.CutterGripProfile);}
+            if(!corpse){airborne?.Apply();gait?.Apply(clock,airborne?.LandingDrop??0);equipmentGrip?.Apply(profile,EquippedWeapon,EquippedWeapon==WeaponId.Plasma?(GetComponent<WeaponModelPresentation>()?.PlasmaViewScale??1):EquippedWeapon==WeaponId.RocketLauncher?(GetComponent<WeaponModelPresentation>()?.PulseGripScale??1):1,GetComponent<WeaponModelPresentation>()?.CutterGripProfile,firedWeapon==EquippedWeapon?CrimsonRecoilSample.Read(profile,EquippedWeapon,clock-firedAt):default);}
             PoseRevision++;
         }
         public void Release()
