@@ -521,6 +521,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
             // Project the exact trusted predecessor before the existing legacy search.
             // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.ForgeDisplayPrefix+"radius"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeDisplay()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.PulseDisplayPrefix+"diameter"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePulseDisplay()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.RifleDisplayPrefix+"width"))

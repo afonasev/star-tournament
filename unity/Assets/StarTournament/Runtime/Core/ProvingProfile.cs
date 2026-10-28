@@ -542,6 +542,7 @@ namespace StarTournament.ProvingGround
             profile.AddVectorPrecisionDescriptors();
             profile.AddShotgunDisplayDescriptors();
             profile.AddPulseDisplayDescriptors();
+            profile.AddForgeDisplayDescriptors();
             profile.AddRifleDisplayDescriptors();
             profile.AddRoundMusicDescriptors();
             profile.AddIndividualEffectGains();
