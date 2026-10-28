@@ -8,6 +8,7 @@ namespace StarTournament.ProvingGround
     {
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
+        public ShotgunAmmoDisplay ShotgunDisplay {get;private set;}
         Renderer batteryRenderer;
         Material batteryMaterial;
         public float CutterChargeFraction {get;private set;}=0;
@@ -27,6 +28,8 @@ namespace StarTournament.ProvingGround
             if(!prefab)throw new System.ArgumentException("Rifle GLB missing",nameof(prefab));
             var mount=GetComponentsInChildren<Transform>(true).Single(x=>x.name=="trooper:rig:weapon-mount");
             shotgun=GetComponentsInChildren<Renderer>(true).Single(x=>x.name=="weapon:joined");
+            ShotgunDisplay=new GameObject("shotgun-ammo-display").AddComponent<ShotgunAmmoDisplay>();
+            ShotgunDisplay.Initialize(shotgun.transform,profile,gameObject.layer);
             rifle=Object.Instantiate(prefab,mount);rifle.name="automatic-rifle";
             rifle.transform.localPosition=Vector3.zero;rifle.transform.localRotation=Quaternion.identity;
             // The imported grip already carries the authored rig scale; a second correction made the model fill the viewport.
@@ -108,14 +111,16 @@ namespace StarTournament.ProvingGround
         }
         public void HideForCorpse()
         {
+            ShotgunDisplay?.SetVisible(false);
             foreach(var renderer in GetComponentsInChildren<Renderer>(true))
-                if(renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"))renderer.enabled=false;
+                if(renderer.GetComponent<ShotgunAmmoDisplay>()!=null||renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"))renderer.enabled=false;
         }
         public WeaponId ShownWeapon { get; private set; }
         public void Show(WeaponId weapon)
         {
             ShownWeapon=weapon;
             if(shotgun)shotgun.enabled=weapon==WeaponId.Shotgun;
+            ShotgunDisplay?.SetVisible(weapon==WeaponId.Shotgun);
             if(rifle)rifle.SetActive(weapon==WeaponId.Rifle);
             if(plasma)plasma.SetActive(weapon==WeaponId.Plasma);
             if(cutter)cutter.SetActive(weapon==WeaponId.Cutter);
@@ -524,11 +529,15 @@ namespace StarTournament.ProvingGround
                 if(bodyVisual)bodyVisual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
                 if(!life.Dead)bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,life.Health,life.Life,session.Pose(p).Grounded);
                 // Both representations use the same simulation phase: the model changes only at the lift apex.
-                bodies[p].GetComponent<WeaponModelPresentation>()?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
+                var bodyWeapon=bodies[p].GetComponent<WeaponModelPresentation>();
+                bodyWeapon?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
+                bodyWeapon?.ShotgunDisplay?.SetAmmo(life.ShotgunAmmo);
+                if(life.Dead)bodyWeapon?.ShotgunDisplay?.SetVisible(false);
             }
             for(int v=0;v<cameras.Length;v++)
             {
                 int i=local[v];var life=session.Life(i); var pose=session.Pose(i);
+                views[v].GetComponent<WeaponModelPresentation>()?.ShotgunDisplay?.SetAmmo(life.ShotgunAmmo);
                 if(!life.Dead)
                 {
                     var viewVisual=views[v].GetComponent<TrooperVisual>();
