@@ -253,7 +253,7 @@ def limb_plate(name,side,part,outline,rx,ry,mat=None,back=False):
         return a.lerp(b,t)+lateral*(rx*scale*math.sin(angle))+front*(ry*scale*math.cos(angle))+radial*offset
     return mapped_plate(name+' '+side,outline,side+part,mat or steel,surface,lambda q:lateral*math.sin(q.x)+front*math.cos(q.x),(rx*3,(b-a).length*3))
 
-def mapped_plate(name,outline,bone,mat,surface,outward,uv_scale):
+def mapped_plate(name,outline,bone,mat,surface,outward,uv_scale,refinement=3):
     corners=[Vector(p) for p in outline]
     uv=[p.lerp(corners[(i+1)%len(corners)],j/3) for i,p in enumerate(corners) for j in range(3)]
     center=sum(uv,Vector((0,0)))/len(uv)
@@ -262,7 +262,7 @@ def mapped_plate(name,outline,bone,mat,surface,outward,uv_scale):
     planar=[Vector((q.x,q.y,0)) for q in coords]
     triangles=[tuple(v if isinstance(v,int) else planar.index(v) for v in tri) for tri in tessellate_polygon([planar])]
     # Refine in parameter space, evaluating the actual shell at every point.
-    for level in range(3):
+    for level in range(refinement):
         cache={};refined=[]
         def midpoint(i,j):
             key=tuple(sorted((i,j)))
