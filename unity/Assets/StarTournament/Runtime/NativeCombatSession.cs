@@ -67,6 +67,7 @@ namespace StarTournament.ProvingGround
         readonly float friendlyMultiplier,selfMultiplier;
         readonly List<RocketState> rockets=new List<RocketState>();
         public RocketState[] Rockets => rockets.ToArray();
+        public float RocketAmmoCapacity {get;} // Frozen reserve for the weapon-local instrument; no mutable presentation state.
         public float RocketBlastRadius => rocketResolver.Radius; // Read-only frozen combat configuration, not presentation state.
         readonly List<RifleBulletState> rifleBullets=new List<RifleBulletState>();
         readonly float rifleSpeed;
@@ -188,6 +189,7 @@ namespace StarTournament.ProvingGround
             cutter=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(cutterProfile??ProvingProfile.CreateCutterDefault()));
             beams=new CutterBeam[motors.Length];for(int i=0;i<beams.Length;i++)beams[i]=new CutterBeam(cutter,motors.Length);
             ArenaIdentity=arena.Definition.Identity;
+            RocketAmmoCapacity=lifecycle.Get("rocket.startingAmmo");
             pickupHeightTolerance=lifecycle.Get("pickup.maximumHeightDifference");this.arena=arena;this.motors = motors; this.physics = physics; Match=match;
             this.movement = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(movement));
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));

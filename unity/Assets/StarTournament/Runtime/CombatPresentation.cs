@@ -9,6 +9,7 @@ namespace StarTournament.ProvingGround
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
         public ShotgunAmmoDisplay ShotgunDisplay {get;private set;}
+        public PulseAmmoDisplay PulseDisplay {get;private set;}
         Renderer batteryRenderer;
         Material batteryMaterial;
         public float CutterChargeFraction {get;private set;}=0;
@@ -53,6 +54,8 @@ namespace StarTournament.ProvingGround
                 pulse.transform.localPosition=Vector3.zero;pulse.transform.localRotation=Quaternion.identity;
                 pulse.transform.localScale=Vector3.one*profile.Get("presentation.rocketModelScale");
                 pulseMuzzle=pulse.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="pulse-muzzle");
+                PulseDisplay=new GameObject("pulse-ammo-display").AddComponent<PulseAmmoDisplay>();
+                PulseDisplay.Initialize(pulse.transform,profile,gameObject.layer);
                 foreach(var t in pulse.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
                 foreach(var r in pulse.GetComponentsInChildren<Renderer>(true))
                 { if(gameObject.layer>=15)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off; }
@@ -112,6 +115,7 @@ namespace StarTournament.ProvingGround
         public void HideForCorpse()
         {
             ShotgunDisplay?.SetVisible(false);
+            PulseDisplay?.SetVisible(false);
             foreach(var renderer in GetComponentsInChildren<Renderer>(true))
                 if(renderer.GetComponent<ShotgunAmmoDisplay>()!=null||renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"))renderer.enabled=false;
         }
@@ -121,6 +125,7 @@ namespace StarTournament.ProvingGround
             ShownWeapon=weapon;
             if(shotgun)shotgun.enabled=weapon==WeaponId.Shotgun;
             ShotgunDisplay?.SetVisible(weapon==WeaponId.Shotgun);
+            PulseDisplay?.SetVisible(weapon==WeaponId.RocketLauncher);
             if(rifle)rifle.SetActive(weapon==WeaponId.Rifle);
             if(plasma)plasma.SetActive(weapon==WeaponId.Plasma);
             if(cutter)cutter.SetActive(weapon==WeaponId.Cutter);
@@ -133,7 +138,7 @@ namespace StarTournament.ProvingGround
             if(pulse)renderers.AddRange(pulse.GetComponentsInChildren<Renderer>(true));
             if(plasma)renderers.AddRange(plasma.GetComponentsInChildren<Renderer>(true));
             if(cutter)renderers.AddRange(cutter.GetComponentsInChildren<Renderer>(true));
-            foreach(var renderer in renderers.Where(r=>r!=batteryRenderer))
+            foreach(var renderer in renderers.Where(r=>r!=batteryRenderer&&r.GetComponent<PulseAmmoDisplay>()==null))
                 for(int slot=0;slot<renderer.sharedMaterials.Length;slot++)
                 {
                     var material=renderer.sharedMaterials[slot];if(!material)continue;
@@ -532,12 +537,15 @@ namespace StarTournament.ProvingGround
                 var bodyWeapon=bodies[p].GetComponent<WeaponModelPresentation>();
                 bodyWeapon?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
                 bodyWeapon?.ShotgunDisplay?.SetAmmo(life.ShotgunAmmo);
+                bodyWeapon?.PulseDisplay?.SetAmmo(life.RocketAmmo,session.RocketAmmoCapacity);
+                if(life.Dead)bodyWeapon?.PulseDisplay?.SetVisible(false);
                 if(life.Dead)bodyWeapon?.ShotgunDisplay?.SetVisible(false);
             }
             for(int v=0;v<cameras.Length;v++)
             {
                 int i=local[v];var life=session.Life(i); var pose=session.Pose(i);
                 views[v].GetComponent<WeaponModelPresentation>()?.ShotgunDisplay?.SetAmmo(life.ShotgunAmmo);
+                views[v].GetComponent<WeaponModelPresentation>()?.PulseDisplay?.SetAmmo(life.RocketAmmo,session.RocketAmmoCapacity);
                 if(!life.Dead)
                 {
                     var viewVisual=views[v].GetComponent<TrooperVisual>();

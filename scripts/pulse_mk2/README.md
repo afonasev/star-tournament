@@ -35,3 +35,18 @@ asset validity, tests and studio images do not establish human acceptance.
 Pulse fire/smoke use an isolated soft-particle shader. An input-only URP pass requests depth before transparent rendering, only on owned cameras with an active burst; original per-camera depth options are restored on expiration/restore/dispose. Other particle shaders and global renderer assets are unchanged. Surface fade and fire radiance are profile v4 metadata; v1-v3 registries remain byte/hash compatible.
 
 F1 rework preserves all grip/muzzle markers and hand poses. Base color and packed metal/roughness maps distinguish coating, graphite and exposed metal; no painted lighting. The authored shell cavities receive final machining bevels after booleans. Detail reduction remains deferred.
+
+## Integrated reserve instrument (C, 2026-10-28)
+
+The native assembled weapon now adds an editable circular instrument inside the existing
+rear breech inset. Its source is `Runtime/PulseAmmoDisplay.cs`, `Resources/PulseDisplay.shader`
+and `Core/PulseDisplayProfile.cs` under `unity/Assets/StarTournament/`. GLB surfaces, source
+Blender files, grips and muzzle markers are byte-for-byte retained. The dynamic surface
+must be rendered by Unity; offline GLB studio previews do not show live ammunition.
+
+One shared 49-vertex/48-triangle front face and one shared opaque material use the existing
+640×128 authored `ShotgunDigits` atlas (source: `scripts/shotgun_display/atlas.py`). No new
+texture, lights, colliders or shadow passes. Digits, icon, hairline rim and reserve arc are
+one pass; per-owner values use a property block only when they change. Extra LOD geometry
+would cost more than this face; existing actor/weapon visibility and view layers remain.
+Profile metadata controls diameter, position, digit size and digit/arc luminance.
