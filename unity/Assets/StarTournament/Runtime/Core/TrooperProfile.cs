@@ -3,10 +3,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeCrimsonShoulder()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<31)return this;
+            var p=DetachedCopy();p.version=30;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson."));p.valueIndex=null;return p;
+        }
         internal ProvingProfile BeforeHeavyAgileGait()
         {
             if(id!="unity-trooper-presentation-v1"||version<30)return this;
-            var p=DetachedCopy();p.version=29;
+            var p=BeforeCrimsonShoulder().DetachedCopy();p.version=29;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.heavy."));p.values.RemoveAll(v=>v.Path.StartsWith("animation.heavy."));p.valueIndex=null;
             foreach(var pair in new[]{("animation.stepLengthMeters",.65f),("animation.stepSeconds",.28f),("animation.stepHeightMeters",.09f)})
             {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
@@ -730,6 +736,15 @@ namespace StarTournament.ProvingGround
                 p.Add("animation.heavy.turnStepDegrees","trooper-animation","Переступание при повороте","Угол поворота корпуса относительно опорной стопы, после которого боец переступает.","degrees",10,90,1,35);
                 p.Add("animation.heavy.leanDegrees","trooper-animation","Наклон корпуса в движении","Предельный наклон таза по направлению движения; камера и gameplay не меняются.","degrees",0,12,.5f,4);
                 p.Add("animation.heavy.toePitchDegrees","trooper-animation","Перекат стопы при переносе","Опускает носок после толчка и поднимает перед приземлением; опорная стопа остаётся неподвижной.","degrees",0,30,1,16);
+                p.version=31;
+                p.Add("grip.crimson.enabled","trooper-grip-RocketLauncher","Crimson · плечевой хват","Опирает новую модель на правое плечо; прочие оружия не затрагивает.","toggle",0,1,1,1);
+                p.Add("grip.crimson.shoulderX","trooper-grip-RocketLauncher","Crimson · наружу от плеча","Боковое смещение авторской опоры относительно правого плечевого сустава.","meters",-.15f,.25f,.005f,.025f);
+                p.Add("grip.crimson.shoulderY","trooper-grip-RocketLauncher","Crimson · высота опоры","Высота опоры над правым плечевым суставом; camera и gameplay не меняются.","meters",-.1f,.25f,.005f,.075f);
+                p.Add("grip.crimson.shoulderZ","trooper-grip-RocketLauncher","Crimson · глубина опоры","Смещение опоры вперёд относительно плечевого сустава.","meters",-.25f,.25f,.005f,0);
+                p.Add("grip.crimson.viewX","trooper-grip-RocketLauncher","Crimson · положение FPS X","Сдвигает модель и обе руки вместе; не меняет камеру и мировую модель.","meters",-.3f,.3f,.005f,-.15f);
+                p.Add("grip.crimson.viewY","trooper-grip-RocketLauncher","Crimson · положение FPS Y","Высота плечевой ракетницы в первом лице.","meters",-.3f,.3f,.005f,-.035f);
+                p.Add("grip.crimson.viewZ","trooper-grip-RocketLauncher","Crimson · положение FPS Z","Удаление плечевой ракетницы от камеры.","meters",-.3f,.3f,.005f,.12f);
+
             }
             return p;
         }

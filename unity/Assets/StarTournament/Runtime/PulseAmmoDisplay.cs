@@ -1,10 +1,11 @@
 using System.Globalization;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace StarTournament.ProvingGround
 {
-    /// <summary>Read-only instrument inset into Pulse's authored rear breech.</summary>
+    /// <summary>Read-only instrument inset into the weapon's authored display mount.</summary>
     public sealed class PulseAmmoDisplay : MonoBehaviour
     {
         static Mesh sharedMesh;
@@ -26,6 +27,21 @@ namespace StarTournament.ProvingGround
                 profile.Get(ProvingProfile.PulseDisplayPrefix+key):defaults.Get(ProvingProfile.PulseDisplayPrefix+key);
             transform.localPosition=new Vector3(0,P("centerY"),P("rearZ"));
             transform.localScale=Vector3.one*P("diameter");
+            // Semantic geometry markers define the new side instrument; historical GLBs retain rear mounting.
+            var markers=weapon.GetComponentsInChildren<Transform>(true);
+            var authored=markers.FirstOrDefault(t=>t.name=="pulse-display-mount");
+            var normal=markers.FirstOrDefault(t=>t.name=="pulse-display-normal");
+            var up=markers.FirstOrDefault(t=>t.name=="pulse-display-up");
+            if(authored&&normal&&up)
+            {
+                transform.position=authored.position+weapon.TransformVector(new Vector3(0,
+                    P("centerY")-defaults.Get(ProvingProfile.PulseDisplayPrefix+"centerY"),
+                    P("rearZ")-defaults.Get(ProvingProfile.PulseDisplayPrefix+"rearZ")));
+                // Mesh front normal is -Z, so its forward axis points into the housing.
+                transform.rotation=Quaternion.LookRotation(authored.position-normal.position,up.position-authored.position);
+                transform.localScale=Vector3.one*P("diameter")*(.118f/.144f); // Authored bezel diameter ratio, not gameplay scale.
+            }
+
             if(!sharedMesh)sharedMesh=BuildMesh();
             if(!sharedMaterial)sharedMaterial=new Material(Resources.Load<Shader>("PulseDisplay"))
                 {name="Pulse recessed reserve instrument",mainTexture=Resources.Load<Texture2D>("ShotgunDigits")};

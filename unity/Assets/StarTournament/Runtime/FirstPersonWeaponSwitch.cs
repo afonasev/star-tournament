@@ -86,11 +86,13 @@ namespace StarTournament.ProvingGround
             mount.localPosition=mountSamplePosition;mount.localRotation=mountSampleRotation;
             for(int i=0;i<joints.Length;i++)
                 joints[i].rotation=Quaternion.AngleAxis(-angles[i]*pose.Lift,axis.right)*joints[i].rotation;
-            root.localPosition=rest+visual.ViewOffset;model?.Show(pose.Weapon);
+            bool crimson=pose.Weapon==WeaponId.RocketLauncher&&visual.Tuning.Version>=31&&visual.Tuning.Get("grip.crimson.enabled")>0;
+            var crimsonOffset=crimson?new Vector3(visual.Tuning.Get("grip.crimson.viewX"),visual.Tuning.Get("grip.crimson.viewY"),visual.Tuning.Get("grip.crimson.viewZ")):Vector3.zero;
+            root.localPosition=rest+visual.ViewOffset+crimsonOffset;model?.Show(pose.Weapon);
             if(visual.Tuning.Version>=28&&visual.Tuning.Get("view.armEntryEnabled")>0)
             {
                 var weaponPosition=mount.position;var weaponRotation=mount.rotation;
-                if(visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)
+                if(!crimson&&visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)
                 {
                     for(int finger=0;finger<10;finger++)fingerTargets[finger]=fingerBones[finger*3+2].position;
                     FitCommon(leftShoulder,joints[2],leftHand,leftPalm,visual.LeftForearmReferenceRotation,0,pose.Lift);
@@ -102,7 +104,7 @@ namespace StarTournament.ProvingGround
                     FitEntry(rightShoulder,joints[3],rightHand,rightPalm,visual.Tuning.Get("view.armEntryRightX"));
                 }
                 mount.SetPositionAndRotation(weaponPosition,weaponRotation);
-                if(visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)FitCommonFingers();
+                if(!crimson&&visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)FitCommonFingers();
             }
         }
         void FitCommon(Transform shoulder,Transform elbow,Transform hand,Transform palm,Quaternion reference,int side,float lift)

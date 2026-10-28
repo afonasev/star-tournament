@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         Vector3 mountPosition;
         Quaternion mountRotation,primaryRotation;
         bool primaryApplied;
+        Transform crimsonShoulder;
         readonly Vector3 rollAxis;
         readonly Dictionary<(WeaponId weapon,Transform bone),string> jointPaths=new Dictionary<(WeaponId,Transform),string>();
         readonly Dictionary<(WeaponId weapon,Transform bone),string> spreadPaths=new Dictionary<(WeaponId,Transform),string>();
@@ -195,6 +196,20 @@ namespace StarTournament.ProvingGround
             primaryRotation=primaryWrist.localRotation;
             mountPosition=mount.localPosition;mountRotation=mount.localRotation;
             var position=mount.position;var rotation=mount.rotation;
+            if(weapon==WeaponId.RocketLauncher&&profile.Version>=31&&profile.Get("grip.crimson.enabled")>0)
+            {
+                if(!crimsonShoulder)crimsonShoulder=rigRoot.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="crimson-shoulder");
+                if(crimsonShoulder)
+                {
+                    var shoulderTarget=rightUpper.position+rigRoot.TransformDirection(new Vector3(profile.Get("grip.crimson.shoulderX"),profile.Get("grip.crimson.shoulderY"),profile.Get("grip.crimson.shoulderZ")));
+                    var delta=shoulderTarget-crimsonShoulder.position;var crimsonHandRotation=primaryWrist.rotation;
+                    var crimsonHandDirection=(rightPalm.position-primaryWrist.position).normalized;
+                    position+=delta;
+                    ReachArm(rightUpper,rightLower,primaryWrist,primaryWrist.position+delta,crimsonHandDirection,profile.Get(fit+"primaryWristAlignment"));
+                    primaryWrist.rotation=crimsonHandRotation;mount.SetPositionAndRotation(position,rotation);
+                }
+            }
+
             primaryWrist.rotation=Quaternion.AngleAxis((profile.Get("grip.primaryWristYaw")+profile.Get(fit+"primaryYaw")),mount.up)*primaryWrist.rotation;
             mount.SetPositionAndRotation(position,rotation);primaryApplied=true;
             if(weapon==WeaponId.Cutter&&cutter!=null)

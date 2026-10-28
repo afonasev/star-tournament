@@ -115,6 +115,50 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<100;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
             Assert.That(Vector3.Distance(first.transform.localPosition,rest),Is.LessThan(.00001f));
         }
+        [UnityTest] public IEnumerator CrimsonShoulderNativeReview()
+        {
+            yield return Load(1);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-10,0,14),0,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            foreach(var v in ground.GetComponentsInChildren<TrooperVisual>(true))
+                foreach(var d in ProvingProfile.CreateTrooperDefault().Descriptors)v.Tuning.Set(d.Path,d.DefaultValue);
+            var snapshot=ground.Session.Capture();snapshot.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].RocketAmmo=8;snapshot.Lives[0].Ammo=8;snapshot.Lives[0].SwitchRemaining=0;
+            ground.Session.Restore(snapshot);ground.SendMessage("LateUpdate");yield return null;
+            var view=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var body=ground.transform.Find("player-1/trooper-presentation").GetComponent<TrooperVisual>();
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_CRIMSON_EVIDENCE");
+            Assert.That(view.EquippedWeapon,Is.EqualTo(WeaponId.RocketLauncher));
+            Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("08"));
+            var bones=body.GetComponentsInChildren<Transform>(true);var shoulder=bones.Single(t=>t.name=="RightUpperArm");var saddle=bones.Single(t=>t.name=="crimson-shoulder");
+            Assert.That(Vector3.Distance(saddle.position,shoulder.position),Is.LessThan(.2f),"World saddle is located at shoulder, not chest or outstretched hands");
+            string before=JsonUtility.ToJson(ground.Session.Capture());
+            if(!string.IsNullOrEmpty(output))
+            {
+                System.IO.Directory.CreateDirectory(output);
+                for(int n=0;n<4;n++){camera.Render();yield return null;ground.SendMessage("LateUpdate");}
+                CaptureSingleView(output,"Crimson-first-person",camera,1600,900);
+                var lines=new System.Collections.Generic.List<string>();
+                foreach(var t in bones.Where(t=>t.name=="RightUpperArm"||t.name=="RightHand"||t.name=="LeftHand"||t.name=="crimson-shoulder"||t.name=="pulse-muzzle"||t.name=="trooper:rig:weapon-mount"))lines.Add(t.name+":"+body.transform.InverseTransformPoint(t.position).ToString("F4"));
+                System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"pose.txt"),lines);
+                var go=new GameObject("Crimson scene review camera");var review=go.AddComponent<Camera>();review.enabled=false;review.fieldOfView=42;review.nearClipPlane=.05f;review.farClipPlane=150;review.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18));
+                review.clearFlags=CameraClearFlags.Skybox;
+                var target=body.transform.position+Vector3.up*1.30f;
+                foreach(var angle in new[]{45,90,270})
+                {
+                    go.transform.position=target+Quaternion.AngleAxis(angle,Vector3.up)*body.transform.forward*2.8f+Vector3.up*.15f;go.transform.LookAt(target);
+                    for(int n=0;n<3;n++){review.Render();yield return null;}
+                    CaptureSingleView(output,"Crimson-world-"+angle,review,1600,1100);
+                }
+                Object.Destroy(go);
+            }
+            Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+            var actions=new LocalAction[ground.Session.ParticipantCount];ground.Session.Tick(actions,.02f);actions[0].Fire=true;ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+            Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1));
+            Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("07"));
+            if(!string.IsNullOrEmpty(output))CaptureSingleView(output,"Crimson-launch",camera,1600,900);
+        }
         [UnityTest] public IEnumerator PulseMk2StaticGripReview()
         {
             yield return Load(2);
