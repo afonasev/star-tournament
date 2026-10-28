@@ -76,6 +76,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     root.transform.rotation=Quaternion.Euler(0,view.Item2,0);visual.ResetPose(10);visual.Render(10,Vector3.zero,100,1);
                     Snapshot("native-"+view.Item1+".png");
                 }
+                foreach(var color in new[]{("blue",new Color(.06f,.30f,.85f)),("orange",new Color(.9f,.23f,.04f))})
+                {
+                    TrooperIdentityPresentation.ApplyBody(root,color.Item2);
+                    foreach(var facing in new[]{("front",0f),("back",180f)})
+                    {
+                        root.transform.rotation=Quaternion.Euler(0,facing.Item2,0);visual.ResetPose(10);visual.Render(10,Vector3.zero,100,1);
+                        Snapshot("identity-"+color.Item1+"-"+facing.Item1+".png");
+                    }
+                }
                 File.WriteAllText(Path.Combine(output,"motion-metrics.txt"),"max support slip metres="+maxSlip+"\nFrames=240 at authored 24 Hz; renderer-only trajectory, not performance or human acceptance.\n");
                 Assert.That(maxSlip,Is.LessThan(.002f),"Support remains planted through acceleration, strafing, reversal, pivot and landing");
             }

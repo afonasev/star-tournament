@@ -1,3 +1,11 @@
+# F19 reference reconstruction — F01 rework candidate
+
+**WIP, not promoted.** Iteration 3 has visible triangular face shading and insufficient reference fidelity; exported candidate is 35,631 skin triangles (over the unchanged 32,989 cap). The latest cloth reduction settings have not been exported or validated. Texture source PNGs in `textures/reference-*` are preserved, but not yet wired into the Blender material graph. Their metadata records actual 1254×1254 dimensions and prompt summaries. Native F01 QA is NotRun. Do not treat earlier F18 or iteration 2 technical PASS as verification of this checkpoint.
+
+Source `f19-reference.blend` and authoring `author_reference.py` rebuild the rejected F18 silhouette/armor/helmet around the preserved rig and glove geometry. Shared packed maps distinguish coated steel, participant-colored plates, matte woven textile, webbing, joint seals and visor. `export_reference.py` creates an isolated candidate; `--reference` retains unreduced geometry, and explicit `--promote` updates only the world model/manifest. FPS bytes and the accepted weapon are pinned to `9345bb2a`; `audit_reference.py` checks their exact compatibility and new PBR map roles.
+
+Approved visual reference and F01 evidence live in shared planning `docs/evidence/refine-vector-heavy-agile-fighter/rework-f01`. Human visual acceptance is pending. Use actual exported-model and native renders, never concept images, as evidence of implementation. Commands follow the same Blender `-b -noaudio --python-exit-code 1 --python` pattern below, using the reference scripts.
+
 # F18 ASSAULT V2 — heavy agile fighter candidate
 
 Current implementation source: `f18-heavy-agile.blend`, derived from retained F17 by
