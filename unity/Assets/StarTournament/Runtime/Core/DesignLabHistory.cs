@@ -523,6 +523,8 @@ namespace StarTournament.ProvingGround
             // Historical snapshots/hashes stay intact; migration appends the new control.
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.PulseDisplayPrefix+"diameter"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePulseDisplay()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.RifleDisplayPrefix+"width"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeRifleDisplay()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.ShotgunDisplayPrefix+"width"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeShotgunDisplay()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.VectorPrecisionPrefix+"flashScale"))

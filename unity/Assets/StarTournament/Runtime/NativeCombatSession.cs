@@ -103,6 +103,7 @@ namespace StarTournament.ProvingGround
         readonly LabRevisionReference designProfile;
         public LabRevisionReference DesignProfile=>designProfile?.Clone();
         public int ParticipantCount => lives.Length;
+        public int RifleStartingAmmo => lives[0].RifleStartingAmmo;
         public void Stop() { stopped=true; ClearInput(); }
         public SafeSpawnSelector Spawns { get; }
         public double Time { get; private set; }
