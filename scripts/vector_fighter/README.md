@@ -1,10 +1,35 @@
-# F19 reference reconstruction — F01 rework candidate
+# F19 VECTOR — детализированный художественный исходник (F01)
 
-**WIP, not promoted.** Iteration 3 has visible triangular face shading and insufficient reference fidelity; exported candidate is 35,631 skin triangles (over the unchanged 32,989 cap). The latest cloth reduction settings have not been exported or validated. Texture source PNGs in `textures/reference-*` are preserved, but not yet wired into the Blender material graph. Their metadata records actual 1254×1254 dimensions and prompt summaries. Native F01 QA is NotRun. Do not treat earlier F18 or iteration 2 technical PASS as verification of this checkpoint.
+Текущий этап: качество модели без лимита треугольников. Решение пользователя
+2026-10-29: сначала форма, материалы и детализация, затем при необходимости
+оптимизация для игры. Runtime GLB, префабы и first-person модель не обновлены.
+Художественная приёмка остаётся открытой.
 
-Source `f19-reference.blend` and authoring `author_reference.py` rebuild the rejected F18 silhouette/armor/helmet around the preserved rig and glove geometry. Shared packed maps distinguish coated steel, participant-colored plates, matte woven textile, webbing, joint seals and visor. `export_reference.py` creates an isolated candidate; `--reference` retains unreduced geometry, and explicit `--promote` updates only the world model/manifest. FPS bytes and the accepted weapon are pinned to `9345bb2a`; `audit_reference.py` checks their exact compatibility and new PBR map roles.
+`author_reference.py` воспроизводит `f19-reference.blend` из сохранённого F18.
+Броня состоит из отдельных замкнутых оболочек: плоские фрезерованные пластины
+и параметрические облегающие секции с согласованными изнанкой и кромками.
+Плечи и шлем используют прилегающие слои; исходник сохраняет rig/weights.
+Изображения `textures/reference-*` подключены в материалы: покрытие и ткань
+получают согласованные albedo/normal; покрытие также packed roughness/metallic.
+Авторский исходник хранит отдельные объекты, фаски, крепёж и материалы.
 
-Approved visual reference and F01 evidence live in shared planning `docs/evidence/refine-vector-heavy-agile-fighter/rework-f01`. Human visual acceptance is pending. Use actual exported-model and native renders, never concept images, as evidence of implementation. Commands follow the same Blender `-b -noaudio --python-exit-code 1 --python` pattern below, using the reference scripts.
+```sh
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/author_reference.py
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/export_reference.py -- --reference
+python3 scripts/vector_fighter/audit_reference_art.py --source .local/vector-reference/reference/candidate-body.glb --output .local/vector-reference/art-audit.json
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/review.py -- --source .local/vector-reference/reference/candidate-body.glb --views model-front,model-side,model-back,helmet,torso --output .local/vector-reference/art-review
+```
+
+`--reference` не сокращает сетку и не продвигает ассет в игру. Art-audit проверяет
+точные binds, weapon/FPS/source/clips, finite geometry, skin weights и PBR;
+это не тест визуального качества и не runtime-ready PASS. Игровой
+`audit_reference.py` сохраняет прежний cap 32,989, отложенный на художественном
+этапе. Не ослаблять его assertions ради исходника. `--promote` и native QA —
+следующий этап после оценки модели. Full/Player/release/deploy не разрешены.
+
+Выбранный референс и реальные рендеры: shared planning
+`docs/evidence/refine-vector-heavy-agile-fighter/rework-f01`.
+Ранние итерации содержат сохранённые FAIL, а не принятую реализацию.
 
 # F18 ASSAULT V2 — heavy agile fighter candidate
 
