@@ -121,7 +121,7 @@ namespace StarTournament.ProvingGround
             // Capture trusted baseline before published values change live profile owners.
             historyStartupBaseline=CurrentLabBundle().Clone();
             historyStartupCatalogue=LabReleaseCatalog.Load();
-            var published=DesignLabHistory.ResolvePublishedDefault(historyStartupBaseline,historyStartupCatalogue);
+            var published=DesignLabHistory.ResolveStartupDefault(historyStartupBaseline,historyStartupCatalogue);
             CacheLabIdentity(published);labBaseline=activeLabSnapshot.Clone();labDraft=labBaseline.Clone();
             ApplySavedLabRevision();
             if(labProjectRoot!=null)yield return LoadDesignLabHistory(true);
@@ -202,8 +202,9 @@ namespace StarTournament.ProvingGround
                 case "well-lifts":return "Колодец → Лифты";case "well-bots":return "Колодец → Боты";case "well-light":return "Колодец → Свет";case "well-art":return "Колодец → Оформление";
                 case "tunnel-light":return "Тоннели → Свет";case "tunnel-surface":return "Тоннели → Поверхности";
                 case "map-geometry":return "Карта → Геометрия (read-only)";case "map-spawn":return "Карта → Спавны (read-only)";case "map-transitions":return "Карта → Переходы (read-only)";case "map-routes":return "Карта → Маршруты (read-only)";case "map-bonuses":return "Карта → Бонусы (read-only)";
+                case "cobalt-shot-effects":return "Оружие → COBALT · выстрел";
                 case "hit-reaction":return "Оформление → Реакция на попадание";case "hit-body-blood":return "Оформление → Кровь на бойце";case "hit-shield":return "Оформление → Вспышки щита";
-                case "plasma-grip":return "Оружие → FORGE · хват";case "plasma":return "Оружие → FORGE";case "plasma-effects":return "Оружие → FORGE · оформление";case "cutter-effects":return "Оружие → Резак · оформление";case "cutter-bots":return "Боты → Резак";case "cutter":return "Оружие → Резак";case "rocket-effects":return "Оружие → Pulse · оформление";case "rocket":return "Оружие → Pulse";case "rifle":return "Оружие → Винтовка";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
+                case "plasma-grip":return "Оружие → FORGE · хват";case "plasma":return "Оружие → FORGE";case "plasma-effects":return "Оружие → FORGE · оформление";case "cutter-effects":return "Оружие → Резак · оформление";case "cutter-bots":return "Боты → Резак";case "cutter":return "Оружие → Резак";case "rocket-effects":return "Оружие → Pulse · оформление";case "rocket":return "Оружие → Pulse";case "rifle":return "Оружие → Винтовка";case "cobalt-display-v1":return "Оружие → COBALT · дисплей";case "pulse-display-v1":return "Оружие → Pulse · счётчик";case "shotgun-display-v1":return "Оружие → Дробовик · дисплей";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
                 case "weapon-pickup":return "Бонусы → Оружие";case "full-heal":return "Бонусы → Полное исцеление";case "armor-pickup":return "Бонусы → Броня";case "damage-boost":return "Бонусы → Урон";case "speed-pickup":return "Бонусы → Скорость";
                 case "pickups":return "Бонусы → Подбор";case "combat":return "Игрок → Здоровье";case "motor":return "Игрок → Движение";
                 case "capsule":return "Игрок → Капсула";case "camera":return "Камера → Вид игрока";case "input":return "Игрок → Управление";

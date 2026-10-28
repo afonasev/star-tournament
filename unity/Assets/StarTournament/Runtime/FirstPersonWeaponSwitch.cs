@@ -32,14 +32,31 @@ namespace StarTournament.ProvingGround
         readonly Quaternion[] sampled;
         readonly float[] angles;
         readonly Vector3 rest;
+        readonly Camera camera;
+        readonly string[][] commonPaths=new string[2][];
+        readonly Transform[] fingerBones=new Transform[30];
+        readonly Quaternion[] fingerSamples=new Quaternion[30];
+        readonly Vector3[] fingerTargets=new Vector3[10];
+        readonly Transform leftHand,rightHand,mount,leftShoulder,rightShoulder,leftPalm,rightPalm;
+        Vector3 leftShoulderSample,rightShoulderSample;
+        Quaternion leftSample,rightSample,mountSampleRotation;
+        Vector3 mountSamplePosition;
         int revision=-1;
         public FirstPersonWeaponSwitch(GameObject view,Camera camera)
         {
-            root=view.transform;axis=camera.transform;model=view.GetComponent<WeaponModelPresentation>();
+            this.camera=camera;root=view.transform;axis=camera.transform;model=view.GetComponent<WeaponModelPresentation>();
             visual=view.GetComponent<TrooperVisual>();var profile=visual.Tuning;
             rest=new Vector3(profile.Get("view.x"),profile.Get("view.y"),profile.Get("view.z"));root.localPosition=rest;
             var bones=view.GetComponentsInChildren<Transform>(true);
-            // Joint names are the imported Humanoid rig contract; pivots never translate.
+            leftShoulder=Array.Find(bones,b=>b.name=="LeftShoulder");rightShoulder=Array.Find(bones,b=>b.name=="RightShoulder");
+            leftPalm=Array.Find(bones,b=>b.name=="LeftMiddleProximal");rightPalm=Array.Find(bones,b=>b.name=="RightMiddleProximal");
+            leftHand=Array.Find(bones,b=>b.name=="LeftHand");rightHand=Array.Find(bones,b=>b.name=="RightHand");
+            mount=Array.Find(bones,b=>b.name=="trooper:rig:weapon-mount");
+            int fingerIndex=0;
+            foreach(var side in new[]{"Left","Right"})foreach(var digit in new[]{"Thumb","Index","Middle","Ring","Little"})foreach(var segment in new[]{"Proximal","Intermediate","Distal"})
+                fingerBones[fingerIndex++]=Array.Find(bones,b=>b.name==side+digit+segment);
+            // Joint names are the imported Humanoid rig contract. The hidden view-only shoulder attachment may translate.
+            for(int side=0;side<2;side++){string prefix="view.common"+(side==0?"Left":"Right");commonPaths[side]=new[]{prefix+"X",prefix+"Y",prefix+"Z",prefix+"DirectionX",prefix+"DirectionY",prefix+"DirectionZ"};}
             joints=new Transform[4];sampled=new Quaternion[4];angles=new float[4];
             string[] names={"LeftUpperArm","RightUpperArm","LeftLowerArm","RightLowerArm"};
             for(int i=0;i<names.Length;i++)
@@ -55,13 +72,83 @@ namespace StarTournament.ProvingGround
             if(revision!=visual.PoseRevision)
             {
                 for(int i=0;i<joints.Length;i++)sampled[i]=joints[i].localRotation;
+                for(int i=0;i<fingerBones.Length;i++)fingerSamples[i]=fingerBones[i].localRotation;
+                leftShoulderSample=leftShoulder.localPosition;rightShoulderSample=rightShoulder.localPosition;
+                leftSample=leftHand.localRotation;rightSample=rightHand.localRotation;
+                mountSamplePosition=mount.localPosition;mountSampleRotation=mount.localRotation;
                 revision=visual.PoseRevision;
             }
             // Start from the sampled clip each time, including repeated render and completion-tick muzzle reads.
             for(int i=0;i<joints.Length;i++)joints[i].localRotation=sampled[i];
+            for(int i=0;i<fingerBones.Length;i++)fingerBones[i].localRotation=fingerSamples[i];
+            leftShoulder.localPosition=leftShoulderSample;rightShoulder.localPosition=rightShoulderSample;
+            leftHand.localRotation=leftSample;rightHand.localRotation=rightSample;
+            mount.localPosition=mountSamplePosition;mount.localRotation=mountSampleRotation;
             for(int i=0;i<joints.Length;i++)
                 joints[i].rotation=Quaternion.AngleAxis(-angles[i]*pose.Lift,axis.right)*joints[i].rotation;
             root.localPosition=rest+visual.ViewOffset;model?.Show(pose.Weapon);
+            if(visual.Tuning.Version>=28&&visual.Tuning.Get("view.armEntryEnabled")>0)
+            {
+                var weaponPosition=mount.position;var weaponRotation=mount.rotation;
+                if(visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)
+                {
+                    for(int finger=0;finger<10;finger++)fingerTargets[finger]=fingerBones[finger*3+2].position;
+                    FitCommon(leftShoulder,joints[2],leftHand,leftPalm,visual.LeftForearmReferenceRotation,0,pose.Lift);
+                    FitCommon(rightShoulder,joints[3],rightHand,rightPalm,visual.RightForearmReferenceRotation,1,pose.Lift);
+                }
+                else
+                {
+                    FitEntry(leftShoulder,joints[2],leftHand,leftPalm,visual.Tuning.Get("view.armEntryLeftX"));
+                    FitEntry(rightShoulder,joints[3],rightHand,rightPalm,visual.Tuning.Get("view.armEntryRightX"));
+                }
+                mount.SetPositionAndRotation(weaponPosition,weaponRotation);
+                if(visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)FitCommonFingers();
+            }
+        }
+        void FitCommon(Transform shoulder,Transform elbow,Transform hand,Transform palm,Quaternion reference,int side,float lift)
+        {
+            var p=visual.Tuning;var paths=commonPaths[side];
+            var point=new Vector3(p.Get(paths[0]),p.Get(paths[1]),p.Get(paths[2]));
+            var direction=new Vector3(p.Get(paths[3]),p.Get(paths[4]),p.Get(paths[5])).normalized;
+            if(direction.sqrMagnitude<.000001f)return; // A zero authored direction has no valid orientation.
+            var turn=Quaternion.AngleAxis(-p.Get("view.switchShoulderDegrees")*lift,Vector3.right);
+            point=turn*point+visual.ViewOffset;direction=axis.TransformDirection(turn*direction);
+            var handRotation=hand.rotation;var palmPosition=palm.position;var palmDirection=palm.position-hand.position;float length=Vector3.Distance(elbow.position,hand.position);
+            var rotation=Quaternion.FromToRotation(reference*hand.localPosition,direction)*reference;
+            var target=axis.TransformPoint(point)-direction*length;
+            shoulder.position+=target-elbow.position;
+            elbow.rotation=rotation;
+            var aim=Vector3.RotateTowards(direction,(palmPosition-hand.position).normalized,p.Get("view.commonWristLimit")*Mathf.Deg2Rad,0);
+            hand.rotation=Quaternion.FromToRotation(palmDirection,aim)*handRotation;
+        }
+        void FitCommonFingers()
+        {
+            int iterations=(int)visual.Tuning.Get("view.commonFingerIterations");float step=visual.Tuning.Get("view.commonFingerStep");
+            for(int finger=0;finger<10;finger++)for(int iteration=0;iteration<iterations;iteration++)for(int link=1;link>=0;link--)
+            {
+                var joint=fingerBones[finger*3+link];var end=fingerBones[finger*3+2];
+                var from=end.position-joint.position;var to=fingerTargets[finger]-joint.position;
+                if(from.sqrMagnitude<.0000001f||to.sqrMagnitude<.0000001f)continue;
+                joint.rotation=Quaternion.RotateTowards(Quaternion.identity,Quaternion.FromToRotation(from,to),step)*joint.rotation;
+            }
+        }
+        void FitEntry(Transform shoulder,Transform elbow,Transform hand,Transform palm,float horizontalOffset)
+        {
+            var b=elbow.position;var c=hand.position;var handRotation=hand.rotation;
+            float length=Vector3.Distance(b,c);
+            // Height-relative coordinates preserve the physical ray across split-screen aspect ratios.
+            float viewportX=.5f+horizontalOffset/camera.aspect;
+            var ray=camera.ViewportPointToRay(new Vector3(viewportX,0,0));
+            var normal=Vector3.Cross(c-ray.origin,ray.direction).normalized;
+            var direction=Vector3.ProjectOnPlane(palm.position-c,normal).normalized;
+            // Singular plane guard, not art tuning. No change is safer than a collapsed forearm.
+            if(direction.sqrMagnitude<.000001f)return;
+            var target=c-direction*length;
+            // The first-person sleeve's hidden shoulder attachment may move; upper/lower arm
+            // lengths, palm contact and weapon pose cannot. World-body rigs never use this pass.
+            shoulder.position+=target-b;
+            elbow.rotation=Quaternion.FromToRotation(hand.position-elbow.position,c-elbow.position)*elbow.rotation;
+            hand.rotation=handRotation;
         }
     }
 }

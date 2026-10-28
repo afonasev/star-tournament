@@ -138,7 +138,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator MapDraftSurvivesReentryButColdReloadUsesDefaults()
         {
             yield return Load();yield return Click("lobby-map");yield return Click("lobby-map-"+IndustrialTunnelsCatalog.Id);
-            ground.AddBot();yield return Press(GamepadButton.Start);yield return NativeLoadingTestScene.Wait(ground);
+            for(int i=0;i<3;i++)ground.AddBot();yield return Press(GamepadButton.Start);yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.Running,Is.True);Assert.That(PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey),Is.EqualTo(IndustrialTunnelsCatalog.Id));
             typeof(ProvingGround).GetMethod("ToMainMenu",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,null);
             yield return Press(GamepadButton.South);Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));

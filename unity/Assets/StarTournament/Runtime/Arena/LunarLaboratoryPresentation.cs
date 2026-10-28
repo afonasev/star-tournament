@@ -25,15 +25,17 @@ namespace StarTournament.ProvingGround
             ceiling=Mat("Acoustic ceiling / perforated panels",new Color(.94f,.94f,.9f),Texture("Ceiling / perforations and narrow panel joints",3));
             grate=Mat("Grating alloy without aliasing shadows",new Color(.31f,.36f,.39f),panels,.6f);paving=Mat("Dust-grey paving",new Color(.51f,.52f,.5f),panels,0,false,VisualMaterialRole.Floor);
             glass=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Transparent projectile-proof armored glass"};owned.Add(glass);glass.color=new Color(.39f,.66f,.72f,P("glassOpacity"));glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",(float)BlendMode.SrcAlpha);glass.SetFloat("_DstBlend",(float)BlendMode.OneMinusSrcAlpha);glass.SetFloat("_ZWrite",0);glass.SetFloat("_Smoothness",.7f);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.renderQueue=3000;
-            int decorated=0;
+            var slice=new LoadingWorkSlice();float tile=P("tile");
+            var targets=new ArenaPresentationLookup(transform.parent);
             foreach(var s in d.Solids)
             {
-                if(decorated++%16==0)yield return null;
-                var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
+                if(slice.Expired){yield return null;slice.Restart();}
+                var target=targets.Find(s.Id);var renderer=target.GetComponent<Renderer>();
                 renderer.sharedMaterial=s.Id.StartsWith("cargo-")?(s.Position.z>0?blue:ochre):s.Id.Contains("-bar-")?grate:s.Surface=="lunar-glass"?glass:s.Surface=="lunar-sand"?sand:(s.Surface=="lunar-graphite"||s.Surface=="lunar-light")?graphite:s.Material=="metal"||s.Surface=="lunar-step"||s.Surface=="lunar-grate"||s.Id.StartsWith("fence-")||s.Id.StartsWith("rail-")?metal:ivory;
                 if(s.Surface=="lunar-grate") {renderer.enabled=false;continue;}
-                var mesh=Instantiate(target.GetComponent<MeshFilter>().sharedMesh);owned.Add(mesh);var v=mesh.vertices;var norms=mesh.normals;var uv=mesh.uv;
-                for(int i=0;i<v.Length;i++){var a=Vector3.Scale(v[i],s.Size);uv[i]=(Mathf.Abs(norms[i].y)>.5f?new Vector2(a.x,a.z):Mathf.Abs(norms[i].x)>.5f?new Vector2(a.z,a.y):new Vector2(a.x,a.y))/P("tile");}mesh.uv=uv;target.GetComponent<MeshFilter>().sharedMesh=mesh;
+                var source=target.GetComponent<MeshFilter>().sharedMesh;var data=targets.Read(source);
+                var mesh=Instantiate(source);owned.Add(mesh);var v=data.Vertices;var norms=data.Normals;var uv=(Vector2[])data.Uv.Clone();
+                for(int i=0;i<v.Length;i++){var a=Vector3.Scale(v[i],s.Size);uv[i]=(Mathf.Abs(norms[i].y)>.5f?new Vector2(a.x,a.z):Mathf.Abs(norms[i].x)>.5f?new Vector2(a.z,a.y):new Vector2(a.x,a.y))/tile;}mesh.uv=uv;target.GetComponent<MeshFilter>().sharedMesh=mesh;
                 if(s.Surface!="lunar-glass")
                 {
                     renderer.enabled=false;
@@ -61,7 +63,8 @@ namespace StarTournament.ProvingGround
         {
             // Raster size, palette and noise encoding are fixed asset authoring, not simulation numbers.
             const int n=256;var t=new Texture2D(n,n,TextureFormat.RGB24,true){name=name,wrapMode=TextureWrapMode.Repeat};owned.Add(t);var c=new Color[n*n];
-            for(int y=0;y<n;y++)for(int x=0;x<n;x++)
+            ArenaTextureWork.Rows(n,y=>
+            {for(int x=0;x<n;x++)
             {
                 uint h=unchecked((uint)(x*73856093)^(uint)(y*19349663));h^=h>>13;float noise=(h%1000)/1000f;
                 float a=kind==0?.9f+noise*.08f:.58f+noise*.3f+Mathf.PerlinNoise(x*.045f,y*.045f)*.22f;
@@ -70,6 +73,7 @@ namespace StarTournament.ProvingGround
                 if(kind==3){a=.95f+noise*.04f;if(x<2||y<2)a=.72f;else if(x%12<2&&y%12<2)a=.48f;}
                 c[y*n+x]=new Color(a,a,a);
             }
+            });
             t.SetPixels(c);t.Apply(true,true);return t;
         }
         void Shape(Material m,Mesh mesh,Vector3 c,Vector3 scale,Quaternion rot)

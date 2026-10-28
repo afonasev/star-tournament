@@ -137,6 +137,7 @@ namespace StarTournament.ProvingGround
         }
         public void Build(ArenaDefinition definition,ProvingProfile profile)
         {
+            var trace=new ArenaBuildTrace("well-presentation");
             this.profile=profile;oldMode=RenderSettings.ambientMode;oldAmbient=RenderSettings.ambientLight;
             white=Mat("Well ceramic white",new Color(.95f,.95f,.93f));floor=Mat("Well pale floor",new Color(.71f,.73f,.71f),role:VisualMaterialRole.Floor);metal=Mat("Well brushed metal",new Color(.64f,.67f,.67f),role:VisualMaterialRole.Metal);metal.SetFloat("_Metallic",.35f);
             ceiling=Mat("Well technical ceiling",new Color(.86f,.89f,.89f));
@@ -151,10 +152,12 @@ namespace StarTournament.ProvingGround
             detail=new WellLabDetail(transform,owned,profile,metal,door,screen,indicator);
             glass=Mat("Armoured glass",new Color(.72f,.90f,.94f,profile.Get("well.glassOpacity")),register:false);glass.SetFloat("_Surface",1);glass.SetFloat("_Blend",0);glass.SetFloat("_SrcBlend",1);glass.SetFloat("_DstBlend",10);glass.SetFloat("_ZWrite",0);glass.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");glass.EnableKeyword("_ALPHAPREMULTIPLY_ON");glass.renderQueue=3000;glass.SetFloat("_Smoothness",profile.Get("well.glassSmoothness"));glass.SetFloat("_Metallic",0);glass.SetFloat("_BlendModePreserveSpecular",1);glass.SetShaderPassEnabled("ShadowCaster",false);
             colours=new[]{Mat("01 bio green",new Color(.12f,.62f,.30f)),Mat("02 physics blue",new Color(.08f,.42f,.80f)),Mat("03 electronics yellow",new Color(.90f,.67f,.08f))};
+            trace.Mark("materials-textures");
+            var targets=new ArenaPresentationLookup(transform.parent);
             // Replace the generic physical meshes with material batches, keeping their exact colliders.
             foreach(var solid in definition.Solids)
             {
-                var tr=transform.parent.Find(solid.Id);if(!tr)continue;tr.GetComponent<Renderer>().enabled=false;
+                var tr=targets.Find(solid.Id);if(!tr)continue;tr.GetComponent<Renderer>().enabled=false;
                 int storey=Mathf.Clamp(Mathf.RoundToInt((solid.Position.y+solid.Size.y/2)/WellArenaCatalog.Storey),0,2);
                 Material m=solid.Material=="glass"?glass:solid.Material=="door"?door:solid.Material=="floor"?(solid.Id=="garden"?soil:solid.Id.StartsWith("f")?storeyFloors[storey]:floor):white;
                 if(WellFurniturePlan.IsFurniture(solid))
@@ -234,15 +237,16 @@ namespace StarTournament.ProvingGround
             BuildPickupMarkings(definition);
             detail.Garden();
             detail.Finish();
+            trace.Mark("decoration");
             var surfaceOwners=new List<Bounds>();
             foreach(var pair in batches)
             {
                 var blockers=pair.Key==glass?null:batches.Where(p=>p.Key!=pair.Key&&p.Key!=glass).SelectMany(p=>p.Value).ToArray();
-                var mesh=WellSurfaceMesh.Build(pair.Value,blockers,pair.Key==glass?null:surfaceOwners);owned.Add(mesh);
+                var mesh=WellSurfaceMesh.Build(pair.Value,blockers,pair.Key==glass?null:surfaceOwners);owned.Add(mesh);trace.Mark("surface-"+pair.Key.name);
                 if(pair.Key!=glass)surfaceOwners.AddRange(pair.Value);
                 if(architecture.Contains(pair.Key))
                 {
-                    var contact=WellContactMesh.Build(mesh,definition.Solids.Where(s=>s.Material!="glass"&&s.Surface!="well-grate").Select(s=>new Bounds(s.Position,s.Size)).ToArray());owned.Add(contact);mesh=contact;
+                    var contact=WellContactMesh.Build(mesh,definition.Solids.Where(s=>s.Material!="glass"&&s.Surface!="well-grate").Select(s=>new Bounds(s.Position,s.Size)).ToArray());owned.Add(contact);mesh=contact;trace.Mark("contact-"+pair.Key.name);
                 }
                 var go=new GameObject(pair.Key.name);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();if(architecture.Contains(pair.Key))
                 {WellSurfaceMesh.SplitHorizontalMaterials(mesh);int floorIndex=System.Array.IndexOf(storeyFloors,pair.Key);
@@ -250,7 +254,7 @@ namespace StarTournament.ProvingGround
                 else renderer.sharedMaterial=pair.Key;
                 if(pair.Key==glass)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
-            batches.Clear();
+            trace.Mark("renderers");batches.Clear();
             RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=(profile.Version>=5?new Color(profile.Get("well.fillRed"),profile.Get("well.fillGreen"),profile.Get("well.fillBlue")):new Color(1,.99f,.97f))*profile.Get("well.fill");
         }
         void OnDestroy(){Font.textureRebuilt-=RefreshFont;RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;foreach(var o in owned)if(o)Destroy(o);}

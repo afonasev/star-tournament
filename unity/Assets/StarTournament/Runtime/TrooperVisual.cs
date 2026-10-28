@@ -15,6 +15,9 @@ namespace StarTournament.ProvingGround
         AnimationClipPlayable[] playable;
         ProvingProfile profile;
         OrbitalGripPose equipmentGrip;
+        Transform referenceLeftForearm,referenceRightForearm;
+        public Quaternion LeftForearmReferenceRotation {get;private set;}
+        public Quaternion RightForearmReferenceRotation {get;private set;}
         VectorAirbornePose airborne;
         VectorGroundedGait gait;
         readonly double[] starts=new double[7]; // Fixed clip contract, not tunable gameplay data.
@@ -81,6 +84,7 @@ namespace StarTournament.ProvingGround
             animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
             animator.Rebind();
             equipmentGrip=new OrbitalGripPose(animator.transform);
+            foreach(var bone in animator.GetComponentsInChildren<Transform>(true)){if(bone.name=="LeftLowerArm")referenceLeftForearm=bone;else if(bone.name=="RightLowerArm")referenceRightForearm=bone;}
             airborne=new VectorAirbornePose(animator.transform,transform,profile,firstPerson);
             gait=firstPerson?null:new VectorGroundedGait(animator.transform,transform,profile);
             graph=PlayableGraph.Create("trooper-presentation"); graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
@@ -164,6 +168,7 @@ namespace StarTournament.ProvingGround
             if(immediate) Array.Copy(weights,transitionFrom,weights.Length);
             equipmentGrip?.RestorePrimary();
             graph.Evaluate(0);
+            LeftForearmReferenceRotation=referenceLeftForearm?referenceLeftForearm.rotation:Quaternion.identity;RightForearmReferenceRotation=referenceRightForearm?referenceRightForearm.rotation:Quaternion.identity;
             if(!corpse&&chest&&hitProfile!=null)
             {
                 var impulse=Impulse(clock);float degrees=hitProfile.Get("hit.degrees");
@@ -172,7 +177,7 @@ namespace StarTournament.ProvingGround
                 var actorToParent=Quaternion.Inverse(chest.parent.rotation)*transform.rotation;
                 chest.localRotation=(actorToParent*impulse*Quaternion.Inverse(actorToParent))*chest.localRotation;
             }
-            if(!corpse){airborne?.Apply();gait?.Apply(clock);equipmentGrip?.Apply(profile,EquippedWeapon,EquippedWeapon==WeaponId.Plasma?(GetComponent<WeaponModelPresentation>()?.PlasmaViewScale??1):1);}
+            if(!corpse){airborne?.Apply();gait?.Apply(clock);equipmentGrip?.Apply(profile,EquippedWeapon,EquippedWeapon==WeaponId.Plasma?(GetComponent<WeaponModelPresentation>()?.PlasmaViewScale??1):1,GetComponent<WeaponModelPresentation>()?.CutterGripProfile);}
             PoseRevision++;
         }
         public void Release()

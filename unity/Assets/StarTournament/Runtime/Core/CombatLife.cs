@@ -53,6 +53,7 @@ namespace StarTournament.ProvingGround
         readonly double cooldown, rifleCooldown, rocketCooldown, respawnDelay, switchSeconds, plasmaCooldown;
         CombatLifeState state;
         public double SwitchSeconds => switchSeconds;
+        public int RifleStartingAmmo => rifleStartingAmmo;
         public CombatLifeState Read() => state; // Value DTO: readers cannot mutate owned state.
         public bool ReadyToRespawn => state.Dead && state.RespawnRemaining <= 0;
 

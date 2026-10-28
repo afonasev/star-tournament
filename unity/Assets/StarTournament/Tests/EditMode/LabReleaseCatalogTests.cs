@@ -12,6 +12,23 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static LabBundle Baseline()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
         static LabReleaseEntry Entry(int sequence,string id,string name,int number,LabBundle snapshot)=>new LabReleaseEntry{
             Sequence=sequence,ProfileId=id,ProfileName=name,Revision=number,Date="20261007",Hash=snapshot.Hash(),Snapshot=snapshot.Clone()};
+        [Test]public void StartupResolverPreservesPublishedSelectionAndValidatesOlderEntries()
+        {
+            var baseline=Baseline();var catalog=LabReleaseCatalog.Factory(baseline);
+            var published=baseline.Clone();published.Set("rifle.damage",40);
+            catalog.Entries.Add(Entry(4,DesignLabHistory.ReleaseId,"Default",6,published));
+            var alternative=baseline.Clone();alternative.Set("rifle.damage",50);
+            catalog.Entries.Add(Entry(5,"alternative","Alternative",1,alternative));
+            string before=UnityEngine.JsonUtility.ToJson(catalog);
+            var expected=DesignLabHistory.ResolvePublishedDefault(baseline,catalog);
+            var startup=DesignLabHistory.ResolveStartupDefault(baseline,catalog);
+            Assert.That(startup.Selected.Snapshot.Hash(),Is.EqualTo(expected.Selected.Snapshot.Hash()));
+            Assert.That(UnityEngine.JsonUtility.ToJson(startup.SavedIdentity(startup.SelectedProfileId,startup.Selected.Number)),
+                Is.EqualTo(UnityEngine.JsonUtility.ToJson(expected.SavedIdentity(expected.SelectedProfileId,expected.Selected.Number))));
+            Assert.That(UnityEngine.JsonUtility.ToJson(catalog),Is.EqualTo(before),"Startup must not trim the original catalogue");
+            catalog.Entries[0].Hash="damaged older entry";
+            Assert.Throws<System.IO.InvalidDataException>(()=>DesignLabHistory.ResolveStartupDefault(baseline,catalog));
+        }
         [Test]public void PublishedDefaultResolverIgnoresLocalHistoryAndPreservesCatalogueTuning()
         {
             var baseline=Baseline();var catalogue=LabReleaseCatalog.Factory(baseline);

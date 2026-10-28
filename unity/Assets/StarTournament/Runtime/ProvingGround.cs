@@ -28,6 +28,7 @@ namespace StarTournament.ProvingGround
         readonly Camera[] cameras = new Camera[SeatInputCoordinator.SeatCount];
         readonly Text[] hud = new Text[SeatInputCoordinator.SeatCount], names = new Text[SeatInputCoordinator.SeatCount];
         public HitFeedbackPresentation HitFeedbackForReview=>presentation?.HitFeedbackForReview;
+        public ForgeReactorPresentation ForgeReactorForReview=>presentation?.ForgeReactorForReview;
         internal RocketPresentation RocketEffectsForReview=>presentation?.RocketEffectsForReview;
         public ProvingProfile RocketEffectsProfile = ProvingProfile.CreateRocketEffectsDefault();
         public ProvingProfile PlasmaProfile = ProvingProfile.CreatePlasmaDefault();
@@ -713,6 +714,8 @@ namespace StarTournament.ProvingGround
         }
         static ProvingProfile Copy(ProvingProfile p) => JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(p));
         void BuildSelectedArena() { var steps=BuildSelectedArenaSteps(false);while(steps.MoveNext()){} }
+        string preparedArenaDefinition,preparedArenaMovement,preparedArenaArt;
+        ProvingArena preparedArenaOwner;
         IEnumerator BuildSelectedArenaSteps(bool asynchronous)
         {
             visualPresentation?.ResetWorld();
@@ -731,10 +734,30 @@ namespace StarTournament.ProvingGround
             bool lunar=SelectedMapId==LunarLaboratoryCatalog.Id;
             if(lunar)studioLight.intensity=LunarPresentation.Get("lunar.sun");
             if(SelectedMapId==WellArenaCatalog.Id)WellArenaPresentation.ConfigureDaylight(studioLight,WellProfile);
-            var steps=arena.BuildSteps(frozen,Profile,SelectedMapId==WellArenaCatalog.Id?WellProfile:lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile,asynchronous);
-            while(steps.MoveNext())yield return steps.Current;
+            var art=SelectedMapId==WellArenaCatalog.Id?WellProfile:lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile;
+            var definitionKey=JsonUtility.ToJson(frozen.Definition);
+            var movementKey=JsonUtility.ToJson(Profile);var artKey=JsonUtility.ToJson(art);
+            bool reuse=preparedArenaOwner==arena&&preparedArenaDefinition==definitionKey&&
+                preparedArenaMovement==movementKey&&preparedArenaArt==artKey&&
+                arena.Surface&&arena.Surface.isActiveAndEnabled&&arena.Surface.navMeshData&&
+                JsonUtility.ToJson(arena.Definition)==definitionKey;
+            // Publish a reusable projection only after all construction and binding succeeds.
+            preparedArenaOwner=null;
+            if(reuse)
+            {
+                frozen.RequireDefinition(arena.Definition);
+                arena.Lifts?.Reset();
+                arena.SpawnsFromDefinition();
+                Physics.SyncTransforms();
+            }
+            else
+            {
+                var steps=arena.BuildSteps(frozen,Profile,art,asynchronous);
+                while(steps.MoveNext())yield return steps.Current;
+            }
             ApplyShadowPreference();
             visualPresentation?.Bind(Profile,arena.transform,studioLight,cameras);
+            preparedArenaDefinition=definitionKey;preparedArenaMovement=movementKey;preparedArenaArt=artKey;preparedArenaOwner=arena;
         }
         static string TimeLabel(double seconds) { int value=(int)Math.Ceiling(seconds); return (value/60).ToString("00")+":"+(value%60).ToString("00"); }
         void CreateMatch(bool repeating) { DrainLoadingSteps(CreateMatchSteps(repeating)); }

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.RenderGraphModule;
 
 namespace StarTournament.ProvingGround
 {
@@ -14,6 +16,12 @@ namespace StarTournament.ProvingGround
             public LineRenderer Flame,Core;
             public ParticleSystem Smoke;
         }
+        sealed class Ignition
+        {
+            public GameObject Root;public LineRenderer Flame;public double Time;public Vector3 Position,Direction;public uint Id;public bool Active;
+        }
+        readonly List<Ignition> ignitions=new List<Ignition>();
+        public int ActiveIgnitions {get {int n=0;foreach(var i in ignitions)if(i.Active)n++;return n;}}
         sealed class Burst
         {
             public GameObject Root;
@@ -33,9 +41,28 @@ namespace StarTournament.ProvingGround
         readonly List<Burst> bursts=new List<Burst>();
         readonly List<uint> removed=new List<uint>();
         readonly HashSet<uint> liveIds=new HashSet<uint>();
-        readonly Material fireMaterial,exhaustMaterial,smokeMaterial,glowMaterial;
+        readonly Material fireMaterial,exhaustMaterial,smokeMaterial,burstSmokeMaterial,glowMaterial;
         readonly Texture2D fireTexture,exhaustTexture,smokeTexture,glowTexture;
         readonly ParticleSystem.Particle[] particles;
+        // Depth is requested only on this presentation's cameras while a burst is alive.
+        // Remember the tri-state option, including UsePipelineSettings, for exact restoration.
+        readonly Dictionary<UniversalAdditionalCameraData,CameraOverrideOption> depthOptions=new Dictionary<UniversalAdditionalCameraData,CameraOverrideOption>();
+        readonly List<UniversalAdditionalCameraData> addedCameraData=new List<UniversalAdditionalCameraData>();
+        sealed class SoftDepthInput:ScriptableRenderPass
+        {
+            // This renderer normally copies depth AFTER transparent objects. Declare
+            // Pulse's earlier read so URP schedules the copy before our billboards.
+            public SoftDepthInput(){renderPassEvent=RenderPassEvent.BeforeRenderingTransparents;ConfigureInput(ScriptableRenderPassInput.Depth);}
+            public override void RecordRenderGraph(RenderGraph graph,ContextContainer frameData){}
+            public override void Execute(ScriptableRenderContext context,ref RenderingData renderingData){}
+        }
+        readonly SoftDepthInput softDepthInput=new SoftDepthInput();
+        void BeforeCamera(ScriptableRenderContext context,Camera camera)
+        {
+            if(ActiveBursts==0)return;
+            var data=camera.GetComponent<UniversalAdditionalCameraData>();
+            if(data&&depthOptions.ContainsKey(data))data.scriptableRenderer.EnqueuePass(softDepthInput);
+        }
         public int ActiveFlights=>flights.Count;
         public int ActiveBursts {get {int n=0;foreach(var b in bursts)if(b.Active)n++;return n;}}
         public int PooledBursts=>bursts.Count;
@@ -47,23 +74,41 @@ namespace StarTournament.ProvingGround
             this.session=session;this.profile=profile;this.owner=owner;this.prefab=prefab;
             this.effects=effects??ProvingProfile.CreateRocketEffectsDefault();
             // Fixed procedural sprite sampling/motif is authored art, independent of visual size/lifetime.
-            fireTexture=FireAtlas();
-            exhaustTexture=CloudTexture("Pulse exhaust",true,false);
-            smokeTexture=CloudTexture("Pulse soft smoke",false,false);
+            fireTexture=RequiredArt("FireAtlas");
+            exhaustTexture=RequiredArt("Exhaust");
+            smokeTexture=RequiredArt("Smoke");
             glowTexture=CloudTexture("Pulse hot core",false,true);
-            fireMaterial=Material(fireTexture);exhaustMaterial=Material(exhaustTexture);smokeMaterial=Material(smokeTexture);glowMaterial=Material(glowTexture);
+            fireMaterial=Material(fireTexture,true);exhaustMaterial=Material(exhaustTexture);smokeMaterial=Material(smokeTexture);burstSmokeMaterial=Material(smokeTexture,true);glowMaterial=Material(glowTexture);
             particles=new ParticleSystem.Particle[Mathf.Max(1,Mathf.Max((int)F("fireCount"),Mathf.Max((int)F("sparkCount"),Mathf.Max((int)F("smokeCount"),(int)F("trailSmokeCount")))))];
-            session.RocketExploded+=Explode;session.StateRestored+=Clear;
+            session.RocketExploded+=Explode;session.StateRestored+=Clear;RenderPipelineManager.beginCameraRendering+=BeforeCamera;
         }
         float P(string key)=>profile.Get("presentation."+key);
         float F(string key)=>effects.Get("pulseFx."+key);
         Color Hot=>new Color(P("rocketRed"),P("rocketGreen"),P("rocketBlue"));
         Color CoreColor(float alpha){var color=Color.Lerp(Color.white,Hot,F("coreWarmth"));color.a=alpha;return color;}
-        Material Material(Texture2D texture)
+        Material Material(Texture2D texture,bool soft=false)
         {
-            var shader=Shader.Find("StarTournament/VectorParticle");
+            var shader=Shader.Find(soft?"StarTournament/PulseSoftParticle":"StarTournament/VectorParticle");
             if(!shader)throw new InvalidOperationException("Pulse particle shader missing from build");
-            return new Material(shader){name=texture.name,mainTexture=texture};
+            var material=new Material(shader){name=texture.name,mainTexture=texture};
+            if(soft){material.SetFloat("_FadeDistance",F("surfaceFadeMeters"));material.SetFloat("_Radiance",texture==fireTexture?F("fireRadiance"):1);}
+            return material;
+        }
+        void UpdateDepthRequests()
+        {
+            if(ActiveBursts==0){RestoreDepthRequests();return;}
+            foreach(var camera in owner.GetComponentsInChildren<Camera>(true))
+            {
+                var data=camera.GetComponent<UniversalAdditionalCameraData>();
+                if(!data){data=camera.gameObject.AddComponent<UniversalAdditionalCameraData>();addedCameraData.Add(data);}
+                if(depthOptions.ContainsKey(data))continue;
+                depthOptions.Add(data,data.requiresDepthOption);data.requiresDepthTexture=true;
+            }
+        }
+        void RestoreDepthRequests()
+        {
+            foreach(var pair in depthOptions)if(pair.Key)pair.Key.requiresDepthOption=pair.Value;
+            depthOptions.Clear();
         }
         static Texture2D CloudTexture(string name,bool fire,bool glow)
         {
@@ -84,26 +129,11 @@ namespace StarTournament.ProvingGround
             }
             texture.Apply(false,true);return texture;
         }
-        static Texture2D FireAtlas()
+        static Texture2D RequiredArt(string name)
         {
-            // Authored 4x4, 128px motifs: fixed art sampling, independent of gameplay and user scale.
-            const int tile=128,grid=4;var texture=new Texture2D(tile*grid,tile*grid,TextureFormat.RGBA32,false){name="Pulse animated fire atlas",wrapMode=TextureWrapMode.Clamp};
-            var pixels=new Color[tile*grid*tile*grid];
-            for(int frame=0;frame<grid*grid;frame++)for(int y=0;y<tile;y++)for(int x=0;x<tile;x++)
-            {
-                float u=(x+.5f)/tile,v=(y+.5f)/tile,phase=frame*.23f;
-                float warp=Mathf.PerlinNoise(u*4+phase,v*4+11)-.5f;
-                float a=Mathf.PerlinNoise(u*5+warp+phase,v*5+19-phase),b=Mathf.PerlinNoise(u*13+phase,v*13+warp+3),c=Mathf.PerlinNoise(u*31-phase,v*31+phase);
-                float r=new Vector2(u*2-1,v*2-1).magnitude;
-                float edge=Mathf.Clamp01((.86f+.12f*a-r)*12);
-                float heat=Mathf.Clamp01(a*.7f+b*.5f+c*.18f-.28f+(1-r)*.2f);
-                float veins=Mathf.Pow(Mathf.Clamp01(1-Mathf.Abs(b-.55f)*6),3)*Mathf.Clamp01(a*2-.55f);
-                var color=Color.Lerp(new Color(.35f,.018f,.003f),new Color(1,.3f,.015f),Mathf.Clamp01(heat*1.5f));
-                color=Color.Lerp(color,new Color(1,.94f,.62f),Mathf.Clamp01((heat-.5f)*2+veins*.55f));
-                color.a=Mathf.SmoothStep(0,1,edge)*Mathf.Clamp01(.2f+heat*.9f+veins*.15f);
-                int px=frame%grid*tile+x,py=frame/grid*tile+y;pixels[py*tile*grid+px]=color;
-            }
-            texture.SetPixels(pixels);texture.Apply(false,true);return texture;
+            var texture=Resources.Load<Texture2D>("PulseMk2/"+name);
+            if(!texture)throw new InvalidOperationException("Pulse Mk II art missing: "+name);
+            return texture; // Shared imported art: this presentation does not destroy it.
         }
         LineRenderer Line(string name,Transform parent,Material material,float width)
         {
@@ -135,7 +165,7 @@ namespace StarTournament.ProvingGround
             var lightObject=new GameObject("Explosion light");lightObject.transform.SetParent(root.transform,false);b.Light=lightObject.AddComponent<Light>();b.Light.type=LightType.Point;b.Light.shadows=LightShadows.None;b.Light.renderMode=LightRenderMode.ForcePixel;b.Light.enabled=false;
             b.Core=System("Hot core",root.transform,glowMaterial,1);
             b.Sparks=System("Sparse sparks",root.transform,glowMaterial,(int)F("sparkCount"),true);
-            b.Smoke=System("Dissipating smoke",root.transform,smokeMaterial,(int)F("smokeCount"));
+            b.Smoke=System("Dissipating smoke",root.transform,burstSmokeMaterial,(int)F("smokeCount"));
             bursts.Add(b);return b;
         }
         void Explode(RocketExplosion e)
@@ -152,9 +182,30 @@ namespace StarTournament.ProvingGround
                 chosen=bursts[0];foreach(var b in bursts)if(b.Time<chosen.Time)chosen=b;
             }
             chosen.Id=e.Rocket.Id;chosen.Time=e.Time;chosen.Center=e.Position;chosen.Radius=session.RocketBlastRadius;chosen.Root.transform.position=e.Position;chosen.Light.transform.localPosition=-e.Rocket.Direction*chosen.Radius*F("lightOffsetScale");chosen.Light.enabled=false;chosen.Active=true;chosen.Root.SetActive(true);
-            DrawBurst(chosen);SelectLights();
+            DrawBurst(chosen);SelectLights();UpdateDepthRequests();
         }
         public void Launch(uint id,Vector3 offset)=>launchOffsets[id]=offset;
+        public void Launch(uint id,Vector3 offset,Vector3 muzzle,Vector3 direction)
+        {
+            Launch(id,offset);
+            foreach(var existing in ignitions)if(existing.Id==id&&existing.Active)return;
+            Ignition chosen=null;foreach(var item in ignitions)if(!item.Active){chosen=item;break;}
+            if(chosen==null&&ignitions.Count<(int)F("maxBursts"))
+            {
+                var root=new GameObject("Pulse Mk II ignition");root.transform.SetParent(owner,false);
+                chosen=new Ignition{Root=root,Flame=Line("Muzzle ignition",root.transform,exhaustMaterial,F("ignitionSize"))};ignitions.Add(chosen);
+            }
+            if(chosen==null){chosen=ignitions[0];foreach(var item in ignitions)if(item.Time<chosen.Time)chosen=item;}
+            chosen.Id=id;chosen.Position=muzzle;chosen.Direction=direction.normalized;chosen.Time=session.Time;chosen.Active=true;chosen.Root.SetActive(true);DrawIgnition(chosen);
+        }
+        void DrawIgnition(Ignition item)
+        {
+            float age=Mathf.Max(0,(float)(session.Time-item.Time)),t=Mathf.Clamp01(age/F("ignitionSeconds"));
+            item.Active=t<1;item.Root.SetActive(item.Active);if(!item.Active)return;
+            item.Flame.widthMultiplier=F("ignitionSize")*(1-t);
+            var length=F("ignitionLength")*(1-t*t);
+            item.Flame.SetPosition(0,item.Position);item.Flame.SetPosition(1,item.Position+item.Direction*length*.3f);item.Flame.SetPosition(2,item.Position+item.Direction*length);
+        }
         Vector3 Offset(uint id,float distance)=>launchOffsets.TryGetValue(id,out var offset)?offset*(1-Mathf.Clamp01(distance/P("rocketMuzzleBlendDistance"))):Vector3.zero;
         static Vector3 Direction(int index,int count,uint seed)
         {
@@ -250,19 +301,25 @@ namespace StarTournament.ProvingGround
                 }
                 Set(flight.Smoke,count);
             }
-            foreach(var b in bursts)if(b.Active)DrawBurst(b);SelectLights();
+            foreach(var item in ignitions)if(item.Active)DrawIgnition(item);
+            foreach(var b in bursts)if(b.Active)DrawBurst(b);SelectLights();UpdateDepthRequests();
         }
         void Clear()
         {
+            RestoreDepthRequests();
+            foreach(var item in ignitions){item.Active=false;if(item.Root)item.Root.SetActive(false);}
             launchOffsets.Clear();foreach(var f in flights.Values)if(f.Root)UnityEngine.Object.Destroy(f.Root);flights.Clear();
             foreach(var b in bursts){b.Active=false;b.Light.enabled=false;if(b.Root)b.Root.SetActive(false);}
         }
         public void Dispose()
         {
+            RenderPipelineManager.beginCameraRendering-=BeforeCamera;
             session.RocketExploded-=Explode;session.StateRestored-=Clear;Clear();
             foreach(var b in bursts)if(b.Root)UnityEngine.Object.Destroy(b.Root);bursts.Clear();
-            UnityEngine.Object.Destroy(fireMaterial);UnityEngine.Object.Destroy(exhaustMaterial);UnityEngine.Object.Destroy(smokeMaterial);UnityEngine.Object.Destroy(glowMaterial);
-            UnityEngine.Object.Destroy(fireTexture);UnityEngine.Object.Destroy(exhaustTexture);UnityEngine.Object.Destroy(smokeTexture);UnityEngine.Object.Destroy(glowTexture);
+            UnityEngine.Object.Destroy(fireMaterial);UnityEngine.Object.Destroy(exhaustMaterial);UnityEngine.Object.Destroy(smokeMaterial);UnityEngine.Object.Destroy(burstSmokeMaterial);UnityEngine.Object.Destroy(glowMaterial);
+            foreach(var data in addedCameraData)if(data)UnityEngine.Object.Destroy(data);addedCameraData.Clear();
+            foreach(var item in ignitions)if(item.Root)UnityEngine.Object.Destroy(item.Root);ignitions.Clear();
+            UnityEngine.Object.Destroy(glowTexture);
         }
     }
 }

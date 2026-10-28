@@ -9,8 +9,9 @@ namespace StarTournament.ProvingGround.Tests
         [Test] public void ApprovedDefaultsAndEveryParameterHasMetadata()
         {
             var p=ProvingProfile.CreatePlasmaDefault();Assert.That(p.Validate(),Is.Empty);
-            Assert.That(p.Get("plasma.damage")/p.Get("plasma.cooldownSeconds"),Is.EqualTo(200).Within(.001));
-            Assert.That(p.Get("plasma.speed"),Is.EqualTo(30));Assert.That(p.Get("plasma.pickupAmmo"),Is.EqualTo(100));
+            Assert.That(p.Get("plasma.damage")/p.Get("plasma.cooldownSeconds"),Is.EqualTo(120).Within(.001));
+            Assert.That(p.Get("plasma.speed"),Is.EqualTo(14.4f));Assert.That(p.Get("plasma.pickupAmmo"),Is.EqualTo(100));
+            Assert.That(p.Version,Is.EqualTo(5));Assert.That(p.Get("plasma.orbRadius"),Is.EqualTo(.1521f));
             foreach(var d in p.Descriptors){Assert.That(d.Label,Is.Not.Empty);Assert.That(d.Description,Is.Not.Empty);}
         }
         [Test] public void PickupHeldCadenceExhaustionAndRefillAreIndependent()
@@ -18,9 +19,9 @@ namespace StarTournament.ProvingGround.Tests
             var life=new CombatLife("p",ProvingProfile.CreateCombatDefault());int initialRifleAmmo=life.Read().RifleAmmo;Assert.That(CombatLife.Owned(life.Read(),WeaponId.Plasma),Is.False);
             Assert.That(life.CollectWeapon(WeaponId.Plasma),Is.True);life.Select(WeaponSelection.Plasma);life.Advance(1);
             Assert.That(life.Read().Ammo,Is.EqualTo(100));Assert.That(life.Fire(true),Is.True);
-            life.Advance(.08);Assert.That(life.Fire(true),Is.False);life.Advance(.02);Assert.That(life.Fire(true),Is.True);
-            for(int i=0;i<98;i++){life.Advance(.1);Assert.That(life.Fire(true),Is.True);}
-            life.Advance(.1);Assert.That(life.Fire(true),Is.False);Assert.That(life.Read().RifleAmmo,Is.EqualTo(initialRifleAmmo));
+            life.Advance(.18);Assert.That(life.Fire(true),Is.False);life.Advance(.02);Assert.That(life.Fire(true),Is.True);
+            for(int i=0;i<98;i++){life.Advance(.2);Assert.That(life.Fire(true),Is.True);}
+            life.Advance(.2);Assert.That(life.Fire(true),Is.False);Assert.That(life.Read().RifleAmmo,Is.EqualTo(initialRifleAmmo));
             Assert.That(life.CollectWeapon(WeaponId.Plasma),Is.True);Assert.That(life.Read().PlasmaAmmo,Is.EqualTo(100));Assert.That(life.CollectWeapon(WeaponId.Plasma),Is.False);
         }
         [Test] public void FifthSlotCyclesAndDeathClearsOwnedCharge()

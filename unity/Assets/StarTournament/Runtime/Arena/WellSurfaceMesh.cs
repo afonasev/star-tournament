@@ -34,6 +34,15 @@ namespace StarTournament.ProvingGround
                     bool buried=sign>0?lo<=plane+Epsilon&&hi>plane+Epsilon:hi>=plane-Epsilon&&lo<plane-Epsilon;
                     bool duplicate=earlier&&(sign>0?Mathf.Abs(hi-plane)<Epsilon&&lo<plane-Epsilon:Mathf.Abs(lo-plane)<Epsilon&&hi>plane+Epsilon);
                     if(!buried&&!duplicate)return;
+                    // Preserve the original subtraction and its order, but don't allocate
+                    // a replacement list when this cutter misses every surviving piece.
+                    bool overlaps=false;var min=other.min;var max=other.max;
+                    foreach(var r in pieces)
+                    {
+                        float x0=Mathf.Max(r.xMin,min[u]),x1=Mathf.Min(r.xMax,max[u]),y0=Mathf.Max(r.yMin,min[v]),y1=Mathf.Min(r.yMax,max[v]);
+                        if(!(x1-x0<Epsilon||y1-y0<Epsilon)){overlaps=true;break;}
+                    }
+                    if(!overlaps)return;
                     var next=new List<Rect>();
                     foreach(var r in pieces)
                     {

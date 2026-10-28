@@ -52,6 +52,7 @@ namespace StarTournament.ProvingGround
         readonly ProvingProfile cutter;
         readonly ProvingProfile plasma;
         public ProvingProfile PlasmaProfile=>JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(plasma));
+        readonly Collider[] plasmaWorldOverlap=new Collider[1];
         readonly List<PlasmaBoltState> plasmaBolts=new List<PlasmaBoltState>();
         public PlasmaBoltState[] PlasmaBolts=>plasmaBolts.ToArray();
         public event Action<PlasmaBoltContact> PlasmaBoltHit;
@@ -66,6 +67,7 @@ namespace StarTournament.ProvingGround
         readonly float friendlyMultiplier,selfMultiplier;
         readonly List<RocketState> rockets=new List<RocketState>();
         public RocketState[] Rockets => rockets.ToArray();
+        public float RocketAmmoCapacity {get;} // Frozen reserve for the weapon-local instrument; no mutable presentation state.
         public float RocketBlastRadius => rocketResolver.Radius; // Read-only frozen combat configuration, not presentation state.
         readonly List<RifleBulletState> rifleBullets=new List<RifleBulletState>();
         readonly float rifleSpeed;
@@ -101,6 +103,7 @@ namespace StarTournament.ProvingGround
         readonly LabRevisionReference designProfile;
         public LabRevisionReference DesignProfile=>designProfile?.Clone();
         public int ParticipantCount => lives.Length;
+        public int RifleStartingAmmo => lives[0].RifleStartingAmmo;
         public void Stop() { stopped=true; ClearInput(); }
         public SafeSpawnSelector Spawns { get; }
         public double Time { get; private set; }
@@ -187,6 +190,7 @@ namespace StarTournament.ProvingGround
             cutter=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(cutterProfile??ProvingProfile.CreateCutterDefault()));
             beams=new CutterBeam[motors.Length];for(int i=0;i<beams.Length;i++)beams[i]=new CutterBeam(cutter,motors.Length);
             ArenaIdentity=arena.Definition.Identity;
+            RocketAmmoCapacity=lifecycle.Get("rocket.startingAmmo");
             pickupHeightTolerance=lifecycle.Get("pickup.maximumHeightDifference");this.arena=arena;this.motors = motors; this.physics = physics; Match=match;
             this.movement = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(movement));
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
@@ -427,16 +431,22 @@ namespace StarTournament.ProvingGround
         }
         void AdvancePlasmaBolts(float seconds)
         {
-            float travel=plasma.Get("plasma.speed")*seconds;
+            float travel=plasma.Get("plasma.speed")*seconds,radius=plasma.Version>=4?plasma.Get("plasma.orbRadius"):0;
             var targets=LiveTargets();
             for(int index=0;index<plasmaBolts.Count;)
             {
                 var b=plasmaBolts[index];
-                bool world=physics.Raycast(b.Position,b.Direction,out var wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
-                var hit=resolver.ResolveSegment(b.Position,b.Direction,targets,b.Owner,b.OwnerLife,world?wall.distance:travel);
+                // SphereCast ignores colliders containing the initial sphere; overlap handles that case.
+                bool overlap=physics.OverlapSphere(b.Position,radius,plasmaWorldOverlap,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore)>0;
+                bool swept=radius>0?physics.SphereCast(b.Position,radius,b.Direction,out var wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore):physics.Raycast(b.Position,b.Direction,out wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+                bool world=overlap||swept;float wallDistance=overlap?0:wall.distance;
+                var wallPoint=overlap?plasmaWorldOverlap[0].ClosestPoint(b.Position):wall.point;
+                var wallNormal=overlap?(b.Position-wallPoint).normalized:wall.normal;
+                if(wallNormal.sqrMagnitude<.001f)wallNormal=-b.Direction;
+                var hit=resolver.ResolveSegment(b.Position,b.Direction,targets,b.Owner,b.OwnerLife,world?wallDistance:travel,radius);
                 if(hit.TargetIndex<0&&!world)
                 { b.Position+=b.Direction*travel;b.Distance+=travel;plasmaBolts[index]=b;index++;continue; }
-                float distance=hit.TargetIndex>=0?hit.Distance:wall.distance;
+                float distance=hit.TargetIndex>=0?hit.Distance:wallDistance;
                 b.Position+=b.Direction*distance;b.Distance+=distance;
                 // Remove before damage callbacks: a snapshot must never retain a spent bullet.
                 plasmaBolts.RemoveAt(index);
@@ -444,11 +454,11 @@ namespace StarTournament.ProvingGround
                 if(hit.TargetIndex>=0)
                 {
                     var target=targets[hit.TargetIndex];
-                    contact=new PelletNotice(b.Direction,b.Position,-b.Direction,PelletContact.Participant,target.Seat,target.Life);
-                    applied=ApplyDamagePolicy(target.Seat,target.Life,plasma.Get("plasma.damage")*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Plasma,b.Id,b.Direction,b.Position)).Applied;
+                    contact=new PelletNotice(b.Direction,b.Position+b.Direction*radius,-b.Direction,PelletContact.Participant,target.Seat,target.Life);
+                    applied=ApplyDamagePolicy(target.Seat,target.Life,plasma.Get("plasma.damage")*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Plasma,b.Id,b.Direction,contact.Endpoint)).Applied;
                     if(b.AccuracyTracked&&IsEnemy(b.Owner,target.Seat))Match?.RecordAccuracy(b.Owner,WeaponId.Plasma,0,1);
                 }
-                else contact=new PelletNotice(b.Direction,b.Position,wall.normal,PelletContact.World);
+                else contact=new PelletNotice(b.Direction,wallPoint,wallNormal,PelletContact.World);
                 if(applied>0)targets=LiveTargets();
                 PlasmaBoltHit?.Invoke(new PlasmaBoltContact(b,contact,applied,Time));
             }

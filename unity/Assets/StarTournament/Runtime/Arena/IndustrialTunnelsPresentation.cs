@@ -28,17 +28,19 @@ namespace StarTournament.ProvingGround
             warm=Emissive("Amber service lamp",new Color(1,.56f,.19f));white=Emissive("White base luminaire",new Color(.86f,.94f,1));
             mold=new Material(Shader.Find("StarTournament/TunnelGrime")){name="Lower wall damp / mold"};mold.SetFloat("_Opacity",P("surface.mold"));owned.Add(mold);
             CreateSectorMaterials();
-            int decorated=0;
+            var slice=new LoadingWorkSlice();float tile=P("surface.tile");
+            var targets=new ArenaPresentationLookup(transform.parent);
             foreach(var s in definition.Solids)
             {
-                if(decorated++%16==0)yield return null;
-                var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
+                if(slice.Expired){yield return null;slice.Restart();}
+                var target=targets.Find(s.Id);var renderer=target.GetComponent<Renderer>();
                 if(s.Surface=="tunnel-grille")
                 {
                     renderer.enabled=false;Grille(s.Position,s.Size);continue;
                 }
-                var mesh=Instantiate(target.GetComponent<MeshFilter>().sharedMesh);owned.Add(mesh);var vertices=mesh.vertices;var normals=mesh.normals;var uv=mesh.uv;
-                for(int i=0;i<uv.Length;i++){var v=Vector3.Scale(vertices[i],s.Size);var n=normals[i];uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/P("surface.tile");}
+                var source=target.GetComponent<MeshFilter>().sharedMesh;var data=targets.Read(source);
+                var mesh=Instantiate(source);owned.Add(mesh);var vertices=data.Vertices;var normals=data.Normals;var uv=(Vector2[])data.Uv.Clone();
+                for(int i=0;i<uv.Length;i++){var v=Vector3.Scale(vertices[i],s.Size);var n=normals[i];uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/tile;}
                 mesh.uv=uv;target.GetComponent<MeshFilter>().sharedMesh=mesh;renderer.sharedMaterial=s.Material=="floor"?floor:steel;
                 if(s.Id.StartsWith("shell-",StringComparison.Ordinal))WallDetails(s,definition);
             }
