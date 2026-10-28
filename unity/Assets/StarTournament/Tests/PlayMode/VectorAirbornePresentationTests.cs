@@ -25,9 +25,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var body=ground.GetComponentsInChildren<TrooperVisual>(true).First(v=>v.name=="trooper-presentation");
             var view=ground.GetComponentsInChildren<TrooperVisual>(true).First(v=>v.name=="trooper-view");
             var knee=body.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="LeftLowerLeg");
+            var hips=body.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="Hips");
             var actor=body.transform.parent;var position=actor.position;
             body.ResetPose(0);view.ResetPose(0);body.Render(.1,Vector3.zero,100,1);view.Render(.1,Vector3.zero,100,1);
-            var grounded=knee.localRotation;
+            var grounded=knee.localRotation;var groundedHipHeight=hips.position.y;
             Capture(body,"grounded");
             foreach(var v in new[]{body,view})v.Render(.25,new Vector3(2,5,0),100,1,false);
             Assert.That(body.AirborneState,Is.EqualTo("rising"));
@@ -41,6 +42,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             body.Render(.55,new Vector3(2,-3,0),100,1,false);Assert.That(body.AirborneState,Is.EqualTo("falling"));
             Capture(body,"falling");
             body.Render(.7,Vector3.zero,100,1,true);body.Render(.8,Vector3.zero,100,1,true);Assert.That(body.AirborneState,Is.EqualTo("landing"));
+            Assert.That(groundedHipHeight-hips.position.y,Is.GreaterThan(.005f),"Grounded stabilization must retain landing compression");
             Capture(body,"landing");
             foreach(var v in new[]{body,view}){v.BeginDeath(.9);v.Render(1,Vector3.zero,0,1,false);Assert.That(v.State,Is.EqualTo("death"));v.ResetPose(2);}
             Assert.That(view.ViewOffset,Is.EqualTo(Vector3.zero));Assert.That(body.AirborneState,Is.EqualTo("grounded"));

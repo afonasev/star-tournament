@@ -24,12 +24,12 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "b61801414f17fdb733847ea7ffa90978444c5e8977bb96801f71d764af0d348b",
+      "sha256": "842279f15a187f6b5edec8d42a87db63decfc53b5fd4cd08402dab344f366d82",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Vector/Petrol detailed original-reference model; scripts/vector_shotgun; preserved rig/gloves"
+      "source": "VECTOR F18 ASSAULT V2; scripts/vector_fighter/author_heavy_agile.py + export_heavy_agile.py"
     },
     {
       "key": "player-hands",

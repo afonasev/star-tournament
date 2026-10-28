@@ -1,3 +1,37 @@
+# F18 ASSAULT V2 — heavy agile fighter candidate
+
+Current implementation source: `f18-heavy-agile.blend`, derived from retained F17 by
+`author_heavy_agile.py`. The model has a stronger torso/core/legs, continuous lower
+garment, shaped abdominal/hip/lumbar/leg armor, seated boot plates and shared packed
+PBR panel/textile maps. The approved concept remains in shared planning evidence:
+`docs/evidence/refine-vector-heavy-agile-fighter/approved-assault-v2.png`.
+Human visual acceptance is pending; generated concepts are not implementation evidence.
+
+```sh
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/author_heavy_agile.py
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/export_heavy_agile.py
+# Inspect the candidate before promotion into this worktree:
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/export_heavy_agile.py -- --promote
+python3 scripts/vector_fighter/audit_heavy_agile.py --output .local/vector-heavy-agile/audit.json
+```
+
+`--reference` exports the same source without reduction for comparable render QA.
+New panels retain authored bevel topology; cloth, sleeves and world gloves use the
+existing resource strategy. The world cap remains 32,989 skin triangles, first-person
+GLB bytes remain unchanged. Current weapon buffers are copied exactly from the task's
+pinned `9d2e15bf` baseline because the F17 Blender source embeds an older shotgun.
+The exporter prunes unused material/texture/accessor/buffer payloads after that copy.
+Re-run `TrooperPreparation.RefreshExistingScene` through the shared Unity wrapper to
+refresh persisted prefabs without changing existing animation clips.
+
+Trooper profile @30 owns longer steps, coherent pelvis height, direction response,
+pivot stepping and foot roll. The visual controller uses real root displacement,
+geometric support reach and world-space stance orientation; gameplay/camera are not
+moved. `BeforeHeavyAgileGait` preserves @29 history. Physical/gameplay/human acceptance
+and full-suite/Player/release/deploy are separate gates.
+
+Historical notes below describe the preserved sources and prior contracts.
+
 # Current F17 assault model
 
 Selected direction: concept 1, 2026-10-24; subsequent user refinement paints the complete pectoral chest plate in participant/team color. `f17-assault.blend` is the editable world source, reproducibly derived from immutable F16:

@@ -16,6 +16,7 @@ namespace StarTournament.ProvingGround
         bool wasGrounded=true;
         float weight,vertical,landing;
         public Vector3 ViewOffset {get;private set;}
+        public float LandingDrop => legLength*(1-Mathf.Cos(Get("animation.landDegrees")*landing*Mathf.Deg2Rad));
         public string State {get;private set;}="grounded";
         public VectorAirbornePose(Transform root,Transform actor,ProvingProfile profile,bool firstPerson)
         {
@@ -62,7 +63,7 @@ namespace StarTournament.ProvingGround
             Rotate("LeftLowerLeg",knee+compression*2);
             Rotate("RightLowerLeg",knee+compression*2);
             if(bones.TryGetValue("Hips",out var hips))
-                hips.localPosition+=hips.parent.InverseTransformVector(-actor.up*(legLength*(1-Mathf.Cos(compression*Mathf.Deg2Rad))));
+                hips.localPosition+=hips.parent.InverseTransformVector(-actor.up*LandingDrop);
         }
     }
 }

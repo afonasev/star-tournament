@@ -177,7 +177,7 @@ namespace StarTournament.ProvingGround
                 var actorToParent=Quaternion.Inverse(chest.parent.rotation)*transform.rotation;
                 chest.localRotation=(actorToParent*impulse*Quaternion.Inverse(actorToParent))*chest.localRotation;
             }
-            if(!corpse){airborne?.Apply();gait?.Apply(clock);equipmentGrip?.Apply(profile,EquippedWeapon,EquippedWeapon==WeaponId.Plasma?(GetComponent<WeaponModelPresentation>()?.PlasmaViewScale??1):1,GetComponent<WeaponModelPresentation>()?.CutterGripProfile);}
+            if(!corpse){airborne?.Apply();gait?.Apply(clock,airborne?.LandingDrop??0);equipmentGrip?.Apply(profile,EquippedWeapon,EquippedWeapon==WeaponId.Plasma?(GetComponent<WeaponModelPresentation>()?.PlasmaViewScale??1):1,GetComponent<WeaponModelPresentation>()?.CutterGripProfile);}
             PoseRevision++;
         }
         public void Release()

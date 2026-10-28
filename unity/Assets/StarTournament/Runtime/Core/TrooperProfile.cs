@@ -3,10 +3,19 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeHeavyAgileGait()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<30)return this;
+            var p=DetachedCopy();p.version=29;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.heavy."));p.values.RemoveAll(v=>v.Path.StartsWith("animation.heavy."));p.valueIndex=null;
+            foreach(var pair in new[]{("animation.stepLengthMeters",.65f),("animation.stepSeconds",.28f),("animation.stepHeightMeters",.09f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
         internal ProvingProfile BeforeCommonForearms()
         {
             if(id!="unity-trooper-presentation-v1"||version<29)return this;
-            var p=DetachedCopy();p.version=28;
+            var p=BeforeHeavyAgileGait().DetachedCopy();p.version=28;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.common"));p.values.RemoveAll(v=>v.Path.StartsWith("view.common"));p.valueIndex=null;return p;
         }
         internal ProvingProfile BeforeStableArmEntry()
@@ -713,6 +722,14 @@ namespace StarTournament.ProvingGround
                         p.Add("view.common"+side+"Direction"+componentName,"trooper-view","Направление предплечья "+side+" "+componentName,"Компонент общего направления от локтя к запястью; вектор нормализуется.","ratio",-1,1,.01f,direction[component]);
                     }
                 }
+                p.version=30;
+                foreach(var pair in new[]{("animation.stepLengthMeters",1.1f),("animation.stepSeconds",.36f),("animation.stepHeightMeters",.12f)})
+                {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+                p.Add("animation.heavy.enabled","trooper-animation","Тяжёлый проворный шаг","Согласует таз, опору и поворот стоп; выключение сохраняет прежний режим постановки ног.","toggle",0,1,1,1);
+                p.Add("animation.heavy.velocityResponseSeconds","trooper-animation","Плавность переноса стопы","Время сглаживания направления цели шага при ускорении и развороте; не задерживает игровой motor.","seconds",.01f,.2f,.01f,.06f);
+                p.Add("animation.heavy.turnStepDegrees","trooper-animation","Переступание при повороте","Угол поворота корпуса относительно опорной стопы, после которого боец переступает.","degrees",10,90,1,35);
+                p.Add("animation.heavy.leanDegrees","trooper-animation","Наклон корпуса в движении","Предельный наклон таза по направлению движения; камера и gameplay не меняются.","degrees",0,12,.5f,4);
+                p.Add("animation.heavy.toePitchDegrees","trooper-animation","Перекат стопы при переносе","Опускает носок после толчка и поднимает перед приземлением; опорная стопа остаётся неподвижной.","degrees",0,30,1,16);
             }
             return p;
         }
