@@ -84,7 +84,7 @@ namespace StarTournament.ProvingGround
             animator.runtimeAnimatorController=null; animator.applyRootMotion=false;
             animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
             animator.Rebind();
-            equipmentGrip=new OrbitalGripPose(animator.transform);
+            equipmentGrip=new OrbitalGripPose(animator.transform,firstPerson);
             foreach(var bone in animator.GetComponentsInChildren<Transform>(true)){if(bone.name=="LeftLowerArm")referenceLeftForearm=bone;else if(bone.name=="RightLowerArm")referenceRightForearm=bone;}
             airborne=new VectorAirbornePose(animator.transform,transform,profile,firstPerson);
             gait=firstPerson?null:new VectorGroundedGait(animator.transform,transform,profile);

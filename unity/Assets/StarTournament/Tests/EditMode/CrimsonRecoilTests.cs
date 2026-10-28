@@ -37,7 +37,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         [TestCase(false)] [TestCase(true)] public void Version32HistoryAndCustomGripSurvive(bool custom)
         {
             var now=ProvingProfile.CreateTrooperDefault();var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCrimsonRecoil",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(now,null);
-            Assert.That(now.Version,Is.EqualTo(33));Assert.That(old.Version,Is.EqualTo(32));Assert.That(old.Descriptors.Any(d=>d.Path.StartsWith("grip.crimson.recoil.")),Is.False);
+            Assert.That(now.Version,Is.EqualTo(34));Assert.That(old.Version,Is.EqualTo(32));Assert.That(old.Descriptors.Any(d=>d.Path.StartsWith("grip.crimson.recoil.")),Is.False);
             Assert.That(now.Validate(),Is.Empty);
             var path=Path.Combine(Path.GetTempPath(),"crimson-recoil-"+Guid.NewGuid()+".json");
             try

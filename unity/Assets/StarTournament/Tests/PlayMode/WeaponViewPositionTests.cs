@@ -44,6 +44,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         var view=camera.transform.Find("trooper-view").GetComponent<TrooperVisual>();
                         Assert.That(view.Tuning.Get("view.y"),Is.EqualTo(-1.49f));Assert.That(view.Tuning.Get("view.z"),Is.EqualTo(.01f));
                         var expected=new Vector3(view.Tuning.Get("view.x"),-1.49f,.01f);
+                        if(weapon==WeaponId.RocketLauncher&&view.Tuning.Version>=31&&view.Tuning.Get("grip.crimson.enabled")>0)
+                            expected+=new Vector3(view.Tuning.Get("grip.crimson.viewX"),view.Tuning.Get("grip.crimson.viewY"),view.Tuning.Get("grip.crimson.viewZ"));
                         Assert.That(Vector3.Distance(view.transform.localPosition,expected+view.WalkOffset),Is.LessThan(.000001f));
                         Assert.That(camera.rect,Is.EqualTo(LocalSeatLayout.Viewport(count,seat)));
                         if(!string.IsNullOrEmpty(output))

@@ -79,9 +79,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var samples=new System.Collections.Generic.List<string>{"weapon,time,offset_x,offset_y,mount_x,mount_y,mount_z"};
             foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
             {
-                var life=snapshot.Lives[0];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;life.Ammo=CombatLife.AmmoFor(life,weapon);
+                // Crimson has an accepted shoulder-specific placement in addition to
+                // the common ground-step offset; it is not a locomotion displacement.
+                var placement=weapon==WeaponId.RocketLauncher&&first.Tuning.Version>=31&&first.Tuning.Get("grip.crimson.enabled")>0?
+                    new Vector3(first.Tuning.Get("grip.crimson.viewX"),first.Tuning.Get("grip.crimson.viewY"),first.Tuning.Get("grip.crimson.viewZ")):Vector3.zero;
+                var life=snapshot.Lives[0];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
                 life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
-                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}snapshot.Lives[0]=life;
+                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}
+                // Derive the selected total after filling the owned slot, as Restore requires.
+                life.Ammo=CombatLife.AmmoFor(life,weapon);snapshot.Lives[0]=life;
                 snapshot.Time=start;ground.Session.Restore(snapshot);first.ResetPose(start);previous=Vector3.zero;float maximumOffset=0;
                 for(int tick=0;tick<=65;tick++)
                 {
@@ -89,7 +95,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     ground.SendMessage("LateUpdate");maximumOffset=Mathf.Max(maximumOffset,first.WalkOffset.magnitude);
                     Assert.That(first.State,Is.EqualTo("aim"));Assert.That(second.WalkOffset,Is.EqualTo(Vector3.zero));
                     Assert.That(second.transform.localPosition,Is.EqualTo(stationary));
-                    Assert.That(Vector3.Distance(first.transform.localPosition,rest+first.WalkOffset),Is.LessThan(.000001f));
+                    Assert.That(Vector3.Distance(first.transform.localPosition,rest+placement+first.WalkOffset),Is.LessThan(.000001f));
                     var point=camera.transform.InverseTransformPoint(mount.position);
                     samples.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1:F3},{2:F6},{3:F6},{4:F6},{5:F6},{6:F6}",weapon,ground.Session.Time,first.WalkOffset.x,first.WalkOffset.y,point.x,point.y,point.z));
                     if(tick>0)maximumStep=Mathf.Max(maximumStep,Vector3.Distance(previous,point));previous=point;

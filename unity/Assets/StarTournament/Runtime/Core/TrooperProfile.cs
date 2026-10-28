@@ -3,10 +3,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeWorldArmFit()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<34)return this;
+            var p=DetachedCopy();p.version=33;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.world."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.world."));p.valueIndex=null;return p;
+        }
         internal ProvingProfile BeforeCrimsonRecoil()
         {
             if(id!="unity-trooper-presentation-v1"||version<33)return this;
-            var p=DetachedCopy();p.version=32;
+            var p=BeforeWorldArmFit().DetachedCopy();p.version=32;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson.recoil."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson.recoil."));p.valueIndex=null;return p;
         }
         internal ProvingProfile BeforeCrimsonDetail()
@@ -769,6 +775,15 @@ namespace StarTournament.ProvingGround
                 p.Add("grip.crimson.recoil.backMeters","trooper-grip-RocketLauncher","Crimson · удар в плечо","Пиковое перемещение оружия назад; длины костей и simulation не меняются.","meters",0,.12f,.005f,.055f);
                 p.Add("grip.crimson.recoil.pitchDegrees","trooper-grip-RocketLauncher","Crimson · подброс ствола","Пиковый подъём дула вокруг плечевого упора; не поворачивает игровую камеру.","degrees",0,15,.5f,7.5f);
                 p.Add("grip.crimson.recoil.rollDegrees","trooper-grip-RocketLauncher","Crimson · крен удара","Небольшой крен корпуса при выстреле.","degrees",-4,4,.25f,-.75f);
+
+                p.version=34;
+                p.Add("grip.world.enabled","trooper-world-grip","Анатомический мировой хват","Отдельная посадка перед бронёй и внешняя плоскость локтей полного персонажа; FPS и gameplay сохраняются.","toggle",0,1,1,1);
+                p.Add("grip.world.elbowForward","trooper-world-grip","Мировой локоть вперёд","Передняя составляющая направления сгиба относительно корпуса.","ratio",0,2,.05f,1);
+                p.Add("grip.world.elbowDown","trooper-world-grip","Мировой локоть вниз","Нижняя составляющая направления сгиба относительно корпуса.","ratio",0,2,.05f,1);
+                foreach(var item in new[]{(WeaponId.Rifle,"COBALT"),(WeaponId.Shotgun,"VECTOR"),(WeaponId.RocketLauncher,"Crimson"),(WeaponId.Cutter,"Резак"),(WeaponId.Plasma,"FORGE")})
+                    p.Add("grip.world."+item.Item1+".forward","trooper-world-grip",item.Item2+" · перед бронёй","Сдвигает мировое оружие и обе кисти вместе, сохраняя длины костей; FPS не меняется.","meters",0,.2f,.005f,item.Item1==WeaponId.Cutter?.12f:item.Item1==WeaponId.RocketLauncher?.08f:.035f);
+                p.Add("grip.world.RocketLauncher.side","trooper-world-grip","Crimson · мировая посадка по X","Боковая коррекция плечевой модели для достижимой опорной рукояти.","meters",-.15f,.15f,.005f,-.06f);
+                p.Add("grip.world.RocketLauncher.primaryElbowForward","trooper-world-grip","Crimson · правый локоть вперёд","Отдельная плоскость правой руки сохраняет просвет у торса при ударе в плечо.","ratio",0,2,.05f,0);
 
 
             }
