@@ -28,15 +28,18 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Load();
             scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
             ground=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             Button("main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,2);
             var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground);
             for(int seat=0;seat<2;seat++)
             {
                 pads[seat]=InputSystem.AddDevice<Gamepad>();Assert.That(input.Assign(seat,pads[seat]),Is.True);
                 yield return null;
-                Button("roster-card-"+seat).onClick.Invoke();Button("roster-identity").onClick.Invoke();yield return null;
-                ground.GetComponentsInChildren<Button>().Single(b=>b.name=="lobby-profile-none").onClick.Invoke();yield return null;
-                Button("roster-done").onClick.Invoke();yield return null;
+                // This fixture tests pause/settings, not the former roster editor.
+                // Author the same guest identity directly; keep the original settle frames.
+                NativeSetupFixture.GuestIdentity(ground,seat,pads[seat]);yield return null;
+                yield return null;
+                yield return null;
             }
             Button("Начать — четыре игрока").onClick.Invoke();yield return new WaitForFixedUpdate();yield return null;
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.True);
