@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     {
         [Test] public void OnlyFourBodiesChangeWhileCasesAndAllOtherAuthoredDataRemainExact()
         {
-            var old=AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"7");var current=WellArenaCatalog.Build();
+            var old=AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"7");var current=AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"8");
             Assert.That(current.Revision,Is.EqualTo("8"));Assert.That(old.Revision,Is.EqualTo("7"));
             Assert.That(current.Solids.Length,Is.EqualTo(old.Solids.Length));
             Assert.That(current.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(56));
@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 foreach(var other in current.Solids.Where(o=>o.Id!=solid.Id))
                     Assert.That(bounds.Intersects(new Bounds(other.Position,other.Size-Vector3.one*.002f)),Is.False,solid.Id+" overlaps "+other.Id);
             }
-            var profile=WellArenaCatalog.AuthoringProfile();Assert.That(profile.Version,Is.EqualTo(8));Assert.That(profile.Validate(),Is.Empty);
+            var profile=WellArenaCatalog.AuthoringProfile(previousDensity:true);Assert.That(profile.Version,Is.EqualTo(8));Assert.That(profile.Validate(),Is.Empty);
             foreach(var solid in changed)foreach(var axis in new[]{"x","y","z"})
                 Assert.That(profile.Descriptors.Any(d=>d.Path=="well.map."+solid.Id+".position."+axis),Is.True,solid.Id);
         }
@@ -49,7 +49,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(saved.Hash,Is.EqualTo(hash));Assert.That(saved.Snapshot.Hash(),Is.EqualTo(hash));Assert.That(JsonUtility.ToJson(saved.Snapshot),Is.EqualTo(bytes));
                 Assert.That(next.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
                 Assert.That(next.Selected.Snapshot.Get("well.map.furniture-f1-corridor-bench.position.x"),Is.EqualTo(-18.2f));
-                Assert.That(next.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(8));
+                Assert.That(next.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(9));
                 var restarted=new DesignLabHistory(path,current);Assert.That(restarted.StorageError,Is.Null);Assert.That(restarted.Selected.Hash,Is.EqualTo(next.Selected.Hash));
             }
             finally{foreach(var suffix in new[]{"",".schema1-backup.json"})if(File.Exists(path+suffix))File.Delete(path+suffix);}

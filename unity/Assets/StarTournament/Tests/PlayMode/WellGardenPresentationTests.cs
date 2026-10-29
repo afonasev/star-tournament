@@ -31,7 +31,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(baseline)));
                 Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24));Assert.That(skin.GetComponentsInChildren<Light>().Count(l=>l.shadows!=LightShadows.None),Is.EqualTo(3));
-                Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(56));
+                Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(62));
                 int vertices=filters.Sum(f=>f.sharedMesh.vertexCount),renderers=skin.GetComponentsInChildren<MeshRenderer>().Length;
                 var garden=filters.Single(f=>f.name=="Well natural garden");var mesh=garden.sharedMesh;
                 Assert.That(mesh.subMeshCount,Is.EqualTo(6));
@@ -116,7 +116,7 @@ namespace StarTournament.ProvingGround.Tests
                         var texture=material.HasProperty("_BaseMap")?material.GetTexture("_BaseMap") as Texture2D:null;
                         return string.Join(",",new[]{"well-garden",mesh.GetInstanceID().ToString(),UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(mesh).ToString(),mesh.vertexCount.ToString(),(mesh.GetIndexCount(index)/3).ToString(),mesh.subMeshCount.ToString(),"1",gardenRenderer.shadowCastingMode.ToString(),gardenRenderer.receiveShadows.ToString(),material.name,material.shader.name,texture?texture.name:"none",texture?texture.GetInstanceID().ToString():"",texture?UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(texture).ToString():"",texture?texture.width.ToString():"",texture?texture.height.ToString():"",texture?texture.format.ToString():"",texture?texture.mipmapCount.ToString():"",texture?texture.isReadable.ToString():"",QualitySettings.names[QualitySettings.GetQualityLevel()],rt.width.ToString(),rt.height.ToString()}.Select(x=>"\""+(x??"").Replace("\"","\"\"")+"\""));
                     }))+"\n");
-                File.WriteAllText(Path.Combine(directory,"audit.json"),"{\"map\":\""+arena.Definition.Identity+"\",\"lights\":24,\"furniture\":56,\"cosmetic_colliders\":0,\"vertices\":"+vertices+",\"renderers\":"+renderers+",\"garden_vertices\":"+mesh.vertexCount+"}");
+                File.WriteAllText(Path.Combine(directory,"audit.json"),"{\"map\":\""+arena.Definition.Identity+"\",\"lights\":24,\"furniture\":62,\"cosmetic_colliders\":0,\"vertices\":"+vertices+",\"renderers\":"+renderers+",\"garden_vertices\":"+mesh.vertexCount+"}");
                 // Preserve the original source assertions, but capture the diagnostic views first.
                 // The established 538-renderer/23,929,841 summed-child-vertex baseline exceeds
                 // these limits; moving the checks does not relax them or hide the FAIL.

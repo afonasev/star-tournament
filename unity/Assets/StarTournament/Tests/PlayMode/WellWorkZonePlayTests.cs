@@ -75,7 +75,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var records=new List<string>();var inventories=new List<long[]>();
             foreach(bool before in new[]{true,false})
             {
-                Build(before?AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"7"):WellArenaCatalog.Build());
+                Build(AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,before?"7":"8"));
                 var light=new GameObject("Review daylight");light.transform.SetParent(root.transform);WellArenaPresentation.ConfigureDaylight(light.AddComponent<Light>(),ProvingProfile.CreateWellDefault());
                 var go=new GameObject("Work zone observer");go.transform.SetParent(root.transform);var camera=go.AddComponent<Camera>();camera.fieldOfView=75;camera.nearClipPlane=.05f;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.8f,.87f,.94f);
                 yield return null;yield return null;

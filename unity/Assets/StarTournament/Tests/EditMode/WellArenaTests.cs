@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround.Tests
         {
             var d=WellArenaCatalog.Build();Assert.That(ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).IsValid,Is.True,ArenaDefinitionValidator.Validate(d,ProvingProfile.CreateDefault()).ToString());
             Assert.That(AuthoredArenaCatalog.Name(d.MapId),Is.EqualTo("Колодец"));Assert.That(AuthoredArenaCatalog.Maximum(d.MapId),Is.EqualTo(8));
-            Assert.That(d.Revision,Is.EqualTo("8"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(13));
+            Assert.That(d.Revision,Is.EqualTo("9"));Assert.That(d.Spawns.Length,Is.EqualTo(10));Assert.That(d.Pickups.Length,Is.EqualTo(13));
             Assert.That(d.Pickups.Count(p=>p.Kind==ArenaPickupKind.Armor),Is.EqualTo(3));
             foreach(var kind in new[]{ArenaPickupKind.Speed,ArenaPickupKind.Pulse,ArenaPickupKind.Damage,ArenaPickupKind.FullHeal})
                 Assert.That(d.Pickups.Count(p=>p.Kind==kind),Is.EqualTo(1),kind.ToString());
@@ -212,7 +212,7 @@ namespace StarTournament.ProvingGround.Tests
                     System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
                 }
                 var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
-                Assert.That(migrated.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(8));
+                Assert.That(migrated.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(9));
                 Assert.That(migrated.Selected.Snapshot.Get("well.idleDepartureSeconds"),Is.EqualTo(21));
                 var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
                 Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
@@ -245,7 +245,7 @@ namespace StarTournament.ProvingGround.Tests
                     System.IO.File.WriteAllText(path,JsonUtility.ToJson(file));
                 }
                 var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
-                Assert.That(migrated.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(8));
+                Assert.That(migrated.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-authoring-v1").Version,Is.EqualTo(9));
                 Assert.That(migrated.Selected.Snapshot.Get("well.idleDepartureSeconds"),Is.EqualTo(21));
                 var preserved=migrated.SelectedProfile.Revisions.Single(r=>r.Number==priorNumber);
                 Assert.That(preserved.Hash,Is.EqualTo(priorHash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(priorHash));
