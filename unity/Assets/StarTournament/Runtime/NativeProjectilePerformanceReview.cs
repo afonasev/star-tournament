@@ -67,6 +67,7 @@ namespace StarTournament.ProvingGround
             ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(LunarLaboratoryCatalog.Id);Begin();yield return null;yield return new WaitForSecondsRealtime(1);initialSnapshot=ground.Session.Capture();
             string hitMode=Arg("-hitPoseReuse","current");if(hitMode!="current"&&hitMode!="baseline")throw new InvalidOperationException("Expected hitPoseReuse baseline or current");
             ground.HitFeedbackForReview.SetPoseReuseForDiagnostics(hitMode=="current");
+            SkinnedContactPatch.OriginalTransformLookupForDiagnostics=hitMode=="baseline";
             var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             report=new Report{body="F23-887439e0",hitPoseReuse=hitMode,views=views,width=Screen.width,height=Screen.height,quality=QualitySettings.GetQualityLevel(),unity=Application.unityVersion,cpu=SystemInfo.processorType,gpu=SystemInfo.graphicsDeviceName,os=SystemInfo.operatingSystem,systemMemoryMB=SystemInfo.systemMemorySize,pipeline=pipeline?pipeline.name:"none",renderScale=pipeline?pipeline.renderScale:1,frameTiming=FrameTimingManager.IsFeatureEnabled(),muted=AudioListener.volume==0};
             if(Screen.width!=1920||Screen.height!=1080||!report.muted)throw new InvalidOperationException("Resolution/silent admission failed");

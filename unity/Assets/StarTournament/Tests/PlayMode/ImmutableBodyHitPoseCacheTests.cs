@@ -98,6 +98,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(EqualFresh(cache,point,direction),Is.SameAs(a));Assert.That(cache.ProjectionBuilds,Is.EqualTo(1));Object.DestroyImmediate(patch);
             Assert.That(EqualFresh(cache,point,direction),Is.SameAs(a));yield return null;
         }
+        [UnityTest] public IEnumerator RemovedPreexistingOverlayCannotLeaveADeadProjectionRenderer()
+        {
+            Setup();var original=new SkinnedContactPatch.Projection(body,immutableTopology:true).Find(point,direction);
+            var patch=SkinnedContactPatch.Create(original,.3f,null,"hit-contact-shield",out var mesh);owned.Add(mesh);
+            var cache=new ImmutableBodyHitPoseCache(body);var a=EqualFresh(cache,point,direction);
+            Object.DestroyImmediate(patch);
+            Assert.That(EqualFresh(cache,point,direction),Is.SameAs(a));
+            Assert.That(EqualFresh(cache,point+Vector3.right*.1f,direction),Is.Not.Null);
+            Assert.That(cache.ProjectionBuilds,Is.EqualTo(1));yield return null;
+        }
         [UnityTest] public IEnumerator TinyFaceZeroDirectionAndSignedZeroKeepFreshSemantics()
         {
             Setup(.002f);var cache=new ImmutableBodyHitPoseCache(body);var a=EqualFresh(cache,point,direction);Assert.That(a,Is.Not.Null);Assert.That(a.Normal.sqrMagnitude,Is.GreaterThan(.9f));

@@ -11,6 +11,9 @@ namespace StarTournament.ProvingGround
         static readonly ProfilerMarker FindMarker=new ProfilerMarker("F23.Contact.Find");
         static readonly ProfilerMarker SnapshotMarker=new ProfilerMarker("F23.Contact.Snapshot");
         static readonly ProfilerMarker CreateMarker=new ProfilerMarker("F23.Contact.Create");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+        public static bool OriginalTransformLookupForDiagnostics {get;set;}
+#endif
         public sealed class Contact
         {
             public SkinnedMeshRenderer Skin;
@@ -29,6 +32,10 @@ namespace StarTournament.ProvingGround
             // callers retain fresh source reads; poses are never cached across hits.
             public Projection(GameObject body,bool immutableTopology=false)
             {this.immutableTopology=immutableTopology;skins=body?body.GetComponentsInChildren<SkinnedMeshRenderer>(true):System.Array.Empty<SkinnedMeshRenderer>();}
+            // Caller-owned pose reuse supplies only original body skins; generated
+            // overlays may be detached/destroyed while this projection remains alive.
+            internal Projection(SkinnedMeshRenderer[] sourceSkins,bool immutableTopology)
+            {this.immutableTopology=immutableTopology;skins=sourceSkins;}
             public Contact Find(Vector3 point,Vector3 direction)
             {
                 using var measurement=FindMarker.Auto();
@@ -109,7 +116,15 @@ namespace StarTournament.ProvingGround
                 World=new Vector3[Baked.Length];
                 // Keep native TransformPoint arithmetic: thin triangles amplify even tiny
                 // matrix-rounding differences in their normals and contact UV basis.
-                for(int i=0;i<Baked.Length;i++)World[i]=skin.transform.TransformPoint(Baked[i]);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+                if(OriginalTransformLookupForDiagnostics)
+                {for(int i=0;i<Baked.Length;i++)World[i]=skin.transform.TransformPoint(Baked[i]);}
+                else
+#endif
+                {
+                    var transform=skin.transform;
+                    for(int i=0;i<Baked.Length;i++)World[i]=transform.TransformPoint(Baked[i]);
+                }
                 // Consecutive authored triangles have useful spatial locality. Fixed-size
                 // blocks preserve their order and cost linear time to build per pose.
                 const int blockIndices=96; // 32 triangles; acceleration granularity only.

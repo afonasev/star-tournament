@@ -24,17 +24,17 @@ namespace StarTournament.ProvingGround
             bool same=projection!=null&&frame==Time.frameCount;
             int weights=(int)QualitySettings.skinWeights;same&=weights==weightLimit;weightLimit=weights;
             renderers.Clear();if(Body)Body.GetComponentsInChildren(true,renderers);
+            renderers.RemoveAll(renderer=>IsOverlay(renderer.transform));
             int count=0;
             foreach(var renderer in renderers)
             {
                 // Generated patches follow skin but are excluded by Projection. Their
                 // insertion/removal cannot change the source body surface being queried.
-                if(IsOverlay(renderer.transform))continue;
                 if(count==poses.Count)poses.Add(new SkinPose());
                 same&=poses[count++].Capture(renderer);
             }
             same&=count==poseCount;poseCount=count;frame=Time.frameCount;
-            if(!same){projection=new SkinnedContactPatch.Projection(Body,immutableTopology:true);contacts.Clear();ProjectionBuilds++;}
+            if(!same){projection=new SkinnedContactPatch.Projection(renderers.ToArray(),immutableTopology:true);contacts.Clear();ProjectionBuilds++;}
             var key=new RayKey(point,direction);
             if(contacts.TryGetValue(key,out var found)){ContactReuses++;return found;}
             FindCalls++;found=projection.Find(point,direction);contacts.Add(key,found);return found;
