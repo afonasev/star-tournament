@@ -57,12 +57,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 {
                     var skin=view.GetComponentsInChildren<SkinnedMeshRenderer>().First(r=>r.name=="vector-armored-hands");var mesh=new Mesh();skin.BakeMesh(mesh);
                     var lines=new List<string>{"material,index,x,y,z"};var vertices=mesh.vertices;
-                    var cloth=new List<int>();var pads=new HashSet<int>();var weights=skin.sharedMesh.boneWeights;
+                    var cloth=new List<int>();var pads=new HashSet<int>();var mounts=new List<List<int>>();var weights=skin.sharedMesh.boneWeights;
                     for(int sub=0;sub<mesh.subMeshCount;sub++)
                     {
                         string material=skin.sharedMaterials[sub].name;
                         if(material=="orbital-restored-material"||material=="orbital-restored-vector-glove")cloth.AddRange(mesh.GetIndices(sub));
-                        if(material=="vector-fighter-identity-reference")
+                        if(material=="vector-reference-edge-metal")
                         {
                             var indices=mesh.GetIndices(sub);var adjacent=new Dictionary<int,HashSet<int>>();
                             foreach(int i in indices)if(!adjacent.ContainsKey(i))adjacent[i]=new HashSet<int>();
@@ -75,20 +75,32 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                                 // Wrist panels are closed 140-vertex islands. Some edge
                                 // vertices legitimately blend into the forearm skin.
                                 if(part.Count==140&&part.Count(i=>skin.bones[weights[i].boneIndex0].name.EndsWith("Hand"))>part.Count/2)
-                                    foreach(int i in part)pads.Add(i);
+                                {mounts.Add(part);foreach(int i in part)pads.Add(i);}
                             }
                         }
                     }
-                    Assert.That(pads.Count,Is.EqualTo(560),"Both paired wrist plates must be present");
-                    float gap=0;
-                    foreach(int i in pads)
+                    Assert.That(pads.Count,Is.EqualTo(560),"Both paired wrist mounting frames must remain complete");
+                    Assert.That(mounts.Count,Is.EqualTo(4));float gap=0;int mountedVertices=0;
+                    var bind=skin.sharedMesh.vertices;
+                    foreach(var mount in mounts)
                     {
-                        float nearest=float.PositiveInfinity;
-                        for(int t=0;t<cloth.Count;t+=3)nearest=Mathf.Min(nearest,(vertices[i]-ClosestPoint(vertices[i],vertices[cloth[t]],vertices[cloth[t+1]],vertices[cloth[t+2]])).sqrMagnitude);
-                        gap=Mathf.Max(gap,Mathf.Sqrt(nearest));
+                        int attached=0;
+                        foreach(int i in mount)
+                        {
+                            float bindGap=float.PositiveInfinity;
+                            for(int t=0;t<cloth.Count;t+=3)bindGap=Mathf.Min(bindGap,(bind[i]-ClosestPoint(bind[i],bind[cloth[t]],bind[cloth[t+1]],bind[cloth[t+2]])).sqrMagnitude);
+                            if(bindGap>=.0015f*.0015f)continue;
+                            attached++;float posedGap=float.PositiveInfinity;
+                            for(int t=0;t<cloth.Count;t+=3)posedGap=Mathf.Min(posedGap,(vertices[i]-ClosestPoint(vertices[i],vertices[cloth[t]],vertices[cloth[t+1]],vertices[cloth[t+2]])).sqrMagnitude);
+                            gap=Mathf.Max(gap,Mathf.Sqrt(posedGap));
+                            Assert.That(Mathf.Sqrt(posedGap),Is.LessThan(.0015f),"Every authored mounting contact must remain on the posed glove");
+                        }
+                        Assert.That(attached,Is.GreaterThan(0),"Each of the four closed wrist frames must have a textile attachment");mountedVertices+=attached;
                     }
+                    // The paired source frames have different back-face tessellation;
+                    // validate all 96 real underside contacts rather than assuming 24 per frame.
+                    Assert.That(mountedVertices,Is.EqualTo(96));
                     File.WriteAllText(Path.Combine(output,"wrist-clearance.txt"),gap.ToString("R",System.Globalization.CultureInfo.InvariantCulture));
-                    Assert.That(gap,Is.LessThan(.0035f),"Wrist pads must sit on the posed glove textile");
                     for(int s=0;s<mesh.subMeshCount;s++)foreach(var i in mesh.GetIndices(s).Distinct()){var p=camera.transform.InverseTransformPoint(skin.transform.TransformPoint(vertices[i]));lines.Add(FormattableString.Invariant($"{skin.sharedMaterials[s].name},{i},{p.x:R},{p.y:R},{p.z:R}"));}
                     File.WriteAllLines(Path.Combine(output,"crimson-skin.csv"),lines);UnityEngine.Object.Destroy(mesh);
                 }

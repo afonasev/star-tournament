@@ -1,4 +1,4 @@
-"""Seat the existing glove wrist plates on their textile, preserving GLB topology/resources.
+"""Seat the existing wrist plate backing on the glove textile, preserving GLB topology/resources.
 Run with Blender -b -noaudio --python scripts/vector_fighter/seat_fps_glove_plates.py.
 The pinned Git asset is the editable baseline; only plate POSITION/NORMAL/skin
 attributes change. No exporter, mesh collapse, texture conversion or world edit.
@@ -31,7 +31,7 @@ def main():
         a=cloth['attributes'];base=len(cv);cv.extend(Vector(p) for p in g.array(a['POSITION']));cw.extend(g.array(a['WEIGHTS_0']));cj.extend(g.array(a['JOINTS_0']))
         ci=[i[0]+base for i in g.array(cloth['indices'])];ct.extend(ci[i:i+3] for i in range(0,len(ci),3))
     tree=BVHTree.FromPolygons(cv,ct,all_triangles=True)
-    plates=[p for p in primitives if data['materials'][p['material']]['name'] in ('orbital-restored-vector-chassis','vector-ceramic-orbital')]
+    plates=[p for p in primitives if data['materials'][p['material']]['name']=='orbital-restored-vector-chassis']
     bone_names=[data['nodes'][j]['name'] for j in data['skins'][node['skin']]['joints']]
     def write(index,rows):
         a=data['accessors'][index];v=data['bufferViews'][a['bufferView']];fmt,size=COMPONENTS[a['componentType']];width=WIDTHS[a['type']]
@@ -52,20 +52,18 @@ def main():
                 i=todo.pop();part.append(i);more=adj[i]&left;left-=more;todo.extend(more)
             if len(part)!=140:continue
             if any(bone_names[joints[i][max(range(4),key=lambda k:weights[i][k])]] not in ('LeftHand','RightHand') for i in part):continue
-            chosen.extend(part)
             center=sum((Vector(positions[i]) for i in part),Vector())/len(part)
             contact_normal=tree.find_nearest(center)[1]
-            points=[Vector(positions[i]) for i in part]
-            heights=[(point-center).dot(contact_normal) for point in points];lo=min(heights);hi=max(heights)
-            for i,point,height in zip(part,points,heights):
-                ceramic=data['materials'][p['material']]['name']=='vector-ceramic-orbital'
-                clearance=(.0016 if ceramic else .0003)+(height-lo)/(hi-lo)*(.0009 if ceramic else .0005)
-                # Directional projection retains the authored tangent coordinates
-                # and rounded outline. Nearest-point shrinkwrap folds that outline
-                # around seams; a global polynomial floats above curved edges.
+            # Retain the original smooth ceramic and the entire upper frame.
+            # Extend only this existing closed frame's underside to the glove.
+            # Its connected side walls then form a real mounting base rather
+            # than an air gap. No new overlay, renderer or topology is added.
+            for i in part:
+                if Vector(normals[i]).dot(contact_normal)>=-.25:continue
+                chosen.append(i);point=Vector(positions[i])
                 hit,cn,tri,_=tree.ray_cast(point+contact_normal*.1,-contact_normal,.2)
-                assert hit is not None,"Wrist plate left the actual glove surface"
-                target=hit+contact_normal*clearance
+                assert hit is not None,"Wrist mounting base left the actual glove surface"
+                target=hit+contact_normal*.0004
                 positions[i]=tuple(target);moves.append((target-point).length)
                 aa_index,bb_index,cc_index=ct[tri];aa,bb,cc=cv[aa_index],cv[bb_index],cv[cc_index];x=bb-aa;y=cc-aa;z=hit-aa;den=x.dot(x)*y.dot(y)-x.dot(y)**2
                 u=(y.dot(y)*z.dot(x)-x.dot(y)*z.dot(y))/den;v=(x.dot(x)*z.dot(y)-x.dot(y)*z.dot(x))/den
@@ -92,7 +90,7 @@ def main():
         assert path.read_bytes()==result,"Run the authoring pass to update the asset"
         print("GLOVE_SEAT_EXACT: topology, nonplate arrays, images, materials, binds and reproducible bytes PASS");return
     path.write_bytes(result);sha=hashlib.sha256(result).hexdigest()
-    manifest=path.parent/'asset-manifest.json';m=json.loads(manifest.read_text());entry=next(e for e in m['entries'] if e['key']=='player-hands');entry['sha256']=sha;entry['source']='Preserved Orbital FPS hands; seat_fps_glove_plates.py: existing glove wrist plates seated on textile with matching skin; topology/images/equipment unchanged';manifest.write_text(json.dumps(m,indent=2)+'\n')
+    manifest=path.parent/'asset-manifest.json';m=json.loads(manifest.read_text());entry=next(e for e in m['entries'] if e['key']=='player-hands');entry['sha256']=sha;entry['source']='Preserved Orbital FPS hands; seat_fps_glove_plates.py: existing wrist chassis underside seated on textile; original ceramic/upper frame preserved; topology/images/equipment unchanged';manifest.write_text(json.dumps(m,indent=2)+'\n')
     mounts=path.parent/'trooper-mounts.json';m=json.loads(mounts.read_text());m['arms']['sha256']=sha;mounts.write_text(json.dumps(m,indent=2)+'\n')
-    out=ROOT/'.local/fps-fix';out.mkdir(parents=True,exist_ok=True);(out/'glove-edit.json').write_text(json.dumps({'baseline':BASE,'source_sha256':hashlib.sha256(raw).hexdigest(),'sha256':sha,'plates':report,'triangles_before':g.triangles(),'triangles_after':Glb(result).triangles(),'image_bytes_equal':g.images()==Glb(result).images(),'strategy':'directional textile seat with preserved authored corner normals; original outline and closed thickness retained','chassis_clearance_m':[.0003,.0008],'ceramic_clearance_m':[.0016,.0025]},indent=2)+'\n')
+    out=ROOT/'.local/fps-fix';out.mkdir(parents=True,exist_ok=True);(out/'glove-edit.json').write_text(json.dumps({'baseline':BASE,'source_sha256':hashlib.sha256(raw).hexdigest(),'sha256':sha,'plates':report,'triangles_before':g.triangles(),'triangles_after':Glb(result).triangles(),'image_bytes_equal':g.images()==Glb(result).images(),'strategy':'extend the existing closed chassis underside to textile; ceramic and upper frame unchanged','mounting_clearance_m':.0004,'ceramic_vertices_byte_exact':True},indent=2)+'\n')
 if __name__=='__main__':main()

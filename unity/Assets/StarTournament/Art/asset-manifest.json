@@ -34,12 +34,12 @@
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "752a156c01165d4dee6d446e6b48db2eb965fd688213b8f6e5ad0ea68f998455",
+      "sha256": "288c9c172ee7e66dde7276dd8572afc79f70885b7043bba0fe981b13670a1645",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "Preserved Orbital FPS hands; seat_fps_glove_plates.py: existing glove wrist plates seated on textile with matching skin; topology/images/equipment unchanged"
+      "source": "Preserved Orbital FPS hands; seat_fps_glove_plates.py: existing wrist chassis underside seated on textile; original ceramic/upper frame preserved; topology/images/equipment unchanged"
     },
     {
       "key": "speed-pickup",
