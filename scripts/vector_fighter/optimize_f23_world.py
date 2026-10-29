@@ -14,7 +14,7 @@ import optimize_runtime as opt
 import author_assault
 from export_heavy_agile import retain_current_weapon
 from mathutils.bvhtree import BVHTree
-SOURCE=ROOT/'scripts/vector_fighter/f23-color-coverage.blend'
+SOURCE=Path(sys.argv[sys.argv.index('--source')+1]).resolve() if '--source' in sys.argv else ROOT/'scripts/vector_fighter/f23-color-coverage.blend'
 OUT=Path(sys.argv[sys.argv.index('--output')+1]).resolve() if '--output' in sys.argv else ROOT/'.local/f23-adaptive-runtime'
 # Offline export tolerance, not a gameplay/camera/acceptance threshold.
 MAX_ERROR_M=.001
@@ -48,6 +48,8 @@ def main():
     bpy.ops.wm.open_mainfile(filepath=str(SOURCE))
     originals={o.name:o for o in bpy.context.scene.objects if o.type=='MESH' and o.name!='weapon:joined'}
     rows={name:{'object':name,'before':opt.triangles(obj),'after':opt.triangles(obj),'strategy':'unchanged exact source geometry'} for name,obj in originals.items()}
+    # A derived costume may replace the helmet; only resample surviving F22 cages.
+    names=tuple(name for name in names if name in originals)
     candidates={}
     for grid,path in paths.items():
         with bpy.data.libraries.load(str(path),link=False) as (src,dst):dst.objects=list(names)

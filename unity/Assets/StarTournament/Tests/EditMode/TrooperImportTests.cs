@@ -100,7 +100,7 @@ namespace StarTournament.ProvingGround.Tests
             string license=File.ReadAllText("Assets/StreamingAssets/trooper-ATTRIBUTION.txt");
             Assert.That(license,Does.Contain("ART_LOLL"));Assert.That(license,Does.Contain("creativecommons.org/licenses/by/4.0/"));
         }
-        [Test] public void AssaultArmorKeepsNeutralMajorityAndRealIdentityMarks()
+        [Test] public void F23RoundColorKeepsRealIdentityPanelsAndNeutralStructure()
         {
             var body=AssetDatabase.LoadAssetAtPath<GameObject>(Root+"TrooperBody.prefab");
             float neutral=0,painted=0;
@@ -119,7 +119,23 @@ namespace StarTournament.ProvingGround.Tests
                 }
             }
             Assert.That(painted,Is.GreaterThan(.01f),"Identity marks must have real surface coverage");
-            Assert.That(neutral,Is.GreaterThan(painted*2),"Selected assault armor is mostly neutral rather than full-body participant color");
+            // 2026-10-29: the user selected color concept 3, superseding the old
+            // neutral-majority ratio. Require real paint on each newly selected region.
+            Assert.That(neutral,Is.GreaterThan(.01f),"Graphite armor structure remains present");
+            foreach(string bone in new[]{"Head","Chest","Spine","LeftUpperLeg","RightUpperLeg"})
+            {
+                bool covered=false;
+                foreach(var skin in body.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    var mesh=skin.sharedMesh;var weights=mesh.boneWeights;
+                    for(int slot=0;slot<skin.sharedMaterials.Length;slot++)
+                    {
+                        if(!skin.sharedMaterials[slot].name.StartsWith("vector-fighter-identity"))continue;
+                        covered|=mesh.GetIndices(slot).Any(i=>weights[i].weight0>.5f&&skin.bones[weights[i].boneIndex0].name==bone);
+                    }
+                }
+                Assert.That(covered,Is.True,"Selected F23 color region: "+bone);
+            }
         }
     }
 }
