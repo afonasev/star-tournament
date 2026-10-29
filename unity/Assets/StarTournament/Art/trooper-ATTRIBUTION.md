@@ -35,3 +35,5 @@ Runtime optimization (2026-10-24): `scripts/vector_fighter/optimize_runtime.py`
 derives separate world and first-person resolutions from the retained accepted
 F16 source. First-person glove anatomy, attributed textures, skeleton, clips and
 weapon geometry are retained; this derivative does not change their attribution.
+
+Original costume restoration (2026-10-30): restored the ART_LOLL skin surfaces from the first native adaptation, retaining current local rig, animation and weapon equipment. FPS removes upper-arm triangles to preserve the existing camera-obstruction contract. The B01 body/FPS derivative remains separately preserved outside the Unity runtime. Script: scripts/trooper/restore_original.py.

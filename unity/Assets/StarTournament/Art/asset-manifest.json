@@ -24,22 +24,22 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "b54804645bafcddfa5d19c78e8514d1db855736345ed87fd58d4b30d1625c448",
+      "sha256": "3cc1ea968ad0bd5e35c4d0a4a914e9c91ab89f27cc95182bf8915cbc8d433df3",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR B01 reconstructed suit; unchanged F02 helmet/rig/gloves/equipment; scripts/vector_fighter/vector-body-b01.blend + export_body.py"
+      "source": "ART_LOLL original costume restored with current equipment/rig; scripts/trooper/restore_original.py"
     },
     {
       "key": "player-hands",
       "path": "Assets/StarTournament/Art/trooper-arms-animated.glb",
-      "sha256": "364045503cb7fa2c73f8af4435aaefdd14e2b67397080280774a45a3ead104eb",
+      "sha256": "3d817601148d0bae7404a1776b3a167e1eb44de1b598282cae3504ea4a6d8c09",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "B01 exact optimized forearms + preserved accepted FPS gloves; scripts/vector_fighter/port_b01_arms.py"
+      "source": "ART_LOLL original costume restored with current equipment/rig; scripts/trooper/restore_original.py"
     },
     {
       "key": "speed-pickup",
