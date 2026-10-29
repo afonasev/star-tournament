@@ -44,7 +44,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==number);
                 Assert.That(preserved.Hash,Is.EqualTo(hash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(hash));
                 Assert.That(preserved.Snapshot.Get("well.lamp"),Is.EqualTo(custom?9:7));
-                Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-gameplay-presentation-v1").Version,Is.EqualTo(6));
+                Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-gameplay-presentation-v1").Version,Is.EqualTo(7));
                 var defaults=ProvingProfile.CreateWellDefault();
                 foreach(var pair in new[]{("well.daylight",1.2f),("well.lamp",9f),("well.fill",.37f),("well.innerAngle",85f),("well.daylightShadow",.6f),("well.lampRange",16f)})
                     Assert.That(upgraded.Selected.Snapshot.Get(pair.Item1),Is.EqualTo(custom?pair.Item2:preserved.Snapshot.Get(pair.Item1)),pair.Item1);

@@ -500,6 +500,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id==ProvingProfile.TunnelsArtId?p.BeforeArenaPickupMarkings():p).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="lunar-laboratory-presentation-v1")?.Version??5)<5)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id=="lunar-laboratory-presentation-v1"?p.BeforeArenaPickupMarkings():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??7)<7)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellWayfinding()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??6)<6)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellPickupMarkings()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??5)<5)
