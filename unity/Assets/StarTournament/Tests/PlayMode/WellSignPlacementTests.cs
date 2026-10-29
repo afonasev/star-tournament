@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround.Tests
     {
         [UnityTest] public IEnumerator EverySignFitsAnOpaqueFaceAtEverySupportedScale()
         {
-            var directory=Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/signs"));Directory.CreateDirectory(directory);
+            var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_SIGNS_OUTPUT")??Path.GetFullPath(Path.Combine(Application.dataPath,"../../docs/evidence/well-storeys/signs"));Directory.CreateDirectory(directory);
             var audit=new List<string>();var failures=new List<string>();
             foreach(float scale in new[]{.5f,1f,2f})
             {
@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests
                 {
                     arena.Build(AuthoredArenaCatalog.Freeze(WellArenaCatalog.Id,movement),movement,art);yield return null;yield return null;
                     var skin=arena.GetComponentInChildren<WellArenaPresentation>();var signs=skin.GetComponentsInChildren<TextMesh>();
-                    Assert.That(signs.Length,Is.EqualTo(30),"Audit eight wall signs and two floor numbers on every storey");
+                    Assert.That(signs.Length,Is.EqualTo(60),"Audit eighteen wall texts and two floor numbers on every storey");
                     Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Sign placement cannot change gameplay authoring");
                     Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);
                     int index=0;
@@ -60,7 +60,7 @@ namespace StarTournament.ProvingGround.Tests
                 finally{camera.targetTexture=null;Object.Destroy(rt);Object.Destroy(root);}yield return null;
             }
             File.WriteAllLines(Path.Combine(directory,"sign-audit.txt"),audit.Concat(failures));
-            Assert.That(failures,Is.Empty,string.Join("\n",failures));Assert.That(audit.Count,Is.EqualTo(90));
+            Assert.That(failures,Is.Empty,string.Join("\n",failures));Assert.That(audit.Count,Is.EqualTo(180));
         }
     }
 }

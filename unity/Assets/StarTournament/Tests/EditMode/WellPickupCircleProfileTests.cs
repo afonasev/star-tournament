@@ -10,7 +10,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     {
         [Test] public void PaintMetadataFitsEveryBridgeWithoutChangingLighting()
         {
-            var current=ProvingProfile.CreateWellDefault();Assert.That(current.Version,Is.EqualTo(6));Assert.That(current.Validate(),Is.Empty);
+            var current=ProvingProfile.CreateWellDefault();Assert.That(current.Version,Is.EqualTo(7));Assert.That(current.Validate(),Is.Empty);
             var predecessor=typeof(ProvingProfile).GetMethod("BeforeWellPickupMarkings",BindingFlags.Instance|BindingFlags.NonPublic);
             var old=(ProvingProfile)predecessor.Invoke(current,null);Assert.That(old.Version,Is.EqualTo(5));
             foreach(var d in old.Descriptors)Assert.That(JsonUtility.ToJson(current.Descriptors.Single(x=>x.Path==d.Path)),Is.EqualTo(JsonUtility.ToJson(d)),d.Path);
@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
                 var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==number);
                 Assert.That(preserved.Hash,Is.EqualTo(hash));Assert.That(preserved.Snapshot.Hash(),Is.EqualTo(hash));
-                Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-gameplay-presentation-v1").Version,Is.EqualTo(6));
+                Assert.That(upgraded.Selected.Snapshot.Profiles.Single(p=>p.Id=="well-gameplay-presentation-v1").Version,Is.EqualTo(7));
                 Assert.That(upgraded.Selected.Snapshot.Get("well.lamp"),Is.EqualTo(9));Assert.That(upgraded.Selected.Snapshot.Get("well.liftSpeed"),Is.EqualTo(5));
                 Assert.That(upgraded.Selected.Snapshot.Get("well.pickupRingRadius"),Is.EqualTo(1.35f));
                 var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(upgraded.Selected.Hash));

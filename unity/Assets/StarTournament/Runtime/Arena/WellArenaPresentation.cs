@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
         {
             var go=new GameObject("Well sign: "+value);go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=rotation;
             size*=profile.Get("well.signScale");var text=go.AddComponent<TextMesh>();text.text=value;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.fontSize=96;text.fontStyle=value=="КОЛОДЕЦ"||value=="01"||value=="02"||value=="03"?FontStyle.Bold:FontStyle.Normal;text.characterSize=size/8;text.color=colour;
-            if(!fontMaterial){signFont=text.font;fontMaterial=new Material(Shader.Find("StarTournament/LunarSign"));fontMaterial.mainTexture=signFont.material.mainTexture;owned.Add(fontMaterial);Font.textureRebuilt+=RefreshFont;}
+            if(!fontMaterial){if(!signFont){signFont=text.font;Font.textureRebuilt+=RefreshFont;}fontMaterial=new Material(Shader.Find("StarTournament/LunarSign"));fontMaterial.mainTexture=signFont.material.mainTexture;owned.Add(fontMaterial);}
             var renderer=text.GetComponent<MeshRenderer>();renderer.sharedMaterial=fontMaterial;var bounds=renderer.localBounds;
             // Fit the actual glyph bounds, including accents and both lines, to the clear wall face.
             // signScale remains a preferred size; it cannot push lettering through a corner or portal.
@@ -125,7 +125,7 @@ namespace StarTournament.ProvingGround
             if(solid.Id.StartsWith("shaft-"))min.y=-.3f;
             result.SetMinMax(min,max);return result;
         }
-        void RefreshFont(Font font){if(font==signFont&&fontMaterial)fontMaterial.mainTexture=font.material.mainTexture;}
+        void RefreshFont(Font font){if(font!=signFont)return;if(fontMaterial)fontMaterial.mainTexture=font.material.mainTexture;if(wayfindingFontMaterial)wayfindingFontMaterial.SetTexture("_BaseMap",font.material.mainTexture);}
         public static void ConfigureDaylight(Light light,ProvingProfile profile)
         {
             light.type=LightType.Directional;light.intensity=profile.Get("well.daylight");
@@ -197,10 +197,11 @@ namespace StarTournament.ProvingGround
                 if(solid.Material=="door")
                 {char side=solid.Id[solid.Id.Length-1];var normal=side=='N'?Vector3.forward:side=='S'?Vector3.back:side=='E'?Vector3.right:Vector3.left;Label("КАБИНЕТ\nЗАКРЫТ",solid.Position+normal*((Mathf.Abs(normal.x)>.5f?solid.Size.x:solid.Size.z)/2+.02f),Quaternion.LookRotation(-normal),Color.white,new Vector2((Mathf.Abs(normal.x)>.5f?solid.Size.z:solid.Size.x)-.3f,solid.Size.y-.3f),.25f);}
             }
+            if(profile.Version>=7)BuildWayfinding(definition);
             for(int f=0;f<3;f++)
             {
                 string department=new[]{"БИОРАЗРАБОТКИ","ФИЗИКА","ЭЛЕКТРОНИКА"}[f];Color colour=colours[f].color;
-                foreach(int side in new[]{-1,1})
+                if(profile.Version<7)foreach(int side in new[]{-1,1})
                 {
                     var rotation=Quaternion.Euler(0,side>0?0:180,0);
                     string title=f==0?"КОЛОДЕЦ":"0"+(f+1)+"  /  "+department;
