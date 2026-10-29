@@ -48,6 +48,15 @@ namespace StarTournament.ProvingGround
     public sealed class NativeCombatSession
     {
         readonly CharacterMotor[] motors;
+        readonly int trainingHumans;
+        readonly float trainingTargetYaw;
+        public bool Training=>arena.Definition.MapId==FiringRangeCatalog.Id;
+        public bool IsTrainingTarget(int participant)=>Training&&participant>=trainingHumans;
+        void EquipTrainingHuman(int participant)
+        {
+            if(!Training||IsTrainingTarget(participant))return;
+            foreach(var weapon in new[]{WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})lives[participant].CollectWeapon(weapon);
+        }
         readonly CutterBeam[] beams;
         readonly ProvingProfile cutter;
         readonly ProvingProfile plasma;
@@ -184,6 +193,9 @@ namespace StarTournament.ProvingGround
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null, ProvingProfile cutterProfile=null, ProvingProfile plasmaProfile=null)
         {
             if(match != null && match.Roster.Count != motors.Length) throw new ArgumentException("Roster/motor count mismatch");
+            if(arena.Definition.MapId==FiringRangeCatalog.Id&&(match!=null||motors.Length<13||motors.Length>NativeMatchRoster.TrainingCapacity))throw new ArgumentException("Invalid training session");
+            trainingHumans=arena.Definition.MapId==FiringRangeCatalog.Id?motors.Length-FiringRangeCatalog.TargetCount:0;
+            trainingTargetYaw=trainingHumans>0?FiringRangeCatalog.AuthoringProfile().Get("range.map.targetYaw"):0;
             this.designProfile=designProfile?.Clone();
             plasma=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(plasmaProfile??ProvingProfile.CreatePlasmaDefault()));
             if(plasma.Id!="forge-plasma-v1"||plasma.Validate().Count!=0)throw new ArgumentException("Invalid FORGE profile");
@@ -200,13 +212,18 @@ namespace StarTournament.ProvingGround
             rocketResolver = new RocketResolver(tuning,this.movement);rifleSpeed=tuning.Get("rifle.speed");
             Spawns = new SafeSpawnSelector(physics, arena, this.movement, tuning);
             lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];speedRemaining=new double[motors.Length];
-            for (int i = 0; i < lives.Length; i++) lives[i] = new CombatLife("player-"+(i+1), lifecycle,cutter,plasma);
+            for (int i = 0; i < lives.Length; i++){lives[i] = new CombatLife("player-"+(i+1), lifecycle,cutter,plasma);EquipTrainingHuman(i);}
             damagePickup=new DamageBoostPickup(arena.Definition.DamagePickupAnchor,lifecycle,arena.Definition.Pickups.FirstOrDefault(x=>x.Kind==ArenaPickupKind.Damage)?.Id??"damage-disabled");damageRemaining=new double[motors.Length];damageWasOutside=new bool[motors.Length];HasDamagePickup=arena.Definition.HasDamagePickup;HasSpeedPickup=!arena.Definition.DisableSpeedPickup;
             weaponPickups=arena.Definition.Pickups.Where(x=>WeaponPickup.IsWeapon(x.Kind)).Select(x=>new WeaponPickup(x,lifecycle)).ToArray();
             healPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.FullHeal).Select(x=>new FullHealPickup(x.Anchor,lifecycle,x.Id)).ToArray();
             armorPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.Armor).Select(x=>new ArmorPickup(x.Anchor,lifecycle,x.Id)).ToArray();
             speedPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.Speed).Select(x=>new SpeedPickup(x.Anchor,lifecycle,x.Id)).ToArray();
             armorPickupWasOutside=new bool[armorPickups.Length,motors.Length];speedPickupWasOutside=new bool[speedPickups.Length,motors.Length];
+            if(Training)for(int i=trainingHumans;i<motors.Length;i++)
+            {
+                motors[i].Initialize(this.movement,arena.Definition.TrainingTargets[i-trainingHumans],arena);
+                var pose=motors[i].State;pose.Yaw=trainingTargetYaw;pose.Grounded=true;motors[i].RestoreState(pose);
+            }
             ResetPickupContacts();
 
         }
@@ -266,11 +283,12 @@ namespace StarTournament.ProvingGround
             }
             for (int i = 0; i < lives.Length; i++)
             {
+                if(IsTrainingTarget(i))actions[i]=default;
                 var weaponBeforeAdvance=Life(i).SelectedWeapon;lives[i].Advance(seconds);
                 if(weaponBeforeAdvance!=Life(i).SelectedWeapon)Match?.RecordWeaponSwitch(i);
                 damageRemaining[i]=Math.Max(0,damageRemaining[i]-seconds);
                 speedRemaining[i]=Math.Max(0,speedRemaining[i]-seconds); motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);
-                if (!Life(i).Dead)
+                if (!Life(i).Dead&&!IsTrainingTarget(i))
                 {
                     var before=motors[i].State.Position;motors[i].Tick(actions[i], seconds);
                     var delta=motors[i].State.Position-before;Match?.RecordMovement(i,new Vector2(delta.x,delta.z).magnitude,motors[i].AcceptedJumpThisTick);
@@ -279,6 +297,8 @@ namespace StarTournament.ProvingGround
             Physics.SyncTransforms();
             for(int i=0;i<lives.Length;i++)
             {
+                if(IsTrainingTarget(i))continue;
+                if(Training&&!Life(i).Dead&&healPickups.Any(item=>item.InRange(Pose(i).Position)&&PickupReach(Pose(i).Position,item.Read().Anchor)))lives[i].RefillRifle();
                 foreach(var item in weaponPickups)
                     if(!Life(i).Dead&&item.InRange(Pose(i).Position)&&PickupReach(Pose(i).Position,item.Read().Anchor))
                         if(item.TryCollect(Pose(i).Position,PickupSupport(Pose(i).Position),lives[i]))PickupCollected?.Invoke(i,item.Read().InstanceId,NativeBotPickupKind.Weapon);
@@ -363,12 +383,16 @@ namespace StarTournament.ProvingGround
             if(Match?.Phase==NativeMatchPhase.Finished) return;
             for (int i = 0; i < lives.Length; i++) if (lives[i].ReadyToRespawn)
             {
-                if (!Spawns.TryChoose(LiveTargets(), out var spawn))
+                Vector3 spawn;
+                if(Training)spawn=IsTrainingTarget(i)?arena.Definition.TrainingTargets[i-trainingHumans]:arena.Definition.Spawns[i];
+                else if (!Spawns.TryChoose(LiveTargets(), out spawn))
                     throw new InvalidOperationException("Fixed arena has no physically safe respawn slot");
                 if (lives[i].Respawn(Life(i).Life))
                 {
                     beams[i].Reset();
                     motors[i].Initialize(movement, spawn);
+                    if(IsTrainingTarget(i)){var pose=motors[i].State;pose.Yaw=trainingTargetYaw;pose.Grounded=true;motors[i].RestoreState(pose);}
+                    EquipTrainingHuman(i);
                     releaseRequired[i] = actions[i].FireHeld || actions[i].Fire;
                     Physics.SyncTransforms(); // Reserve this live capsule before the next participant chooses.
                     Respawned?.Invoke(i);

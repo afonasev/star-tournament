@@ -149,6 +149,8 @@ namespace StarTournament.ProvingGround
                 var steps=decoration.AddComponent<IndustrialTunnelsPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateIndustrialTunnelsPresentation());
                 while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
+            if(Definition.MapId==FiringRangeCatalog.Id)
+            {var decoration=new GameObject("Firing range presentation");decoration.transform.SetParent(transform,false);decoration.AddComponent<FiringRangePresentation>().Build(Definition);}
             trace.Mark("presentation");
             gameObject.AddComponent<ArenaRenderChunks>().Build(transform);trace.Mark("render-chunks");
             ArenaMeshResidency.ReleaseUnreferencedOwnedMeshes(transform);trace.Mark("mesh-residency");

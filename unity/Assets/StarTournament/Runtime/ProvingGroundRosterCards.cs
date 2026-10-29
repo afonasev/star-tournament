@@ -61,6 +61,8 @@ namespace StarTournament.ProvingGround
         }
         NativeMatchComposition FreezeLobbyColors(NativeMatchComposition draft)
         {
+            if(draft.Roster.Mode==NativeMatchMode.Training)
+            {var training=draft.Read();EnsureLobbyColors();for(int i=0;i<draft.LocalCount;i++)training.Participants[i].Color=NativeParticipantColors.Read(ParticipantPaletteProfile)[lobbyColors[LobbyColorIdentity(i)]];return NativeMatchComposition.Restore(training);}
             if(draft.Roster.Mode!=NativeMatchMode.Ffa)return NativeParticipantColors.FreezeNewMatch(draft,profile:ParticipantPaletteProfile);
             EnsureLobbyColors();var snapshot=draft.Read();
             for(int p=0;p<snapshot.Participants.Length;p++)snapshot.Participants[p].Color=LobbyColor(p);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace StarTournament.ProvingGround
 {
-    public enum NativeParticipantKind { LocalHuman, Bot, DiagnosticFixture }
+    public enum NativeParticipantKind { LocalHuman, Bot, DiagnosticFixture, TrainingDummy }
 
     [Serializable]
     public struct NativeParticipantInfo
@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround
         public NativeParticipantInfo(NativeParticipantKind kind,string name,Color color,int difficulty=-1)
         { Kind=kind;Name=name;Color=color;Difficulty=difficulty; }
         public string Label => Kind==NativeParticipantKind.Bot ? Name+" · "+new[]{"Рекрут","Боец","Ветеран"}[Difficulty] :
-            Name+(Kind==NativeParticipantKind.LocalHuman?" · ИГРОК":" · FIXTURE");
+            Name+(Kind==NativeParticipantKind.LocalHuman?" · ИГРОК":Kind==NativeParticipantKind.TrainingDummy?" · МИШЕНЬ":" · FIXTURE");
     }
 
     [Serializable]
@@ -56,10 +56,18 @@ namespace StarTournament.ProvingGround
                 if(p.Kind==NativeParticipantKind.Bot ? p.Difficulty<0 || p.Difficulty>2 : p.Difficulty!=-1)
                     throw new ArgumentException("Invalid difficulty for participant kind");
             }
+            if(Roster.Mode==NativeMatchMode.Training)
+            {
+                if(participants.Length!=mapping.Length+12 || participants.Take(mapping.Length).Any(p=>p.Kind!=NativeParticipantKind.LocalHuman) ||
+                    participants.Skip(mapping.Length).Any(p=>p.Kind!=NativeParticipantKind.TrainingDummy) || !mapping.SequenceEqual(Enumerable.Range(0,mapping.Length)))
+                    throw new ArgumentException("Training requires one–four humans followed by twelve passive targets");
+            }
+            else if(participants.Any(p=>p.Kind==NativeParticipantKind.TrainingDummy))throw new ArgumentException("Training targets require training mode");
             for(int a=0;a<participants.Length;a++)for(int b=0;b<a;b++)
             {
+                if(Roster.Mode==NativeMatchMode.Training && (participants[a].Kind==NativeParticipantKind.TrainingDummy||participants[b].Kind==NativeParticipantKind.TrainingDummy))continue;
                 bool equal=participants[a].Color==participants[b].Color;
-                if(Roster.Mode==NativeMatchMode.Ffa ? equal : Roster.AreAllies(a,b)!=equal)
+                if(Roster.Mode!=NativeMatchMode.Teams ? equal : Roster.AreAllies(a,b)!=equal)
                     throw new ArgumentException("Resolved colors must distinguish opponents and agree within teams");
             }
             for(int seat=0;seat<localParticipants.Length;seat++)

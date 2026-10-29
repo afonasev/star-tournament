@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround
         public float Get(string path) => Profile(path).Get(path);
         public void Set(string path,float value) => Profile(path).Set(path,value);
         public IEnumerable<NumericDescriptor> Descriptors => Profiles.SelectMany(p => p.Descriptors);
-        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1"||Profile(path).Id==ProvingProfile.TunnelsAuthoringId||Profile(path).Id=="lunar-laboratory-authoring-v1"||Profile(path).Id=="well-authoring-v1";
+        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1"||Profile(path).Id==ProvingProfile.TunnelsAuthoringId||Profile(path).Id=="lunar-laboratory-authoring-v1"||Profile(path).Id=="well-authoring-v1"||Profile(path).Id==ProvingProfile.FiringRangeAuthoringId;
         public bool IsDiagnostic(string path)=>path.StartsWith("bots.evaluation.")||path=="weapon.probeRange"||path=="weapon.probeCooldown";
         public bool IsLevelAuthoring(string path)
         {
@@ -405,6 +405,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamBattery()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??8)<8)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamForearmSwivel()).ToList()};
+            if(!sought.Profiles.Any(p=>p.Id==ProvingProfile.FiringRangeAuthoringId))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!=ProvingProfile.FiringRangeAuthoringId).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??7)<7)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamContactSurface()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??6)<6)

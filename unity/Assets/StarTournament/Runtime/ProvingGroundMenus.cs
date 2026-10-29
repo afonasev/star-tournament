@@ -225,6 +225,7 @@ namespace StarTournament.ProvingGround
         }
         string SetupBlockingReason()
         {
+            if(TrainingSelected&&!TrainingHumansOnly)return "Полигон: оставьте 1–4 человека; болванчики уже стоят в зале";
             if(LocalSeatCount+botSetup.Count>AuthoredArenaCatalog.Maximum(SelectedMapId))return "Для этой карты нужно 2–"+AuthoredArenaCatalog.Maximum(SelectedMapId)+" участника";
             if(!ValidSetup())return LocalSeatCount+botSetup.Count<2?"Добавьте игрока или бота":"Для команд нужны обе команды";
             if(!input.Ready)return "Подключите устройства людей";

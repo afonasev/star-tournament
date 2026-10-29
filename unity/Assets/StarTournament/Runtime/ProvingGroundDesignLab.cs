@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround
             labSavedPresentation="Баланс матча: "+selection.SelectedProfileName+"\nВерсия "+saved.Number+" · "+date;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,PlasmaProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile,LobbyProfile}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,PlasmaProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,FiringRangeAuthoring,HitFeedbackProfile,LobbyProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
         void PrepareLabRegistry()
         {
@@ -190,7 +190,8 @@ namespace StarTournament.ProvingGround
             // Runtime profile objects retain their identity for fixture/authoring references.
             // Match creation copies their values into separate frozen owners.
             foreach(var profile in CurrentLabBundle().Profiles)
-                foreach(var descriptor in profile.Descriptors)profile.Set(descriptor.Path,saved.Get(descriptor.Path));
+                foreach(var descriptor in profile.Descriptors)
+                    if(profile.Id!=ProvingProfile.FiringRangeAuthoringId||saved.Profiles.Any(p=>p.Id==profile.Id))profile.Set(descriptor.Path,saved.Get(descriptor.Path));
         }
         // Translate presentation only; historical descriptor bytes and Lab hashes remain unchanged.
         static string LabText(string text)=>text.Replace("Салага","Рекрут");

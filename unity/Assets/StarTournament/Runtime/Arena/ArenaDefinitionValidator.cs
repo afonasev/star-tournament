@@ -71,7 +71,15 @@ namespace StarTournament.ProvingGround
                 if(!Finite(region.Center)||!Finite(region.Size)||region.Size.x<=0||region.Size.z<=0||region.Size.y<0) return Reject("ARENA_INVALID_SPAWN_REGION",family,region.Id,"Spawn region bounds must be finite and non-degenerate.");
                 if(string.IsNullOrWhiteSpace(region.Support)||!supports.Contains(region.Support)) return Reject("ARENA_UNKNOWN_SPAWN_SUPPORT",family,region.Id,"Spawn region support is not declared.");
             }
-            if(definition.Transitions.Length<2) return Reject("ARENA_TOO_FEW_TRANSITIONS",family,null,"At least two declared transitions are required.");
+            if(definition.MapId==FiringRangeCatalog.Id)
+            {
+                if(definition.TrainingTargets==null||definition.TrainingTargets.Length!=FiringRangeCatalog.TargetCount||definition.Spawns.Length!=4||definition.Transitions.Length!=0||supports.Count!=1)
+                    return Reject("ARENA_INVALID_TRAINING_LAYOUT",family,null,"Training needs four player spawns, twelve targets and one continuous floor.");
+                foreach(var target in definition.TrainingTargets)if(!OnNamedFloor(target,definition.Solids,supports))return Reject("ARENA_INVALID_TRAINING_TARGET",family,null,"Targets need a named floor.");
+                if(definition.TrainingTargets.Distinct().Count()!=FiringRangeCatalog.TargetCount)return Reject("ARENA_DUPLICATE_TRAINING_TARGET",family,null,"Targets require distinct positions.");
+            }
+            else if(definition.TrainingTargets!=null&&definition.TrainingTargets.Length>0)return Reject("ARENA_UNEXPECTED_TRAINING_TARGETS",family,null,"Targets are exclusive to training.");
+            if(definition.MapId!=FiringRangeCatalog.Id&&definition.Transitions.Length<2) return Reject("ARENA_TOO_FEW_TRANSITIONS",family,null,"At least two declared transitions are required.");
             ids.Clear(); foreach(var transition in definition.Transitions)
             {
                 if(transition==null||string.IsNullOrWhiteSpace(transition.Id)||!ids.Add(transition.Id)) return Reject("ARENA_INVALID_TRANSITION",family,transition?.Id,"Transition ID must be unique.");

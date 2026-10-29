@@ -99,7 +99,7 @@ namespace StarTournament.ProvingGround
             if(authored==null)throw new InvalidDataException("Недоступно поддерживаемое определение ресурса "+shape.Id+"@"+shape.Version);
             storageAuthored.Add(key,authored);return authored;
         }
-        static bool AuthoredProfile(string id)=>id=="combat-bowl-ring-r7-authoring-v1"||id==ProvingProfile.TunnelsAuthoringId||id=="lunar-laboratory-authoring-v1"||id=="well-authoring-v1";
+        static bool AuthoredProfile(string id)=>id=="combat-bowl-ring-r7-authoring-v1"||id==ProvingProfile.TunnelsAuthoringId||id=="lunar-laboratory-authoring-v1"||id=="well-authoring-v1"||id==ProvingProfile.FiringRangeAuthoringId;
         static string ShapeKey(LabBundle b)=>string.Join("|",b.Profiles.Select(p=>p.Id+"@"+p.Version+":"+string.Join(",",p.Descriptors.Select(d=>d.Path).OrderBy(path=>path,StringComparer.Ordinal))));
         string SchemaIdentity(LabBundle bundle)
         {

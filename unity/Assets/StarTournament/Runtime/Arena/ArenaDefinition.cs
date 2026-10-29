@@ -16,7 +16,7 @@ namespace StarTournament.ProvingGround
     {
         public string Revision, MapId, ProfileFingerprint, Identity;
         public ArenaLiftDefinition[] Lifts;
-        public ArenaSolid[] Solids; public Vector3[] Spawns, RouteAnchors;
+        public ArenaSolid[] Solids; public Vector3[] Spawns, RouteAnchors, TrainingTargets;
         public ArenaPickupDefinition[] Pickups;
         public Vector3 ArmorPickupAnchor=>Pickups.First(x=>x.Kind==ArenaPickupKind.Armor).Anchor;
         public Vector3 SpeedPickupAnchor=>Pickups.First(x=>x.Kind==ArenaPickupKind.Speed).Anchor;

@@ -160,6 +160,8 @@ namespace StarTournament.ProvingGround
             else {state.CutterOwned=true;state.CutterEnergy=cutterCapacity;}
             state.Ammo=AmmoFor(state,state.SelectedWeapon);return true;
         }
+        public void RefillRifle()
+        { if(!state.Dead){state.RifleAmmo=rifleStartingAmmo;if(state.SelectedWeapon==WeaponId.Rifle)state.Ammo=state.RifleAmmo;} }
         public void HealTo(float target)
         {
             if(float.IsNaN(target)||float.IsInfinity(target)||target<0)throw new ArgumentOutOfRangeException(nameof(target));
