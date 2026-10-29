@@ -262,3 +262,53 @@ preserved shipping first-person arms, factory camera offset and vertical FOV.
 Images are Blender studio renders with native pose data, not Unity screenshots
 or Player/device acceptance. The FPS source is deliberately separate from the
 world body and retains its existing broad identity forearm panels.
+
+## F23 adaptive world sampling (2026-10-29)
+
+`optimize_f23_world.py` derives a candidate from the unchanged
+`f23-color-coverage.blend`. It reuses `reconstruct_f22.py`'s manufacturing cages
+at 12/24 interior samples and retains the original panel whenever the sampled
+surface distance exceeds 1 mm in either direction. This is an offline export
+choice, not an acceptance threshold. Bevel resolution, material slots, all
+nonarmor geometry, gloves, rig and equipment remain preserved. The source blend
+is never overwritten; FPS geometry is not exported or modified.
+
+```sh
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/optimize_f23_world.py
+```
+
+The candidate, derived editable sources and per-panel error/fallback report go
+to `.local/f23-adaptive-runtime/`. The script never promotes automatically.
+Current runtime candidate: 678,893 skinned triangles (source export: 1,070,223).
+The existing user-authorized test cap remains unchanged. Real before/after
+rendering, native import/grip/gait/contact checks and Player timing are required
+before integration; this triangle count alone is not a performance or visual PASS.
+
+`NativeModelPerformanceReview.cs` and `ModelPerformanceBuild.cs` originate from
+`codex/vector-reference-rework@6951a008794f53407dd7cfa713eaf73bfb55e97c`.
+The F23 follow-up adds contact CPU markers, a fixed 24-shot surface diagnostic,
+post-timing native front/side/back/motion images, and an original-F23 resource
+in the same explicitly requested diagnostic build. The original-body mode
+restores the former duplicate source/proxy shadow routing for comparison.
+Private generated baseline assets must be removed from Assets after building;
+the exact diagnostic app and durable evidence remain retained for review.
+
+The confirmed surface hot path uses an opt-in weak cache of immutable imported
+mesh topology/bind attributes in `HitFeedbackPresentation`. Dynamic/general
+`SkinnedContactPatch` callers still read fresh source data by default. Baked
+vertices, world transforms and block bounds are rebuilt per impact. The existing
+exhaustive reference test exercises the product cache across changed transforms;
+`-f23ContactReview <absolute output>` runs 24 uncached/cached CPU probes per body
+in an isolated diagnostic Player (exclusive, muted), including the initial fill.
+
+Dense F23 faces exposed `Vector3.normalized`'s small-vector cutoff in contact
+geometry. Surface normals now normalize every nondegenerate face explicitly;
+the exhaustive reference keeps its historical default and opts into precise
+normals for the current exact comparison. An independent 2 mm skinned-face
+regression test verifies a unit normal and a complete visible patch.
+
+Supporting `F23SurfaceAllocationReview.Run` records one optimized asset in ABBA
+order in Editor. It is not Player FPS. A zero allocation counter delta is marked
+unavailable (the local Mono counter returned zero even in allocating phases),
+never reported as zero allocations. Native Player pairs and raw tails remain
+the primary runtime evidence.

@@ -1010,6 +1010,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That((camera.cullingMask&1),Is.Not.Zero);
             foreach(var proxy in proxies)
             {
+                var original=proxy.transform.parent.GetComponent<SkinnedMeshRenderer>();
+                Assert.That(original.shadowCastingMode,Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.Off));
+                Assert.That(proxy.sharedMesh,Is.SameAs(original.sharedMesh));
+                Assert.That(proxy.bones,Is.EqualTo(original.bones));
+                // Identity materials are owned per renderer; equivalent shadow inputs
+                // need not have the same Unity object identity after palette updates.
+                Assert.That(proxy.sharedMaterials.Select(m=>m.shader),Is.EqualTo(original.sharedMaterials.Select(m=>m.shader)));
+                Assert.That(proxy.sharedMaterials.Select(m=>m.renderQueue),Is.EqualTo(original.sharedMaterials.Select(m=>m.renderQueue)));
                 Assert.That(proxy.gameObject.layer,Is.Zero);
                 Assert.That(proxy.shadowCastingMode,Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly));
                 Assert.That(proxy.GetComponents<Collider>(),Is.Empty);

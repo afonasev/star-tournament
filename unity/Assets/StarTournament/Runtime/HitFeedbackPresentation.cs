@@ -31,7 +31,8 @@ namespace StarTournament.ProvingGround
             bool shield=notice.ArmorLost>0&&notice.Time-lastShield[p]>=profile.Get("hit.shieldInterval");
             if(!stain&&!shield)return;
             // Rate-limit the shot, not each pellet: one shot may create several bounded patches.
-            var projection=new SkinnedContactPatch.Projection(bodies[p]);
+            // Actor GLB topology is immutable; only its animated pose changes.
+            var projection=new SkinnedContactPatch.Projection(bodies[p],immutableTopology:true);
             bool placed=false;
             if(notice.Contacts!=null&&notice.Contacts.Count>0)
             {

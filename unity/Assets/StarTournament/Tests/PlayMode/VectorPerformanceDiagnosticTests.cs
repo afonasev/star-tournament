@@ -70,6 +70,28 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(path,Is.Not.Null.And.Not.Empty);Directory.CreateDirectory(path);File.WriteAllLines(Path.Combine(path,"contacts.csv"),lines);
             UnityEngine.Debug.Log(string.Join("\n",lines));
         }
+        [UnityTest] public IEnumerator TinySkinnedFacesKeepUnitNormalsAndVisibleContactPatches()
+        {
+            var owner=new GameObject("tiny-contact-body");var bone=new GameObject("tiny-contact-bone");bone.transform.SetParent(owner.transform,false);
+            var skin=owner.AddComponent<SkinnedMeshRenderer>();var source=new Mesh();
+            source.vertices=new[]{new Vector3(-.001f,-.001f,0),new Vector3(.001f,-.001f,0),new Vector3(-.001f,.001f,0),new Vector3(.001f,.001f,0)};
+            source.normals=Enumerable.Repeat(Vector3.forward,4).ToArray();source.triangles=new[]{0,1,2,2,1,3};
+            source.boneWeights=Enumerable.Repeat(new BoneWeight{boneIndex0=0,weight0=1},4).ToArray();source.bindposes=new[]{Matrix4x4.identity};source.RecalculateBounds();
+            skin.sharedMesh=source;skin.bones=new[]{bone.transform};skin.rootBone=bone.transform;skin.updateWhenOffscreen=true;skin.localBounds=new Bounds(Vector3.zero,Vector3.one*.01f);
+            try
+            {
+                foreach(bool cached in new[]{false,true})
+                {
+                    var contact=new SkinnedContactPatch.Projection(owner,immutableTopology:cached).Find(new Vector3(0,0,.001f),Vector3.back);
+                    Assert.That(contact,Is.Not.Null);Assert.That(contact.Normal.sqrMagnitude,Is.EqualTo(1).Within(.000001f));Assert.That(Vector3.Dot(contact.Normal,Vector3.forward),Is.GreaterThan(.99999f));
+                    var patch=SkinnedContactPatch.Create(contact,.01f,null,"hit-contact-tiny-test",out var mesh);
+                    try{Assert.That(patch,Is.Not.Null);Assert.That(mesh.triangles.Length,Is.EqualTo(6));Assert.That(mesh.vertexCount,Is.EqualTo(4));}
+                    finally{if(patch)UnityEngine.Object.Destroy(patch);if(mesh)UnityEngine.Object.Destroy(mesh);}
+                }
+            }
+            finally{UnityEngine.Object.Destroy(owner);UnityEngine.Object.Destroy(source);}
+            yield return null;
+        }
         [UnityTest] public IEnumerator ContactProjectionMatchesExhaustiveGeometry()
         {
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
@@ -81,18 +103,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var scale in new[]{Vector3.one,new Vector3(.8f,1.2f,1.1f)})
             {
                 body.transform.localScale=scale;body.transform.localRotation=Quaternion.Euler(0,37,0);
-                var projection=new SkinnedContactPatch.Projection(body);
+                // Exercise the product cache across contacts and changed transform/pose.
+                var projection=new SkinnedContactPatch.Projection(body,immutableTopology:true);
                 for(int i=0;i<12;i++)
                 {
                     var point=chest.position+body.transform.right*(i%3-1)*.27f+Vector3.up*(i/3-1)*.15f;
                     var direction=i%2==0?-body.transform.forward:body.transform.right;
-                    var expected=ReferenceSkinnedContactPatch.Find(body,point,direction);
+                    var expected=ReferenceSkinnedContactPatch.Find(body,point,direction,preciseNormals:true);
                     var actual=projection.Find(point,direction);
                     Assert.That(actual==null,Is.EqualTo(expected==null));if(expected==null)continue;
                     Assert.That(actual.Skin,Is.SameAs(expected.Skin));
                     Assert.That(Vector3.Distance(actual.Point,expected.Point),Is.LessThan(.00001f));
                     Assert.That(Vector3.Distance(actual.Normal,expected.Normal),Is.LessThan(.00001f));
-                    var oldPatch=ReferenceSkinnedContactPatch.Create(expected,.1f,null,"reference",out var oldMesh);
+                    var oldPatch=ReferenceSkinnedContactPatch.Create(expected,.1f,null,"reference",out var oldMesh,preciseNormals:true);
                     var newPatch=SkinnedContactPatch.Create(actual,.1f,null,"candidate",out var newMesh);
                     try
                     {

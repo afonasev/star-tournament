@@ -459,6 +459,10 @@ namespace StarTournament.ProvingGround
                 proxy.updateWhenOffscreen=true;
                 proxy.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
                 proxy.receiveShadows=false;
+                // The world-layer proxy already casts this exact animated surface for
+                // every camera. Avoid submitting the owner's original skin a second
+                // time in other local seats' shadow passes.
+                source.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
         }
         void CreateView(int index,int participant,ProvingProfile movement,ProvingProfile trooper)

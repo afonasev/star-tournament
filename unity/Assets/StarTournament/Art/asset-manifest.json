@@ -24,12 +24,12 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "19b25bcdfe9a0c5d0093487f18715bea86be7b37ab1d7f28210065d9bfed904a",
+      "sha256": "118bcc0a744b2e36c66adace0293abcaec3aa117186fcbd69b0db2f8652b3467",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR F23 full-quality local test candidate; scripts/vector_fighter/f23-color-coverage.blend; full-quality test budget explicitly authorized 2026-10-29"
+      "source": "VECTOR F23; immutable f23-color-coverage.blend; optimize_f23_world.py adaptive 12/24/original cages within 1mm; nonarmor/FPS/equipment preserved"
     },
     {
       "key": "player-hands",
