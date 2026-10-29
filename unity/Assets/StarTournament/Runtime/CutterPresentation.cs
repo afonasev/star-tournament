@@ -25,6 +25,16 @@ namespace StarTournament.ProvingGround
         readonly int rippleCount;
         readonly bool legacyBeam;
         bool disposed;
+        // Authored 48-facet shield topology; only its orientation changes per contact.
+        const int ShieldFacets=48;
+        static readonly Vector2[] shieldCircle=ShieldCircle();
+        readonly Vector3[] shieldRays=new Vector3[ShieldFacets+1];
+        static Vector2[] ShieldCircle()
+        {
+            var result=new Vector2[ShieldFacets+1];
+            for(int k=0;k<result.Length;k++){float a=k*Mathf.PI*2/ShieldFacets;result[k]=new Vector2(Mathf.Cos(a),Mathf.Sin(a));}
+            return result;
+        }
         struct Contact {public bool Valid,Shield;public int Life;public double Time;public Vector3 Point,Direction;}
         // One reusable dynamic mesh per colour/layer, regardless of contacts or spark count.
         sealed class Batch
@@ -50,8 +60,13 @@ namespace StarTournament.ProvingGround
             }
             public void Disc(Vector3 center,Vector3 side,Vector3 up,float radius,float alpha,float white=0)
                 =>Quad(center-side*radius-up*radius,center+side*radius-up*radius,center+side*radius+up*radius,center-side*radius+up*radius,alpha,true,white);
+            bool empty=true;
             public void End()
             {
+                // Clear once on release, retaining the zero-vertex contract. Idle batches
+                // need no repeated mesh uploads, bounds calculations or native calls.
+                if(vertices.Count==0){if(!empty){Mesh.Clear();empty=true;}if(Object.activeSelf)Object.SetActive(false);return;}
+                empty=false;
                 Mesh.Clear();Mesh.SetVertices(vertices);Mesh.SetUVs(0,uv);Mesh.SetColors(colors);Mesh.SetTriangles(triangles,0);Mesh.RecalculateBounds();Object.SetActive(vertices.Count>0);
             }
         }
@@ -125,15 +140,15 @@ namespace StarTournament.ProvingGround
                 float radius=shieldRadius*shieldSpread;
                 // Curved local surface, tessellated radially. The fragment envelope
                 // fades into the undisturbed shield; it is never a gameplay volume.
-                const int facets=48;
+                const int facets=ShieldFacets;
                 const int bands=8;
-                Vector3 Surface(float r,float a)=>point+(side*Mathf.Cos(a)+up*Mathf.Sin(a))*r+direction*(r*r/(radius*3));
+                for(int k=0;k<=facets;k++)shieldRays[k]=side*shieldCircle[k].x+up*shieldCircle[k].y;
+                Vector3 Surface(float r,int k)=>point+shieldRays[k]*r+direction*(r*r/(radius*3));
                 for(int band=0;band<bands;band++)for(int k=0;k<facets;k++)
                 {
                     float inner=radius*band/bands,outer=radius*(band+1)/bands;
-                    float a=k*Mathf.PI*2/facets,b=(k+1)*Mathf.PI*2/facets;
                     float fade=1-(band+.5f)/bands;
-                    batch.Quad(Surface(inner,a),Surface(inner,b),Surface(outer,b),Surface(outer,a),strength*shieldOpacity*fade,solid:true);
+                    batch.Quad(Surface(inner,k),Surface(inner,k+1),Surface(outer,k+1),Surface(outer,k),strength*shieldOpacity*fade,solid:true);
                 }
                 for(int wave=0;wave<rippleCount;wave++)
                 {
@@ -143,7 +158,7 @@ namespace StarTournament.ProvingGround
                     {
                         float a=k*Mathf.PI*2/facets,b=(k+1)*Mathf.PI*2/facets;
                         float wa=1+Mathf.Sin(a*7+phase)*shieldRingWidth/radius,wb=1+Mathf.Sin(b*7+phase)*shieldRingWidth/radius;
-                        batch.Quad(Surface(r*wa,a),Surface(r*wb,b),Surface(r*wb+shieldRingWidth,b),Surface(r*wa+shieldRingWidth,a),strength*(1-life));
+                        batch.Quad(Surface(r*wa,k),Surface(r*wb,k+1),Surface(r*wb+shieldRingWidth,k+1),Surface(r*wa+shieldRingWidth,k),strength*(1-life));
                     }
                 }
                 float cell=radius/7;
@@ -193,7 +208,9 @@ namespace StarTournament.ProvingGround
                 if(k%3==0)batch.Disc(At(travel*.2f),side,up,glowRadius*(.04f+Random(151)*.08f),alpha,1);
             }
         }
-        public void Render()
+        static readonly Unity.Profiling.ProfilerMarker renderMarker=new Unity.Profiling.ProfilerMarker("ST.Cutter.Render");
+        public void Render() {using(renderMarker.Auto())RenderCore();}
+        void RenderCore()
         {
             if(disposed)return;
             for(int i=0;i<cores.Length;i++)

@@ -223,15 +223,19 @@ namespace StarTournament.ProvingGround
             float age=Mathf.Max(0,(float)(session.Time-b.Time)),life=P("rocketExplosionSeconds"),t=Mathf.Clamp01(age/life),radius=b.Radius*F("blastRadiusScale");
             // Authored eased expansion/fade shape. All absolute scales/counts/times have Lab metadata.
             int fire=t<1?(int)F("fireCount"):0;
+            // Frozen values and session-age envelopes are identical for every lobe.
+            // Hoist them out of the particle loops without changing their arithmetic.
+            var hot=Hot;float fireVariation=F("fireSizeVariation");
+            float spreadWeight=Mathf.Sqrt(t)*F("fireSpreadScale"),lobeWeight=F("fireLobeScale")*Mathf.Sin(Mathf.PI*Mathf.Sqrt(t))*.5f;
+            float scale=radius*Mathf.Clamp01(Mathf.Sqrt(t)*2.4f)/Mathf.Max(.0001f,spreadWeight+lobeWeight),spread=spreadWeight*scale;
+            var fireColor=Color.Lerp(Color.white,hot,t*t);fireColor.a=(1-t)*(1-t);
             for(int i=0;i<fire;i++)
             {
                 var direction=Direction(i,fire,b.Id);
-                float variety=1-F("fireSizeVariation")+F("fireSizeVariation")*(Mathf.Sin(i*2.1f+b.Id)+1)*.5f;
+                float variety=1-fireVariation+fireVariation*(Mathf.Sin(i*2.1f+b.Id)+1)*.5f;
                 // Normalize centers + half-diameter to the real radius; authored fast opening then fade.
-                float spreadWeight=Mathf.Sqrt(t)*F("fireSpreadScale"),lobeWeight=F("fireLobeScale")*Mathf.Sin(Mathf.PI*Mathf.Sqrt(t))*.5f;
-                float scale=radius*Mathf.Clamp01(Mathf.Sqrt(t)*2.4f)/Mathf.Max(.0001f,spreadWeight+lobeWeight),spread=spreadWeight*scale;
-                var color=Color.Lerp(Color.white,Hot,t*t);color.a=(1-t)*(1-t);
-                Particle(i,b.Center+direction*spread,lobeWeight*2*scale*variety,color,Vector3.zero,b.Id+(uint)i);
+
+                Particle(i,b.Center+direction*spread,lobeWeight*2*scale*variety,fireColor,Vector3.zero,b.Id+(uint)i);
             }
             var sheet=b.Fire.textureSheetAnimation;sheet.frameOverTime=new ParticleSystem.MinMaxCurve((Mathf.Floor(age*F("fireFramesPerSecond"))%16)/16f);
             Set(b.Fire,fire);
@@ -240,19 +244,22 @@ namespace StarTournament.ProvingGround
             float core=Mathf.Clamp01(age/F("coreSeconds"));
             Particle(0,b.Center,radius*F("coreScale")*(1+core),CoreColor((1-core)*(1-core)),Vector3.zero,b.Id);Set(b.Core,core<1?1:0);
             float sparks=Mathf.Clamp01(age/F("sparkSeconds"));int sparkCount=sparks<1?(int)F("sparkCount"):0;
+            float sparkSpeed=F("sparkSpeed"),sparkVariation=F("sparkSpeedVariation"),sparkSize=F("sparkSize")*(1-sparks);
+            var sparkColor=Color.Lerp(CoreColor(1),hot,sparks);sparkColor.a=1-sparks;
             for(int i=0;i<sparkCount;i++)
             {
-                var direction=Direction(i,sparkCount,b.Id+31);float speed=F("sparkSpeed")*(1-F("sparkSpeedVariation")+F("sparkSpeedVariation")*(i%3)/2);
-                var color=Color.Lerp(CoreColor(1),Hot,sparks);color.a=1-sparks;
-                Particle(i,b.Center+direction*(speed*age),F("sparkSize")*(1-sparks),color,direction*speed,b.Id+(uint)i);
+                var direction=Direction(i,sparkCount,b.Id+31);float speed=sparkSpeed*(1-sparkVariation+sparkVariation*(i%3)/2);
+                Particle(i,b.Center+direction*(speed*age),sparkSize,sparkColor,direction*speed,b.Id+(uint)i);
             }
             Set(b.Sparks,sparkCount);
             float smokeAge=age-F("smokeDelay"),s=Mathf.Clamp01(smokeAge/F("smokeSeconds"));int smokeCount=smokeAge>0&&s<1?(int)F("smokeCount"):0;
+            float shade=F("smokeShade"),smokeSpreadScale=F("smokeSpreadScale");
+            var smokeColor=new Color(shade,shade,shade,F("smokeOpacity")*Mathf.Sin(Mathf.PI*s));
+            var rise=Vector3.up*F("smokeRise")*smokeAge;float smokeSize=radius*F("smokeScale")*(F("smokeInitialScale")+s);
             for(int i=0;i<smokeCount;i++)
             {
-                var direction=Direction(i,smokeCount,b.Id+71);float shade=F("smokeShade");
-                var color=new Color(shade,shade,shade,F("smokeOpacity")*Mathf.Sin(Mathf.PI*s));
-                Particle(i,b.Center+direction*radius*Mathf.Sqrt(s)*F("smokeSpreadScale")+Vector3.up*F("smokeRise")*smokeAge,radius*F("smokeScale")*(F("smokeInitialScale")+s),color,Vector3.zero,b.Id+(uint)i);
+                var direction=Direction(i,smokeCount,b.Id+71);
+                Particle(i,b.Center+direction*radius*Mathf.Sqrt(s)*smokeSpreadScale+rise,smokeSize,smokeColor,Vector3.zero,b.Id+(uint)i);
             }
             Set(b.Smoke,smokeCount);
             if(age>=Mathf.Max(F("lightSeconds"),Mathf.Max(F("coreSeconds"),Mathf.Max(life,Mathf.Max(F("sparkSeconds"),F("smokeDelay")+F("smokeSeconds")))))){b.Active=false;b.Light.enabled=false;b.Root.SetActive(false);}
@@ -267,7 +274,9 @@ namespace StarTournament.ProvingGround
                 b.Light.enabled=diagnosticLights&&b.Active&&b.Light.intensity>0&&rank<(int)F("maxLights");
             }
         }
-        public void Render()
+        static readonly Unity.Profiling.ProfilerMarker renderMarker=new Unity.Profiling.ProfilerMarker("ST.Rocket.Render");
+        public void Render() {using(renderMarker.Auto())RenderCore();}
+        void RenderCore()
         {
             var rockets=session.Rockets;liveIds.Clear();foreach(var r in rockets)liveIds.Add(r.Id);
             removed.Clear();foreach(var id in flights.Keys)if(!liveIds.Contains(id))removed.Add(id);

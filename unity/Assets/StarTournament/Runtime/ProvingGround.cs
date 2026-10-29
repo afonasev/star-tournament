@@ -650,7 +650,16 @@ namespace StarTournament.ProvingGround
         void OnApplicationFocus(bool focus)
         {
             musicFocused=focus;menuWindowFocused=focus;
-            if(!focus){menuGamepadCursor=false;SetCursor(false);input.Clear();Session?.ClearInput();}
+            if(!focus)
+            {
+                menuGamepadCursor=false;SetCursor(false);input.Clear();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+                // The opt-in performance driver owns synthetic input while measuring
+                // background rendering. Ordinary gameplay retains its focus boundary.
+                if(!NativeProjectilePerformanceReview.OwnsInput(this))
+#endif
+                    Session?.ClearInput();
+            }
             if(!focus&&!diagnostic&&!combatReview&&!nativeInputReview&&!Application.isBatchMode)gameAudio?.SuspendMusic();
             if(!focus && displayConfirmationActive)RollbackDisplay();
             if (!focus && phase == Phase.Running && !diagnostic && !combatReview && !nativeInputReview) Pause("Окно потеряло фокус");
