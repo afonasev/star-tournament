@@ -8,7 +8,7 @@
   "pivot": "feet-center",
   "body": {
     "path": "trooper-body-animated.glb",
-    "sha256": "842279f15a187f6b5edec8d42a87db63decfc53b5fd4cd08402dab344f366d82"
+    "sha256": "19b25bcdfe9a0c5d0093487f18715bea86be7b37ab1d7f28210065d9bfed904a"
   },
   "arms": {
     "path": "trooper-arms-animated.glb",

@@ -47,7 +47,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
                 var positions=bones.Values.Select(b=>b.position).ToArray();var rotations=bones.Values.Select(b=>b.rotation).ToArray();
                 ground.SendMessage("LateUpdate");ground.SendMessage("LateUpdate");
-                for(int i=0;i<positions.Length;i++){Assert.That(Vector3.Distance(positions[i],bones.Values.ElementAt(i).position),Is.LessThan(.00001f));Assert.That(Quaternion.Angle(rotations[i],bones.Values.ElementAt(i).rotation),Is.LessThan(.05f));}
+                for(int i=0;i<positions.Length;i++){Assert.That(Vector3.Distance(positions[i],bones.Values.ElementAt(i).position),Is.LessThan(.00001f),phase+" frozen "+bones.Values.ElementAt(i).name);Assert.That(Quaternion.Angle(rotations[i],bones.Values.ElementAt(i).rotation),Is.LessThan(.05f));}
                 if(!string.IsNullOrEmpty(output))
                 {
                     var directory=Path.Combine(output,phase);Directory.CreateDirectory(directory);
@@ -70,7 +70,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var previous=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeVectorGrip",flags).Invoke(current,null);
             foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma,WeaponId.Shotgun})
             {
-                apply.Invoke(grip,new object[]{current,weapon,1f,null});
+                apply.Invoke(grip,new object[]{current,weapon,1f,null,default(CrimsonRecoilSample)});
                 for(int i=0;i<all.Length;i++)Assert.That(Vector3.Distance(all[i].localPosition,localPositions[i]),Is.LessThan(.00001f),weapon+" "+all[i].name+" bone length");
                 Assert.That(Vector3.Distance(mount.position,mountPosition),Is.LessThan(.00001f),weapon+" mount position");
                 Assert.That(Quaternion.Angle(mount.rotation,mountRotation),Is.LessThan(.05f),weapon+" mount rotation");
@@ -81,7 +81,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(Quaternion.Angle(all[i].localRotation,localRotations[i]),Is.LessThan(.05f),weapon+" restored rotation");
                 }
                 if(weapon==WeaponId.Shotgun)continue;
-                apply.Invoke(grip,new object[]{previous,weapon,1f,null});
+                apply.Invoke(grip,new object[]{previous,weapon,1f,null,default(CrimsonRecoilSample)});
                 for(int i=0;i<all.Length;i++)
                 {
                     Assert.That(Vector3.Distance(all[i].position,positions[i]),Is.LessThan(.00001f),weapon+" unchanged pose");

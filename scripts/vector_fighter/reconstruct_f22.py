@@ -12,6 +12,9 @@ import author_reference as r
 from study_upper import profile
 OUT=ROOT/'.local/vector-f22';OUT.mkdir(exist_ok=True,parents=True)
 solids=[]
+PANEL_GRID=48
+SHELL_BEVEL_SEGMENTS=2
+SOURCE_OUTPUT=ROOT/'scripts/vector_fighter/f22-reconstruction.blend'
 
 def solid(name,points,bone,mat=None,axis=(0,-1,0),depth=.009,crown=.003,inset=.12,hardware=True):
     """Explicit broad center face, sloped perimeter, full return and inner wall.
@@ -64,7 +67,7 @@ def shellpanel(name,coords,bone,surface,outward,mat=None):
     triangles=tessellate_polygon([poly3])
     xmin=min(q.x for q in inner);xmax=max(q.x for q in inner)
     ymin=min(q.y for q in inner);ymax=max(q.y for q in inner)
-    nx=48;ny=48;dx=(xmax-xmin)/nx;dy=(ymax-ymin)/ny
+    nx=PANEL_GRID;ny=PANEL_GRID;dx=(xmax-xmin)/nx;dy=(ymax-ymin)/ny
     def clipped(poly,axis,value,positive):
         result=[]
         for a,b in zip(poly,poly[1:]+poly[:1]):
@@ -116,7 +119,7 @@ def shellpanel(name,coords,bone,surface,outward,mat=None):
     bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
     mod=obj.modifiers.new('Full inward wall','SOLIDIFY');mod.thickness=.007;mod.offset=-1;mod.use_even_offset=True;mod.material_offset=2;mod.material_offset_rim=1
     bpy.ops.object.modifier_apply(modifier=mod.name)
-    mod=obj.modifiers.new('Machined lip','BEVEL');mod.width=.0007;mod.segments=2;mod.limit_method='ANGLE';mod.angle_limit=.65;mod.material=1
+    mod=obj.modifiers.new('Machined lip','BEVEL');mod.width=.0007;mod.segments=SHELL_BEVEL_SEGMENTS;mod.limit_method='ANGLE';mod.angle_limit=.65;mod.material=1
     bpy.ops.object.modifier_apply(modifier=mod.name)
     obj.select_set(False);mod=obj.modifiers.new('Skin','ARMATURE');mod.object=g.rig
     seed=int(hashlib.sha256(name.encode()).hexdigest()[:6],16)/0xffffff
@@ -446,6 +449,6 @@ def main():
         bm=bmesh.new();bm.from_mesh(obj.data);bad=sum(not e.is_manifold for e in bm.edges);bm.free();rows.append({'name':obj.name,'nonmanifold_edges':bad});assert bad==0,obj.name
     (OUT/'construction.json').write_text(json.dumps({'closed_solids':len(rows),'objects':rows},indent=2)+'\n')
     g.rig.data.pose_position='POSE';bpy.context.preferences.filepaths.save_version=0
-    bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'scripts/vector_fighter/f22-reconstruction.blend'))
+    bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE_OUTPUT))
     print('F22_COMPLETE',len(solids))
 if __name__=='__main__':main()

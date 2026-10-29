@@ -571,11 +571,13 @@ namespace StarTournament.ProvingGround
                 if(life.Dead)viewWeapon?.RifleDisplay?.SetVisible(false);
                 if(!life.Dead)
                 {
+                    // The grip solver uses world-space joints. Sample under this
+                    // frame's camera, matching PrepareShotPose and frozen re-renders.
+                    cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     var viewVisual=views[v].GetComponent<TrooperVisual>();
                     if(viewVisual)viewVisual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
                     views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
                     weaponSwitches[v]?.Apply(life,session.WeaponSwitchSeconds);
-                    cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     continue;
                 }
                 Vector3 position=deathEye[i], target;

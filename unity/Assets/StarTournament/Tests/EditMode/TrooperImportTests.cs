@@ -108,7 +108,7 @@ namespace StarTournament.ProvingGround.Tests
                 for(int slot=0;slot<skin.sharedMaterials.Length;slot++)
                 {
                     string name=skin.sharedMaterials[slot].name;
-                    bool armor=name.StartsWith("vector-assault-armor");
+                    bool armor=name.StartsWith("vector-assault-armor")||name=="vector-reference-coated-steel";
                     if(!armor&&!name.StartsWith("vector-fighter-identity"))continue;
                     var indices=mesh.GetIndices(slot);float area=0;
                     for(int i=0;i<indices.Length;i+=3)
