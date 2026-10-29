@@ -312,3 +312,9 @@ order in Editor. It is not Player FPS. A zero allocation counter delta is marked
 unavailable (the local Mono counter returned zero even in allocating phases),
 never reported as zero allocations. Native Player pairs and raw tails remain
 the primary runtime evidence.
+
+## Rounded F23 — helmet 2 / color 3 (2026-10-29)
+
+`f23-round-color.blend` is the editable successor for the selected world helmet and color panels; `f23-color-coverage.blend` remains intact. Reproduce with `blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/round_f23_helmet.py`, then `blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/optimize_f23_world.py -- --source scripts/vector_fighter/f23-round-color.blend --output .local/f23-round/optimized`. The latter is candidate-only. New helmet surfaces use an analytic rounded shell with existing material/Head skin roles; surviving F22 body cages retain the adaptive export pass. Do not run the old blanket collapse exporter.
+
+`audit_round_f23.py` checks actual GLB compatibility against a supplied baseline plus the unreduced export. Only world GLB and its hash records are promoted; independent FPS mesh, all grips, camera, clips and gameplay stay unchanged. Review actual imported renders and Unity views separately from structural audits. Canonical decision/evidence: shared planning change `round-f23-helmet-color-panels`.
