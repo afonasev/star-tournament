@@ -6,7 +6,28 @@ namespace StarTournament.ProvingGround
     public static class WellFurniturePlan
     {
         public static bool IsFurniture(ArenaSolid solid)=>solid.Surface!=null&&solid.Surface.StartsWith("well-furniture-");
-        public static ArenaSolid[] Build()=>BuildRevisionFour();
+        public const string WorkZonesProfile="well-work-zones-v1";
+        public static ArenaSolid[] Build()
+        {
+            var result=BuildRevisionFour();
+            // Immutable revision-8 authoring; sizes/positions are exposed by the map Lab profile.
+            // Reuse four existing bodies. Shipping cases and every other body remain exact.
+            foreach(var solid in result)
+            {
+                if(solid.Id=="furniture-f0-corner-bench-1-1")
+                {
+                    solid.Position=new Vector3(17.3f,solid.Position.y,20.7f);
+                    solid.Size=new Vector3(1.3f,solid.Size.y,3.6f);
+                }
+                else if(solid.Id=="furniture-f1-corridor-bench")
+                    solid.Position=new Vector3(-18.2f,solid.Position.y,6.4f);
+                else if(solid.Id=="furniture-f2-corner-bench--1-1")
+                    solid.Position=new Vector3(-17,solid.Position.y,23.85f);
+                else if(solid.Id=="furniture-f2-cabinet--1-1")
+                    solid.Position=new Vector3(-14.55f,solid.Position.y,22.35f);
+            }
+            return result;
+        }
         /// <summary>Frozen revision-4 furniture, retained for historical map and Lab hashes.</summary>
         public static ArenaSolid[] BuildRevisionFour()
         {
@@ -53,6 +74,8 @@ namespace StarTournament.ProvingGround
         }
         public static Vector3 Front(ArenaSolid solid)
         {
+            // Only the new island is turned; frozen predecessors retain their original front.
+            if(solid.Id=="furniture-f0-corner-bench-1-1"&&solid.Size.z>solid.Size.x)return Vector3.left;
             if(solid.Id.Contains("-corridor-cabinet"))return Vector3.back*Mathf.Sign(solid.Position.z);
             bool xFace=solid.Id.Contains("cabinet")||solid.Id.Contains("side-bench")||solid.Id.Contains("supply")||solid.Id.Contains("-corridor-bench");
             return xFace?Vector3.left*Mathf.Sign(solid.Position.x):Vector3.back*Mathf.Sign(solid.Position.z);

@@ -81,6 +81,7 @@ namespace StarTournament.ProvingGround
             IEnumerable<ProvingProfile> Candidates()
             {
                 yield return current;
+                yield return current.BeforeWellWorkZones(shape.Version);
                 yield return current.BeforeForgePlacement(shape.Version);
                 var beforeForge=current.BeforeForgePickups();yield return beforeForge;
                 if(shape.Id=="well-authoring-v1"&&shape.Version==4)yield return beforeForge.BeforeWellSecondFloorWeapons();
