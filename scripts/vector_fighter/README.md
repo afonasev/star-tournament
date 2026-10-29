@@ -239,3 +239,26 @@ unity-run shared; measured multi-variant comparison uses exclusive.
 
 ## Restored shotgun surface maps (2026-10-25)
 After exporting the final runtime GLBs, run `python3 tools/restore-shotgun-surfaces.py`. This append-only pass reuses the original 128px shotgun metal map from double-barrel-shotgun-lod0.glb on vector-chassis/vector-titanium. It preserves all existing geometry, UV, skin, clip and image bytes, shares one new texture between the two materials per file, and updates asset-manifest hashes. Existing ceramic/glove maps remain intact.
+
+## F23 color coverage and native pose review
+
+`refine_f23.py` derives `f23-color-coverage.blend` from pinned F22 by assigning the
+existing identity material to 16 major armor panels. Geometry, skin, gloves and
+weapon are unchanged. Export with `export_reference.py --reference --source
+scripts/vector_fighter/f23-color-coverage.blend --output-root .local/vector-f23`.
+This is an unreduced art candidate, never runtime promotion.
+
+The GLB's embedded clips do not contain the game's finger/wrist IK. For an
+honest grip preview, run Unity Editor `VectorArtPoseExport.Run` with
+`STAR_TOURNAMENT_ART_POSES` set to an absolute JSON output path, through the shared
+`unity-run` wrapper and `-batchmode -noaudio -muted -nographics -quit`. It executes
+actual `TrooperVisual`, `OrbitalGripPose` and grounded gait with factory tuning,
+persisted clips and measured actor displacement. It writes evidence only.
+
+`blender -b -noaudio --python-exit-code 1 --python
+scripts/vector_fighter/review_native.py -- --poses PATH --output OUTPUT --details`
+uses that native skin/weapon palette on the actual art GLB. Add `--fps` for the
+preserved shipping first-person arms, factory camera offset and vertical FOV.
+Images are Blender studio renders with native pose data, not Unity screenshots
+or Player/device acceptance. The FPS source is deliberately separate from the
+world body and retains its existing broad identity forearm panels.
