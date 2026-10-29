@@ -59,6 +59,34 @@ namespace StarTournament.ProvingGround.Tests
             // Full-quality F23 world forearms may exceed the independent FPS hands.
             Assert.That(forearms.triangles.Length/3,Is.LessThanOrEqualTo(38562));
         }
+        [Test] public void B01FirstPersonMapsSurviveIndependentParticipantColors()
+        {
+            var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(Root+"TrooperArms.prefab");
+            var first=Object.Instantiate(prefab);var second=Object.Instantiate(prefab);
+            try
+            {
+                var blue=new Color(.06f,.30f,.85f);var orange=new Color(.9f,.23f,.04f);
+                TrooperIdentityPresentation.ApplyBody(first,blue);TrooperIdentityPresentation.ApplyBody(second,orange);
+                foreach(var pair in new[]{(root:first,color:blue),(root:second,color:orange)})
+                {
+                    var skin=pair.root.GetComponentsInChildren<SkinnedMeshRenderer>().Single(s=>s.name=="vector-armored-hands");
+                    foreach(var name in new[]{"vector-fighter-identity-body-b01-baked","vector-body-b01-textile-baked","vector-body-b01-graphite-baked"})
+                    {
+                        var material=skin.sharedMaterials.Single(m=>m.name==name);
+                        var source=prefab.GetComponentsInChildren<Renderer>().SelectMany(r=>r.sharedMaterials).Single(m=>m.name==name);
+                        foreach(var map in new[]{"baseColorTexture","normalTexture","metallicRoughnessTexture"})
+                        {
+                            Assert.That(source.GetTexture(map),Is.Not.Null,name+" "+map);
+                            Assert.That(material.GetTexture(map),Is.SameAs(source.GetTexture(map)));
+                        }
+                        int slot=System.Array.IndexOf(skin.sharedMaterials,material);var block=new MaterialPropertyBlock();skin.GetPropertyBlock(block,slot);
+                        Assert.That(block.GetFloat("_IdentityMode"),Is.EqualTo(name.StartsWith("vector-fighter-identity")?1:0));
+                        Assert.That(block.GetColor("_IdentityColor"),Is.EqualTo(pair.color));
+                    }
+                }
+            }
+            finally{Object.DestroyImmediate(first);Object.DestroyImmediate(second);}
+        }
         [Test] public void FirstPersonSleevesExcludeUpperArmObstructionButWorldRemainsComplete()
         {
             int UpperVertices(GameObject prefab)

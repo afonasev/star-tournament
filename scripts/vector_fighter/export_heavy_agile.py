@@ -5,8 +5,6 @@ Candidate-only by default; --promote updates the body and its manifest identity.
 import sys, json, hashlib, shutil,copy,struct,subprocess
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
-import optimize_runtime as opt
-import author_assault
 
 def retain_current_weapon(candidate,current):
     """Copy exact shipping equipment buffers; old F17 contains an obsolete shotgun.
@@ -94,6 +92,8 @@ def retain_current_weapon(candidate,current):
         struct.pack('<I4s',len(payload),b'JSON')+payload+struct.pack('<I4s',len(binary),b'BIN\0')+binary)
 
 def main():
+    import optimize_runtime as opt
+    import author_assault
     if "--reference" in sys.argv and "--promote" in sys.argv:
         raise ValueError("Unoptimized reference cannot be promoted")
     root=Path(__file__).resolve().parents[2]

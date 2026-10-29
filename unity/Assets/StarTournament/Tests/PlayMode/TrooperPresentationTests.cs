@@ -316,7 +316,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
             var rifle=visual.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="automatic-rifle");
             var authored=ground.RiflePrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
-            var actual=rifle.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
+            var display=visual.GetComponent<WeaponModelPresentation>().RifleDisplay;
+            Assert.That(display.Screen.transform.IsChildOf(rifle),Is.True);
+            Assert.That(display.Screen.sharedMaterial.shader,Is.EqualTo(Resources.Load<Shader>("RifleDisplay")));
+            // The later integrated ammo display is a separate runtime attachment.
+            // Preserve exact equality for every authored rifle surface.
+            var actual=rifle.GetComponentsInChildren<Renderer>(true).Where(r=>r!=display.Screen).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
             CollectionAssert.AreEquivalent(authored,actual,"Mounted rifle must retain the imported PBR surfaces");
             Assert.That(actual.All(m=>m && m.name.StartsWith("cobalt") && m.mainTexture),Is.True,"All authored finishes include their texture");
             foreach(var material in actual)
@@ -648,6 +653,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             try
             {
                 camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;RenderNative(camera,target);
+                if(System.Environment.GetEnvironmentVariable("STAR_CAPTURE_FIRST_SUBMISSION")=="1")
+                {
+                    RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-first-submission.png"),pixels.EncodeToPNG());
+                }
+                // Match the native coating check: the first offscreen submission
+                // can leave imported PBR textures unresolved. Keep pose/light fixed.
+                RenderNative(camera,target);
                 RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-fps.png"),pixels.EncodeToPNG());
             }

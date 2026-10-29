@@ -1,3 +1,28 @@
+# B01 — предплечья от первого лица, 2026-10-30
+
+`python3 scripts/vector_fighter/port_b01_arms.py --promote` переносит точные
+оптимизированные поверхности B01 на FPS-модель из pinned `70828f74`.
+Редактируемый источник брони — `vector-body-b01.blend`; исходные FPS кисти,
+крепления и оружие сохранены в pinned GLB. Скрипт не пересэмплирует их:
+сохраняются topology/UV/normals/weights, skeleton и bind transforms. Защита
+promotion отказывается перезаписывать более новые body/FPS assets.
+
+До: 32524 skin triangles, 7 arm material slots. После: 36705, 9 slots,
+в пределах существующих 45000. Переиспользуется выполненная для B01 bounded
+оптимизация; второе упрощение не требуется. Неиспользуемые старые surfaces,
+resource tables и buffers удаляются. PBR карты и материалы общие с body через
+`TrooperPreparation`, отдельного нового атласа нет. Тени FPS остаются выключены;
+для этой всегда близкой модели distance LOD неприменим. Это учёт ресурсов,
+не измерение CPU/GPU/FPS.
+
+После promotion: `TrooperPreparation.RefreshExistingScene`, затем affected
+`TrooperImportTests` и native `WristDigitReviewTests` (output через
+`STAR_WRIST_DIGIT_CAPTURE`), плюс проверка COBALT в `TrooperPresentationTests`.
+Все Unity-запуски — через `unity-run --shared`, `-noaudio -muted`, с отдельной
+QA history. Все пять кадров получают второй offscreen submission перед чтением
+пикселей; `STAR_CAPTURE_FIRST_SUBMISSION=1` сохраняет и первый кадр для сравнения
+при той же позе/свете. Внеэкранный capture не является Player/device приёмкой.
+
 # B01 — реконструкция всего костюма по VECTOR REFERENCE STUDY
 
 Новый исходник `vector-body-b01.blend` содержит заново построенные торс/спину,
