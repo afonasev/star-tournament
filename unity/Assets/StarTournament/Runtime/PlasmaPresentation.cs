@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -25,6 +24,9 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<uint,Vector3> offsets=new Dictionary<uint,Vector3>();
         readonly List<Orb> impacts=new List<Orb>();
         readonly Stack<Orb> pool=new Stack<Orb>();
+        readonly HashSet<uint> liveIds=new HashSet<uint>();
+        readonly List<uint> removed=new List<uint>();
+        readonly Vector3[] filamentPositions=new Vector3[9],trailPositions=new Vector3[5];
         const int RetainedPoolLimit=128;
         public int ActiveCount=>flights.Count+impacts.Count;
         public PlasmaPresentation(NativeCombatSession session,Transform owner,Func<int,Vector3> muzzle=null)
@@ -85,7 +87,8 @@ namespace StarTournament.ProvingGround
                 var f=orb.Filaments[j];f.enabled=j<3;if(!f.enabled)continue;
                 f.startWidth=radius*.035f;f.endWidth=radius*.005f;f.startColor=new Color(.7f,1,.35f,.5f);f.endColor=new Color(.2f,1,.05f,.1f);
                 var rotation=Quaternion.Euler(j*67,phase*17+j*47,j*59);
-                for(int k=0;k<9;k++){float a=phase+j*2.1f+k*.48f;float r=radius*(.87f+.08f*Mathf.Sin(k*2+phase));f.SetPosition(k,rotation*new Vector3(Mathf.Cos(a)*r,Mathf.Sin(a)*r,Mathf.Sin(a*2)*radius*.15f));}
+                for(int k=0;k<9;k++){float a=phase+j*2.1f+k*.48f;float r=radius*(.87f+.08f*Mathf.Sin(k*2+phase));filamentPositions[k]=rotation*new Vector3(Mathf.Cos(a)*r,Mathf.Sin(a)*r,Mathf.Sin(a*2)*radius*.15f);}
+                f.SetPositions(filamentPositions);
             }
         }
         void Flash(Orb flash,float age)
@@ -104,15 +107,19 @@ namespace StarTournament.ProvingGround
                 {
                     float t=k/8f;float reach=radius*(.4f+age*2.7f)*t;
                     float wiggle=Mathf.Sin(j*7+k*2.4f)*radius*.12f*t*fade;
-                    f.SetPosition(k,new Vector3(Mathf.Cos(a)*reach-Mathf.Sin(a)*wiggle,Mathf.Sin(a)*reach+Mathf.Cos(a)*wiggle,radius*(Mathf.Sin(t*Mathf.PI)*.25f+age*t*.35f)));
+                    filamentPositions[k]=new Vector3(Mathf.Cos(a)*reach-Mathf.Sin(a)*wiggle,Mathf.Sin(a)*reach+Mathf.Cos(a)*wiggle,radius*(Mathf.Sin(t*Mathf.PI)*.25f+age*t*.35f));
                 }
+                f.SetPositions(filamentPositions);
             }
         }
-        public void Render()
+        static readonly Unity.Profiling.ProfilerMarker renderMarker=new Unity.Profiling.ProfilerMarker("ST.Plasma.Render");
+        public void Render() {using(renderMarker.Auto())RenderCore();}
+        void RenderCore()
         {
             float phase=(float)session.Time*p.Get("plasma.orbPulseHz");shellMaterial.SetFloat("_Phase",phase);
-            var bolts=session.PlasmaBolts;var ids=new HashSet<uint>(bolts.Select(b=>b.Id));
-            foreach(var id in flights.Keys.Where(id=>!ids.Contains(id)).ToArray()){Return(flights[id]);flights.Remove(id);offsets.Remove(id);pending.Remove(id);}
+            var bolts=session.PlasmaBolts;liveIds.Clear();foreach(var b in bolts)liveIds.Add(b.Id);
+            removed.Clear();foreach(var id in flights.Keys)if(!liveIds.Contains(id))removed.Add(id);
+            foreach(var id in removed){Return(flights[id]);flights.Remove(id);offsets.Remove(id);pending.Remove(id);}
             foreach(var b in bolts)
             {
                 if(pending.TryGetValue(b.Id,out var shooter))
@@ -128,7 +135,8 @@ namespace StarTournament.ProvingGround
                 var head=b.Position+Offset(b.Id,b.Distance);orb.Root.transform.position=head;
                 float pulse=1+p.Get("plasma.orbPulseAmplitude")*Mathf.Sin(phase*Mathf.PI*2+b.Id);float radius=p.Get("plasma.orbRadius")*pulse;Size(orb,radius);Arcs(orb,radius,phase+b.Id);
                 float tail=Mathf.Max(0,b.Distance-p.Get("plasma.trailLength"));orb.Trail.enabled=true;orb.Trail.startWidth=radius*.9f;orb.Trail.endWidth=0;
-                for(int k=0;k<5;k++){float distance=Mathf.Lerp(b.Distance,tail,k/4f);orb.Trail.SetPosition(k,b.Position-b.Direction*(b.Distance-distance)+Offset(b.Id,distance));}
+                for(int k=0;k<5;k++){float distance=Mathf.Lerp(b.Distance,tail,k/4f);trailPositions[k]=b.Position-b.Direction*(b.Distance-distance)+Offset(b.Id,distance);}
+                orb.Trail.SetPositions(trailPositions);
             }
             for(int i=impacts.Count-1;i>=0;i--)
             {

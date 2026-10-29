@@ -78,7 +78,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             type.GetMethod("RestorePrimary").Invoke(grip,null);
             var localPose=boneArray.Select(t=>(t.localPosition,t.localRotation)).ToArray();
             var mount=view.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="trooper:rig:weapon-mount");var gunPosition=mount.position;var gunRotation=mount.rotation;
-            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile});
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile,default(CrimsonRecoilSample)});
             Assert.That(Vector3.Distance(mount.position,gunPosition),Is.LessThan(.00001f),"SEAM fitting cannot displace weapon");
             Assert.That(Quaternion.Angle(mount.rotation,gunRotation),Is.LessThan(.05f));
             for(int j=0;j<boneArray.Length;j++)Assert.That(Vector3.Distance(localPose[j].localPosition,boneArray[j].localPosition),Is.LessThan(.00001f),boneArray[j].name+" bone length");
@@ -171,7 +171,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(var descriptor in ground.Session.CutterProfile.Descriptors)zeroSwivel.Set(descriptor.Path,ground.Session.CutterProfile.Get(descriptor.Path));
             zeroSwivel.Set("cutter.seam.surface.supportElbowSwivel",0);
             type.GetMethod("RestorePrimary").Invoke(grip,null);
-            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,zeroSwivel});
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,zeroSwivel,default(CrimsonRecoilSample)});
             var supportWrist=boneArray.Single(t=>t.name=="LeftHand");var elbow=boneArray.Single(t=>t.name=="LeftLowerArm");
             var contactPose=supportWrist.GetComponentsInChildren<Transform>(true).Select(t=>(bone:t,position:t.position,rotation:t.rotation)).ToArray();
             var previousElbow=seat.WorldToViewportPoint(elbow.position);var previousWrist=supportWrist.position;
@@ -179,7 +179,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // Skinning is cached within a frame: compare transforms here.
             // Use the retained F2 capture for the visual before/after comparison.
             type.GetMethod("RestorePrimary").Invoke(grip,null);
-            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile});
+            type.GetMethod("Apply").Invoke(grip,new object[]{visual.Tuning,WeaponId.Cutter,1f,ground.Session.CutterProfile,default(CrimsonRecoilSample)});
             var correctedElbow=seat.WorldToViewportPoint(elbow.position);
             Assert.That(correctedElbow.x,Is.LessThan(previousElbow.x),"F3 moves the lower left arm screen-left");
             Assert.That(Vector3.Distance(previousWrist,supportWrist.position),Is.LessThan(.00001f),"F3 keeps wrist contact");
