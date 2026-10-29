@@ -33,12 +33,15 @@ namespace StarTournament.ProvingGround
         }
         [Serializable] sealed class Sample
         {
+            public Distribution hitObserveMs;
+            public long contactProjections,contactFindCalls,contactReuses,contactRequests;
             public string weapon,variant;public int views,width,height,unfocused,nonrunning;public long allocatedBytes,reservedBytes,monoBytes;public double simulationSeconds;
             public Distribution frame,cpu,gpu,main,render,present,draws,triangles,setpass,tickMs,gcBytes,cutterMs,rocketMs,plasmaMs;public int shots,damageNotices,rocketHits,plasmaHits,visualActiveFrames,focusTransitions;
         }
         [Serializable] sealed class MeshRow{public string path,kind;public int triangles,vertices,materials;public bool active;}
         [Serializable] sealed class Report
         {
+            public string hitPoseReuse;
             public string status="RUNNING",body,unity,cpu,gpu,os,pipeline,protocol="seed 20261029; 4 shooters/4 shielded targets 6m apart in open south yard; health/armor 100 replenished; rocket/shotgun press edges every tick subject to unchanged cooldown; real fixed-step firing with resource replenishment, cooldowns retained; opt-in synthetic-input owner ignores device-focus resets, ordinary gameplay unchanged; each frozen sample resets canonical initial snapshot then runs exactly 30 ordinary .02s firing ticks; effects must remain active on every frame; 5s warmup+8s idle/20s firing/8s frozen-contact; same F23 body and product defaults; actual Player, no capture during timed samples. Sustained diagnostic fire is not an ordinary match average.";
             public int views,width,height,quality,systemMemoryMB;public bool frameTiming,muted;public float renderScale;public List<Sample> samples=new List<Sample>();
         }
@@ -62,8 +65,10 @@ namespace StarTournament.ProvingGround
             Screen.SetResolution(1920,1080,FullScreenMode.Windowed);QualitySettings.SetQualityLevel(NativeVisualPreferences.QualityTier(NativeVisualPreferences.DefaultQuality),true);QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
             currentBody=ground.TrooperBodyPrefab;
             ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(LunarLaboratoryCatalog.Id);Begin();yield return null;yield return new WaitForSecondsRealtime(1);initialSnapshot=ground.Session.Capture();
+            string hitMode=Arg("-hitPoseReuse","current");if(hitMode!="current"&&hitMode!="baseline")throw new InvalidOperationException("Expected hitPoseReuse baseline or current");
+            ground.HitFeedbackForReview.SetPoseReuseForDiagnostics(hitMode=="current");
             var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
-            report=new Report{body="F23-41a9032a",views=views,width=Screen.width,height=Screen.height,quality=QualitySettings.GetQualityLevel(),unity=Application.unityVersion,cpu=SystemInfo.processorType,gpu=SystemInfo.graphicsDeviceName,os=SystemInfo.operatingSystem,systemMemoryMB=SystemInfo.systemMemorySize,pipeline=pipeline?pipeline.name:"none",renderScale=pipeline?pipeline.renderScale:1,frameTiming=FrameTimingManager.IsFeatureEnabled(),muted=AudioListener.volume==0};
+            report=new Report{body="F23-887439e0",hitPoseReuse=hitMode,views=views,width=Screen.width,height=Screen.height,quality=QualitySettings.GetQualityLevel(),unity=Application.unityVersion,cpu=SystemInfo.processorType,gpu=SystemInfo.graphicsDeviceName,os=SystemInfo.operatingSystem,systemMemoryMB=SystemInfo.systemMemorySize,pipeline=pipeline?pipeline.name:"none",renderScale=pipeline?pipeline.renderScale:1,frameTiming=FrameTimingManager.IsFeatureEnabled(),muted=AudioListener.volume==0};
             if(Screen.width!=1920||Screen.height!=1080||!report.muted)throw new InvalidOperationException("Resolution/silent admission failed");
             draws=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Draw Calls Count");triangles=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Triangles Count");passes=ProfilerRecorder.StartNew(ProfilerCategory.Render,"SetPass Calls Count");
             gcCost=ProfilerRecorder.StartNew(ProfilerCategory.Memory,"GC Allocated In Frame");cutterCost=ProfilerRecorder.StartNew(ProfilerCategory.Scripts,"ST.Cutter.Render");rocketCost=ProfilerRecorder.StartNew(ProfilerCategory.Scripts,"ST.Rocket.Render");plasmaCost=ProfilerRecorder.StartNew(ProfilerCategory.Scripts,"ST.Plasma.Render");
@@ -136,11 +141,12 @@ namespace StarTournament.ProvingGround
         IEnumerator Measure(WeaponId weapon,string mode,float seconds)
         {
             variant=mode;RefreshRenderers();double warm=Time.realtimeSinceStartupAsDouble+5;while(Time.realtimeSinceStartupAsDouble<warm){FrameTimingManager.CaptureFrameTimings();yield return null;}
+            var observe=new List<double>();var hitEffects=ground.HitFeedbackForReview;long previousObserve=hitEffects.ObserveTicks;var cacheBefore=hitEffects.PoseReuseDiagnostics();
             var ticks=new List<double>();tickMilliseconds=0;var gc=new List<double>();var cc=new List<double>();var rc=new List<double>();var pc=new List<double>();int shotStart=ground.Session.ShotCount,damageStart=damageNotices,rocketStart=rocketHits,plasmaStart=plasmaHits;
             var frame=new List<double>();var cpu=new List<double>();var gpu=new List<double>();var main=new List<double>();var render=new List<double>();var present=new List<double>();var dc=new List<double>();var tr=new List<double>();var sp=new List<double>();
             bool focused=Application.isFocused;
             var s=new Sample{weapon=weapon.ToString(),variant=mode,views=views,width=Screen.width,height=Screen.height};double simulation=ground.Session.Time,previous=Time.realtimeSinceStartupAsDouble,until=previous+seconds;ulong stamp=0;
-            var csv=new StringBuilder("frame_ms,cpu_ms,gpu_ms,draw_calls,triangles,setpass,focused,cutter_ms,rocket_ms,plasma_ms\n");
+            var csv=new StringBuilder("frame_ms,cpu_ms,gpu_ms,draw_calls,triangles,setpass,focused,cutter_ms,rocket_ms,plasma_ms,tick_ms,hit_observe_ms\n");
             while(Time.realtimeSinceStartupAsDouble<until)
             {
                 FrameTimingManager.CaptureFrameTimings();yield return null;double now=Time.realtimeSinceStartupAsDouble;frame.Add((now-previous)*1000);previous=now;
@@ -148,9 +154,11 @@ namespace StarTournament.ProvingGround
                 bool fresh=FrameTimingManager.GetLatestTimings(1,timings)>0&&timings[0].frameStartTimestamp!=stamp;var t=timings[0];
                 if(fresh){stamp=t.frameStartTimestamp;if(t.cpuFrameTime>0)cpu.Add(t.cpuFrameTime);if(t.gpuFrameTime>0)gpu.Add(t.gpuFrameTime);if(t.cpuMainThreadFrameTime>0)main.Add(t.cpuMainThreadFrameTime);if(t.cpuRenderThreadFrameTime>0)render.Add(t.cpuRenderThreadFrameTime);present.Add(t.cpuMainThreadPresentWaitTime);}
                 ticks.Add(tickMilliseconds);tickMilliseconds=0;if(gcCost.Valid)gc.Add(gcCost.LastValue);if(cutterCost.Valid)cc.Add(cutterCost.LastValue/1e6);if(rocketCost.Valid)rc.Add(rocketCost.LastValue/1e6);if(plasmaCost.Valid)pc.Add(plasmaCost.LastValue/1e6);
+                long nowObserve=hitEffects.ObserveTicks;double observeDelta=(nowObserve-previousObserve)*1000.0/System.Diagnostics.Stopwatch.Frequency;observe.Add(observeDelta);previousObserve=nowObserve;
                 if(draws.Valid)dc.Add(draws.LastValue);if(triangles.Valid)tr.Add(triangles.LastValue);if(passes.Valid)sp.Add(passes.LastValue);
-                csv.AppendLine(string.Join(",",new double[]{frame[frame.Count-1],fresh?t.cpuFrameTime:double.NaN,fresh?t.gpuFrameTime:double.NaN,draws.Valid?draws.LastValue:-1,triangles.Valid?triangles.LastValue:-1,passes.Valid?passes.LastValue:-1,Application.isFocused?1:0,cutterCost.Valid?cutterCost.LastValue/1e6:double.NaN,rocketCost.Valid?rocketCost.LastValue/1e6:double.NaN,plasmaCost.Valid?plasmaCost.LastValue/1e6:double.NaN}.Select(v=>v.ToString("R",CultureInfo.InvariantCulture))));
+                csv.AppendLine(string.Join(",",new double[]{frame[frame.Count-1],fresh?t.cpuFrameTime:double.NaN,fresh?t.gpuFrameTime:double.NaN,draws.Valid?draws.LastValue:-1,triangles.Valid?triangles.LastValue:-1,passes.Valid?passes.LastValue:-1,Application.isFocused?1:0,cutterCost.Valid?cutterCost.LastValue/1e6:double.NaN,rocketCost.Valid?rocketCost.LastValue/1e6:double.NaN,plasmaCost.Valid?plasmaCost.LastValue/1e6:double.NaN,ticks[ticks.Count-1],observeDelta}.Select(v=>v.ToString("R",CultureInfo.InvariantCulture))));
             }
+            var cacheAfter=hitEffects.PoseReuseDiagnostics();s.hitObserveMs=new Distribution(observe);s.contactProjections=cacheAfter[0]-cacheBefore[0];s.contactFindCalls=cacheAfter[1]-cacheBefore[1];s.contactReuses=cacheAfter[2]-cacheBefore[2];s.contactRequests=cacheAfter[3]-cacheBefore[3];
             s.tickMs=new Distribution(ticks);s.gcBytes=new Distribution(gc);s.shots=ground.Session.ShotCount-shotStart;s.damageNotices=damageNotices-damageStart;s.rocketHits=rocketHits-rocketStart;s.plasmaHits=plasmaHits-plasmaStart;s.cutterMs=new Distribution(cc);s.rocketMs=new Distribution(rc);s.plasmaMs=new Distribution(pc);s.frame=new Distribution(frame);s.cpu=new Distribution(cpu);s.gpu=new Distribution(gpu);s.main=new Distribution(main);s.render=new Distribution(render);s.present=new Distribution(present);s.draws=new Distribution(dc);s.triangles=new Distribution(tr);s.setpass=new Distribution(sp);s.allocatedBytes=Profiler.GetTotalAllocatedMemoryLong();s.reservedBytes=Profiler.GetTotalReservedMemoryLong();s.monoBytes=Profiler.GetMonoUsedSizeLong();s.simulationSeconds=ground.Session.Time-simulation;
             if(mode=="frozen-contact"&&s.visualActiveFrames!=s.frame.count)throw new InvalidOperationException("Inactive frozen effects: "+weapon+" active="+s.visualActiveFrames+" frames="+s.frame.count);
             report.samples.Add(s);File.WriteAllText(Path.Combine(directory,weapon+"-"+mode+".csv"),csv.ToString());Save();Debug.Log("MODEL_SAMPLE "+report.body+" "+views+" "+weapon+" "+mode+" p50="+s.frame.p50+" p95="+s.frame.p95+" GPU="+s.gpu.p50);

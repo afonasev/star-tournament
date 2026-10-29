@@ -16,7 +16,7 @@ namespace StarTournament.ProvingGround.Editor
             ProvingGroundBuild.Prepare();LabReleaseBuild.Validate();
             string company=PlayerSettings.companyName,product=PlayerSettings.productName,id=PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.Standalone);bool timing=PlayerSettings.enableFrameTimingStats;
             try {
-                PlayerSettings.companyName="StarTournament QA";PlayerSettings.productName="Projectile Performance QA";PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone,"tech.afonasev.projectile-performance-20261029");PlayerSettings.enableFrameTimingStats=true;
+                PlayerSettings.companyName="StarTournament QA";PlayerSettings.productName=Environment.GetEnvironmentVariable("STAR_PROJECTILE_PRODUCT")??"Projectile Performance QA";PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone,Environment.GetEnvironmentVariable("STAR_PROJECTILE_APP_ID")??"tech.afonasev.projectile-performance-20261029");PlayerSettings.enableFrameTimingStats=true;
                 var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/StarTournament/Scenes/ProvingGround.unity"},locationPathName=output,target=BuildTarget.StandaloneOSX,options=BuildOptions.Development,extraScriptingDefines=new[]{"STAR_TOURNAMENT_DEVELOPMENT_QA"}});
                 if(result.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(result.summary.result.ToString());
                 UnityEngine.Debug.Log("PROJECTILE_PERFORMANCE_BUILD_PASS "+result.summary.totalSize);
