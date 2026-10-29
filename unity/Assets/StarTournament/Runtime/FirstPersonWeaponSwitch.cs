@@ -38,6 +38,9 @@ namespace StarTournament.ProvingGround
         readonly Quaternion[] fingerSamples=new Quaternion[30];
         readonly Vector3[] fingerTargets=new Vector3[10];
         readonly Transform leftHand,rightHand,mount,leftShoulder,rightShoulder,leftPalm,rightPalm;
+        readonly Quaternion leftHandBind=Quaternion.identity,rightHandBind=Quaternion.identity;
+        readonly Transform[] sleeveTwists=new Transform[4];
+        readonly Quaternion[] sleeveTwistBind=new Quaternion[4];
         Vector3 leftShoulderSample,rightShoulderSample;
         Quaternion leftSample,rightSample,mountSampleRotation;
         Vector3 mountSamplePosition;
@@ -64,6 +67,25 @@ namespace StarTournament.ProvingGround
                 joints[i]=Array.Find(bones,b=>b.name==names[i]);
                 if(!joints[i])throw new InvalidOperationException("Weapon switch joint missing: "+names[i]);
                 angles[i]=profile.Get(i<2?"view.switchShoulderDegrees":"view.switchElbowDegrees");
+            }
+            // Read the skin bind frame, not an already sampled animation pose.
+            foreach(var skin in view.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                var bind=skin.sharedMesh.bindposes;var skinBones=skin.bones;
+                int left=Array.IndexOf(skinBones,leftHand),right=Array.IndexOf(skinBones,rightHand);
+                int lowerLeft=Array.IndexOf(skinBones,joints[2]),lowerRight=Array.IndexOf(skinBones,joints[3]);
+                if(left<0||right<0||lowerLeft<0||lowerRight<0)continue;
+                leftHandBind=(bind[lowerLeft]*bind[left].inverse).rotation;
+                rightHandBind=(bind[lowerRight]*bind[right].inverse).rotation;
+                for(int side=0;side<2;side++)for(int segment=0;segment<2;segment++)
+                {
+                    int index=side*2+segment;
+                    int bone=Array.FindIndex(skinBones,b=>b.name==(side==0?"Left":"Right")+"LowerArmTwist"+(segment+1));
+                    if(bone<0)continue;
+                    sleeveTwists[index]=skinBones[bone];
+                    sleeveTwistBind[index]=(bind[side==0?lowerLeft:lowerRight]*bind[bone].inverse).rotation;
+                }
+                break;
             }
         }
         public void Apply(CombatLifeState state,double duration)
@@ -112,6 +134,28 @@ namespace StarTournament.ProvingGround
                 if(!crimson&&visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)FitCommonFingers();
                 if(pose.Weapon==WeaponId.Cutter&&visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)visual.FitFirstPersonSeamThumb();
             }
+            // Wrist contact fits may leave almost half a turn between the cuff's
+            // two skin bones. Linear blending then collapses its cross-section.
+            // Carry axial roll with the whole forearm; preserve the fitted hand.
+            UnwindSleeve(joints[2],leftHand,leftHandBind);
+            UnwindSleeve(joints[3],rightHand,rightHandBind);
+            // The imported clip also animates two sleeve-only twist bones per arm.
+            // Its old roll is stale after the wrist/contact fit. With roll carried
+            // by the forearm, these bones retain their skin bind frame.
+            for(int i=0;i<sleeveTwists.Length;i++)if(sleeveTwists[i])sleeveTwists[i].localRotation=sleeveTwistBind[i];
+        }
+        static void UnwindSleeve(Transform elbow,Transform hand,Quaternion bind)
+        {
+            var axis=hand.localPosition.normalized;
+            var delta=hand.localRotation*Quaternion.Inverse(bind);
+            var projection=axis*Vector3.Dot(new Vector3(delta.x,delta.y,delta.z),axis);
+            var twist=new Quaternion(projection.x,projection.y,projection.z,delta.w);
+            float norm=Mathf.Sqrt(Quaternion.Dot(twist,twist));
+            if(norm<.000001f)return; // Pure 180-degree swing has no defined axial twist.
+            twist=new Quaternion(twist.x/norm,twist.y/norm,twist.z/norm,twist.w/norm);
+            var rotation=hand.rotation;
+            elbow.rotation=elbow.rotation*twist;
+            hand.rotation=rotation;
         }
         void FitCommon(Transform shoulder,Transform elbow,Transform hand,Transform palm,Quaternion reference,int side,float lift)
         {
