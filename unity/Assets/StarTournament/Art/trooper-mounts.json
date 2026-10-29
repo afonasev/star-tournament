@@ -12,7 +12,7 @@
   },
   "arms": {
     "path": "trooper-arms-animated.glb",
-    "sha256": "092d2ca4b186cebccb4ff854efda82d9076173ce8470c9c45bbc995c52ea15ed"
+    "sha256": "752a156c01165d4dee6d446e6b48db2eb965fd688213b8f6e5ad0ea68f998455"
   },
   "clips": [
     "idle",

@@ -40,6 +40,30 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(profile.Validate(),Is.Empty);
         }
 
+        [Test] public void V12ThumbContactIsAdditiveAndHistoricalSnapshotRemainsExact()
+        {
+            var current=ProvingProfile.CreateCutterDefault();
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeSeamThumbContact",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(current,null);
+            Assert.That(old.Version,Is.EqualTo(12));Assert.That(current.Version,Is.EqualTo(13));
+            Assert.That(current.Descriptors.Count-old.Descriptors.Count,Is.EqualTo(6));
+            foreach(var d in old.Descriptors)
+            {
+                Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)),d.Path);
+                Assert.That(JsonUtility.ToJson(current.Descriptors.Single(x=>x.Path==d.Path)),Is.EqualTo(JsonUtility.ToJson(d)),d.Path);
+            }
+            var path=Path.Combine(Path.GetTempPath(),"seam-thumb-history-"+Guid.NewGuid()+".json");
+            try
+            {
+                var first=new DesignLabHistory(path,new LabBundle{Profiles={old}});first.Rename("Default");
+                string hash=first.Selected.Hash,bytes=JsonUtility.ToJson(first.Selected.Snapshot);
+                var next=new DesignLabHistory(path,new LabBundle{Profiles={current}});
+                Assert.That(next.StorageError,Is.Null);
+                Assert.That(JsonUtility.ToJson(next.Profiles.SelectMany(p=>p.Revisions).Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(bytes));
+                Assert.That(next.Selected.Snapshot.Get("cutter.seam.surface.thumbContactX"),Is.EqualTo(-.045f));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
+
         [Test] public void V11CoreDefaultAdvancesWhileCustomAndHistoricalValuesStayExact()
         {
             var current=ProvingProfile.CreateCutterDefault();

@@ -2,11 +2,19 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Additive FPS thumb contact; saved v12 registries retain exact metadata/values.
+        internal ProvingProfile BeforeSeamThumbContact()
+        {
+            if(id!="cutter-beam-v1"||version<13)return this;
+            var p=DetachedCopy();p.version=12;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.surface.thumb"));
+            p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.surface.thumb"));p.valueIndex=null;return p;
+        }
         // F8 nudges the shipped core from 3 to 3.5 mm; v11 stays byte-exact.
         internal ProvingProfile BeforeThickerLegacyCutterCore()
         {
             if(id!="cutter-beam-v1"||version<12)return this;
-            var p=DetachedCopy();p.version=11;
+            var p=BeforeSeamThumbContact().DetachedCopy();p.version=11;
             p.Set("cutter.seam.legacyCoreWidth",.003f);
             p.descriptors.Find(d=>d.Path=="cutter.seam.legacyCoreWidth").DefaultValue=.003f;
             p.descriptors.Find(d=>d.Path=="cutter.seam.legacyCoreWidth").Step=.001f;
@@ -102,7 +110,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=12 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=13 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -161,6 +169,13 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.seam.detail.arcRadiusScale","cutter-effects","SEAM: размах разрядов","Масштаб мелких изломов относительно сохранённого радиуса.","ratio",.05f,1,.05f,.25f);
             p.Add("cutter.seam.detail.arcWidthScale","cutter-effects","SEAM: тонкие нити","Масштаб толщины электрических нитей.","ratio",.1f,1,.05f,.5f);
             p.Add("cutter.seam.detail.warmth","cutter-effects","SEAM: тёплое свечение","Смешивание линейного оттенка для оранжевых разрядов.","ratio",0,1,.05f,1);
+            foreach(var axis in new[]{"X","Y","Z"})
+            {
+                float contact=axis=="X"?-.045f:axis=="Y"?-.089f:.290f;
+                float direction=axis=="Y"?-.6f:.3f;
+                p.Add("cutter.seam.surface.thumbContact"+axis,"cutter-effects","SEAM: контакт большого пальца "+axis,"Контакт дистального сустава опорного большого пальца с рукоятью после FPS-подгонки предплечья; без сдвига оружия.","model-m",-.5f,.5f,.001f,contact);
+                p.Add("cutter.seam.surface.thumbDirection"+axis,"cutter-effects","SEAM: направление кончика пальца "+axis,"Направление последней фаланги вдоль хвата; нулевой вектор сохраняет исходную ориентацию.","ratio",-1,1,.01f,direction);
+            }
             p.Add("cutter.seam.surface.gripFitIterations","cutter-effects","SEAM: доводка пальцев","Итерации контакта нижних пальцев; 0 отключает подгонку.","count",0,8,1,4);
             p.Add("cutter.seam.surface.gripFitStep","cutter-effects","SEAM: шаг подгонки","Максимальный доворот сустава за итерацию без растяжения.","degrees",1,20,1,12);
             foreach(var digit in new[]{"Ring","Little"})foreach(var axis in new[]{"X","Y","Z"})

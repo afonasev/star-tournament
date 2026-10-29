@@ -110,6 +110,7 @@ namespace StarTournament.ProvingGround
                 }
                 mount.SetPositionAndRotation(weaponPosition,weaponRotation);
                 if(!crimson&&visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)FitCommonFingers();
+                if(pose.Weapon==WeaponId.Cutter&&visual.Tuning.Version>=29&&visual.Tuning.Get("view.commonForearmsEnabled")>0)visual.FitFirstPersonSeamThumb();
             }
         }
         void FitCommon(Transform shoulder,Transform elbow,Transform hand,Transform palm,Quaternion reference,int side,float lift)

@@ -182,6 +182,7 @@ namespace StarTournament.ProvingGround
             if(!corpse){airborne?.Apply();gait?.Apply(clock,airborne?.LandingDrop??0);equipmentGrip?.Apply(profile,EquippedWeapon,EquippedWeapon==WeaponId.Plasma?(GetComponent<WeaponModelPresentation>()?.PlasmaViewScale??1):EquippedWeapon==WeaponId.RocketLauncher?(GetComponent<WeaponModelPresentation>()?.PulseGripScale??1):1,GetComponent<WeaponModelPresentation>()?.CutterGripProfile,firedWeapon==EquippedWeapon?CrimsonRecoilSample.Read(profile,EquippedWeapon,clock-firedAt):default);}
             PoseRevision++;
         }
+        internal void FitFirstPersonSeamThumb()=>equipmentGrip?.FitFirstPersonSeamThumb(profile,GetComponent<WeaponModelPresentation>()?.CutterGripProfile);
         public void Release()
         {
             equipmentGrip?.RestorePrimary();

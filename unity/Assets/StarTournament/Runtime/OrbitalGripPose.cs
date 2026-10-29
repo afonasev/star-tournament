@@ -186,6 +186,22 @@ namespace StarTournament.ProvingGround
                 }
             }
         }
+        public void FitFirstPersonSeamThumb(ProvingProfile rig,ProvingProfile equipment)
+        {
+            if(!firstPerson||!wrist||equipment==null)return;
+            // Saved custom joint controls remain authoritative, as in the other contact fits.
+            foreach(var d in rig.Descriptors)
+                if(d.Path.StartsWith("grip.Cutter.left.Thumb.")&&!Mathf.Approximately(rig.Get(d.Path),d.DefaultValue))return;
+            if(!seamModel)seamModel=rigRoot.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="cutter");
+            if(!seamModel)return;
+            var a=digits[0].bone;var b=digits[1].bone;var c=digits[2].bone;
+            var target=seamModel.TransformPoint(new Vector3(SeamSurface(equipment,"thumbContactX"),SeamSurface(equipment,"thumbContactY"),SeamSurface(equipment,"thumbContactZ")));
+            var direction=seamModel.TransformDirection(new Vector3(SeamSurface(equipment,"thumbDirectionX"),SeamSurface(equipment,"thumbDirectionY"),SeamSurface(equipment,"thumbDirectionZ")));
+            // The same exact two-link fit used for arms preserves all phalanx lengths.
+            // It runs after common-forearm IK, whose thumb correction otherwise opens the grip.
+            ReachArm(a,b,c,target,(c.position-b.position).normalized,0);
+            if(direction.sqrMagnitude>0)c.rotation=Quaternion.FromToRotation(c.position-b.position,direction)*c.rotation;
+        }
         ProvingProfile seamRig,seamInput,seamEquipment;
         // Immutable match profiles: cache equipment fit without changing saved rig values.
         ProvingProfile SeamRig(ProvingProfile rig,ProvingProfile equipment)
