@@ -8,12 +8,21 @@ namespace StarTournament.ProvingGround
     internal sealed class OrbitalGripPose
     {
         readonly Transform wrist,primaryWrist,mount,upper,lower,palm,rightUpper,rightLower,rightPalm,rigRoot;
+        readonly bool firstPerson;
+        readonly Transform torso;
+        readonly Quaternion torsoFrame;
+        Quaternion worldFrame;
+        bool worldFit;
+        float elbowForward,primaryElbowForward,elbowDown;
+        static readonly Dictionary<WeaponId,string> worldForwardPaths=System.Enum.GetValues(typeof(WeaponId)).Cast<WeaponId>().ToDictionary(w=>w,w=>"grip.world."+w+".forward");
+        public float WorldGripError {get;private set;}
         readonly List<(Transform proximal,Transform middle,Transform distal,Transform target)> forgeContacts=new List<(Transform,Transform,Transform,Transform)>();
         readonly Transform[] sampledBones;
         readonly List<(Transform bone,Vector3 position,Quaternion rotation)> restored=new List<(Transform,Vector3,Quaternion)>();
         Vector3 mountPosition;
         Quaternion mountRotation,primaryRotation;
         bool primaryApplied;
+        Transform crimsonShoulder,crimsonGrip;
         readonly Vector3 rollAxis;
         readonly Dictionary<(WeaponId weapon,Transform bone),string> jointPaths=new Dictionary<(WeaponId,Transform),string>();
         readonly Dictionary<(WeaponId weapon,Transform bone),string> spreadPaths=new Dictionary<(WeaponId,Transform),string>();
@@ -29,9 +38,11 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<Transform,Vector3> spreadAxes=new Dictionary<Transform,Vector3>();
         readonly List<(Transform bone,Vector3 axis,bool thumb,string bias)> digits=new List<(Transform,Vector3,bool,string)>();
         readonly List<(Transform bone,Vector3 axis,string path,bool thumb)> primaryDigits=new List<(Transform,Vector3,string,bool)>();
-        public OrbitalGripPose(Transform root)
+        public OrbitalGripPose(Transform root,bool firstPerson)
         {
-            rigRoot=root;
+            rigRoot=root;this.firstPerson=firstPerson;
+            torso=root.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="Chest");
+            torsoFrame=torso?Quaternion.Inverse(torso.rotation)*root.rotation:Quaternion.identity;
             var bones=root.GetComponentsInChildren<Transform>(true).Where(t=>t.name.StartsWith("Left")||t.name.StartsWith("Right")).ToDictionary(t=>t.name,t=>t);
             if(!bones.TryGetValue("LeftHand",out wrist))return;
             var row=(bones["LeftLittleProximal"].position-bones["LeftIndexProximal"].position).normalized;
@@ -71,7 +82,7 @@ namespace StarTournament.ProvingGround
             primaryApplied=false;
         }
         void Reach(Vector3 target,Vector3 handDirection,float wristAlignment,float elbowSwivel=0)=>ReachArm(upper,lower,wrist,target,handDirection,wristAlignment,elbowSwivel);
-        static void ReachArm(Transform upper,Transform lower,Transform wrist,Vector3 target,Vector3 handDirection,float wristAlignment,float elbowSwivel=0)
+        void ReachArm(Transform upper,Transform lower,Transform wrist,Vector3 target,Vector3 handDirection,float wristAlignment,float elbowSwivel=0)
         {
             var a=upper.position;var b=lower.position;var c=wrist.position;
             // Numerical guard only: avoid a singular straight elbow, not an art parameter.
@@ -80,11 +91,19 @@ namespace StarTournament.ProvingGround
             var delta=target-a;float distance=Mathf.Clamp(delta.magnitude,Mathf.Abs(first-second)+reachEpsilon,first+second-reachEpsilon);
             var direction=delta.normalized;
             var bend=Vector3.ProjectOnPlane(b-a,direction).normalized;
+            if(worldFit)
+            {
+                var pole=worldFrame*new Vector3(upper==rightUpper?1:-1,-elbowDown,upper==rightUpper?primaryElbowForward:elbowForward);
+                var projected=Vector3.ProjectOnPlane(pole,direction);
+                if(projected.sqrMagnitude>reachEpsilon*reachEpsilon)bend=projected.normalized;
+            }
             // The elbow lies on a circle around shoulder-to-wrist. Its nearest
             // point to the backwards palm axis minimizes wrist flexion while
             // retaining both bone lengths and the authored palm contact.
             var aligned=Vector3.ProjectOnPlane(-handDirection,direction);
-            if(aligned.sqrMagnitude>reachEpsilon*reachEpsilon)
+            // World elbows use an anatomical outside/front pole, independent of the
+            // camera-local palm-axis fit. Historical profiles keep their original solver.
+            if(!worldFit&&aligned.sqrMagnitude>reachEpsilon*reachEpsilon)
                 bend=Vector3.Slerp(bend,aligned.normalized,wristAlignment).normalized;
             // Swivel only the elbow circle; the fitted palm and bone lengths stay fixed.
             if(elbowSwivel!=0)bend=Quaternion.AngleAxis(elbowSwivel,direction)*bend;
@@ -184,9 +203,19 @@ namespace StarTournament.ProvingGround
             seamRig.Set("grip.Cutter.supportZ",seamRig.Get("grip.Cutter.supportZ")+SeamSurface(equipment,"gripSupportZ"));
             return seamRig;
         }
-        public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1,ProvingProfile cutter=null)
+        public void Apply(ProvingProfile profile,WeaponId weapon,float supportScale=1,ProvingProfile cutter=null,CrimsonRecoilSample recoil=default)
         {
             if(!wrist)return;
+            worldFit=!firstPerson&&profile.Version>=34&&profile.Get("grip.world.enabled")>0;
+            WorldGripError=0;
+            if(worldFit)
+            {
+                // The chest follows gait/clip lean. Keeping poles and clearance in actor
+                // axes would push a valid resting arm back into the leaning torso.
+                worldFrame=torso?torso.rotation*torsoFrame:rigRoot.rotation;
+                elbowForward=profile.Get("grip.world.elbowForward");elbowDown=profile.Get("grip.world.elbowDown");
+                primaryElbowForward=weapon==WeaponId.RocketLauncher?profile.Get("grip.world.RocketLauncher.primaryElbowForward"):elbowForward;
+            }
             if(weapon==WeaponId.Cutter&&cutter!=null)profile=SeamRig(profile,cutter);
             foreach(var bone in sampledBones)
                 restored.Add((bone,bone.localPosition,bone.localRotation));
@@ -195,6 +224,23 @@ namespace StarTournament.ProvingGround
             primaryRotation=primaryWrist.localRotation;
             mountPosition=mount.localPosition;mountRotation=mount.localRotation;
             var position=mount.position;var rotation=mount.rotation;
+            if(weapon==WeaponId.RocketLauncher&&profile.Version>=31&&profile.Get("grip.crimson.enabled")>0)
+            {
+                if(!crimsonShoulder)crimsonShoulder=rigRoot.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="crimson-shoulder");
+                if(crimsonShoulder)
+                {
+                    var shoulderOffset=new Vector3(profile.Get("grip.crimson.shoulderX"),profile.Get("grip.crimson.shoulderY"),profile.Get("grip.crimson.shoulderZ"));
+                    var shoulderTarget=rightUpper.position+(worldFit?worldFrame*shoulderOffset:rigRoot.TransformDirection(shoulderOffset));
+                    var delta=shoulderTarget-crimsonShoulder.position;var crimsonHandRotation=primaryWrist.rotation;
+                    if(!crimsonGrip)crimsonGrip=rigRoot.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="pulse-grip");
+                    var gripDelta=crimsonGrip?(crimsonGrip.position-mount.position)*(1-1/supportScale):Vector3.zero;
+                    var crimsonHandDirection=(rightPalm.position-primaryWrist.position).normalized;
+                    position+=delta;
+                    ReachArm(rightUpper,rightLower,primaryWrist,primaryWrist.position+delta+gripDelta,crimsonHandDirection,profile.Get(fit+"primaryWristAlignment"));
+                    primaryWrist.rotation=crimsonHandRotation;mount.SetPositionAndRotation(position,rotation);
+                }
+            }
+
             primaryWrist.rotation=Quaternion.AngleAxis((profile.Get("grip.primaryWristYaw")+profile.Get(fit+"primaryYaw")),mount.up)*primaryWrist.rotation;
             mount.SetPositionAndRotation(position,rotation);primaryApplied=true;
             if(weapon==WeaponId.Cutter&&cutter!=null)
@@ -244,6 +290,37 @@ namespace StarTournament.ProvingGround
             }
             if(weapon==WeaponId.Cutter&&cutter!=null)FitSeamDigits(profile,cutter);
             if(weapon==WeaponId.Plasma)FitForgeDigits(profile);
+            if(worldFit)
+            {
+                var offset=worldFrame*new Vector3(weapon==WeaponId.RocketLauncher?profile.Get("grip.world.RocketLauncher.side"):0,0,profile.Get(worldForwardPaths[weapon]));
+                var rp=primaryWrist.position+offset;var lp=wrist.position+offset;
+                var rr=primaryWrist.rotation;var lr=wrist.rotation;
+                var mp=mount.position+offset;var mr=mount.rotation;
+                ReachArm(rightUpper,rightLower,primaryWrist,rp,(rightPalm.position-primaryWrist.position).normalized,0);
+                primaryWrist.rotation=rr;mount.SetPositionAndRotation(mp,mr);
+                Reach(lp,(palm.position-wrist.position).normalized,0);wrist.rotation=lr;
+                mount.SetPositionAndRotation(mp,mr);
+                WorldGripError=Mathf.Max(Vector3.Distance(primaryWrist.position,rp),Vector3.Distance(wrist.position,lp));
+            }
+            if(weapon==WeaponId.RocketLauncher&&crimsonShoulder&&recoil.Weight>0)
+                ApplyCrimsonRecoil(recoil,profile,fit);
+        }
+        void ApplyCrimsonRecoil(CrimsonRecoilSample sample,ProvingProfile profile,string fit)
+        {
+            var pivot=crimsonShoulder.position;
+            var turn=Quaternion.AngleAxis(-sample.PitchDegrees,mount.right)*Quaternion.AngleAxis(sample.RollDegrees,mount.forward);
+            var offset=-mount.forward*sample.BackMeters;
+            Vector3 Move(Vector3 point)=>pivot+turn*(point-pivot)+offset;
+            var weaponPosition=Move(mount.position);var weaponRotation=turn*mount.rotation;
+            var rightTarget=Move(primaryWrist.position);var leftTarget=Move(wrist.position);
+            var rightRotation=turn*primaryWrist.rotation;var leftRotation=turn*wrist.rotation;
+            var rightDirection=turn*(rightPalm.position-primaryWrist.position).normalized;
+            var leftDirection=turn*(palm.position-wrist.position).normalized;
+            ReachArm(rightUpper,rightLower,primaryWrist,rightTarget,rightDirection,profile.Get(fit+"primaryWristAlignment"));
+            primaryWrist.rotation=rightRotation;mount.SetPositionAndRotation(weaponPosition,weaponRotation);
+            Reach(leftTarget,leftDirection,profile.Get(fit+"wristAlignment"));wrist.rotation=leftRotation;
+            mount.SetPositionAndRotation(weaponPosition,weaponRotation);
+            if(worldFit)WorldGripError=Mathf.Max(WorldGripError,Mathf.Max(Vector3.Distance(primaryWrist.position,rightTarget),Vector3.Distance(wrist.position,leftTarget)));
         }
     }
 }

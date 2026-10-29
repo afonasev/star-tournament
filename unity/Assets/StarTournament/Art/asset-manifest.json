@@ -104,23 +104,23 @@
     {
       "key": "pulse-lod0",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod0.glb",
-      "sha256": "a463e6c1ecae4c18ece56ccc050b7ae4269ada4f94d8639d40cd392991759bd6",
+      "sha256": "91c7db568cdf15ccbae6a4e775a1b40ab4c08debfb4319e437bfd4760be4fd0d",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "pulse-grip",
-      "source": "Original Pulse Mk II; scripts/pulse_mk2/build.py; high detail source preserved; reduction deferred",
+      "source": "Original Crimson; scripts/crimson/build.py and crimson-master.blend; same silhouette lossless material batching",
       "lod": 0
     },
     {
       "key": "pulse-lod1",
       "path": "Assets/StarTournament/Art/pulse-launcher-lod1.glb",
-      "sha256": "a463e6c1ecae4c18ece56ccc050b7ae4269ada4f94d8639d40cd392991759bd6",
+      "sha256": "91c7db568cdf15ccbae6a4e775a1b40ab4c08debfb4319e437bfd4760be4fd0d",
       "units": "meters",
       "up": "+Y",
       "forward": "+Z",
       "pivot": "pulse-grip",
-      "source": "Original Pulse Mk II; scripts/pulse_mk2/build.py; high detail source preserved; reduction deferred",
+      "source": "Original Crimson; scripts/crimson/build.py and crimson-master.blend; same silhouette lossless material batching",
       "lod": 1
     },
     {

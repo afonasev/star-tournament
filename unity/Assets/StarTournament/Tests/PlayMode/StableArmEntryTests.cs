@@ -26,7 +26,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             camera.aspect=1600f/900f; // The visual witness uses the same explicit projection as its output frame.
             var view=camera.transform.Find("trooper-view").GetComponent<TrooperVisual>();
             // This fixture preserves the @28 axis-only contract; common visible forearms have a separate witness.
-            view.Tuning.Set("view.commonForearmsEnabled",0);
+            var legacy=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCommonForearms",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(view.Tuning,null);
+            view.Initialize(ground.TrooperClips,legacy,true);
             var presentation=typeof(ProvingGround).GetField("presentation",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
             var transition=((Array)presentation.GetType().GetField("weaponSwitches",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(presentation)).GetValue(0);
             var applyTransition=transition.GetType().GetMethod("Apply");

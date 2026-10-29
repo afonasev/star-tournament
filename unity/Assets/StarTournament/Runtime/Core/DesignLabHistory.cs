@@ -429,6 +429,14 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??34)<34)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWorldArmFit()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??33)<33)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCrimsonRecoil()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??32)<32)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCrimsonDetail()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??31)<31)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCrimsonShoulder()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??30)<30)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeHeavyAgileGait()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??29)<29)
