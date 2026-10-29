@@ -1,3 +1,44 @@
+# B01 — реконструкция всего костюма по VECTOR REFERENCE STUDY
+
+Новый исходник `vector-body-b01.blend` содержит заново построенные торс/спину,
+плечи/руки, таз, ноги и обувь. `reconstruct_body.py` сохраняет только F02 head,
+rig, кисти и equipment из `f23-reconstructed.blend`; прежние body meshes удаляются.
+Новые ткани используют анатомические сечения; броня охватывает их замкнутыми
+оболочками. Три новых материала имеют общий уникальный 2048² albedo/normal/ORM
+атлас. Старые canonical материалы сохранены на реальных деталях для точного
+FPS material aliasing. FPS GLB, клипы, gameplay/camera/collider не изменены.
+
+```sh
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/reconstruct_body.py
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/texture_body.py
+blender -b -noaudio --python-exit-code 1 --python scripts/vector_fighter/export_body.py
+python3 scripts/vector_fighter/audit_body.py --output .local/vector-body-reconstruction/audit.json
+python3 scripts/vector_fighter/catalog_game_bodies.py --output .local/vector-body-reconstruction/catalog.json --extract unity/Assets/B01Review
+```
+
+Экспорт создаёт high/candidate GLB в `.local/vector-body-reconstruction`, без
+автоматического продвижения. Отдельная оптимизация сохраняет защищённые детали,
+удаляет только полностью закрытые новой бронёй участки предплечной ткани на той
+же кости и сокращает новые поверхности с bidirectional sampled error ≤0.7 mm.
+Предел не является gameplay/acceptance числом. Исходник остаётся полным.
+Финальный world: 176352 треугольника (исходный F23: 603575; новый high: 234566),
+world-предплечья: 36705 ≤ существующих 38562; FPS ≤45000 без изменения ассета.
+Материалы 19→22, embedded images 21→24 — стоимость нового общего body атласа.
+
+Native review: `B01SurfaceReviewTests` проверяет отклик фактуры после assigned tint;
+`B01HistoryReviewTests` использует manifest из `STAR_B01_GALLERY` и output из
+`STAR_B01_HISTORY_EVIDENCE`. Исторические native тела имеют общие idle/run, цвет,
+свет и камеры; два browser-era GLB и процедурная фигура имеют другой rig и явно
+помеченную authored-rest позу. `STAR_B01_GALLERY_IDS` позволяет переснять только
+указанные через `;` ревизии после изменения, сохраняя полный catalog gate.
+Процедурная фигура восстановлена по точным размерам исходного renderer; tessellation
+Unity отличается от Three.js. Это native сравнение ассетов, не запуск старого web runtime.
+
+Доказательства: shared planning `docs/evidence/reconstruct-vector-body-from-reference/2026-10-29`.
+Первый EditMode FAIL на forearm budget сохранён; тесты не ослаблялись. Полные тесты,
+Player build/release/deploy и physical/human acceptance не выполнялись. Человеческая
+оценка сходства с выбранным макетом остаётся открытой.
+
 # F19 VECTOR — детализированный художественный исходник (F01)
 
 Текущий этап: качество модели без лимита треугольников. Решение пользователя

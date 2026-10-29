@@ -38,13 +38,12 @@ def inspect(raw):
     rows = []
     triangles = 0
     for node in data['nodes']:
-        if 'skin' not in node or 'mesh' not in node or node['name'] == 'weapon:joined':
+        if 'mesh' not in node or node.get('name') == 'weapon:joined':
             continue
-        skin = data['skins'][node['skin']]
-        joints = [data['nodes'][i]['name'] for i in skin['joints']]
+        joints = [data['nodes'][i]['name'] for i in data['skins'][node['skin']]['joints']] if 'skin' in node else []
         for primitive in data['meshes'][node['mesh']]['primitives']:
             mat = data['materials'][primitive['material']]['name']
-            indices = accessor(primitive['indices'])
+            indices = accessor(primitive['indices']) if 'indices' in primitive else {'count': data['accessors'][primitive['attributes']['POSITION']]['count'], 'type':'implicit-sequential'}
             triangles += indices['count']//3
             rows.append({'material': mat, 'joints': joints,
                          'attributes': {k: accessor(v) for k,v in sorted(primitive['attributes'].items())},
@@ -68,6 +67,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ref', default='main')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--extract', type=Path, help='Optional owned Unity import directory for native history review')
     args = parser.parse_args()
     history = git('log', '--first-parent', '--reverse', '--format=%H%x09%s', args.ref, '--', ASSET).decode().splitlines()
     rows = [];seen = {}
@@ -83,12 +83,27 @@ def main():
             seen[digest] = sha
             row.update(inspect(raw))
         rows.append(row)
+    legacy=[]
+    for ref in ['14d2ad9f','5b6f408f']:
+        sha=git('rev-parse',ref).decode().strip();path='public/assets/participants/light-sport-robot-lod0.glb'
+        raw=git('show',sha+':'+path)
+        legacy.append({'revision':sha,'subject':'Light Sport Robot '+ref,'glb_sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'integrated':True,'path':path,'kind':'browser-static-rig',**inspect(raw)})
+    old='14d2ad9f^';source_paths=['src/render/firstPersonRenderer.ts','src/scenario/combatSliceScenarioV1.ts']
+    procedural={'revision':git('rev-parse',old).decode().strip(),'type':'analytical primitives before GLB','sources':{p:hashlib.sha256(git('show',old+':'+p)).hexdigest() for p in source_paths},'native_review':'B01HistoryReviewTests recreates exact dimensions; Unity tessellation differs from historical Three.js. No original GLB existed; retained static pose, normalized height.'}
     result = {'ref': git('rev-parse', args.ref).decode().strip(),
-              'selection': 'Every first-parent commit changing the native body GLB; source studies excluded unless integrated',
-              'remaining': ['Group payload-only optimizations/equipment revisions after material/geometry review',
-                            'Check earlier browser-era body paths before claiming all historical game models',
-                            'Render every distinct confirmed game costume with common native conditions'],
-              'revisions': rows}
+              'selection': 'Every first-parent native body GLB change plus both integrated Light Sport Robot GLBs and pre-GLB procedural source',
+              'technical_duplicates':'Payload signature changes include topology/UV/skin optimization; never counted as a new artistic generation.',
+              'pose_limit':'Native Trooper versions use common persisted idle/run clips; incompatible browser rig and procedural target use authored rest pose with explicit labels.',
+              'procedural':procedural,'legacy':legacy,'revisions':rows}
+    if args.extract:
+        args.extract.mkdir(parents=True,exist_ok=True);seen=set();items=[]
+        for row in legacy+rows:
+            signature=row.get('body_skin_payload_sha256')
+            if not signature or signature in seen:continue
+            seen.add(signature);name=row['revision'][:8]
+            (args.extract/(name+'.glb')).write_bytes(git('show',row['revision']+':'+row['path']))
+            items.append({'id':name,'revision':row['revision'],'label':row['subject'],'path':'Assets/'+args.extract.name+'/'+name+'.glb','kind':row.get('kind','native'),'sha256':row['glb_sha256']})
+        (args.extract/'gallery.json').write_text(json.dumps({'items':items},indent=2)+'\n')
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({'revisions': len(rows), 'unique_glbs': len(seen), 'output': str(args.output)}))

@@ -24,12 +24,12 @@
     {
       "key": "player-body",
       "path": "Assets/StarTournament/Art/trooper-body-animated.glb",
-      "sha256": "cf9992f4453d81c13a34d75db06e3577f8a4b1b108fa4df138bf00de8da074eb",
+      "sha256": "a0a45076730f2732f5d2812be5a56056ed3278872656340b60421063f395454a",
       "units": "meters",
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR F23 F02 reconstructed military helmet, unique UV/PBR; scripts/vector_fighter/f23-reconstructed.blend + export_reconstructed_f23.py"
+      "source": "VECTOR B01 reconstructed suit; unchanged F02 helmet/rig/gloves/equipment; scripts/vector_fighter/vector-body-b01.blend + export_body.py"
     },
     {
       "key": "player-hands",
