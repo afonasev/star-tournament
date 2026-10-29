@@ -29,7 +29,7 @@
       "up": "+Y",
       "front": "+Z",
       "pivot": "feet-center",
-      "source": "VECTOR F23 full-quality local test candidate; scripts/vector_fighter/f23-color-coverage.blend; world budget gate remains open"
+      "source": "VECTOR F23 full-quality local test candidate; scripts/vector_fighter/f23-color-coverage.blend; full-quality test budget explicitly authorized 2026-10-29"
     },
     {
       "key": "player-hands",

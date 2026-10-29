@@ -953,3 +953,5 @@ The neutral glove shell uses a continuous anatomical palm/thenar/finger volume w
 ### Pulse — встроенный счётчик C, 2026-10-28
 
 Выбран и разрешён к реализации круглый счётчик в заднем торце Pulse Mk II. Боезапас берётся из состояния владельца; приёмка реального результата отдельна от выбора эскиза.
+
+F23 local test exception (2026-10-29): user explicitly authorized the full-quality world mesh budget of 1,070,223 triangles. FPS remains capped at 45,000 with separate geometry. This test-version exception does not establish release or hardware performance acceptance.
