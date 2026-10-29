@@ -11,6 +11,7 @@ namespace StarTournament.ProvingGround
         {
             if(id==CombatBowlCatalog.Id&&revision=="19")return Previous(CombatBowlCatalog.Build(true),revision);
             if(id==LunarLaboratoryCatalog.Id&&revision=="8")return Previous(LunarLaboratoryCatalog.Draft(previousForgePlacement:true),revision);
+            if(id==WellArenaCatalog.Id&&revision=="7")return WellArenaCatalog.Build(previousWorkZones:true);
             if(id==WellArenaCatalog.Id&&revision=="6")return Previous(WellArenaCatalog.Build(true),revision);
             if(id==WellArenaCatalog.Id&&(revision==null||revision==WellArenaCatalog.Revision))return WellArenaCatalog.Build();
             if(id==WellArenaCatalog.Id&&revision==WellArenaRevisionFour.Revision)return WellArenaRevisionFour.Build();
