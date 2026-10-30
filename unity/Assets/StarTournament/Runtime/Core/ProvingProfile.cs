@@ -499,7 +499,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
-            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 8 };
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 9 };
             profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
             profile.Add("armor.maximum", "armor-pickup", "Максимум брони", "Верхняя граница брони участника.", "armor", 1, 1000, 1, 100);
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
@@ -529,7 +529,7 @@ namespace StarTournament.ProvingGround
             profile.Add("rifle.startingAmmo", "rifle", "Боезапас винтовки", "Число выстрелов до следующего возрождения.", "ammo", 1, 300, 1, 240);
             profile.Add("rifle.cooldownSeconds", "rifle", "Скорострельность (интервал)", "Время между выстрелами при удержании огня: меньше секунд — выше скорострельность.", "seconds", .02f, 1f, 1f / 300f, .10f / 1.2f);
             profile.Add("weapon.switchSeconds", "weapon-switch", "Время смены оружия", "Время запрета стрельбы до выбора другого слота.", "seconds", .1f, 3f, .1f, .5f);
-            profile.Add("combat.cooldownSeconds", "shotgun", "Интервал выстрелов", "Минимальное simulation время до следующего выстрела.", "seconds", .05f, 5, .05f, .7f);
+            profile.Add("combat.cooldownSeconds", "shotgun", "Интервал выстрелов", "Минимальное simulation время до следующего выстрела; по умолчанию совпадает с завершением затвора VECTOR.", "seconds", .05f, 5, .01f, .66f);
             profile.Add("combat.killcamSeconds", "death", "Ожидание возрождения", "Simulation время смерти до готовности к выбору spawn.", "seconds", 0, 15, .1f, 3);
             AddRocketLife(profile);
             return profile;

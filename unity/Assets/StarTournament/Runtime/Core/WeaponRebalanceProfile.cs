@@ -3,6 +3,16 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Preserve historical tuning and hashes while the new default follows the authored bolt.
+        internal ProvingProfile BeforeShotgunBoltTiming()
+        {
+            if(id!="unity-combat-state-v1"||version<9)return this;
+            var p=DetachedCopy();p.version=8;
+            p.RebalanceDefault("combat.cooldownSeconds",.7f);
+            var d=p.FindDescriptor("combat.cooldownSeconds");d.Step=.05f;
+            d.Description="Минимальное simulation время до следующего выстрела.";
+            return p;
+        }
         // Preserve exact v8 metadata/defaults and immutable Lab revision hashes.
         internal ProvingProfile BeforeGamepadWeaponTuning()
         {
@@ -17,6 +27,7 @@ namespace StarTournament.ProvingGround
         // Reconstruct only trusted shipped metadata, never rewrite saved historical revisions.
         internal ProvingProfile BeforeRifleBurstParameters()
         {
+            if(id=="unity-combat-state-v1"&&version>=9)return BeforeShotgunBoltTiming().BeforeRifleBurstParameters();
             if(id=="unity-native-combat-v1"&&version>=9)return BeforeGamepadWeaponTuning().BeforeRifleBurstParameters();
             if((id!="unity-native-combat-v1"&&id!="unity-combat-state-v1")||version!=8)return this;
             var p=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
@@ -28,6 +39,7 @@ namespace StarTournament.ProvingGround
         // Exact pre-rebalance registry: immutable hashes and metadata must remain trusted.
         internal ProvingProfile BeforeWeaponRebalance()
         {
+            if(id=="unity-combat-state-v1"&&version>=9)return BeforeShotgunBoltTiming().BeforeWeaponRebalance();
             if(id=="unity-native-combat-v1"&&version>=9)return BeforeGamepadWeaponTuning().BeforeWeaponRebalance();
             if(version==8&&(id=="unity-native-combat-v1"||id=="unity-combat-state-v1"))return BeforeRifleBurstParameters().BeforeWeaponRebalance();
             if((id!="unity-native-combat-v1"||version!=7)&&(id!="unity-combat-state-v1"||version!=7)&&(id!="cutter-beam-v1"||version!=4))return this;

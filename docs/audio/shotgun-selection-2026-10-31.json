@@ -1,0 +1,26 @@
+{
+  "source_preview": "planning main@c952092e / shotgun-metal-bolt-v4-20261031/01-arena-bolt-review.wav",
+  "shot_source_sha256": "e2a3c0c0cb2b90f086a77ef1412c7aa181d7835b6c883bd4f5d67f979eb13e7a",
+  "bolt_source_sha256": "6f2d2e152bd1edc988a166812396135ab994909a24a57cadc29f08b739f34d97",
+  "shot_relative_gain_db": 2,
+  "previous_common_gain": 0.7700164443568724,
+  "bolt_close_end_seconds": 0.66,
+  "default_cooldown_seconds": 0.66,
+  "raw_seconds": 1.8,
+  "preview_padding_in_runtime": false,
+  "bank_policy": "Both bank entries intentionally contain the exact selected variant1; no unapproved timbral variant",
+  "reference_pcm_used": false,
+  "output_sha256": "74c88c97d98560b4e2a81dc6936a1da211bf84cc2e93c4bd12da126e3717d738",
+  "levels": {
+    "input_i": "-21.72",
+    "input_tp": "-4.51",
+    "input_lra": "2.60",
+    "input_thresh": "-32.66",
+    "output_i": "-20.29",
+    "output_tp": "-3.40",
+    "output_lra": "1.50",
+    "output_thresh": "-31.10",
+    "normalization_type": "dynamic",
+    "target_offset": "0.29"
+  }
+}

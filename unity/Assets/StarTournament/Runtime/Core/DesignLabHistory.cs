@@ -397,7 +397,7 @@ namespace StarTournament.ProvingGround
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWellDensity(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeWellWorkZones(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
                 (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<9
-                    ?p.BeforeGamepadWeaponTuning():p).ToList()};
+                    ?p.BeforeGamepadWeaponTuning().BeforeShotgunBoltTiming():p).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??6)<6)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeRapidFire()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??14)<14)
