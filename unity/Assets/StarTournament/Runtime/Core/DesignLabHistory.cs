@@ -395,6 +395,13 @@ namespace StarTournament.ProvingGround
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWellDensity(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeWellWorkZones(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<9
+                    ?p.BeforeGamepadWeaponTuning():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??6)<6)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeRapidFire()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??14)<14)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCutterGamepadRadius()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??13)<13)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamThumbContact()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??12)<12)

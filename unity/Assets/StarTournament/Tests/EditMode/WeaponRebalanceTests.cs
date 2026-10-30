@@ -7,12 +7,49 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class WeaponRebalanceTests
     {
+        [Test] public void RequestedTuningPreservesExactPreviousRegistryAndCustomValues()
+        {
+            var current=new LabBundle{Profiles=new System.Collections.Generic.List<ProvingProfile>{ProvingProfile.CreateCombatDefault(),ProvingProfile.CreateNativeCombatDefault(),ProvingProfile.CreatePlasmaDefault()}};
+            ProvingProfile Previous(ProvingProfile p,string method)=>(ProvingProfile)typeof(ProvingProfile).GetMethod(method,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null);
+            var old=new LabBundle{Profiles=current.Profiles.Select(p=>Previous(Previous(p,"BeforeGamepadWeaponTuning"),"BeforeForgeRapidFire")).ToList()};
+            Assert.That(old.Get("shot.damage"),Is.EqualTo(85));Assert.That(old.Get("rifle.spread"),Is.EqualTo(1.32f));Assert.That(old.Get("plasma.cooldownSeconds"),Is.EqualTo(.2f));
+            var path=Path.Combine(Path.GetTempPath(),"gamepad-tuning-"+Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,old);string release=history.Selected.Hash;
+                history.Create("Custom tuning");var draft=history.Selected.Snapshot;draft.Set("shot.damage",81);draft.Set("rifle.spread",2.3f);draft.Set("plasma.cooldownSeconds",.23f);history.Save(draft);string custom=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==custom),Is.True);Assert.That(migrated.Selected.Snapshot.Get("shot.damage"),Is.EqualTo(81));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==release),Is.True);
+                var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
+                migrated.Select(DesignLabHistory.ReleaseId,migrated.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Last().Number);
+                Assert.That(migrated.Selected.Snapshot.Get("shot.damage"),Is.EqualTo(93.5f));Assert.That(migrated.Selected.Snapshot.Get("rifle.spread"),Is.EqualTo(1.584f));
+                Assert.That(24/migrated.Selected.Snapshot.Get("plasma.cooldownSeconds"),Is.EqualTo(144).Within(.001));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
+        [Test] public void DpsReportMeasuresActualFixedTickCadence()
+        {
+            var combat=ProvingProfile.CreateNativeCombatDefault();
+            foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Plasma})
+            {
+                var life=new CombatLife("dps",ProvingProfile.CreateCombatDefault());
+                if(weapon!=WeaponId.Rifle){life.CollectWeapon(weapon);life.Select(weapon==WeaponId.Shotgun?WeaponSelection.Shotgun:weapon==WeaponId.RocketLauncher?WeaponSelection.RocketLauncher:WeaponSelection.Plasma);life.Advance(1);}
+                Assert.That(life.Read().SelectedWeapon,Is.EqualTo(weapon));
+                Assert.That(life.Fire(true),Is.True);life.ClearHeldInput();int ticks=0;
+                do{life.Advance(.02f);life.ClearHeldInput();ticks++;}while(!life.Fire(true)&&ticks<300);
+                float damage=weapon==WeaponId.Plasma?24:combat.Get(weapon==WeaponId.Rifle?"rifle.damage":weapon==WeaponId.Shotgun?"shot.damage":"rocket.maximumDamage");
+                int expected=weapon==WeaponId.Rifle?5:weapon==WeaponId.Shotgun?35:weapon==WeaponId.RocketLauncher?60:9;
+                Assert.That(ticks,Is.EqualTo(expected));
+                TestContext.WriteLine($"DPS weapon={weapon} damage={damage} ticks={ticks} period={ticks*.02f:F3}s actualDps={damage/(ticks*.02f):F4} all-projectiles-hit, no boost");
+            }
+        }
         [Test] public void RifleParametersKeepTimerQuantizationAndStopAtNewCapacity()
         {
             var p=ProvingProfile.CreateCombatDefault();var combat=ProvingProfile.CreateNativeCombatDefault();
             Assert.That(p.Get("rifle.startingAmmo"),Is.EqualTo(240));
             Assert.That(p.Get("rifle.cooldownSeconds"),Is.EqualTo(.10f/1.2f));
-            Assert.That(combat.Get("rifle.spread"),Is.EqualTo(1.32f));
+            Assert.That(combat.Get("rifle.spread"),Is.EqualTo(1.584f));
             Assert.That(combat.Get("rifle.damage"),Is.EqualTo(10));
             Assert.That(p.Validate(),Is.Empty);Assert.That(combat.Validate(),Is.Empty);
             var life=new CombatLife("p",p);int fired=0;
@@ -25,7 +62,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test] public void RifleSpreadComparisonUsesIdenticalSeedsAtThreeDistances()
         {
-            var current=ProvingProfile.CreateNativeCombatDefault();var previous=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(current));previous.Set("rifle.spread",1.1f);
+            var current=ProvingProfile.CreateNativeCombatDefault();var previous=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(current));previous.Set("rifle.spread",1.32f);
             var oldResolver=new ShotgunResolver(previous,1.8f);var resolver=new ShotgunResolver(current,1.8f);
             foreach(float distance in new[]{10f,30f,60f})
             {
@@ -37,7 +74,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                     var oldPoint=a*(distance/a.z);var point=b*(distance/b.z);
                     float oldRadius=new Vector2(oldPoint.x,oldPoint.y).magnitude;
                     float radius=new Vector2(point.x,point.y).magnitude;
-                    Assert.That(radius/oldRadius,Is.EqualTo(Mathf.Tan(1.32f*Mathf.Deg2Rad)/Mathf.Tan(1.1f*Mathf.Deg2Rad)).Within(.00001));
+                    Assert.That(radius/oldRadius,Is.EqualTo(Mathf.Tan(1.584f*Mathf.Deg2Rad)/Mathf.Tan(1.32f*Mathf.Deg2Rad)).Within(.00001));
                     if(Mathf.Abs(oldPoint.x)<=.25f&&Mathf.Abs(oldPoint.y)<=.9f)oldHits++;
                     if(Mathf.Abs(point.x)<=.25f&&Mathf.Abs(point.y)<=.9f)newHits++;
                     maxRadius=Mathf.Max(maxRadius,radius);
@@ -66,7 +103,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
                 migrated.Select(DesignLabHistory.ReleaseId,migrated.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Last().Number);
                 Assert.That(migrated.Selected.Snapshot.Get("rifle.startingAmmo"),Is.EqualTo(240));
-                Assert.That(migrated.Selected.Snapshot.Get("rifle.spread"),Is.EqualTo(1.32f));
+                Assert.That(migrated.Selected.Snapshot.Get("rifle.spread"),Is.EqualTo(1.584f));
             }
             finally {if(File.Exists(path))File.Delete(path);}
         }

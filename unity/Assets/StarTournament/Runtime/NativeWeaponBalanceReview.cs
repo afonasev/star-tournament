@@ -24,7 +24,7 @@ namespace StarTournament.ProvingGround
         {
             var args=Environment.GetCommandLineArgs();directory=args[Array.IndexOf(args,"-weaponBalanceReview")+1];Directory.CreateDirectory(directory);
             ground=GetComponent<ProvingGround>();AudioListener.volume=0;Application.runInBackground=true;yield return new WaitForSecondsRealtime(1);ground.enabled=false;
-            Require(ground.CombatProfile.Get("rifle.damage")==10&&ground.CombatProfile.Get("shot.damage")==85&&ground.CombatProfile.Get("shot.pellets")==18,"Shipped weapon defaults stale");
+            Require(ground.CombatProfile.Get("rifle.damage")==10&&ground.CombatProfile.Get("shot.damage")==93.5f&&ground.CombatProfile.Get("shot.pellets")==18,"Shipped weapon defaults stale");
             Require(ground.LifeProfile.Get("rifle.startingAmmo")==240&&ground.LifeProfile.Get("weapon.switchSeconds")==.5f&&ground.LifeProfile.Get("damageBoost.multiplier")==1.5f,"Shipped life defaults stale");
             for(int run=0;run<(args.Contains("-weaponBalanceVisualOnly")?0:4);run++)
             {

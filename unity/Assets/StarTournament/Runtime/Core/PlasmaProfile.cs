@@ -25,10 +25,18 @@ namespace StarTournament.ProvingGround
             bool Added(string path)=>path.StartsWith("forge-")||path.Contains(".forge-");
             p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));return p;
         }
+        internal ProvingProfile BeforeForgeRapidFire()
+        {
+            if(id!="forge-plasma-v1"||version<6)return this;
+            var p=DetachedCopy();p.version=5;
+            p.RebalanceDefault("plasma.cooldownSeconds",.2f);
+            p.FindDescriptor("plasma.cooldownSeconds").Step=.01f;
+            return p;
+        }
         internal ProvingProfile BeforeForgeHeavyTuning()
         {
             if(id!="forge-plasma-v1"||version<5)return this;
-            var p=DetachedCopy();p.version=4;
+            var p=BeforeForgeRapidFire().DetachedCopy();p.version=4;
             p.RebalanceDefault("plasma.damage",20);p.RebalanceDefault("plasma.speed",24);p.RebalanceDefault("plasma.orbRadius",.117f);
             p.FindDescriptor("plasma.speed").Step=1;p.FindDescriptor("plasma.orbRadius").Step=.001f;
             return p;
@@ -67,9 +75,9 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreatePlasmaDefault()
         {
-            var p=new ProvingProfile{id="forge-plasma-v1",version=5};
+            var p=new ProvingProfile{id="forge-plasma-v1",version=6};
             p.Add("plasma.damage","plasma","Урон шара FORGE","Прямой урон одного шара до усиления и союзного коэффициента.","HP",0,500,1,24);
-            p.Add("plasma.cooldownSeconds","plasma","Интервал FORGE","Пауза между шарами при удержании огня.","s",.02f,2,.01f,.2f);
+            p.Add("plasma.cooldownSeconds","plasma","Интервал FORGE","Пауза между шарами при удержании огня.","s",.02f,2,1f/600f,.2f/1.2f);
             p.Add("plasma.speed","plasma","Скорость шара","Скорость прямого полёта: меньше — легче увернуться.","m/s",1,200,.1f,14.4f);
             p.Add("plasma.pickupAmmo","plasma","Заряд при подборе","Подбор пополняет запас до этого значения.","charge",1,500,1,100);
             p.Add("plasma.modelScale","plasma-effects","Масштаб FORGE","Размер модели на существующем хвате.","ratio",.1f,3,.05f,1.4f);

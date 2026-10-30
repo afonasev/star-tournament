@@ -3,11 +3,21 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Preserve exact v8 metadata/defaults and immutable Lab revision hashes.
+        internal ProvingProfile BeforeGamepadWeaponTuning()
+        {
+            if(id!="unity-native-combat-v1"||version<9)return this;
+            var p=DetachedCopy();p.version=8;
+            p.RebalanceDefault("rifle.spread",1.32f);p.FindDescriptor("rifle.spread").Step=.02f;
+            p.RebalanceDefault("shot.damage",85);p.FindDescriptor("shot.damage").Step=1;
+            return p;
+        }
         void RebalanceDefault(string path,float value)
         {Set(path,value);FindDescriptor(path).DefaultValue=value;}
         // Reconstruct only trusted shipped metadata, never rewrite saved historical revisions.
         internal ProvingProfile BeforeRifleBurstParameters()
         {
+            if(id=="unity-native-combat-v1"&&version>=9)return BeforeGamepadWeaponTuning().BeforeRifleBurstParameters();
             if((id!="unity-native-combat-v1"&&id!="unity-combat-state-v1")||version!=8)return this;
             var p=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
             p.version=7;
@@ -18,6 +28,7 @@ namespace StarTournament.ProvingGround
         // Exact pre-rebalance registry: immutable hashes and metadata must remain trusted.
         internal ProvingProfile BeforeWeaponRebalance()
         {
+            if(id=="unity-native-combat-v1"&&version>=9)return BeforeGamepadWeaponTuning().BeforeWeaponRebalance();
             if(version==8&&(id=="unity-native-combat-v1"||id=="unity-combat-state-v1"))return BeforeRifleBurstParameters().BeforeWeaponRebalance();
             if((id!="unity-native-combat-v1"||version!=7)&&(id!="unity-combat-state-v1"||version!=7)&&(id!="cutter-beam-v1"||version!=4))return this;
             var p=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));

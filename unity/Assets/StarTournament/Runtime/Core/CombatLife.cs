@@ -19,6 +19,7 @@ namespace StarTournament.ProvingGround
         public int RocketAmmo;
         public int PlasmaAmmo;
         public double PlasmaCooldownRemaining;
+        public double PlasmaCadenceCarry;
         public double CutterEnergy;
         public double RifleCooldownRemaining;
         public double ShotgunCooldownRemaining;
@@ -103,6 +104,10 @@ namespace StarTournament.ProvingGround
         {
             if (double.IsNaN(seconds) || double.IsInfinity(seconds) || seconds < 0)
                 throw new ArgumentOutOfRangeException(nameof(seconds));
+            // Keep sub-tick phase only across uninterrupted held plasma fire. Large
+            // time jumps and idle periods never bank overdue shots.
+            state.PlasmaCadenceCarry=state.SelectedWeapon==WeaponId.Plasma&&state.FireHeld&&state.PlasmaCooldownRemaining>0&&seconds<plasmaCooldown
+                ?Math.Max(0,seconds-state.PlasmaCooldownRemaining):0;
             state.PlasmaCooldownRemaining = Countdown(state.PlasmaCooldownRemaining, seconds);
             state.RifleCooldownRemaining = Countdown(state.RifleCooldownRemaining, seconds);
             state.ShotgunCooldownRemaining = Countdown(state.ShotgunCooldownRemaining, seconds);
@@ -121,7 +126,7 @@ namespace StarTournament.ProvingGround
             if (state.Dead) state.RespawnRemaining = Math.Max(0, state.RespawnRemaining - seconds);
         }
 
-        public void ClearHeldInput() { state.FireHeld = false; }
+        public void ClearHeldInput() { state.FireHeld = false;state.PlasmaCadenceCarry=0; }
         public void Select(WeaponSelection selection)
         {
             if (state.Dead || selection==WeaponSelection.None || state.SwitchRemaining > 0) return;
@@ -138,6 +143,7 @@ namespace StarTournament.ProvingGround
                 default: throw new ArgumentOutOfRangeException(nameof(selection));
             }
             if (target == state.SelectedWeapon || !Owned(state,target)) return;
+            state.PlasmaCadenceCarry=0;
             state.PendingWeapon = target;
             state.SwitchRemaining = switchSeconds;
         }
@@ -178,7 +184,7 @@ namespace StarTournament.ProvingGround
         static bool ValidTimer(double v) => !double.IsNaN(v) && !double.IsInfinity(v) && v>=0;
         public void ValidateSnapshot(CombatLifeState snapshot)
         {
-            if(snapshot.PlasmaAmmo<0||snapshot.PlasmaAmmo>plasmaPickupAmmo||!ValidTimer(snapshot.PlasmaCooldownRemaining)||!ValidTimer(snapshot.CutterEnergy)||snapshot.CutterEnergy>cutterCapacity||snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.RocketAmmo<0||!WeaponValid(snapshot.SelectedWeapon)||!ValidTimer(snapshot.RifleCooldownRemaining)||!ValidTimer(snapshot.ShotgunCooldownRemaining)||!ValidTimer(snapshot.RocketCooldownRemaining)||!ValidTimer(snapshot.SwitchRemaining)||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(!WeaponValid(snapshot.PendingWeapon)||snapshot.PendingWeapon==snapshot.SelectedWeapon))
+            if(snapshot.PlasmaAmmo<0||snapshot.PlasmaAmmo>plasmaPickupAmmo||!ValidTimer(snapshot.PlasmaCooldownRemaining)||!ValidTimer(snapshot.PlasmaCadenceCarry)||snapshot.PlasmaCadenceCarry>=plasmaCooldown||!ValidTimer(snapshot.CutterEnergy)||snapshot.CutterEnergy>cutterCapacity||snapshot.ParticipantId!=state.ParticipantId||snapshot.Life<1||float.IsNaN(snapshot.Health)||float.IsInfinity(snapshot.Health)||snapshot.Health<0||snapshot.Health>maximumHealth||float.IsNaN(snapshot.Armor)||float.IsInfinity(snapshot.Armor)||snapshot.Armor<0||snapshot.Armor>maximumArmor||snapshot.Ammo<0||snapshot.RifleAmmo<0||snapshot.ShotgunAmmo<0||snapshot.RocketAmmo<0||!WeaponValid(snapshot.SelectedWeapon)||!ValidTimer(snapshot.RifleCooldownRemaining)||!ValidTimer(snapshot.ShotgunCooldownRemaining)||!ValidTimer(snapshot.RocketCooldownRemaining)||!ValidTimer(snapshot.SwitchRemaining)||snapshot.SwitchRemaining>switchSeconds||snapshot.SwitchRemaining==0&&snapshot.PendingWeapon!=default||snapshot.SwitchRemaining>0&&(!WeaponValid(snapshot.PendingWeapon)||snapshot.PendingWeapon==snapshot.SelectedWeapon))
                 throw new ArgumentException("Invalid combat life snapshot",nameof(snapshot));
             if(!Owned(snapshot,snapshot.SelectedWeapon)||snapshot.SwitchRemaining>0&&!Owned(snapshot,snapshot.PendingWeapon)||
                 !snapshot.ShotgunOwned&&snapshot.ShotgunAmmo!=0||!snapshot.RocketOwned&&snapshot.RocketAmmo!=0||!snapshot.CutterOwned&&snapshot.CutterEnergy!=0||!snapshot.PlasmaOwned&&snapshot.PlasmaAmmo!=0)
@@ -194,6 +200,7 @@ namespace StarTournament.ProvingGround
         {
             bool edge = held && !state.FireHeld;
             state.FireHeld = held;
+            if(!held)state.PlasmaCadenceCarry=0;
             if (!Owned(state,state.SelectedWeapon) || state.SelectedWeapon==WeaponId.Cutter || state.Dead || state.SwitchRemaining > 0 || !held || state.CooldownRemaining > 0 || state.Ammo == 0 ||
                 (state.SelectedWeapon!=WeaponId.Rifle && state.SelectedWeapon!=WeaponId.Plasma && !edge)) return false;
             if(state.SelectedWeapon==WeaponId.Rifle)
@@ -202,7 +209,7 @@ namespace StarTournament.ProvingGround
                 state.Ammo=state.RifleAmmo;
             }
             else if(state.SelectedWeapon==WeaponId.Plasma)
-            {state.PlasmaAmmo--;state.PlasmaCooldownRemaining=plasmaCooldown;state.Ammo=state.PlasmaAmmo;}
+            {state.PlasmaAmmo--;state.PlasmaCooldownRemaining=plasmaCooldown-state.PlasmaCadenceCarry;state.PlasmaCadenceCarry=0;state.Ammo=state.PlasmaAmmo;}
             else if(state.SelectedWeapon==WeaponId.RocketLauncher)
             {
                 state.RocketAmmo--; state.RocketCooldownRemaining=rocketCooldown; state.Ammo=state.RocketAmmo;
@@ -233,7 +240,7 @@ namespace StarTournament.ProvingGround
             if (killed)
             {
                 state.Dead = true;
-                state.ShotgunOwned=state.RocketOwned=state.CutterOwned=state.PlasmaOwned=false;state.PlasmaAmmo=0;state.PlasmaCooldownRemaining=0;
+                state.ShotgunOwned=state.RocketOwned=state.CutterOwned=state.PlasmaOwned=false;state.PlasmaAmmo=0;state.PlasmaCooldownRemaining=0;state.PlasmaCadenceCarry=0;
                 state.ShotgunAmmo=state.RocketAmmo=0;state.CutterEnergy=0;
                 state.SelectedWeapon=WeaponId.Rifle;state.Ammo=state.RifleAmmo;
                 state.CooldownRemaining=state.RifleCooldownRemaining;

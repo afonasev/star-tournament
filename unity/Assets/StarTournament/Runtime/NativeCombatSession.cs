@@ -494,12 +494,15 @@ namespace StarTournament.ProvingGround
             var origin=pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
             float limit=float.PositiveInfinity;
             if(physics.Raycast(origin,direction,out var wall,beams[shooter].Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))limit=wall.distance;
+            float radius=cutter.Descriptor("cutter.damageRadius")!=null?cutter.Get("cutter.damageRadius"):0;
+            // The whole beam volume stops at cover, including an edge outside its axis.
+            if(radius>0&&physics.SphereCast(origin,radius,direction,out var edge,beams[shooter].Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))limit=Mathf.Min(limit,edge.distance);
             var distances=new float[lives.Length];var identities=new int[lives.Length];
             for(int i=0;i<lives.Length;i++)
             {
                 identities[i]=Life(i).Life;
                 if(i==shooter||Life(i).Dead){distances[i]=-1;continue;}
-                var hit=resolver.ResolveTarget(origin,direction,new CombatTarget(i,identities[i],Pose(i)),limit);
+                var hit=resolver.ResolveTarget(origin,direction,new CombatTarget(i,identities[i],Pose(i)),limit,radius);
                 distances[i]=hit.TargetIndex<0?-1:hit.Distance;
             }
             bool began=!beams[shooter].Read().Active&&Life(shooter).CutterEnergy>0;float applied=0;

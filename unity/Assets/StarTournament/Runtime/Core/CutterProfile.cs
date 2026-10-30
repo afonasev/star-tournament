@@ -2,11 +2,20 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // New visible gameplay control; obsolete hitRadius retains historical bytes.
+        internal ProvingProfile BeforeCutterGamepadRadius()
+        {
+            if(id!="cutter-beam-v1"||version<14)return this;
+            var p=DetachedCopy();p.version=13;
+            p.descriptors.RemoveAll(d=>d.Path=="cutter.damageRadius"||d.Path=="cutter.dischargeScale");
+            p.values.RemoveAll(v=>v.Path=="cutter.damageRadius"||v.Path=="cutter.dischargeScale");p.valueIndex=null;
+            return p;
+        }
         // Additive FPS thumb contact; saved v12 registries retain exact metadata/values.
         internal ProvingProfile BeforeSeamThumbContact()
         {
             if(id!="cutter-beam-v1"||version<13)return this;
-            var p=DetachedCopy();p.version=12;
+            var p=BeforeCutterGamepadRadius().DetachedCopy();p.version=12;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam.surface.thumb"));
             p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam.surface.thumb"));p.valueIndex=null;return p;
         }
@@ -78,7 +87,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeSeamPresentation()
         {
             if(id!="cutter-beam-v1"||version<5)return this;
-            var p=DetachedCopy();p.version=4;
+            var p=BeforeCutterGamepadRadius().DetachedCopy();p.version=4;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("cutter.seam."));
             p.values.RemoveAll(v=>v.Path.StartsWith("cutter.seam."));
             return p;
@@ -110,7 +119,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateCutterDefault()
         {
-            var p = new ProvingProfile { id="cutter-beam-v1", version=13 };
+            var p = new ProvingProfile { id="cutter-beam-v1", version=14 };
             p.Add("cutter.energyCapacity","cutter","Полный заряд","Запас на новую жизнь.","energy",1f,300f,1f,30f);
             p.Add("cutter.energyPerSecond","cutter","Расход","Расход во время роста и полного луча.","energy/s",0.01f,20f,0.01f,1f);
             p.Add("cutter.maxRangeMeters","cutter","Дальность","Максимальная достигнутая длина.","m",0.1f,100f,0.1f,20f);
@@ -118,6 +127,8 @@ namespace StarTournament.ProvingGround
             p.Add("cutter.contactTickSeconds","cutter","Контактный тик","Непрерывный контакт до очередного урона.","s",0.01f,1f,0.01f,0.1f);
             p.Add("cutter.referenceDamage","cutter","Эталонный урон","Урон за эталонное время контакта.","HP",0f,1000f,1f,300f);
             p.Add("cutter.referenceContactSeconds","cutter","Эталонное время","Время контакта для эталонного урона.","s",0.1f,30f,0.1f,3f);
+            p.Add("cutter.damageRadius","cutter","Радиус урона","Допуск вокруг оси луча при контакте с телом; укрытия блокируют весь объём.","m",0f,.5f,.01f,.10f);
+            p.Add("cutter.dischargeScale","cutter-effects","Размах внешнего разряда","Множитель электрических ветвей вокруг тонкого ядра; 1 сохраняет прежний вид.","ratio",1f,4f,.05f,1.25f);
             p.Add("cutter.hitRadius","cutter","Радиус луча","Расширение gameplay капсулы при запросе.","m",0f,0.5f,0.01f,0.02f);
             p.Add("cutter.botMinimumDistance","cutter-bots","Бот: минимум","Ближняя граница выбора Резака.","m",0f,30f,0.1f,3f);
             p.Add("cutter.botRangeFraction","cutter-bots","Бот: запас дальности","Доля дальности для выбора луча.","ratio",0.1f,1f,0.01f,0.9f);

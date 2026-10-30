@@ -8,6 +8,25 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class SeamCutterProfileTests
     {
+        [Test] public void GamepadRadiusIsVisibleAndPredecessorKeepsExactSnapshots()
+        {
+            var current=ProvingProfile.CreateCutterDefault();
+            var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCutterGamepadRadius",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(current,null);
+            Assert.That(current.Version,Is.EqualTo(14));Assert.That(old.Version,Is.EqualTo(13));
+            Assert.That(current.Get("cutter.damageRadius"),Is.EqualTo(.1f));Assert.That(current.Get("cutter.jitter")*current.Get("cutter.dischargeScale"),Is.EqualTo(.1f).Within(.000001));
+            Assert.That(old.Descriptor("cutter.damageRadius"),Is.Null);Assert.That(old.Get("cutter.jitter"),Is.EqualTo(.08f));
+            var path=Path.Combine(Path.GetTempPath(),"cutter-radius-"+Guid.NewGuid()+".json");
+            try
+            {
+                var first=new DesignLabHistory(path,new LabBundle{Profiles={old}});first.Create("Custom cutter");var draft=first.Selected.Snapshot;draft.Set("cutter.jitter",.13f);first.Save(draft);
+                string hash=first.Selected.Hash,bytes=JsonUtility.ToJson(first.Selected.Snapshot);
+                var next=new DesignLabHistory(path,new LabBundle{Profiles={current}});Assert.That(next.StorageError,Is.Null);
+                Assert.That(next.Selected.Snapshot.IsVisible("cutter.damageRadius"),Is.True);Assert.That(next.Selected.Snapshot.Get("cutter.jitter"),Is.EqualTo(.13f));
+                Assert.That(JsonUtility.ToJson(next.Profiles.SelectMany(p=>p.Revisions).Single(r=>r.Hash==hash).Snapshot),Is.EqualTo(bytes));
+                var reopened=new DesignLabHistory(path,new LabBundle{Profiles={current}});Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(next.Selected.Hash));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
         [Test] public void ContactTraceDefaultPassesMatchStartValidationWithoutChangingDuration()
         {
             const string path="cutter.seam.contactSeconds";
@@ -42,7 +61,8 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 
         [Test] public void V12ThumbContactIsAdditiveAndHistoricalSnapshotRemainsExact()
         {
-            var current=ProvingProfile.CreateCutterDefault();
+            var latest=ProvingProfile.CreateCutterDefault();
+            var current=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeCutterGamepadRadius",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(latest,null);
             var old=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeSeamThumbContact",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(current,null);
             Assert.That(old.Version,Is.EqualTo(12));Assert.That(current.Version,Is.EqualTo(13));
             Assert.That(current.Descriptors.Count-old.Descriptors.Count,Is.EqualTo(6));

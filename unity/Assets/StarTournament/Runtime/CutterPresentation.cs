@@ -21,7 +21,7 @@ namespace StarTournament.ProvingGround
         readonly float coronaScale,contactSeconds,sparkSeconds,sparkReach,shieldRadius,muzzleRadius,shieldRingWidth,muzzleBlend,sparkWidth,contactGlow;
         readonly int sparkCount,arcSubdivisions;
         readonly float sparkSpread,shieldSpread,arcRadiusScale,arcWidthScale;
-        readonly float shieldOpacity,sparkGravity,sparkVariance,coreFraction;
+        readonly float shieldOpacity,sparkGravity,sparkVariance,coreFraction,dischargeRadius;
         readonly int rippleCount;
         readonly bool legacyBeam;
         bool disposed;
@@ -75,6 +75,7 @@ namespace StarTournament.ProvingGround
             this.session=session;p=session.CutterProfile;
             var defaults=ProvingProfile.CreateCutterDefault();
             float Read(string name){string path="cutter.seam."+name;return p.Descriptors.Any(d=>d.Path==path)?p.Get(path):defaults.Get(path);}
+            dischargeRadius=p.Get("cutter.jitter")*(p.Descriptor("cutter.dischargeScale")!=null?p.Get("cutter.dischargeScale"):1);
             legacyBeam=Read("legacyBeam")>0;
             float coreWidth=legacyBeam?Read("legacyCoreWidth"):p.Get("cutter.width");
             shieldOpacity=Read("surface.shieldOpacity");rippleCount=(int)Read("surface.rippleCount");sparkGravity=Read("surface.sparkGravity");sparkVariance=Read("surface.sparkVariance");coreFraction=Read("surface.coreFraction");
@@ -244,13 +245,13 @@ namespace StarTournament.ProvingGround
                         // Original phase hash is a fixed decorrelation invariant, not a balance value.
                         float phase=legacyBeam?Mathf.Floor((float)session.Time*p.Get("cutter.frequency"))*78.233f+k*12.9898f:Mathf.Floor((float)session.Time*p.Get("cutter.frequency"))*311.7f+k*127.1f;
                         float Noise(float seed)=>Mathf.Repeat(Mathf.Sin(seed)*43758.5453f,1)*2-1;
-                        var offset=(legacyBeam?side*Mathf.Sin(phase)+up*Mathf.Cos(phase):(side*Noise(phase)+up*Noise(phase+73.1f))*arcRadiusScale)*p.Get("cutter.jitter")*Mathf.Sin(t*Mathf.PI);
+                        var offset=(legacyBeam?side*Mathf.Sin(phase)+up*Mathf.Cos(phase):(side*Noise(phase)+up*Noise(phase+73.1f))*arcRadiusScale)*dischargeRadius*Mathf.Sin(t*Mathf.PI);
                         float distance=t*total;
                         var center=distance<=first?Vector3.Lerp(start,junction,first>0?distance/first:1):Vector3.Lerp(junction,state.Endpoint,total>first?(distance-first)/(total-first):1);
                         arcs[i].SetPosition(k,center+offset);
                         if(!legacyBeam)
                         {
-                            var second=(side*Noise(phase+19.4f)+up*Noise(phase+51.8f))*p.Get("cutter.jitter")*arcRadiusScale*Mathf.Sin(t*Mathf.PI);
+                            var second=(side*Noise(phase+19.4f)+up*Noise(phase+51.8f))*dischargeRadius*arcRadiusScale*Mathf.Sin(t*Mathf.PI);
                             filaments[i].SetPosition(k,center+second);
                         }
                     }

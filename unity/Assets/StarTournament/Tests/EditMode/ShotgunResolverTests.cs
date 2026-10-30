@@ -49,7 +49,7 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(resolver.Resolve(new Vector3(0,1.62f,0),Vector3.forward,targets,0,2).TargetIndex,Is.EqualTo(-1));
             Assert.That(resolver.Resolve(new Vector3(0,1.62f,0),Vector3.forward,targets,1,35).TargetIndex,Is.EqualTo(1));
             float mixed=(resolver.FullDamage(head.Zone)+resolver.FullDamage(torso.Zone)+resolver.FullDamage(leg.Zone))/3;
-            Assert.That(mixed,Is.EqualTo(85).Within(.001f));
+            Assert.That(mixed,Is.EqualTo(93.5f).Within(.001f));
         }
         [Test]
         public void NativeTuningRejectsFractionalPelletsAndDirectionsRespectSpread()

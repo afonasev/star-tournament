@@ -62,7 +62,7 @@ namespace StarTournament.ProvingGround
                     for(int enemyIndex=0;enemyIndex<frame.Knowledge.Enemies.Length;enemyIndex++)
                     {
                         var enemy=frame.Knowledge.Enemies[enemyIndex];if(!enemy.Visible)continue;
-                        float contact=Coverage(origin,ray,enemy.Sighting,t,range);
+                        float contact=Coverage(origin,ray,enemy.Sighting,t,range,cutter.Descriptor("cutter.damageRadius")!=null?cutter.Get("cutter.damageRadius"):0);
                         float hitDamage=cutter.Get("cutter.referenceDamage")/cutter.Get("cutter.referenceContactSeconds")*(to-from)*contact*(frame.DamageRemaining>t?boostMultiplier:1);
                         if(enemy.Sighting.HasVitals)hitDamage=Mathf.Min(hitDamage,Mathf.Max(0,enemy.Sighting.Health+enemy.Sighting.Armor-beamDelivered[enemyIndex]));
                         score+=hitDamage/(1+t/horizon);beamDelivered[enemyIndex]+=hitDamage;
@@ -100,17 +100,17 @@ namespace StarTournament.ProvingGround
             }
             return score;
         }
-        float Coverage(Vector3 origin,Vector3 ray,NativeBotSighting target,float future,float range)
+        float Coverage(Vector3 origin,Vector3 ray,NativeBotSighting target,float future,float range,float radius=0)
         {
             var feet=target.Position+target.Velocity*future;var delta=origin-feet;
             float facing=Mathf.Atan2(delta.x,delta.z)*Mathf.Rad2Deg;
             var pose=new ParticipantState{Position=feet,Yaw=facing};
             var body=new CombatTarget(target.Participant,target.Life,pose);
-            float front=zones.ResolveTarget(origin,ray,body,range).TargetIndex>=0?1:0;
+            float front=zones.ResolveTarget(origin,ray,body,range,radius).TargetIndex>=0?1:0;
             // Enemy yaw is absent from filtered sightings. Equal frontal/side uncertainty
             // avoids reading a hidden authoritative pose or pretending an exact silhouette.
             pose.Yaw+=90;body=new CombatTarget(target.Participant,target.Life,pose);
-            return (front+(zones.ResolveTarget(origin,ray,body,range).TargetIndex>=0?1:0))*.5f;
+            return (front+(zones.ResolveTarget(origin,ray,body,range,radius).TargetIndex>=0?1:0))*.5f;
         }
     }
 }

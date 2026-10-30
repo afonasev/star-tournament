@@ -6,10 +6,11 @@ namespace StarTournament.ProvingGround
         {
             var p=CreateLegacyNativeCombatDefault();
             p.UpgradeBodyDamage();
-            p.version=8;
-            p.RebalanceDefault("rifle.damage",10);p.RebalanceDefault("rifle.spread",1.32f);
-            p.FindDescriptor("rifle.spread").Step=.02f;
-            p.RebalanceDefault("shot.damage",85);p.RebalanceDefault("shot.pellets",18);p.RebalanceDefault("shot.spread",6);
+            p.version=9;
+            p.RebalanceDefault("rifle.damage",10);p.RebalanceDefault("rifle.spread",1.584f);
+            p.FindDescriptor("rifle.spread").Step=.001f;
+            p.RebalanceDefault("shot.damage",93.5f);p.RebalanceDefault("shot.pellets",18);p.RebalanceDefault("shot.spread",6);
+            p.FindDescriptor("shot.damage").Step=.1f;
             p.RebalanceDefault("rocket.maximumDamage",85);
             p.FindDescriptor("rocket.maximumDamage").Description="Базовый прямой урон и splash у эпицентра до усиления.";
             return p;
