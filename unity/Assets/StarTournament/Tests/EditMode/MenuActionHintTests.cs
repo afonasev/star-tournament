@@ -16,7 +16,7 @@ namespace StarTournament.ProvingGround.Tests
         [TearDown]public void Cleanup(){if(pad!=null&&pad.added)InputSystem.RemoveDevice(pad);if(root)Object.DestroyImmediate(root);}
         [Test]public void HintNeverRewritesDynamicCaptionOrMistakesItsContentsForASuffix()
         {
-            hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo("Нижняя"));Assert.That(caption.text,Is.EqualTo("Профиль · Нижняя"));
+            hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo("A"));Assert.That(caption.text,Is.EqualTo("Профиль · Нижняя"));
             caption.text="Новая версия · A";for(int i=0;i<4;i++)hint.Refresh();Assert.That(caption.text,Is.EqualTo("Новая версия · A"));
             active=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);Assert.That(caption.text,Is.EqualTo("Новая версия · A"));
         }
@@ -26,6 +26,16 @@ namespace StarTournament.ProvingGround.Tests
             focused=true;button.interactable=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);button.interactable=true;
             InputSystem.DisableDevice(pad);hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);InputSystem.EnableDevice(pad);hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);
             InputSystem.RemoveDevice(pad);hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);
+        }
+        [Test]public void KeyboardHasNoGamepadArtworkAndUnknownPadHasXboxButtons()
+        {
+            var keyboard=InputSystem.AddDevice<Keyboard>();
+            try
+            {
+                hint.Device=()=>keyboard;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);Assert.That(root.transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.False);
+                hint.Device=()=>pad;hint.Refresh();Assert.That(hint.GlyphLabel.text,Is.EqualTo("A"));Assert.That(root.transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);
+            }
+            finally{InputSystem.RemoveDevice(keyboard);}
         }
         [Test]public void NarrowActionKeepsItsCaptionAndOmitsAnOverlappingHint()
         {
@@ -41,9 +51,9 @@ namespace StarTournament.ProvingGround.Tests
         }
         [Test]public void ExplicitShortcutAppearsOnlyForTheActualAvailableRoute()
         {
-            bool route=true;hint.Shortcut=MenuPadButton.East;hint.ShortcutActive=()=>route;focused=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo("Правая"));
-            route=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);focused=true;hint.Refresh();Assert.That(hint.GlyphLabel.text,Is.EqualTo("Нижняя"));
-            route=true;hint.Refresh();Assert.That(hint.GlyphLabel.text,Is.EqualTo("Нижняя / Правая"));button.interactable=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);
+            bool route=true;hint.Shortcut=MenuPadButton.East;hint.ShortcutActive=()=>route;focused=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo("B"));
+            route=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);focused=true;hint.Refresh();Assert.That(hint.GlyphLabel.text,Is.EqualTo("A"));
+            route=true;hint.Refresh();Assert.That(hint.GlyphLabel.text,Is.EqualTo("A"));Assert.That(root.transform.Find("gamepad-shortcut-hint").GetComponent<Text>().text,Is.EqualTo("B"));Assert.That(root.transform.Find("gamepad-shortcut-button").GetComponent<Image>().enabled,Is.True);button.interactable=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);
         }
         [Test]public void ReservedDecorationSpaceProtectsInstalledBadgeOrDropdownArrow()
         {
@@ -71,11 +81,11 @@ namespace StarTournament.ProvingGround.Tests
                         hint.Shortcut=actions[n];hint.Refresh();
                         var family=MenuGamepadHints.Family(device.layout,device.description.product);
                         string expected=MenuGamepadHints.Glyph(family,actions[n]);
-                        if(centered&&family!=MenuPadFamily.Generic&&(expected=="Menu"||expected=="Options"||expected=="+"))expected="≡";
+                        if(family!=MenuPadFamily.Generic&&(expected=="Menu"||expected=="Options"||expected=="+"))expected="≡";
                         Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(expected));
                         Assert.That(root.transform.Find("gamepad-shortcut-hint").GetComponent<Text>().enabled,Is.False,"Only one shortcut remains");
                         var backing=root.transform.Find("gamepad-action-button").GetComponent<Image>();
-                        if(centered&&family!=MenuPadFamily.Generic){Assert.That(backing.enabled,Is.True);Assert.That((Color32)backing.color,Is.EqualTo(colors[n]));}
+                        if(family!=MenuPadFamily.Generic){Assert.That(backing.enabled,Is.True);Assert.That((Color32)backing.color,Is.EqualTo(colors[n]));}
                         focused=false;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.True);Assert.That(hint.GlyphLabel.text,Is.EqualTo(expected));focused=true;
                     }
                     hint.Shortcut=MenuPadButton.South;hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False,"South is redundant on the focused lobby action");

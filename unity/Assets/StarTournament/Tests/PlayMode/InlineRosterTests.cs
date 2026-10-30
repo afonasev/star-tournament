@@ -25,10 +25,67 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         IEnumerator OpenInline(Gamepad device,int participant)
         {
             // Keep the per-device cursor independent of the shared EventSystem, then use real submit.
-            EditorFor(device).GetType().GetField("LastSharedSelection").SetValue(EditorFor(device),EventSystem.current.currentSelectedGameObject);
-            EditorFocus(device,"roster-card-"+participant);yield return Press(GamepadButton.South,device);
+            if((bool)Call("IsPrimaryMenuDevice",device))
+            {
+                EditorFor(device).GetType().GetField("LastSharedSelection").SetValue(EditorFor(device),EventSystem.current.currentSelectedGameObject);
+                EditorFocus(device,"roster-card-"+participant);yield return Press(GamepadButton.South,device);
+            }
+            else {Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(participant),Is.SameAs(device));yield return Press(GamepadButton.North,device);}
             Assert.That(EditorField<string>(device,"Target"),Is.EqualTo(Call("LobbyColorIdentity",participant)));
             Assert.That(EditorField<object>(device,"Page").ToString(),Is.EqualTo("Fields"));
+        }
+        [UnityTest] public IEnumerator InterruptedShortXDoesNotOpenBotFlowAfterFocusOrDisconnect()
+        {
+            EditorFor(pad).GetType().GetField("LastSharedSelection").SetValue(EditorFor(pad),EventSystem.current.currentSelectedGameObject);EditorFocus(pad,"roster-card-0");
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return null;yield return null;
+            Assert.That(EditorField<bool>(pad,"WestPending"),Is.True);typeof(ProvingGround).GetField("menuWindowFocused",Private).SetValue(ground,false);yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;typeof(ProvingGround).GetField("menuWindowFocused",Private).SetValue(ground,true);yield return null;yield return null;
+            Assert.That(Field<GameObject>("lobbyDialog")==null||!Field<GameObject>("lobbyDialog").activeSelf,Is.True);Assert.That(EditorField<bool>(pad,"WestPending"),Is.False);
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return null;yield return null;InputSystem.DisableDevice(pad);yield return null;
+            Assert.That(EditorField<bool>(pad,"WestPending"),Is.False);InputSystem.EnableDevice(pad);InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return null;
+            Assert.That(Field<GameObject>("lobbyDialog")==null||!Field<GameObject>("lobbyDialog").activeSelf,Is.True);
+        }
+        [UnityTest] public IEnumerator PrimaryKeepsMainMenuAndSecondaryJoinUsesItsOwnDevice()
+        {
+            Call("ToMainMenu");yield return null;EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);
+            yield return Press(GamepadButton.South,second);Assert.That(Field<object>("phase").ToString(),Is.EqualTo("MainMenu"));Assert.That(EventSystem.current.currentSelectedGameObject,Is.SameAs(B("main-action-0").gameObject));
+            yield return Press(GamepadButton.South,pad);Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Setup"));
+            yield return Press(GamepadButton.North,second);yield return Press(GamepadButton.South,second);
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(2));Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(1),Is.SameAs(second));
+        }
+        [UnityTest] public IEnumerator ShortXOnParticipantAddsBotAndSecondaryCannotControlSharedLobby()
+        {
+            yield return Press(GamepadButton.North,second);yield return Click("lobby-profile-none");
+            var primary=Field<SeatInputCoordinator>("input").DeviceAt(0);Assert.That(primary,Is.SameAs(pad));
+            var selected=EventSystem.current.currentSelectedGameObject;var mode=ground.SetupMode;int humans=ground.LocalSeatCount;int bots=ground.SetupBotCount;
+            EditorFocus(second,"lobby-mode");
+            foreach(var button in new[]{GamepadButton.DpadRight,GamepadButton.South,GamepadButton.East,GamepadButton.West,GamepadButton.Start})yield return Press(button,second);
+            Assert.That(ground.SetupMode,Is.EqualTo(mode));Assert.That(ground.LocalSeatCount,Is.EqualTo(humans));Assert.That(ground.SetupBotCount,Is.EqualTo(bots));Assert.That(EventSystem.current.currentSelectedGameObject,Is.SameAs(selected));
+            Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Setup"));Assert.That(Field<GameObject>("lobbyDialog").activeSelf,Is.False);
+            EditorFor(pad).GetType().GetField("LastSharedSelection").SetValue(EditorFor(pad),EventSystem.current.currentSelectedGameObject);EditorFocus(pad,"roster-card-0");
+            yield return Press(GamepadButton.West,pad);
+            Assert.That(Field<GameObject>("lobbyDialog").activeSelf,Is.True,"Short X on a participant must open bot creation");Assert.That(ground.LocalSeatCount,Is.EqualTo(humans));
+            yield return Capture("ownership-short-x-bot-dialog");
+        }
+        [UnityTest] public IEnumerator YOpensOnlyOwnEditorAndPreservesOtherPlayersDraftAndTeam()
+        {
+            yield return Press(GamepadButton.North,second);yield return Click("lobby-profile-none");
+            ground.SetMatchMode(NativeMatchMode.Teams);yield return null;var original=Field<NativeTeam[]>("teamAssignments")[1];
+            yield return Press(GamepadButton.North,pad);Assert.That(EditorField<object>(pad,"Page").ToString(),Is.EqualTo("Fields"));
+            EditorFocus(pad,"inline-identity-0");yield return Press(GamepadButton.South,pad);var first=EditorField<Button>(pad,"Focus").name;
+            yield return Press(GamepadButton.North,second);
+            Assert.That(EditorField<string>(second,"Target"),Is.EqualTo(Call("LobbyColorIdentity",1)));Assert.That(EditorField<object>(second,"Page").ToString(),Is.EqualTo("Fields"));Assert.That(Field<NativeTeam[]>("teamAssignments")[1],Is.EqualTo(original),"Y must not switch teams");
+            Assert.That(EditorField<object>(pad,"Page").ToString(),Is.EqualTo("Identity"));Assert.That(EditorField<Button>(pad,"Focus").name,Is.EqualTo(first));
+            yield return Capture("ownership-two-y-editors");
+        }
+        [UnityTest] public IEnumerator PrimaryKeyboardKeepsPadHintsHiddenDespiteSecondaryActivity()
+        {
+            qaKeyboard=InputSystem.AddDevice<Keyboard>();qaMouse=InputSystem.AddDevice<Mouse>();var seats=Field<SeatInputCoordinator>("input");Assert.That(seats.Replace(0,qaKeyboard),Is.True);
+            Field<LocalIdentitySession>("identities").ChooseGuest(0,qaKeyboard.deviceId,.1f,true);Call("RefreshInterface");yield return null;
+            yield return Press(GamepadButton.DpadRight,second);yield return Press(GamepadButton.South,second);
+            Assert.That(Field<bool>("menuGamepadCursor"),Is.False);Assert.That(Field<InputDevice>("menuDevice"),Is.SameAs(qaKeyboard));
+            foreach(var hint in ground.GetComponentsInChildren<MenuActionHint>()){hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False,hint.name);}
+            yield return Capture("ownership-keyboard-no-pad-hints");
         }
         [UnityTest] public IEnumerator InlineEditorsUseIndependentFocusDraftAndBack()
         {
@@ -80,8 +137,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     Assert.That(info.GetField("Page").GetValue(keyboardEditor).ToString(),Is.EqualTo("Identity"));
                     var scroll=(ScrollRect)info.GetField("Scroll").GetValue(keyboardEditor);var first=ground.GetComponentsInChildren<Button>().Single(b=>b.name=="inline-profile-0-0");
                     Assert.That(scroll.viewport.rect.height/((RectTransform)first.transform).rect.height,Is.InRange(5f,5.5f),"Five visible profile rows");
-                    // Pad starts at the shared participant selection, then independently reaches its card.
-                    yield return Press(GamepadButton.DpadRight,second);yield return Press(GamepadButton.South,second);
+                    // Secondary joins its own editor through Y without navigating the shared cursor.
+                    yield return Press(GamepadButton.North,second);
                     Assert.That(EditorField<object>(second,"Page").ToString(),Is.EqualTo("Fields"));Assert.That(EditorField<string>(second,"Target"),Is.EqualTo(Call("LobbyColorIdentity",1)));
                     for(int i=0;i<12;i++)yield return KeyboardPress(UnityEngine.InputSystem.Key.DownArrow);
                     var last=(Button)info.GetField("Focus").GetValue(keyboardEditor);Assert.That(last.name,Is.EqualTo("inline-profile-0-12"));Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(.1f));
@@ -141,6 +198,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return null;
                 Assert.That(EditorField<bool>(pad,"RemovalLatched"),Is.False);Assert.That(EditorField<Button>(pad,"Focus"),Is.SameAs(B("roster-card-1")));
                 InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return new WaitForSecondsRealtime(threshold+.1f);
+                TestContext.WriteLine($"second-hold: hold={EditorField<float>(pad,"Hold")} latched={EditorField<bool>(pad,"RemovalLatched")} pending={EditorField<bool>(pad,"WestPending")} focus={EditorField<Button>(pad,"Focus")?.name} windowFocused={Field<bool>("menuWindowFocused")} pressed={pad.buttonWest.isPressed}");
                 Assert.That(ground.SetupBotCount,Is.EqualTo(count-2),"A new hold after release may remove one more participant");Assert.That(EditorField<Button>(pad,"Focus"),Is.SameAs(B("roster-card-0")));
                 InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return null;Assert.That(EditorField<bool>(pad,"RemovalLatched"),Is.False);
             }
@@ -166,7 +224,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     InputSystem.QueueStateEvent(pad,new GamepadState());InputSystem.QueueStateEvent(second,new GamepadState());yield return null;
                     Assert.That(colors.Values.Distinct().Count(),Is.EqualTo(8));
                     for(int i=0;i<4;i++){while(EditorField<object>(devices[i],"Page").ToString()!="Closed")yield return Press(GamepadButton.East,devices[i]);}
-                    // Selected card owns X; cancellation never enters the add flow.
+                    // A short release cancels removal; a full roster cannot start add flow.
                     // Seed the closed cursors through real shared selection. A raw
                     // Focus field write can be superseded by the final editor close.
                     EventSystem.current.SetSelectedGameObject(B("roster-card-7").gameObject);yield return null;yield return null;
@@ -179,8 +237,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.West));yield return new WaitForSecondsRealtime(ground.LobbyProfile.Get("lobby.removeHoldSeconds")+.1f);
                     InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;Assert.That(ground.SetupBotCount,Is.EqualTo(count-1));
                     Assert.That(ground.LocalSeatCount,Is.EqualTo(4),"The selected bot is removed; all four humans remain");
-                    yield return Click("lobby-map");var mapButtons=ground.GetComponentsInChildren<Button>().Where(x=>x.name.StartsWith("lobby-map-")).ToArray();Assert.That(mapButtons.Length,Is.EqualTo(4));
-                    Assert.That(mapButtons.Select(x=>x.GetComponent<RectTransform>().anchorMin.x).Distinct().Count(),Is.EqualTo(2));Assert.That(mapButtons.Select(x=>x.GetComponent<RectTransform>().anchorMin.y).Distinct().Count(),Is.EqualTo(2));
+                    yield return Click("lobby-map");var mapButtons=ground.GetComponentsInChildren<Button>().Where(x=>x.name.StartsWith("lobby-map-")).ToArray();Assert.That(mapButtons.Length,Is.EqualTo(5));Assert.That(mapButtons.Select(b=>b.name.Substring("lobby-map-".Length)),Is.EquivalentTo(new[]{CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id,FiringRangeCatalog.Id}));
+                    Assert.That(mapButtons.Select(x=>x.GetComponent<RectTransform>().anchorMin.x).Distinct().Count(),Is.EqualTo(2));Assert.That(mapButtons.Select(x=>x.GetComponent<RectTransform>().anchorMin.y).Distinct().Count(),Is.EqualTo(3));
                     foreach(var map in mapButtons)Assert.That(map.GetComponent<MenuActionHint>().HideFocusedConfirm,Is.True);
                     yield return Capture("05-map-grid");yield return Click("lobby-map-"+WellArenaCatalog.Id);Assert.That(ground.SelectedMapId,Is.EqualTo(WellArenaCatalog.Id));
                 }

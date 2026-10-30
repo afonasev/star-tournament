@@ -61,15 +61,15 @@ namespace StarTournament.ProvingGround
                 glyph.font=caption.font;glyph.fontStyle=caption.fontStyle;glyph.fontSize=ColoredLobbyGlyph&&family!=MenuPadFamily.Generic?26:Mathf.Min(caption.fontSize,family==MenuPadFamily.Generic?18:22);glyph.color=caption.color;
                 string direct=shortcut?MenuGamepadHints.Glyph(family,Shortcut.Value):null;
                 string confirm=MenuGamepadHints.Glyph(family,MenuPadButton.South);
-                if(ColoredLobbyGlyph&&family!=MenuPadFamily.Generic){direct=NeutralMenuGlyph(direct);confirm=NeutralMenuGlyph(confirm);}
-                bool pair=ColoredLobbyGlyph&&family!=MenuPadFamily.Generic&&showConfirm&&shortcut&&Shortcut.Value!=MenuPadButton.South;
+                if(family!=MenuPadFamily.Generic){direct=NeutralMenuGlyph(direct);confirm=NeutralMenuGlyph(confirm);}
+                bool pair=family!=MenuPadFamily.Generic&&showConfirm&&shortcut&&Shortcut.Value!=MenuPadButton.South;
                 glyph.text=showConfirm?confirm:direct;
                 if(showConfirm&&shortcut&&Shortcut.Value!=MenuPadButton.South&&!pair)glyph.text+=" / "+direct;
-                bool buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(glyph.text);
+                bool buttonGlyph=IsButtonGlyph(glyph.text);
                 bool secondaryButton=pair&&IsButtonGlyph(direct);
                 float buttonWidth=buttonGlyph?GlyphWidth(glyph.text):0,secondaryWidth=secondaryButton?GlyphWidth(direct):0;
                 float width=pair?buttonWidth+secondaryWidth+4:buttonGlyph?buttonWidth:glyph.preferredWidth+4;
-                float inset=Mathf.Max(ColoredLobbyGlyph?12:buttonGlyph?width+8:8,ReservedRightInset?.Invoke()??8);
+                float inset=Mathf.Max(ColoredLobbyGlyph?12:8,ReservedRightInset?.Invoke()??8);
                 // Keep the value/title rectangle untouched. Omit a hint when there is
                 // no free space beside the caption (for example a narrow numeric key).
                 bool left=caption.alignment==TextAnchor.MiddleLeft||caption.alignment==TextAnchor.UpperLeft||caption.alignment==TextAnchor.LowerLeft;
@@ -78,14 +78,14 @@ namespace StarTournament.ProvingGround
                 float space=((RectTransform)button.transform).rect.xMax-inset-captionEnd-4;
                 if(space<width&&pair)
                 {
-                    pair=false;glyph.text=ColoredLobbyGlyph&&showConfirm?confirm:direct;buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(glyph.text);secondaryButton=false;
+                    pair=false;glyph.text=direct;buttonGlyph=IsButtonGlyph(glyph.text);secondaryButton=false;
                     buttonWidth=buttonGlyph?GlyphWidth(glyph.text):0;secondaryWidth=0;width=buttonGlyph?buttonWidth:glyph.preferredWidth+4;
-                    inset=Mathf.Max(ColoredLobbyGlyph?12:buttonGlyph?width+8:8,ReservedRightInset?.Invoke()??8);
+                    inset=Mathf.Max(ColoredLobbyGlyph?12:8,ReservedRightInset?.Invoke()??8);
                     space=((RectTransform)button.transform).rect.xMax-inset-captionEnd-4;
                 }
-                if(space<width&&showConfirm&&shortcut&&!pair&&!ColoredLobbyGlyph){glyph.text=direct;buttonGlyph=ColoredLobbyGlyph&&IsButtonGlyph(direct);buttonWidth=buttonGlyph?GlyphWidth(direct):0;width=buttonGlyph?buttonWidth:glyph.preferredWidth+4;inset=Mathf.Max(ColoredLobbyGlyph?12:buttonGlyph?width+8:8,ReservedRightInset?.Invoke()??8);}
+                if(space<width&&showConfirm&&shortcut&&!pair&&!ColoredLobbyGlyph){glyph.text=direct;buttonGlyph=IsButtonGlyph(direct);buttonWidth=buttonGlyph?GlyphWidth(direct):0;width=buttonGlyph?buttonWidth:glyph.preferredWidth+4;inset=Mathf.Max(ColoredLobbyGlyph?12:8,ReservedRightInset?.Invoke()??8);}
                 show=space>=width;
-                MenuPadButton primaryAction=showConfirm?(ColoredLobbyGlyph?MenuPadButton.South:shortcut&&Shortcut.Value!=MenuPadButton.South&&!pair?Shortcut.Value:MenuPadButton.South):Shortcut.Value;
+                MenuPadButton primaryAction=showConfirm&&glyph.text==confirm?MenuPadButton.South:Shortcut??MenuPadButton.South;
                 float primaryWidth=pair?buttonWidth:width;
                 glyph.rectTransform.offsetMin=new Vector2(-primaryWidth-inset,0);glyph.rectTransform.offsetMax=new Vector2(-inset,0);
                 float y=(glyph.rectTransform.anchorMin.y+glyph.rectTransform.anchorMax.y)*.5f;
@@ -175,8 +175,8 @@ namespace StarTournament.ProvingGround
         }
         static string NeutralMenuGlyph(string value)=>value=="Menu"||value=="Options"||value=="+"?"≡":value;
         static bool IsButtonGlyph(string value)=>value.Length==1;
-        static float GlyphWidth(string value)=>value.Length==1?38:58;
-        static Color ButtonColor(MenuPadButton button)
+        internal static float GlyphWidth(string value)=>value.Length==1?38:58;
+        internal static Color ButtonColor(MenuPadButton button)
         {
             switch(button)
             {
@@ -190,9 +190,26 @@ namespace StarTournament.ProvingGround
     }
     sealed class MenuContextHint : MonoBehaviour
     {
-        public Func<string> Value;Text caption;
-        void Awake(){caption=GetComponent<Text>();}
-        void LateUpdate(){if(!caption)return;caption.text=Value?.Invoke()??"";caption.enabled=caption.text.Length>0;}
+        public Func<string> Value;
+        public Func<InputDevice> Device;
+        Text caption,glyph;Image backing;Vector2 originalInset;
+        void Awake()
+        {
+            caption=GetComponent<Text>();originalInset=caption.rectTransform.offsetMin;
+            var node=new GameObject("context-button",typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));node.transform.SetParent(transform,false);
+            backing=node.GetComponent<Image>();backing.sprite=LobbyVisualAssets.Button;backing.color=MenuActionHint.ButtonColor(MenuPadButton.East);backing.raycastTarget=false;
+            float size=MenuActionHint.GlyphWidth("B");var rect=backing.rectTransform;rect.anchorMin=rect.anchorMax=new Vector2(0,.5f);rect.sizeDelta=Vector2.one*size;rect.anchoredPosition=new Vector2(-size*.5f-4,0);
+            var text=new GameObject("context-glyph",typeof(RectTransform),typeof(CanvasRenderer),typeof(Text));text.transform.SetParent(node.transform,false);glyph=text.GetComponent<Text>();glyph.font=caption.font;glyph.fontSize=caption.fontSize;glyph.color=Color.white;glyph.alignment=TextAnchor.MiddleCenter;glyph.raycastTarget=false;glyph.rectTransform.anchorMin=Vector2.zero;glyph.rectTransform.anchorMax=Vector2.one;glyph.rectTransform.offsetMin=glyph.rectTransform.offsetMax=Vector2.zero;
+            backing.enabled=glyph.enabled=false;
+        }
+        void LateUpdate()
+        {
+            if(!caption)return;caption.text=Value?.Invoke()??"";caption.enabled=caption.text.Length>0;
+            var device=Device?.Invoke();bool show=caption.enabled&&device is Gamepad&&device.added&&device.enabled;
+            backing.enabled=glyph.enabled=show;
+            if(show)glyph.text=MenuGamepadHints.Glyph(MenuGamepadHints.Family(device.layout,device.description.product),MenuPadButton.East);
+            caption.rectTransform.offsetMin=originalInset+(show?Vector2.right*(MenuActionHint.GlyphWidth("B")+4):Vector2.zero);
+        }
     }
     sealed class MenuPadOnlyHint : MonoBehaviour
     {

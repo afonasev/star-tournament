@@ -111,7 +111,7 @@ namespace StarTournament.ProvingGround
             {
                 var device=InMatch?owner.input.DeviceAt(Seat):owner.menuDevice;
                 if(!CanHintAssignedShortcut()||!(device is Gamepad)||!device.added||!device.enabled||!owner.menuGamepadCursor||!owner.menuWindowFocused||owner.textEntryPanel||owner.textClosing||BackActionTarget()!=null||!string.IsNullOrEmpty(settingsWriteError.text))return "";
-                return MenuGamepadHints.Glyph(MenuGamepadHints.Family(device.layout,device.description.product),MenuPadButton.East)+" — к разделам";
+                return "к разделам";
             }
             public void Back()
             {

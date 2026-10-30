@@ -12,9 +12,9 @@ namespace StarTournament.ProvingGround
         bool TryTakeMenuBack(Gamepad assigned=null,bool restrict=false)
         {
             if(!menuWindowFocused||menuBackConsumedFrame==Time.frameCount)return false;
-            bool back=Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame;
+            bool back=Keyboard.current!=null&&(restrict?assigned==null:MenuUiDevice is Keyboard)&&Keyboard.current.escapeKey.wasPressedThisFrame;
             back|=restrict?assigned!=null&&assigned.added&&assigned.enabled&&assigned.buttonEast.wasPressedThisFrame:
-                Gamepad.all.Any(p=>p.added&&p.enabled&&p.buttonEast.wasPressedThisFrame);
+                MenuUiDevice is Gamepad owner&&owner.added&&owner.enabled&&owner.buttonEast.wasPressedThisFrame;
             if(!back)return false;menuBackConsumedFrame=Time.frameCount;return true;
         }
         void UpdateShellBackInput()

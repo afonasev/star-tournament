@@ -24,6 +24,18 @@ namespace StarTournament.ProvingGround
         InputAction menuSubmitAction,menuMoveAction,menuClickAction;
         NativeUpdateBridge updateBridge;
         InputDevice menuDevice,menuActivationDevice;
+        InputDevice PrimaryMenuDevice
+        {
+            get
+            {
+                int first=Enumerable.Range(0,LocalSeatCount).Where(input.IsHumanSeat).DefaultIfEmpty(-1).First();
+                return first>=0&&input.DeviceAt(first)!=null?input.DeviceAt(first):menuDevice;
+            }
+        }
+        InputDevice MenuUiDevice=>phase==Phase.Setup&&lobbyDialog&&lobbyDialog.activeSelf&&lobbyJoinDevice!=null&&!lobbyJoinFromButton?lobbyJoinDevice:PrimaryMenuDevice;
+        bool IsPrimaryMenuDevice(InputDevice device)=>device!=null&&device==PrimaryMenuDevice;
+        bool IsMenuInputDevice(InputDevice device)=>device!=null&&(device==MenuUiDevice||device is Mouse&&MenuUiDevice is Keyboard);
+
         int menuActivationFrame=-1;
         Button identitySettingsButton,operatorSettingsButton;
         Button[] seatIdentityButtons = new Button[SeatInputCoordinator.SeatCount];
@@ -59,6 +71,10 @@ namespace StarTournament.ProvingGround
         {
             var button=ButtonElement(parent,value,action);button.name=name;Layout((RectTransform)button.transform,min,max);
             button.interactable=enabled;
+            // Compact Back actions keep the caption and their real B shortcut as
+            // one centered group, so button artwork fits without overlapping text.
+            if(name=="profiles-back"||name=="settings-back")
+            {var hint=button.GetComponent<MenuActionHint>();hint.ColoredLobbyGlyph=true;hint.HideFocusedConfirm=true;}
             return button;
         }
         // Approved modal composition in Canvas design pixels; presentation only, never gameplay tuning.
@@ -250,6 +266,7 @@ namespace StarTournament.ProvingGround
             if(context.action==menuMoveAction && context.ReadValue<Vector2>()==Vector2.zero)return;
             if(context.action==menuClickAction && !context.ReadValueAsButton())return;
             var device=context.control?.device;
+            if(PrimaryMenuDevice!=null&&Enumerable.Range(0,LocalSeatCount).Any(i=>input.DeviceAt(i)!=null)&&!IsMenuInputDevice(device))return;
             if(device is Mouse)device=Keyboard.current;
             if(device is Keyboard || device is Gamepad)
             {

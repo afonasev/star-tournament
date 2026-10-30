@@ -98,7 +98,7 @@ namespace StarTournament.ProvingGround
                 resetAllButton=MenuButton(settingsScreen.transform,StandardName("settings-reset-all"),"Сбросить все настройки",new Vector2(.05f,.035f),new Vector2(.34f,.09f),OpenReset);
                 settingsWriteError=Label(settingsScreen.transform,StandardName("settings-save-error"),"",17,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(255,218,184,255));
                 var backContext=Label(settingsScreen.transform,StandardName("settings-back-context"),"",18,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-                backContext.gameObject.AddComponent<MenuContextHint>().Value=BackContextCaption;
+                var contextHint=backContext.gameObject.AddComponent<MenuContextHint>();contextHint.Value=BackContextCaption;contextHint.Device=()=>InMatch?owner.input.DeviceAt(Seat):owner.menuDevice;
                 resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,SelectorBackdrop);
                 var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);owner.StyleSelectorCard(card,false);
                 Label(card.transform,"title","Сбросить все настройки?",30,new Vector2(.06f,.76f),new Vector2(.94f,.94f),TextAnchor.MiddleLeft,MenuGold);
@@ -216,8 +216,9 @@ namespace StarTournament.ProvingGround
                 resetDialog.SetActive(resetOpen);resetAllButton.gameObject.SetActive(!settingsHelpOpen&&!settingsDevicesOpen);
                 for(int i=0;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 resetAllButton.interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
-                var pad=InMatch?owner.input.DeviceAt(Seat) as UnityEngine.InputSystem.Gamepad:owner.menuDevice as UnityEngine.InputSystem.Gamepad;
-                resetAllButton.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Сбросить все настройки",pad,owner.menuGamepadCursor&&resetAllButton.IsInteractable()&&CanHintAssignedShortcut()&&CanResetShortcut(),MenuPadButton.North);
+                resetAllButton.GetComponentInChildren<Text>().text="Сбросить все настройки";
+                var resetHint=resetAllButton.GetComponent<MenuActionHint>();resetHint.Shortcut=MenuPadButton.North;
+                resetHint.ShortcutActive=()=>CanHintAssignedShortcut()&&CanResetShortcut();resetHint.Refresh();
             }
             void ChooseAutoResolution()
             {var d=Screen.currentResolution;int w=d.width>0?d.width:Screen.width,h=d.height>0?d.height:Screen.height;displayReturnButton=settingsAutoButton;owner.BeginDisplayChange(this,w,h,EffectiveDisplayMode(),true);}

@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround
             public ScrollRect Scroll;
             public Vector2 Direction;
             public float RepeatAt,Hold;
-            public bool RemovalLatched;
+            public bool RemovalLatched,WestPending;
             public int OpenedFrame=-1;
             public string HoldTarget;
         }
@@ -51,19 +51,21 @@ namespace StarTournament.ProvingGround
         {
             bool active=phase==Phase.Setup&&setupStep==2&&pendingSeat<0&&rosterEditing<0&&!(lobbyDialog&&lobbyDialog.activeSelf)&&!textEntryPanel;
             bool keyboardOwned=active&&inlineEditors.Values.Any(e=>e.Device is Keyboard&&e.Page!=InlinePage.Closed);
-            int signature=17;foreach(var device in InputSystem.devices.Where(d=>!(d is Gamepad)))signature=unchecked(signature*31+device.deviceId);
-            if(inlineRouting==active&&inlineKeyboardRouting==keyboardOwned&&(!active||signature==inlineDeviceSignature))return;
+            int signature=MenuUiDevice?.deviceId??17;foreach(var device in InputSystem.devices.Where(d=>!(d is Gamepad)))signature=unchecked(signature*31+device.deviceId);
+            if(inlineRouting==active&&inlineKeyboardRouting==keyboardOwned&&signature==inlineDeviceSignature)return;
             inlineDeviceSignature=signature;
             inlineRouting=active;inlineKeyboardRouting=keyboardOwned;
-            if(active)menuInputModule.actionsAsset.devices=InputSystem.devices.Where(d=>!(d is Gamepad)&&(!keyboardOwned||!(d is Keyboard))).ToArray();
+            if(active)menuInputModule.actionsAsset.devices=InputSystem.devices.Where(d=>!(d is Gamepad)&&IsMenuInputDevice(d)&&(!keyboardOwned||!(d is Keyboard))).ToArray();
             // A conditional array/null expression lifts null to an empty ReadOnlyArray,
             // which masks every device. Assign nullable null directly when restoring.
+            else if(MenuUiDevice!=null)menuInputModule.actionsAsset.devices=InputSystem.devices.Where(IsMenuInputDevice).ToArray();
             else menuInputModule.actionsAsset.devices=null;
         }
         void OpenInlineEditor(int p)
         {
             if(phase!=Phase.Setup||p<0||p>=RosterTotal)return;
             var e=InlineFor(inlineInvokingDevice??(inlinePointerParticipant==p?(InputDevice)Keyboard.current:menuDevice));inlinePointerParticipant=-1;if(e==null)return;
+            if(!IsPrimaryMenuDevice(e.Device)&&(p>=LocalSeatCount||input.DeviceAt(p)!=e.Device))return;
             string target=LobbyColorIdentity(p);
             if(inlineEditors.Values.Any(other=>other!=e&&other.Page!=InlinePage.Closed&&other.Target==target))return;
             CloseInlineEditor(e);e.Target=target;e.Page=InlinePage.Fields;e.OpenedFrame=Time.frameCount;e.Hold=0;e.Direction=Vector2.zero;
@@ -72,7 +74,7 @@ namespace StarTournament.ProvingGround
         void CloseInlineEditor(InlineEditor e)
         {
             if(e.Root){e.Root.SetActive(false);Destroy(e.Root);}e.Root=null;e.Scroll=null;e.Choices.Clear();e.Keys.Clear();e.FocusKey=null;
-            e.Page=InlinePage.Closed;e.Hold=0;e.HoldTarget=null;
+            e.Page=InlinePage.Closed;e.Hold=0;e.HoldTarget=null;e.WestPending=false;
         }
         void BackInlineEditor(InlineEditor e)
         {
@@ -320,27 +322,35 @@ namespace StarTournament.ProvingGround
         }
         bool UpdateInlineInput()
         {
-            RouteInlineInput();if(!inlineRouting||setupTransitionFrame==Time.frameCount)return false;
-            if(!menuWindowFocused){foreach(var context in inlineEditors.Values){context.Hold=0;context.HoldTarget=null;context.Direction=Vector2.zero;}PaintInlineFocus();return false;}
+            RouteInlineInput();if(menuBackConsumedFrame==Time.frameCount)return true;
+            if(!inlineRouting||setupTransitionFrame==Time.frameCount)return false;
+            if(!menuWindowFocused){foreach(var context in inlineEditors.Values){context.Hold=0;context.HoldTarget=null;context.WestPending=false;context.Direction=Vector2.zero;}PaintInlineFocus();return false;}
             foreach(var pad in Gamepad.all.Where(p=>p.added&&p.enabled))
             {
                 var e=InlineFor(pad);if(e.OpenedFrame==Time.frameCount)continue;
+                bool primary=IsPrimaryMenuDevice(pad);
+                if(!primary&&e.Page==InlinePage.Closed){e.Focus=null;e.Hold=0;e.HoldTarget=null;e.WestPending=false;continue;}
                 var shared=EventSystem.current?.currentSelectedGameObject;
                 if(e.Page==InlinePage.Closed&&shared!=e.LastSharedSelection){e.Focus=shared?shared.GetComponent<Button>():lobbyMap;e.LastSharedSelection=shared;}
                 if(e.Page==InlinePage.Closed&&(!e.Focus||!e.Focus.gameObject.activeInHierarchy))e.Focus=lobbyMap;
-                if(e.Page!=InlinePage.Closed&&InlineParticipant(e)<0){CloseInlineEditor(e);continue;}
+                if(e.Page!=InlinePage.Closed&&(InlineParticipant(e)<0||!primary&&(InlineParticipant(e)>=LocalSeatCount||input.DeviceAt(InlineParticipant(e))!=pad))){CloseInlineEditor(e);continue;}
                 var nav=pad.dpad.ReadValue();if(nav==Vector2.zero)nav=pad.leftStick.ReadValue();nav=new Vector2(Mathf.Abs(nav.x)>.5f?Mathf.Sign(nav.x):0,Mathf.Abs(nav.y)>.5f?Mathf.Sign(nav.y):0);
                 if(InlineRepeat(e,nav))MoveInlineFocus(e,nav);
                 if(pad.buttonEast.wasPressedThisFrame)
                 {
                     menuBackConsumedFrame=Time.frameCount;setupTransitionFrame=Time.frameCount;
-                    if(e.Page!=InlinePage.Closed)BackInlineEditor(e);else if(!InlineAny)PreviousSetupStep();
+                    if(e.Page!=InlinePage.Closed)BackInlineEditor(e);else if(primary&&!InlineAny)PreviousSetupStep();
                     continue;
                 }
                 int participant=e.Page==InlinePage.Closed?Array.IndexOf(rosterCards,e.Focus):InlineParticipant(e);
                 if(participant>=RosterTotal)participant=-1;
-                if(!pad.buttonWest.isPressed)e.RemovalLatched=false;
-                if(pad.buttonWest.isPressed&&!e.RemovalLatched&&participant>=0)
+                if(primary&&pad.buttonWest.wasPressedThisFrame&&e.Page==InlinePage.Closed)e.WestPending=true;
+                if(!pad.buttonWest.isPressed)
+                {
+                    bool tap=primary&&e.WestPending&&!e.RemovalLatched;e.WestPending=false;e.RemovalLatched=false;
+                    if(tap){e.Hold=0;e.HoldTarget=null;BeginLobbyBot();continue;}
+                }
+                if(primary&&pad.buttonWest.isPressed&&!e.RemovalLatched&&participant>=0)
                 {
                     string target=LobbyColorIdentity(participant);if(e.HoldTarget!=target){e.HoldTarget=target;e.Hold=0;}
                     e.Hold+=Time.unscaledDeltaTime;
@@ -359,7 +369,7 @@ namespace StarTournament.ProvingGround
                     inlineInvokingDevice=pad;e.Focus.onClick.Invoke();inlineInvokingDevice=null;
                 }
             }
-            var disconnected=inlineEditors.Values.Where(e=>(e.Page!=InlinePage.Closed||e.Hold>0)&&(!e.Device.added||!e.Device.enabled)).ToArray();
+            var disconnected=inlineEditors.Values.Where(e=>(e.Page!=InlinePage.Closed||e.Hold>0||e.WestPending)&&(!e.Device.added||!e.Device.enabled)).ToArray();
             foreach(var e in disconnected)CloseInlineEditor(e);
             if(disconnected.Length>0)RefreshInterface();
             var keyboard=Keyboard.current;
@@ -386,7 +396,7 @@ namespace StarTournament.ProvingGround
         bool InlineWestOwns(Gamepad pad)
         {
             if(!inlineEditors.TryGetValue(pad.deviceId,out var e))return false;
-            return e.Page!=InlinePage.Closed||Array.IndexOf(rosterCards,e.Focus)>=0||e.HoldTarget!=null;
+            return !IsPrimaryMenuDevice(pad)||e.Page!=InlinePage.Closed||e.WestPending||Array.IndexOf(rosterCards,e.Focus)>=0||e.HoldTarget!=null;
         }
     }
     public sealed class InlineRosterPointer : MonoBehaviour,IPointerDownHandler

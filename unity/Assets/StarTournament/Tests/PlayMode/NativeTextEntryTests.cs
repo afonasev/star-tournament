@@ -58,10 +58,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<6;i++)yield return null;
             Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo("Пилот"),"Opening/held submit must not insert a character");
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
-            Assert.That(B("text-space").GetComponentInChildren<Text>().text,Is.EqualTo("Пробел · Верхняя"));
-            Assert.That(B("text-delete").GetComponentInChildren<Text>().text,Is.EqualTo("Удалить · Левая"));
-            Assert.That(B("text-cancel").GetComponentInChildren<Text>().text,Is.EqualTo("Отмена · Правая"));
-            Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить · Start"));
+            Assert.That(B("text-space").GetComponentInChildren<Text>().text,Is.EqualTo("Пробел"));var hinttextspace=B("text-space").GetComponent<MenuActionHint>();hinttextspace.Refresh();Assert.That(hinttextspace.GlyphLabel.text,Is.EqualTo("Y"));Assert.That(B("text-space").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);
+            Assert.That(B("text-delete").GetComponentInChildren<Text>().text,Is.EqualTo("Удалить"));var hinttextdelete=B("text-delete").GetComponent<MenuActionHint>();hinttextdelete.Refresh();Assert.That(hinttextdelete.GlyphLabel.text,Is.EqualTo("X"));Assert.That(B("text-delete").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);
+            Assert.That(B("text-cancel").GetComponentInChildren<Text>().text,Is.EqualTo("Отмена"));var hinttextcancel=B("text-cancel").GetComponent<MenuActionHint>();hinttextcancel.Refresh();Assert.That(hinttextcancel.GlyphLabel.text,Is.EqualTo("B"));Assert.That(B("text-cancel").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);
+            Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить"));var hinttextapply=B("text-apply").GetComponent<MenuActionHint>();hinttextapply.Refresh();Assert.That(hinttextapply.GlyphLabel.text,Is.EqualTo("≡"));Assert.That(B("text-apply").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);
             yield return Press(other,GamepadButton.South);yield return Press(other,GamepadButton.Start);yield return Press(other,GamepadButton.East);
             Assert.That(Open,Is.True);Assert.That(Draft,Is.EqualTo("Пилот"));
             yield return Press(pad,GamepadButton.South);Assert.That(Draft,Is.EqualTo("Пилот1"));
@@ -123,7 +123,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Open,Is.True);Assert.That(B("text-apply").interactable,Is.False);Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить"));
             yield return Capture("keyboard-numeric-incomplete.png");
             yield return Press(pad,GamepadButton.West);yield return Type(before);yield return Press(pad,GamepadButton.DpadDown);
-            Assert.That(B("text-apply").interactable,Is.True);Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить · Start"));
+            Assert.That(B("text-apply").interactable,Is.True);Assert.That(B("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить"));
             yield return Press(pad,GamepadButton.East);Assert.That(numeric.text,Is.EqualTo(before));
         }
         [UnityTest] public IEnumerator GridLanguageCaseCaretAndKeyboardCancelAreFunctional()

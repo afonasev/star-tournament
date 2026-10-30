@@ -17,23 +17,23 @@ namespace StarTournament.ProvingGround
         }
         void PollRosterShortcuts()
         {
-            if(LobbyModal||setupTransitionFrame==Time.frameCount)return;
+            if(rosterEditing>=0||pendingSeat>=0||(lobbyDialog&&lobbyDialog.activeSelf)||textEntryPanel||setupTransitionFrame==Time.frameCount)return;
             foreach(var pad in Gamepad.all)
             {
                 if(pad.buttonNorth.wasPressedThisFrame)
                 {
-                    SetSetupNavigationMode(true);
+                    if(IsPrimaryMenuDevice(pad))SetSetupNavigationMode(true);
                     int seat=Enumerable.Range(0,LocalSeatCount).Where(i=>input.DeviceAt(i)==pad).DefaultIfEmpty(-1).First();
-                    if(seat>=0){if(SetupMode==NativeMatchMode.Teams)SetTeam(seat,teamAssignments[seat]==NativeTeam.TeamA?NativeTeam.TeamB:NativeTeam.TeamA);}
+                    if(seat>=0){inlineInvokingDevice=pad;OpenInlineEditor(seat);inlineInvokingDevice=null;}
                     else BeginLobbyJoin(pad);
                     return;
                 }
-                if(pad.buttonWest.wasPressedThisFrame&&!InlineWestOwns(pad)){SetSetupNavigationMode(true);BeginLobbyBot();return;}
+                if(IsPrimaryMenuDevice(pad)&&pad.buttonWest.wasPressedThisFrame&&!InlineWestOwns(pad)){SetSetupNavigationMode(true);BeginLobbyBot();return;}
             }
         }
         void PollSetupStart()
         {
-            if(Gamepad.all.Any(pad=>pad.startButton.wasPressedThisFrame)){SetSetupNavigationMode(true);AdvanceSetupInput();}
+            if(PrimaryMenuDevice is Gamepad pad&&pad.startButton.wasPressedThisFrame){SetSetupNavigationMode(true);AdvanceSetupInput();}
         }
         void StyleOperatorPause()
         {

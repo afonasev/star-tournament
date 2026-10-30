@@ -217,7 +217,7 @@ namespace StarTournament.ProvingGround
         }
         void CloseLobbyDialog()
         {
-            if(lobbyDialog)lobbyDialog.SetActive(false);lobbyBack=null;setupTransitionFrame=Time.frameCount;RefreshInterface();Select(lobbyOpener??lobbyMap);
+            if(lobbyDialog)lobbyDialog.SetActive(false);lobbyJoinDevice=null;lobbyBack=null;setupTransitionFrame=Time.frameCount;RefreshInterface();Select(lobbyOpener??lobbyMap);
         }
         void OpenLobbyMaps()
         {

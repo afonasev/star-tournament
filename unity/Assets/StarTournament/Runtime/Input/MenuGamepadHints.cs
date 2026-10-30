@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround
             if(identity.Contains("dual")||identity.Contains("playstation"))return MenuPadFamily.PlayStation;
             if(identity.Contains("switch")||identity.Contains("nintendo"))return MenuPadFamily.Switch;
             if(identity.Contains("xinput")||identity.Contains("xbox"))return MenuPadFamily.Xbox;
-            return MenuPadFamily.Generic;
+            return MenuPadFamily.Xbox;
         }
         static readonly string[][] Glyphs={
             new[]{"Нижняя","Правая","Левая","Верхняя","Start"},

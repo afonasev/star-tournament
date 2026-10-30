@@ -1011,6 +1011,9 @@ namespace StarTournament.ProvingGround
             RouteInlineInput();
             if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);return;}
             if(phase==Phase.Running || phase==Phase.Loading)return;
+            var owner=MenuUiDevice;
+            if(owner!=null&&Enumerable.Range(0,LocalSeatCount).Any(i=>input.DeviceAt(i)!=null))
+            {menuDevice=owner;menuGamepadCursor=owner is Gamepad;Cursor.visible=!menuGamepadCursor;return;}
             foreach(var pad in Gamepad.all)
             {
                 if(!pad.enabled)continue;
