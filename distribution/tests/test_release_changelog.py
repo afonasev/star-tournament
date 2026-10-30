@@ -1,6 +1,9 @@
 """Real temporary Git histories and mocked publisher API; no publication/build."""
 import copy
 import io
+import hashlib
+import struct
+import zlib
 import json
 from pathlib import Path
 import subprocess
@@ -33,6 +36,45 @@ class ReleaseNotes(unittest.TestCase):
         self.git('add','file.txt');self.git('commit','-m',subject);return self.git('rev-parse','HEAD')
     def render(self,review=None,previous='default',source=None):
         return notes.render(review or self.review,self.repo,source or self.source,'production',self.previous if previous=='default' else previous)
+    def add_image(self):
+        def chunk(kind, payload):
+            return struct.pack('>I',len(payload))+kind+payload+struct.pack('>I',zlib.crc32(kind+payload)&0xffffffff)
+        data=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',2,1,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(b'\0\xff\0\0\0\xff\0'))+chunk(b'IEND',b'')
+        image=Path(self.temp.name)/'frame.png';image.write_bytes(data)
+        self.review['changes'][0]['images']=[dict(path='frame.png',sha256=hashlib.sha256(data).hexdigest(),ru='Арена после обновления.',en='Updated arena.')]
+        return data
+    def test_images_follow_their_own_bullet_in_both_languages(self):
+        self.add_image()
+        body=notes.render(self.review,self.repo,self.source,'production',self.previous,version='2.0.0')
+        name='history-'+self.review['changes'][0]['images'][0]['sha256']+'.png'
+        self.assertIn('- Введите имя с геймпада.\n\n  ![Арена после обновления.]',body)
+        self.assertEqual(body.count('/releases/download/v2.0.0/'+name),2)
+        self.assertEqual(body.count('\n- '),4)
+        with self.assertRaisesRegex(ValueError,'version required'):self.render()
+    def test_paired_caption_and_safe_relative_path_required(self):
+        self.add_image()
+        original=copy.deepcopy(self.review)
+        for caption in ['', 'broken]caption', 'caption\nnew paragraph']:
+            self.review=copy.deepcopy(original);self.review['changes'][0]['images'][0]['en']=caption
+            with self.assertRaises(ValueError):notes.render(self.review,self.repo,self.source,'production',self.previous,version='2.0.0')
+        import release_media
+        for path in ['../frame.png','/frame.png']:
+            self.review=copy.deepcopy(original);self.review['changes'][0]['images'][0]['path']=path
+            with self.assertRaises(ValueError):release_media.prepare(self.review,Path(self.temp.name),'2.0.0',Path(self.temp.name)/'out')
+    def test_media_preparation_and_changed_bytes_fail_before_publish(self):
+        data=self.add_image();path=Path(self.temp.name)/'review.json';path.write_text(json.dumps(self.review));out=Path(self.temp.name)/'out'
+        with patch.object(publisher,'changelog_baseline',return_value=self.previous):
+            body=publisher.prepare_changelog(path,self.repo,self.source,'2.0.0','production','fixture',out)
+            identity=json.loads((out/'release-notes.identity.json').read_text())
+            self.assertEqual((out/'history-media'/identity['media'][0]['name']).read_bytes(),data)
+            self.assertEqual(publisher.changelog_assets(out)[0]['sha256'],hashlib.sha256(data).hexdigest())
+            self.assertEqual(publisher.prepare_changelog(path,self.repo,self.source,'2.0.0','production','fixture',out),body)
+            (Path(self.temp.name)/'frame.png').write_bytes(data[:-1])
+            with self.assertRaises(ValueError):publisher.prepare_changelog(path,self.repo,self.source,'2.0.0','production','fixture',out)
+            self.assertEqual((out/'release-notes.md').read_text(),body)
+            (out/'history-media'/identity['media'][0]['name']).write_bytes(b'changed after packaging')
+            with self.assertRaisesRegex(ValueError,'before upload'):publisher.changelog_assets(out)
+
     def test_scaffold_contains_exact_range_and_pending_evidence(self):
         draft=notes.scaffold(self.repo,self.source,'production',self.previous)
         self.assertEqual([x['commit'] for x in draft['pending']],[self.first,self.source])

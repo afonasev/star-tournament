@@ -278,6 +278,56 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(File.Exists(command),Is.False,"Reading/closing history never grants update consent");
             }
         }
+        [UnityTest] public IEnumerator HistoryImagesRemainInlineAndReleaseTexturesOnBack()
+        {
+            oldStatus=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS");
+            oldCommand=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND");
+            oldRelease=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL");
+            directory=Path.Combine(Path.GetTempPath(),"star-history-images-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
+            string status=Path.Combine(directory,"status.json"),command=Path.Combine(directory,"command.json");
+            File.WriteAllText(status,"{\"state\":\"current\"}");
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_STATUS",status);Environment.SetEnvironmentVariable("STAR_TOURNAMENT_UPDATE_COMMAND",command);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_RELEASE_LABEL","1.2.0 (30.10.2026)");
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return null;
+            var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            // Use a real captured menu as the fixture's screenshot, never a remote/network image.
+            string path=Path.Combine(directory,"frame.png");yield return EditorUiCapture.Capture(ground,path,960,540);
+            string digest;using(var sha=System.Security.Cryptography.SHA256.Create())digest=BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant();
+            string rawBullet="### Улучшения\n- Меню игры.";
+            var item=new NativeUpdateBridge.HistoryItem{version="1.2.0",date="2026-10-30",russian=rawBullet+"\nПодпись кадра.\n- Следующий пункт.",russianBlocks=new[]{
+                new NativeUpdateBridge.HistoryBlock{kind="text",offset=0,length=rawBullet.Length},
+                new NativeUpdateBridge.HistoryBlock{kind="image",text="Меню игры · проверочный кадр",sha256=digest,path=path,width=960,height=540,state="ready"},
+                new NativeUpdateBridge.HistoryBlock{kind="text",text="• Следующий пункт."},
+                new NativeUpdateBridge.HistoryBlock{kind="image",text="Недоступный кадр · подпись сохранена",state="unavailable"}}};
+            var snapshot=new NativeUpdateBridge.Snapshot{state="current",history=new NativeUpdateBridge.History{state="ready",items=new[]{item}}};
+            File.WriteAllText(status,JsonUtility.ToJson(snapshot));
+            using(var viewport=EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="release-history-action").onClick.Invoke();
+                float end=Time.realtimeSinceStartup+10;
+                RawImage image=null;
+                while(Time.realtimeSinceStartup<end)
+                {image=ground.GetComponentsInChildren<RawImage>().FirstOrDefault(x=>x.name=="release-history-image"&&x.texture);if(image)break;yield return null;}
+                Assert.That(image,Is.Not.Null,"Cached PNG is decoded and shown inside history");
+                var texture=image.texture;Assert.That(texture.width,Is.EqualTo(960));
+                Assert.That(image.rectTransform.rect.width/image.rectTransform.rect.height,Is.EqualTo(960f/540).Within(.01f));
+                var content=image.transform.parent;var texts=content.GetComponentsInChildren<Text>();
+                var bullet=texts.Single(x=>x.text.Contains("• Меню игры."));var caption=texts.Single(x=>x.text=="Меню игры · проверочный кадр");
+                Assert.That(bullet.transform.GetSiblingIndex(),Is.LessThan(image.transform.GetSiblingIndex()));
+                Assert.That(caption.transform.GetSiblingIndex(),Is.GreaterThan(image.transform.GetSiblingIndex()));
+                Assert.That(texts.Any(x=>x.text=="Недоступный кадр · подпись сохранена"),Is.True);
+                Assert.That(texts.Any(x=>x.text=="Изображение недоступно"),Is.True);
+                var scroll=ground.GetComponentsInChildren<ScrollRect>(true).Single(x=>x.name=="release-history-scroll");
+                Assert.That(scroll.content.rect.height,Is.GreaterThan(scroll.viewport.rect.height));
+                Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("release-history-back"));
+                yield return Capture(ground,"history-images-inline");
+                scroll.verticalNormalizedPosition=0;yield return null;yield return Capture(ground,"history-images-unavailable");
+                ground.GetComponentsInChildren<Button>(true).Single(b=>b.name=="release-history-back").onClick.Invoke();yield return null;yield return null;
+                Assert.That(texture==null,Is.True,"Closing history releases decoded image texture");
+                Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("release-history-action"));
+            }
+        }
         [Serializable] sealed class Command { public string action,id; }
         IEnumerator Capture(ProvingGround ground,string name)
         {
