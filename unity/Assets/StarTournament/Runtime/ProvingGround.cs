@@ -632,6 +632,7 @@ namespace StarTournament.ProvingGround
                 damageVignettes[i]?.Render(phase==Phase.Running&&!life.Dead);
                 health[i].text=Mathf.CeilToInt(life.Health).ToString();
                 armorGroups[i].SetActive(life.Armor>0); if(life.Armor>0) armor[i].text=Mathf.CeilToInt(life.Armor).ToString();
+                ammo[i].transform.parent.gameObject.SetActive(NativeUserPreferences.ShowAmmoHud);
                 ammo[i].text=(life.SelectedWeapon==WeaponId.Cutter?life.CutterEnergy.ToString("0.0"):life.Ammo.ToString())+(Session.DamageBoostRemaining(participant)>0&&life.SelectedWeapon!=WeaponId.RocketLauncher?" ×2":"");
                 ammoIcons[i].Kind=life.SelectedWeapon==WeaponId.Plasma?HudIndicatorIcon.IconKind.Plasma:life.SelectedWeapon==WeaponId.Cutter?HudIndicatorIcon.IconKind.Cutter:life.SelectedWeapon==WeaponId.Rifle?HudIndicatorIcon.IconKind.Rifle:life.SelectedWeapon==WeaponId.Shotgun?HudIndicatorIcon.IconKind.Shotgun:HudIndicatorIcon.IconKind.Rocket;
                 ResizeHudIndicator(health[i]);if(life.Armor>0)ResizeHudIndicator(armor[i]);ResizeHudIndicator(ammo[i]);
@@ -1151,6 +1152,7 @@ namespace StarTournament.ProvingGround
                 armor[i]=CreateHudIndicator(viewportRoots[i],"armor-"+i,HudIndicatorIcon.IconKind.Shield,new Color32(55,234,255,255),false,padding*2+indicatorHeight,indicatorHeight,out _);
                 armorGroups[i]=armor[i].transform.parent.gameObject;
                 ammo[i]=CreateHudIndicator(viewportRoots[i],"ammo-"+i,HudIndicatorIcon.IconKind.Cartridges,Color.white,true,padding,indicatorHeight,out ammoIcons[i]);
+                ammo[i].transform.parent.gameObject.SetActive(NativeUserPreferences.ShowAmmoHud);
                 names[i]=TextElement(viewportRoots[i],"seat-name-"+i,"",(int)Profile.Get("ui.nameFontSize"));
                 Layout(names[i].rectTransform,Vector2.zero,Vector2.one);
                 names[i].rectTransform.offsetMin=Vector2.one*padding;

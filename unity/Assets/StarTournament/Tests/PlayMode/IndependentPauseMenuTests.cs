@@ -56,6 +56,49 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(hadLastMap)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,priorLastMap);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);
             PlayerPrefs.Save();
         }
+        [UnityTest] public IEnumerator AmmoHudPreferenceUpdatesBothSeatsAndPauseSettings()
+        {
+            bool had=PlayerPrefs.HasKey(NativeUserPreferences.AmmoHudKey);int prior=PlayerPrefs.GetInt(NativeUserPreferences.AmmoHudKey);
+            try
+            {
+                PlayerPrefs.DeleteKey(NativeUserPreferences.AmmoHudKey);
+                yield return Load();yield return null;
+                for(int seat=0;seat<2;seat++)
+                {
+                    Assert.That(Object("ammo-"+seat+"-group").activeSelf,Is.False);
+                    Assert.That(Object("ammo-"+seat+"-icon").activeInHierarchy,Is.False);
+                }
+                yield return Press(0,GamepadButton.Start);
+                Button("pause-action-0-1").onClick.Invoke();Button("seat-settings-0-settings-section-2").onClick.Invoke();yield return null;
+                var toggle=ground.GetComponentsInChildren<UnityEngine.UI.Toggle>(true).Single(x=>x.name=="seat-settings-0-settings-ammo-hud");
+                Assert.That(toggle.isOn,Is.False);double clock=ground.Session.Time;
+                var next=toggle.navigation.selectOnDown;Assert.That(next.name,Is.EqualTo("seat-settings-0-settings-fps"));
+                toggle.isOn=true;yield return null;
+                Assert.That(NativeUserPreferences.ShowAmmoHud,Is.True);
+                Assert.That(ground.Session.Time,Is.EqualTo(clock));
+                for(int seat=0;seat<2;seat++)
+                {
+                    Assert.That(Object("ammo-"+seat+"-group").activeSelf,Is.True);
+                    Assert.That(Object("ammo-"+seat+"-icon").activeSelf,Is.True);
+                    Assert.That(Object("ammo-"+seat).GetComponent<UnityEngine.UI.Text>().text,Is.Not.Empty);
+                }
+                string output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_AMMO_QA_IMAGES");
+                if(!string.IsNullOrEmpty(output))
+                {
+                    System.IO.Directory.CreateDirectory(output);
+                    yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"ammo-interface-setting.png"));
+                }
+                toggle.isOn=false;yield return null;
+                for(int seat=0;seat<2;seat++)Assert.That(Object("ammo-"+seat+"-group").activeSelf,Is.False);
+                yield return Press(0,GamepadButton.East);yield return Press(0,GamepadButton.East);
+                Button("pause-action-0-0").onClick.Invoke();yield return null;
+                Assert.That(ground.Running,Is.True);
+                if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"ammo-hud-hidden.png"));
+                NativeUserPreferences.SetAmmoHud(true);yield return null;
+                if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"ammo-hud-visible.png"));
+            }
+            finally{if(had)PlayerPrefs.SetInt(NativeUserPreferences.AmmoHudKey,prior);else PlayerPrefs.DeleteKey(NativeUserPreferences.AmmoHudKey);PlayerPrefs.Save();}
+        }
         [UnityTest] public IEnumerator ResolutionPopupsStayAboveTheirOwnSeatAndPreserveOtherSeats()
         {
             yield return Load();yield return Press(0,GamepadButton.Start);yield return Press(1,GamepadButton.Start);

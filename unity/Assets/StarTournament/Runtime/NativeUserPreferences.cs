@@ -7,6 +7,9 @@ namespace StarTournament.ProvingGround
     // UserPreferenceCatalog v1: preference bounds, deliberately outside match/Lab state.
     public static class NativeUserPreferences
     {
+        public const string AmmoHudKey="StarTournament.Settings.ShowAmmoHud";
+        public static bool ShowAmmoHud=>PlayerPrefs.GetInt(AmmoHudKey,0)!=0;
+        public static void SetAmmoHud(bool value){PlayerPrefs.SetInt(AmmoHudKey,value?1:0);PlayerPrefs.Save();}
         public const string ScaleKey="StarTournament.Settings.UiScalePercent",ContrastKey="StarTournament.Settings.HighContrast";
         public const string FrameCapKey="StarTournament.Graphics.FrameCap",AutoKey="StarTournament.Graphics.AutoResolution";
         public static readonly NumericDescriptor ScaleDescriptor=new NumericDescriptor {Path="preferences.uiScalePercent",Label="Масштаб интерфейса",Group="interface",Unit="%",Minimum=75,Maximum=150,Step=5,DefaultValue=100};
@@ -27,7 +30,7 @@ namespace StarTournament.ProvingGround
         {
             delete=delete??PlayerPrefs.DeleteKey;save=save??PlayerPrefs.Save;
             // Explicit allow-list: never erase identities, progress, Lab or statistics consent.
-            foreach(var k in new[]{ScaleKey,ContrastKey,FrameCapKey,MouseSensitivityPreference.Key,FpsDisplay.PreferenceKey,
+            foreach(var k in new[]{AmmoHudKey,ScaleKey,ContrastKey,FrameCapKey,MouseSensitivityPreference.Key,FpsDisplay.PreferenceKey,
                 "StarTournament.Graphics.VSync","StarTournament.Graphics.Shadows",NativeVisualPreferences.AntialiasingKey,NativeVisualPreferences.QualityKey,
                 "StarTournament.Audio.MusicPercent","StarTournament.Audio.EffectsPercent",NativeAudioPreferences.MasterKey,NativeAudioPreferences.VoiceKey,
                 NativeBotReactionPreferences.TextKey,NativeBotReactionPreferences.VoiceKey})delete(k);

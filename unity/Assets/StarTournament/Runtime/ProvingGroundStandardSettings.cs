@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround
         {
             GameObject settingsGraphicsPage,resetDialog;
             Slider settingsDeadzoneSlider,settingsScaleSlider;
-            Toggle settingsInvertX,settingsInvertY,settingsContrast;
+            Toggle settingsInvertX,settingsInvertY,settingsContrast,settingsAmmoHud;
             Button settingsAutoButton,settingsFrameCap,settingsQualityButton,resetAllButton,resetCancel,resetConfirm;
             Text settingsWriteError;
             bool resetOpen;
@@ -88,11 +88,12 @@ namespace StarTournament.ProvingGround
                     Move(row,body,new Vector2(.02f,1-(i+1)*.098f),new Vector2(.98f,1-i*.098f-.008f));
                     var focus=c.GetComponent<MenuScrollFocus>()??c.gameObject.AddComponent<MenuScrollFocus>();focus.Scroll=controls;focus.Row=(RectTransform)row;
                 }
-                settingsScaleSlider=owner.NumericSetting(settingsInterfacePage.transform,StandardName("settings-ui-scale"),"Масштаб интерфейса",new Vector2(.02f,.81f),new Vector2(.98f,.99f),NativeUserPreferences.ScaleDescriptor,v=>SaveStandard(()=>NativeUserPreferences.SetScale(v)));
-                settingsContrast=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-high-contrast"),"Повышенный контраст",new Vector2(.02f,.61f),new Vector2(.98f,.79f),v=>SaveStandard(()=>NativeUserPreferences.SetContrast(v)));
-                Layout((RectTransform)settingsFpsToggle.transform,new Vector2(.02f,.41f),new Vector2(.98f,.59f));
-                Layout((RectTransform)settingsBotTextToggle.transform,new Vector2(.02f,.21f),new Vector2(.98f,.39f));
-                Layout((RectTransform)settingsBotVoiceToggle.transform,new Vector2(.02f,.01f),new Vector2(.98f,.19f));
+                settingsScaleSlider=owner.NumericSetting(settingsInterfacePage.transform,StandardName("settings-ui-scale"),"Масштаб интерфейса",new Vector2(.02f,.84f),new Vector2(.98f,1),NativeUserPreferences.ScaleDescriptor,v=>SaveStandard(()=>NativeUserPreferences.SetScale(v)));
+                settingsContrast=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-high-contrast"),"Повышенный контраст",new Vector2(.02f,.674f),new Vector2(.98f,.834f),v=>SaveStandard(()=>NativeUserPreferences.SetContrast(v)));
+                settingsAmmoHud=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-ammo-hud"),"Показывать боезапас в интерфейсе",new Vector2(.02f,.508f),new Vector2(.98f,.668f),v=>SaveStandard(()=>NativeUserPreferences.SetAmmoHud(v)));
+                Layout((RectTransform)settingsFpsToggle.transform,new Vector2(.02f,.342f),new Vector2(.98f,.502f));
+                Layout((RectTransform)settingsBotTextToggle.transform,new Vector2(.02f,.176f),new Vector2(.98f,.336f));
+                Layout((RectTransform)settingsBotVoiceToggle.transform,new Vector2(.02f,.01f),new Vector2(.98f,.17f));
                 foreach(var hint in settingsInterfacePage.GetComponentsInChildren<Text>(true).Where(t=>t.name.EndsWith("settings-bot-reactions-help")))hint.gameObject.SetActive(false);
 
                 resetAllButton=MenuButton(settingsScreen.transform,StandardName("settings-reset-all"),"Сбросить все настройки",new Vector2(.05f,.035f),new Vector2(.34f,.09f),OpenReset);
@@ -105,7 +106,7 @@ namespace StarTournament.ProvingGround
                 Label(card.transform,"body","Экран, графика, звук, управление и интерфейс, включая личные предпочтения, вернутся к исходным значениям.\n\nПрофили, прогресс, история и лаборатория сохранятся. Согласие на статистику не изменится.",22,new Vector2(.06f,.30f),new Vector2(.94f,.75f),TextAnchor.UpperLeft,Color.white);
                 resetCancel=MenuButton(card.transform,StandardName("settings-reset-cancel"),"Отмена",new Vector2(.06f,.10f),new Vector2(.48f,.24f),CloseReset);
                 resetConfirm=MenuButton(card.transform,StandardName("settings-reset-confirm"),"Сбросить всё",new Vector2(.52f,.10f),new Vector2(.94f,.24f),ConfirmReset);
-                foreach(var c in new Selectable[]{settingsQualityButton,settingsAutoButton,settingsFrameCap,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsScaleSlider,settingsContrast,resetAllButton,resetCancel,resetConfirm})AddStandardFocus(c);
+                foreach(var c in new Selectable[]{settingsQualityButton,settingsAutoButton,settingsFrameCap,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsScaleSlider,settingsContrast,settingsAmmoHud,resetAllButton,resetCancel,resetConfirm})AddStandardFocus(c);
                 var canvas=settingsScreen.GetComponentInParent<Canvas>();
                 if(canvas&&!canvas.GetComponent<NativeInterfacePreferences>())canvas.gameObject.AddComponent<NativeInterfacePreferences>();
                 CreateSettingsExplanations(aaLabel);
@@ -182,6 +183,7 @@ namespace StarTournament.ProvingGround
                 Action(settingsDevicesButton,"Подключённые устройства и их назначение игрокам.");
                 Numeric(settingsScaleSlider,"Выше — крупнее меню и HUD, но меньше свободного места.");
                 Boolean(settingsContrast,"Усиливает контраст интерфейса для лучшей читаемости.");
+                Boolean(settingsAmmoHud,"Показывает иконку оружия и запас патронов или заряда в углу экрана.");
                 Boolean(settingsFpsToggle,"Показывает число кадров в секунду для оценки плавности.");
                 Boolean(settingsBotTextToggle,"Показывает текстовые реплики ботов; общая настройка игроков.");
                 Boolean(settingsBotVoiceToggle,"Включает озвучку реплик ботов; громкость задаётся в «Речь».");
@@ -200,7 +202,7 @@ namespace StarTournament.ProvingGround
                 Chain(screen,settingsSectionButtons[0]);
                 Chain(new Selectable[]{settingsQualityButton,settingsAntialiasingButton,settingsShadowsToggle}.Concat(visualToggles).ToArray(),settingsSectionButtons[4]);
                 Chain(new Selectable[]{settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsReturnDelaySlider,settingsAutoLevelToggle,settingsHelpButton,settingsDevicesButton},settingsSectionButtons[1]);
-                Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsFpsToggle,settingsBotTextToggle,settingsBotVoiceToggle},settingsSectionButtons[2]);
+                Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsAmmoHud,settingsFpsToggle,settingsBotTextToggle,settingsBotVoiceToggle},settingsSectionButtons[2]);
             }
             void Chain(Selectable[] controls,Button section)
             {for(int i=0;i<controls.Length;i++)Link(controls[i],i==0?section:controls[i-1],i==controls.Length-1?resetAllButton:controls[i+1],section);}
@@ -210,7 +212,7 @@ namespace StarTournament.ProvingGround
                 var look=MenuGamepadLook();
                 RefreshNumericSetting(settingsDeadzoneSlider,"Мёртвая зона стика",look.Deadzone*100,"%");
                 RefreshNumericSetting(settingsScaleSlider,"Масштаб интерфейса",NativeUserPreferences.Scale,"%");
-                RefreshToggle(settingsInvertX,look.InvertX);RefreshToggle(settingsInvertY,look.InvertY);RefreshToggle(settingsContrast,NativeUserPreferences.HighContrast);
+                RefreshToggle(settingsInvertX,look.InvertX);RefreshToggle(settingsInvertY,look.InvertY);RefreshToggle(settingsContrast,NativeUserPreferences.HighContrast);RefreshToggle(settingsAmmoHud,NativeUserPreferences.ShowAmmoHud);
                 settingsFrameCap.GetComponentInChildren<Text>().text=NativeUserPreferences.FrameCap<0?"Без ограничения":NativeUserPreferences.FrameCap+" FPS";
                 settingsQualityButton.GetComponentInChildren<Text>().text=NativeVisualPreferences.QualityNames[NativeVisualPreferences.Quality];
                 resetDialog.SetActive(resetOpen);resetAllButton.gameObject.SetActive(!settingsHelpOpen&&!settingsDevicesOpen);

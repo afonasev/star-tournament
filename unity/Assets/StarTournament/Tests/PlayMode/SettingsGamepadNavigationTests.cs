@@ -433,9 +433,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"));
             Assert.That(scroll.content.GetComponentsInChildren<Text>(true).Single(t=>t.name=="help-lt-aim-text").text,
                 Does.Contain("короткое нажатие — сброс к горизонту"));
+            string ammoOutput=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_AMMO_QA_IMAGES");
+            if(!string.IsNullOrEmpty(ammoOutput)){System.IO.Directory.CreateDirectory(ammoOutput);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(ammoOutput,"help-gamepad-names.png"));}
             CaptureLtHelp(scroll.content.GetComponentInParent<Canvas>());
             yield return Press(GamepadButton.DpadLeft);yield return Press(GamepadButton.South);
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
+            if(!string.IsNullOrEmpty(ammoOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(ammoOutput,"help-keyboard-names.png"));
             yield return Press(GamepadButton.South);
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"),"Previous arrow wraps from keyboard to gamepad");
             yield return Press(GamepadButton.South);
@@ -445,6 +448,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-ui-scale"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-high-contrast"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-ammo-hud"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-fps"));
             Assert.That(ground.GetComponentsInChildren<Text>().Count(t=>t.text.ToUpperInvariant().Contains("ПОКАЗЫВАТЬ FPS")),Is.EqualTo(1));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-2"));
