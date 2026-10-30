@@ -64,10 +64,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             EventSystem.current.SetSelectedGameObject(Toggle("settings-fps").gameObject);
             yield return Press(GamepadButton.DpadDown);Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(text.gameObject));
             yield return Press(GamepadButton.South);Assert.That(text.isOn,Is.False);Assert.That(voice.isOn,Is.False);
+            yield return Press(GamepadButton.DpadDown);Assert.That(EventSystem.current.currentSelectedGameObject.name,Is.EqualTo("settings-reset-all"));
+            Assert.That(text.transform.parent.name,Is.EqualTo("settings-interface"));
+            Assert.That(voice.transform.parent.name,Is.EqualTo("settings-audio"));
+            Assert.That(voice.gameObject.activeInHierarchy,Is.False);
+            Button("settings-section-3").onClick.Invoke();yield return null;
+            var voiceSlider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-voice");
+            EventSystem.current.SetSelectedGameObject(voiceSlider.gameObject);
             yield return Press(GamepadButton.DpadDown);Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(voice.gameObject));
             yield return Press(GamepadButton.South);Assert.That(voice.isOn,Is.True);Assert.That(text.isOn,Is.False);
-            // EventSystem pointer route is shared by mouse; keyboard Submit is the standard selectable route.
+            // EventSystem pointer route is shared by mouse; keyboard Submit retains its existing contract.
+            Button("settings-section-2").onClick.Invoke();yield return null;
             text.OnPointerClick(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});Assert.That(text.isOn,Is.True);
+            Button("settings-section-3").onClick.Invoke();yield return null;
             EventSystem.current.SetSelectedGameObject(voice.gameObject);
             InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));yield return null;yield return null;
             InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;Assert.That(voice.isOn,Is.False);Assert.That(text.isOn,Is.True);
@@ -75,11 +84,46 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {text.isOn=t;voice.isOn=v;Assert.That(NativeBotReactionPreferences.TextEnabled,Is.EqualTo(t));Assert.That(NativeBotReactionPreferences.VoiceEnabled,Is.EqualTo(v));}
             string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BANTER_SETTINGS_EVIDENCE");
             if(!string.IsNullOrEmpty(output)&&SystemInfo.graphicsDeviceType!=GraphicsDeviceType.Null)
-            {Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,Path.Combine(output,"bot-reaction-settings.png"));}
+            {
+                Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,Path.Combine(output,"bot-voice-audio.png"));
+                Button("settings-section-2").onClick.Invoke();yield return null;
+                yield return EditorUiCapture.Capture(ground,Path.Combine(output,"interface-without-voice.png"));
+            }
             NativeBotReactionPreferences.SetText(false);NativeBotReactionPreferences.SetVoice(true);
             yield return SceneManager.UnloadSceneAsync(scene);yield return Load();
             Button("main-action-4").onClick.Invoke();yield return null;Button("settings-section-2").onClick.Invoke();yield return null;
             Assert.That(Toggle("settings-bot-reaction-text").isOn,Is.False);Assert.That(Toggle("settings-bot-reaction-voice").isOn,Is.True);
+        }
+        [UnityTest] public IEnumerator VoiceControlLivesInAudioAndRetainsPreferenceAfterReload()
+        {
+            yield return Load();pad=InputSystem.AddDevice<Gamepad>();
+            Button("main-action-4").onClick.Invoke();yield return null;
+            Button("settings-section-2").onClick.Invoke();yield return null;
+            var text=Toggle("settings-bot-reaction-text");var voice=Toggle("settings-bot-reaction-voice");
+            Assert.That(text.transform.parent.name,Is.EqualTo("settings-interface"));
+            Assert.That(text.gameObject.activeInHierarchy,Is.True);
+            Assert.That(voice.transform.parent.name,Is.EqualTo("settings-audio"));
+            Assert.That(voice.gameObject.activeInHierarchy,Is.False);
+            Assert.That(voice.isOn,Is.False);Assert.That(text.isOn,Is.True);
+            Button("settings-section-3").onClick.Invoke();yield return null;
+            Assert.That(voice.gameObject.activeInHierarchy,Is.True);Assert.That(text.gameObject.activeInHierarchy,Is.False);
+            var slider=ground.GetComponentsInChildren<Slider>(true).Single(x=>x.name=="settings-voice");
+            EventSystem.current.SetSelectedGameObject(slider.gameObject);
+            yield return Press(GamepadButton.DpadDown);Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(voice.gameObject));
+            yield return Press(GamepadButton.South);Assert.That(voice.isOn,Is.True);
+            Assert.That(NativeBotReactionPreferences.VoiceEnabled,Is.True);Assert.That(NativeBotReactionPreferences.TextEnabled,Is.True);
+            string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BANTER_SETTINGS_EVIDENCE");
+            if(!string.IsNullOrEmpty(output))
+            {
+                Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,Path.Combine(output,"bot-voice-audio.png"));
+                Button("settings-section-2").onClick.Invoke();yield return null;
+                yield return EditorUiCapture.Capture(ground,Path.Combine(output,"interface-without-voice.png"));
+            }
+            yield return SceneManager.UnloadSceneAsync(scene);yield return Load();
+            Button("main-action-4").onClick.Invoke();yield return null;Button("settings-section-3").onClick.Invoke();yield return null;
+            Assert.That(Toggle("settings-bot-reaction-voice").gameObject.activeInHierarchy,Is.True);
+            Assert.That(Toggle("settings-bot-reaction-voice").isOn,Is.True);
+            Assert.That(Toggle("settings-bot-reaction-text").isOn,Is.True);
         }
         static NativeMatchComposition Composition(int locals)
         {

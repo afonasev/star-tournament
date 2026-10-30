@@ -88,12 +88,17 @@ namespace StarTournament.ProvingGround
                     Move(row,body,new Vector2(.02f,1-(i+1)*.098f),new Vector2(.98f,1-i*.098f-.008f));
                     var focus=c.GetComponent<MenuScrollFocus>()??c.gameObject.AddComponent<MenuScrollFocus>();focus.Scroll=controls;focus.Row=(RectTransform)row;
                 }
-                settingsScaleSlider=owner.NumericSetting(settingsInterfacePage.transform,StandardName("settings-ui-scale"),"Масштаб интерфейса",new Vector2(.02f,.84f),new Vector2(.98f,1),NativeUserPreferences.ScaleDescriptor,v=>SaveStandard(()=>NativeUserPreferences.SetScale(v)));
-                settingsContrast=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-high-contrast"),"Повышенный контраст",new Vector2(.02f,.674f),new Vector2(.98f,.834f),v=>SaveStandard(()=>NativeUserPreferences.SetContrast(v)));
-                settingsAmmoHud=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-ammo-hud"),"Показывать боезапас в интерфейсе",new Vector2(.02f,.508f),new Vector2(.98f,.668f),v=>SaveStandard(()=>NativeUserPreferences.SetAmmoHud(v)));
-                Layout((RectTransform)settingsFpsToggle.transform,new Vector2(.02f,.342f),new Vector2(.98f,.502f));
-                Layout((RectTransform)settingsBotTextToggle.transform,new Vector2(.02f,.176f),new Vector2(.98f,.336f));
-                Layout((RectTransform)settingsBotVoiceToggle.transform,new Vector2(.02f,.01f),new Vector2(.98f,.17f));
+                settingsScaleSlider=owner.NumericSetting(settingsInterfacePage.transform,StandardName("settings-ui-scale"),"Масштаб интерфейса",new Vector2(.02f,.81f),new Vector2(.98f,.99f),NativeUserPreferences.ScaleDescriptor,v=>SaveStandard(()=>NativeUserPreferences.SetScale(v)));
+                settingsContrast=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-high-contrast"),"Повышенный контраст",new Vector2(.02f,.61f),new Vector2(.98f,.79f),v=>SaveStandard(()=>NativeUserPreferences.SetContrast(v)));
+                settingsAmmoHud=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-ammo-hud"),"Показывать боезапас в интерфейсе",new Vector2(.02f,.41f),new Vector2(.98f,.59f),v=>SaveStandard(()=>NativeUserPreferences.SetAmmoHud(v)));
+                Layout((RectTransform)settingsFpsToggle.transform,new Vector2(.02f,.21f),new Vector2(.98f,.39f));
+                Layout((RectTransform)settingsBotTextToggle.transform,new Vector2(.02f,.01f),new Vector2(.98f,.19f));
+                Selectable[] audioControls={settingsMasterSlider,settingsMusicSlider,settingsEffectsSlider,settingsVoiceSlider,settingsBotVoiceToggle};
+                for(int i=0;i<audioControls.Length;i++)
+                {
+                    var control=audioControls[i];var row=control is Slider?control.transform.parent:control.transform;
+                    Move(row,settingsAudioPage.transform,new Vector2(.02f,.81f-i*.20f),new Vector2(.98f,.99f-i*.20f));
+                }
                 foreach(var hint in settingsInterfacePage.GetComponentsInChildren<Text>(true).Where(t=>t.name.EndsWith("settings-bot-reactions-help")))hint.gameObject.SetActive(false);
 
                 resetAllButton=MenuButton(settingsScreen.transform,StandardName("settings-reset-all"),"Сбросить все настройки",new Vector2(.05f,.035f),new Vector2(.34f,.09f),OpenReset);
@@ -202,7 +207,7 @@ namespace StarTournament.ProvingGround
                 Chain(screen,settingsSectionButtons[0]);
                 Chain(new Selectable[]{settingsQualityButton,settingsAntialiasingButton,settingsShadowsToggle}.Concat(visualToggles).ToArray(),settingsSectionButtons[4]);
                 Chain(new Selectable[]{settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsReturnDelaySlider,settingsAutoLevelToggle,settingsHelpButton,settingsDevicesButton},settingsSectionButtons[1]);
-                Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsAmmoHud,settingsFpsToggle,settingsBotTextToggle,settingsBotVoiceToggle},settingsSectionButtons[2]);
+                Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsAmmoHud,settingsFpsToggle,settingsBotTextToggle},settingsSectionButtons[2]);
             }
             void Chain(Selectable[] controls,Button section)
             {for(int i=0;i<controls.Length;i++)Link(controls[i],i==0?section:controls[i-1],i==controls.Length-1?resetAllButton:controls[i+1],section);}
