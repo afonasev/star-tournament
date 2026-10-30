@@ -1,5 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
+using System.IO;
+using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,6 +21,12 @@ namespace StarTournament.ProvingGround
         ScrollRect historyScroll,historyVersionScroll;
         readonly List<Text> historyTextChunks=new List<Text>();
         readonly List<Button> historyButtons=new List<Button>();
+        readonly List<GameObject> historyMediaObjects=new List<GameObject>();
+        readonly List<Texture2D> historyTextures=new List<Texture2D>();
+        readonly List<Coroutine> historyImageLoads=new List<Coroutine>();
+        int historyImageGeneration;
+        string historyMediaRequested;
+        Vector2 historyDetailSize;
         string historyShown,historySelected;
         Vector2 historyVersionViewportSize;
         NativeUpdateBridge.History historyData;
@@ -43,11 +54,11 @@ namespace StarTournament.ProvingGround
         void OpenReleaseHistory()
         {
             if(phase!=Phase.MainMenu)return;
-            phase=Phase.History;historyShown=null;RefreshInterface();Select(historyBack);
+            phase=Phase.History;historyShown=null;historyMediaRequested=null;RefreshInterface();Select(historyBack);
             updateBridge?.RequestHistory();RefreshReleaseHistory();
         }
         void CloseReleaseHistory()
-        {phase=Phase.MainMenu;RefreshInterface();Select(historyAction);}
+        {updateBridge?.CloseHistory();ClearHistoryImages();historyMediaRequested=null;phase=Phase.MainMenu;RefreshInterface();Select(historyAction);}
         void RefreshReleaseHistory()
         {
             var data=updateBridge?updateBridge.HistoryState:null;
@@ -76,7 +87,7 @@ namespace StarTournament.ProvingGround
             int chosen=count==0?-1:Array.FindIndex(items,0,count,x=>x.version==historySelected);
             if(chosen<0&&count>0)chosen=0;
             if(chosen>=0){ShowReleaseNotes(chosen);if(ownedFocus)Select(historyButtons[chosen]);}
-            else{historyTitle.text="";historyBody.text="";}
+            else{ClearHistoryImages();historyTitle.text="";historyBody.text="";}
         }
         void AddHistoryScrollbar(Transform parent,string name,ScrollRect scroll,Vector2? min=null,Vector2? max=null)
         {
@@ -112,33 +123,106 @@ namespace StarTournament.ProvingGround
             content.anchoredPosition=new Vector2(0,Mathf.Clamp(offset,0,Mathf.Max(0,content.rect.height-height)));
         }
         static string HistoryDate(string value)=>DateTime.TryParseExact(value,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out var date)?date.ToString("dd.MM.yyyy",CultureInfo.InvariantCulture):value;
+        void ClearHistoryImages()
+        {
+            historyImageGeneration++;
+            foreach(var load in historyImageLoads)if(load!=null)StopCoroutine(load);historyImageLoads.Clear();
+            foreach(var go in historyMediaObjects)if(go){go.SetActive(false);Destroy(go);}historyMediaObjects.Clear();
+            foreach(var texture in historyTextures)if(texture)Destroy(texture);historyTextures.Clear();
+        }
+        IEnumerator LoadHistoryImage(NativeUpdateBridge.HistoryBlock block,RawImage image,Text status,int generation)
+        {
+            // Disk IO and digest verification stay off the render thread; Unity owns bounded decode.
+            var read=Task.Run(()=>
+            {
+                try
+                {
+                    var info=new FileInfo(block.path);
+                    if(!info.Exists||info.Length>2*1024*1024)return null;
+                    byte[] bytes;
+                    using(var stream=File.OpenRead(block.path))
+                    {
+                        if(stream.Length>2*1024*1024)return null;
+                        bytes=new byte[(int)stream.Length];int offset=0;
+                        while(offset<bytes.Length){int count=stream.Read(bytes,offset,bytes.Length-offset);if(count==0)return null;offset+=count;}
+                        if(stream.ReadByte()!=-1)return null;
+                    }
+                    using(var sha=SHA256.Create())
+                    {if(BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","").ToLowerInvariant()!=block.sha256)return null;}
+                    if(bytes.Length<29||bytes[0]!=137||bytes[1]!=80||bytes[2]!=78||bytes[3]!=71)return null;
+                    int width=(bytes[16]<<24)|(bytes[17]<<16)|(bytes[18]<<8)|bytes[19];
+                    int height=(bytes[20]<<24)|(bytes[21]<<16)|(bytes[22]<<8)|bytes[23];
+                    return width==block.width&&height==block.height?bytes:null;
+                }
+                catch(Exception ex) when(ex is IOException||ex is UnauthorizedAccessException||ex is ArgumentException){return null;}
+            });
+            while(!read.IsCompleted)yield return null;
+            if(generation!=historyImageGeneration||!image||phase!=Phase.History)yield break;
+            if(read.IsFaulted||read.Result==null){status.text="Изображение недоступно";yield break;}
+            var texture=new Texture2D(2,2,TextureFormat.RGBA32,false);
+            if(!ImageConversion.LoadImage(texture,read.Result,true)||texture.width!=block.width||texture.height!=block.height)
+            {Destroy(texture);status.text="Изображение недоступно";yield break;}
+            historyTextures.Add(texture);image.texture=texture;image.color=Color.white;status.text="";
+        }
         void ShowReleaseNotes(int index)
         {
-            var item=historyData.items[index];historySelected=item.version;RevealHistoryVersion(index);
+            var item=historyData.items[index];bool same=historySelected==item.version;
+            float previousScroll=historyScroll.verticalNormalizedPosition;
+            historySelected=item.version;RevealHistoryVersion(index);
             historyTitle.text="Версия "+item.version+" · "+HistoryDate(item.date)+(item.installed?" · Установлена":"");
-            // The current game menu is Russian. Both languages are retained in IPC for localization.
+            if(historyMediaRequested!=item.version&&((item.russianBlocks!=null&&Array.Exists(item.russianBlocks,x=>x!=null&&x.kind=="image"))||(item.russian??"").Contains("![")))
+            {historyMediaRequested=item.version;updateBridge?.RequestHistoryMedia(item.version);}
             string notes=string.IsNullOrWhiteSpace(item.russian)?"Описание на русском языке не опубликовано для этой версии.":item.russian;
-            foreach(var chunk in historyTextChunks)if(chunk)Destroy(chunk.gameObject);historyTextChunks.Clear();
-            Canvas.ForceUpdateCanvases();
-            float height=0;int start=0,part=0;
-            // Keep each uGUI text mesh below the vertex limit without truncating release notes.
-            while(start<notes.Length)
+            ClearHistoryImages();
+            foreach(var chunk in historyTextChunks)if(chunk){chunk.gameObject.SetActive(false);Destroy(chunk.gameObject);}historyTextChunks.Clear();
+            historyBody.text="";Canvas.ForceUpdateCanvases();
+            float height=0;int part=0;float width=historyScroll.viewport.rect.width;
+            void AddText(string value)
             {
-                int count=Math.Min(8000,notes.Length-start);
-                if(start+count<notes.Length){int newline=notes.LastIndexOf('\n',start+count-1,count);if(newline>=start)count=newline-start+1;else if(char.IsHighSurrogate(notes[start+count-1]))count--;}
-                var text=part==0?historyBody:Label(historyScroll.content,"release-history-description-"+part,"",22,Vector2.zero,Vector2.one,TextAnchor.UpperLeft,Color.white);
-                if(part>0)historyTextChunks.Add(text);
-                text.supportRichText=false;text.raycastTarget=false;text.text=notes.Substring(start,count);
-                var rect=text.rectTransform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=Vector2.one;rect.pivot=new Vector2(.5f,1);
-                rect.sizeDelta=Vector2.zero;rect.anchoredPosition=new Vector2(0,-height);
-                Canvas.ForceUpdateCanvases();float chunkHeight=text.preferredHeight+4;rect.sizeDelta=new Vector2(0,chunkHeight);
-                height+=chunkHeight;start+=count;part++;
+                int start=0;
+                while(start<value.Length)
+                {
+                    int count=Math.Min(8000,value.Length-start);
+                    if(start+count<value.Length){int newline=value.LastIndexOf('\n',start+count-1,count);if(newline>=start)count=newline-start+1;else if(char.IsHighSurrogate(value[start+count-1]))count--;}
+                    var text=part==0?historyBody:Label(historyScroll.content,"release-history-description-"+part,"",22,Vector2.zero,Vector2.one,TextAnchor.UpperLeft,Color.white);
+                    if(part>0)historyTextChunks.Add(text);
+                    text.supportRichText=false;text.raycastTarget=false;text.text=value.Substring(start,count);
+                    var rect=text.rectTransform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=Vector2.one;rect.pivot=new Vector2(.5f,1);
+                    rect.sizeDelta=Vector2.zero;rect.anchoredPosition=new Vector2(0,-height);
+                    Canvas.ForceUpdateCanvases();float chunkHeight=text.preferredHeight+4;rect.sizeDelta=new Vector2(0,chunkHeight);
+                    height+=chunkHeight;start+=count;part++;
+                }
             }
-            historyScroll.content.sizeDelta=new Vector2(0,Mathf.Max(historyScroll.viewport.rect.height,height+20));historyScroll.verticalNormalizedPosition=1;
+            var blocks=item.russianBlocks;
+            if(blocks==null||blocks.Length==0||string.IsNullOrWhiteSpace(item.russian))AddText(notes);
+            else foreach(var block in blocks)
+            {
+                if(block==null)continue;
+                if(block.kind!="image")
+                {
+                    // Launcher references slices rather than duplicating up to eleven long notes in IPC.
+                    string value=block.text??"";
+                    if(block.length>0&&block.offset>=0&&block.offset<=notes.Length-block.length)
+                        value=Regex.Replace(Regex.Replace(notes.Substring(block.offset,block.length).Trim(),@"(?m)^### +",""),@"(?m)^- +","• ");
+                    AddText(value);height+=12;continue;
+                }
+                bool ready=block.state=="ready"&&block.width>0&&block.width<=1600&&block.height>0&&block.height<=1200&&!string.IsNullOrEmpty(block.path);
+                float imageHeight=ready?width*block.height/block.width:72;
+                var go=new GameObject("release-history-image",typeof(RectTransform),typeof(RawImage));go.transform.SetParent(historyScroll.content,false);historyMediaObjects.Add(go);
+                var rect=(RectTransform)go.transform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=Vector2.one;rect.pivot=new Vector2(.5f,1);rect.sizeDelta=new Vector2(0,imageHeight);rect.anchoredPosition=new Vector2(0,-height);
+                var image=go.GetComponent<RawImage>();image.color=new Color32(24,41,55,255);image.raycastTarget=false;
+                var status=Label(go.transform,"release-history-image-state",ready?"Загрузка изображения…":block.state=="unavailable"?"Изображение недоступно":"Загрузка изображения…",18,Vector2.zero,Vector2.one,TextAnchor.MiddleCenter,new Color32(153,173,187,255));status.raycastTarget=false;
+                if(ready)historyImageLoads.Add(StartCoroutine(LoadHistoryImage(block,image,status,historyImageGeneration)));
+                height+=imageHeight+8;AddText(block.text??"");height+=20;
+            }
+            historyScroll.content.sizeDelta=new Vector2(0,Mathf.Max(historyScroll.viewport.rect.height,height+20));
+            historyScroll.verticalNormalizedPosition=same?previousScroll:1;historyDetailSize=historyScroll.viewport.rect.size;
         }
         void UpdateReleaseHistory()
         {
             if(phase!=Phase.History)return;RefreshReleaseHistory();
+            if(historyDetailSize!=historyScroll.viewport.rect.size&&historyData?.items!=null)
+            {int selected=Array.FindIndex(historyData.items,x=>x.version==historySelected);if(selected>=0)ShowReleaseNotes(selected);}
             var size=historyVersionScroll.viewport.rect.size;
             if(size!=historyVersionViewportSize)
             {

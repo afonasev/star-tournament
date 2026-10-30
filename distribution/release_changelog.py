@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+from release_media import images, image_link
 
 CATEGORIES = {'added': ('Новое', 'Added'), 'improved': ('Улучшения', 'Improved'), 'fixed': ('Исправления', 'Fixed')}
 SEMVER = re.compile(r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?\Z')
@@ -76,7 +77,8 @@ def text(value):
     return value.strip()
 
 
-def render(review, repo, source, channel, previous):
+def render(review, repo, source, channel, previous, *, version=None):
+    images(review)
     if review.get('schema') != 1 or review.get('source_ref') != source or review.get('channel') != channel or review.get('previous_release') != previous:
         raise ValueError('Review is bound to a different Git range/channel')
     commits = {row['commit'] for row in history(repo, source, previous)}
@@ -95,13 +97,18 @@ def render(review, repo, source, channel, previous):
                 text(row.get('reason'))
             else:
                 if row.get('category') not in CATEGORIES: raise ValueError('Unknown change category')
-                groups[row['category']].append((text(row.get('ru')), text(row.get('en'))))
+                groups[row['category']].append((text(row.get('ru')), text(row.get('en')), row.get('images', [])))
     if covered != commits: raise ValueError('Unreviewed Git commits: ' + str(len(commits - covered)))
     sections = []
     for language, title in enumerate(('Русский', 'English')):
         lines = ['## ' + title, '']
         for category, names in CATEGORIES.items():
-            if groups[category]: lines += ['### ' + names[language], ''] + ['- ' + pair[language] for pair in groups[category]] + ['']
+            if groups[category]:
+                lines += ['### ' + names[language], '']
+                for pair in groups[category]:
+                    lines += ['- ' + pair[language]]
+                    for image in pair[2]: lines += ['', '  ' + image_link(image, version, ('ru', 'en')[language]), '']
+                lines += ['']
         if not any(groups.values()): lines += [('Техническое обслуживание; изменений для игрока не заявлено.', 'Maintenance release; no player-facing changes are listed.')[language], '']
         sections.append('\n'.join(lines).strip())
     body = '\n\n'.join(sections) + '\n'; validate_body(body)
@@ -132,13 +139,14 @@ def main():
     parser.add_argument('--channel', choices=['test', 'production'], required=True)
     parser.add_argument('--previous-tag', help='Exact published tag supplied by release preparation; omit for first release')
     parser.add_argument('--review', type=Path)
+    parser.add_argument('--version', help='Target release version; required with illustrations')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     previous = dict(tag=args.previous_tag, revision=resolve(args.repo, 'refs/tags/' + args.previous_tag)) if args.previous_tag else None
     if args.action == 'scaffold': result = json.dumps(scaffold(args.repo, args.source_ref, args.channel, previous), ensure_ascii=False, indent=2) + '\n'
     else:
         if not args.review: parser.error('--review required for render')
-        result = render(json.loads(args.review.read_text()), args.repo, args.source_ref, args.channel, previous)
+        result = render(json.loads(args.review.read_text()), args.repo, args.source_ref, args.channel, previous, version=args.version)
     args.output.write_text(result, encoding='utf-8')
     print(args.output)
 

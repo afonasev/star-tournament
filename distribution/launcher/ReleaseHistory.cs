@@ -6,7 +6,7 @@ using Velopack;
 
 namespace StarTournament.Distribution;
 
-public sealed record ReleaseHistoryItem(string Version, string Date, string Russian, string English, bool Installed, string PublishedAt = "");
+public sealed record ReleaseHistoryItem(string Version, string Date, string Russian, string English, bool Installed, string PublishedAt = "", ReleaseHistoryBlock[]? RussianBlocks = null, ReleaseHistoryBlock[]? EnglishBlocks = null);
 public sealed record ReleaseHistorySnapshot(string State, ReleaseHistoryItem[] Items, string Error = "");
 // Release text is presentation data only. It cannot admit or replace an update target.
 public sealed class ReleaseHistory : IDisposable
@@ -15,12 +15,15 @@ public sealed class ReleaseHistory : IDisposable
     readonly LauncherConfig config;
     readonly string cachePath;
     readonly HttpClient http;
+    readonly ReleaseHistoryMedia media;
+    ReleaseHistorySnapshot? latest;
     DateTimeOffset blockedUntil;
     static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true };
     sealed record Cache(string Channel, string Installed, string ETag, ReleaseHistoryItem[] Items);
-    public ReleaseHistory(LauncherConfig config, string cachePath, HttpMessageHandler? transport = null)
+    public ReleaseHistory(LauncherConfig config, string cachePath, HttpMessageHandler? transport = null, HttpMessageHandler? mediaTransport = null)
     {
         this.config = config; this.cachePath = cachePath;
+        media = new ReleaseHistoryMedia(cachePath + ".media", mediaTransport);
         http = new HttpClient(transport ?? new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(10) };
         http.DefaultRequestHeaders.UserAgent.ParseAdd("StarTournament-History/1");
         http.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
@@ -48,7 +51,7 @@ public sealed class ReleaseHistory : IDisposable
         string body = row.TryGetProperty("body", out var value) ? value.GetString() ?? "" : "";
         if (body.Length > 65536) throw new InvalidDataException("Release notes exceed limit");
         var languages = Languages(body);
-        return new(version.ToString(), publication.UtcDateTime.ToString("yyyy-MM-dd"), languages.Russian, languages.English, installed, publication.ToUniversalTime().ToString("O"));
+        return new(version.ToString(), publication.UtcDateTime.ToString("yyyy-MM-dd"), languages.Russian, languages.English, installed, publication.ToUniversalTime().ToString("O"), ReleaseHistoryMedia.Parse(languages.Russian, version.ToString(), compact: true), ReleaseHistoryMedia.Parse(languages.English, version.ToString(), compact: true));
     }
     Cache? ReadCache()
     {
@@ -80,7 +83,8 @@ public sealed class ReleaseHistory : IDisposable
         { if (buffer.Length + count > 2 * 1024 * 1024) throw new InvalidDataException("History metadata exceeds limit"); buffer.Write(bytes, 0, count); }
         return (response.StatusCode, System.Text.Encoding.UTF8.GetString(buffer.ToArray()), response.Headers.ETag?.ToString() ?? "");
     }
-    public async Task<ReleaseHistorySnapshot> Fetch(CancellationToken token)
+    public async Task<ReleaseHistorySnapshot> Fetch(CancellationToken token) => latest = await FetchCore(token);
+    async Task<ReleaseHistorySnapshot> FetchCore(CancellationToken token)
     {
         var cache = ReadCache();
         try
@@ -119,11 +123,32 @@ public sealed class ReleaseHistory : IDisposable
             return new("ready", result);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
-        catch (Exception ex) when (ex is HttpRequestException or IOException or JsonException or OperationCanceledException)
+        catch (Exception ex) when (ex is HttpRequestException or IOException or InvalidDataException or JsonException or OperationCanceledException)
         {
             return cache != null ? new("cached", cache.Items, "Сеть недоступна. Показана сохранённая история.") :
                 new("error", Array.Empty<ReleaseHistoryItem>(), "Не удалось получить историю версий. Проверьте подключение.");
         }
     }
-    public void Dispose() => http.Dispose();
+    public async Task<ReleaseHistorySnapshot?> FetchMedia(string version, CancellationToken token)
+    {
+        var snapshot = latest;
+        var item = snapshot?.Items.FirstOrDefault(x => x.Version == version);
+        if (snapshot == null || item == null) return null;
+        // Old caches have no blocks. Reparse from retained canonical language text.
+        var ru = item.RussianBlocks ?? ReleaseHistoryMedia.Parse(item.Russian, version, compact: true);
+        var en = item.EnglishBlocks ?? ReleaseHistoryMedia.Parse(item.English, version, compact: true);
+        var loaded = new Dictionary<string, ReleaseHistoryBlock>();
+        var referenced = ru.Concat(en).Where(x => x.Kind == "image").DistinctBy(x => x.Sha256).ToArray();
+        if (referenced.Length > ReleaseHistoryMedia.MaxImages)
+        {
+            ReleaseHistoryBlock[] Unavailable(ReleaseHistoryBlock[] blocks) => blocks.Select(x => x.Kind == "image" ? x with { State = "unavailable", Path = "" } : x).ToArray();
+            return latest = snapshot with { Items = snapshot.Items.Select(x => x.Version == version ? item with { RussianBlocks = Unavailable(ru), EnglishBlocks = Unavailable(en) } : x).ToArray() };
+        }
+        foreach (var block in referenced)
+            if (!loaded.ContainsKey(block.Sha256)) loaded[block.Sha256] = await media.Load(block, version, token);
+        ReleaseHistoryBlock[] Apply(ReleaseHistoryBlock[] blocks) => blocks.Select(x => loaded.TryGetValue(x.Sha256, out var image) ? image with { Text = x.Text } : x).ToArray();
+        token.ThrowIfCancellationRequested();
+        return latest = snapshot with { Items = snapshot.Items.Select(x => x.Version == version ? item with { RussianBlocks = Apply(ru), EnglishBlocks = Apply(en) } : x).ToArray() };
+    }
+    public void Dispose() { http.Dispose(); media.Dispose(); }
 }

@@ -16,6 +16,10 @@ public sealed class UpdateSession : IAsyncDisposable
     CancellationTokenSource? historyCancellation;
     Task historyOperation = Task.CompletedTask;
     bool historyResume;
+    readonly Func<string, CancellationToken, Task<ReleaseHistorySnapshot?>>? mediaFetch;
+    CancellationTokenSource? mediaCancellation;
+    Task mediaOperation = Task.CompletedTask;
+    bool historyOpen;
     CancellationTokenSource? cancellation;
     Task operation = Task.CompletedTask;
     UpdateSnapshot state;
@@ -25,9 +29,10 @@ public sealed class UpdateSession : IAsyncDisposable
 
     public UpdateSession(Func<CancellationToken, Task<string?>> discover,
         Func<Action<int>, CancellationToken, Task> download, Action stage, Action<UpdateSnapshot> publish,
-        UpdateSnapshot? initial = null, Func<CancellationToken, Task<ReleaseHistorySnapshot>>? historyFetch = null)
+        UpdateSnapshot? initial = null, Func<CancellationToken, Task<ReleaseHistorySnapshot>>? historyFetch = null,
+        Func<string, CancellationToken, Task<ReleaseHistorySnapshot?>>? mediaFetch = null)
     {
-        this.historyFetch = historyFetch; this.discover = discover; this.download = download; this.stage = stage; this.publish = publish;
+        this.mediaFetch = mediaFetch; this.historyFetch = historyFetch; this.discover = discover; this.download = download; this.stage = stage; this.publish = publish;
         state = initial ?? new("checking"); version = state.Version; publish(state);
     }
     void Status(string name, int progress = 0, string error = "")
@@ -101,6 +106,17 @@ public sealed class UpdateSession : IAsyncDisposable
         catch (Exception ex)
         { UpdateFeedback.Log("history-error", ex); lock (gate) if (!closing && !match && !token.IsCancellationRequested) { state = state with { History = new("error", Array.Empty<ReleaseHistoryItem>(), "Не удалось получить историю версий.") }; publish(state); } }
     }
+    async Task FetchMedia(string version, CancellationToken token)
+    {
+        try
+        {
+            var result = await mediaFetch!(version, token);
+            lock (gate) if (result != null && !closing && !match && historyOpen && !token.IsCancellationRequested)
+            { state = state with { History = result }; publish(state); }
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+        catch (Exception ex) { UpdateFeedback.Log("history-media", ex); }
+    }
     public async Task<bool> CommandAsync(string action, string request = "")
     {
         await commands.WaitAsync();
@@ -113,14 +129,25 @@ public sealed class UpdateSession : IAsyncDisposable
         lock (gate)
         {
             if (closing) return false;
-            if (action == "match")
+            if (action == "history-media")
+            {
+                if (match || !historyOpen || mediaFetch == null || !historyOperation.IsCompleted || state.History?.Items.Any(x => x.Version == request) != true) return false;
+                mediaCancellation?.Cancel(); drain = mediaOperation;
+            }
+            else if (action == "history-close")
+            {
+                historyOpen = historyResume = false; historyCancellation?.Cancel(); mediaCancellation?.Cancel();
+                drain = Task.WhenAll(historyOperation, mediaOperation);
+            }
+            else if (action == "match")
             {
                 match = true; historyResume = !historyOperation.IsCompleted;
                 if (historyResume) historyCancellation?.Cancel();
+                mediaCancellation?.Cancel();
                 resume = consent && state.State is "downloading" or "verifying";
                 state = state with { MatchPaused = false, MatchRequest = request };
                 if (!operation.IsCompleted) cancellation?.Cancel();
-                drain = Task.WhenAll(operation, historyOperation);
+                drain = Task.WhenAll(operation, historyOperation, mediaOperation);
             }
             else if (action == "menu")
             {
@@ -132,7 +159,9 @@ public sealed class UpdateSession : IAsyncDisposable
             }
             else if (action == "history")
             {
-                if (match || historyFetch == null || !historyOperation.IsCompleted || state.History?.State is "ready" or "cached") return false;
+                if (match || historyFetch == null) return false;
+                historyOpen = true;
+                if (!historyOperation.IsCompleted || state.History?.State is "ready" or "cached") return false;
                 BeginHistory(); return false;
             }
             else if (action == "cancel")
@@ -156,7 +185,12 @@ public sealed class UpdateSession : IAsyncDisposable
         lock (gate)
         {
             if (closing) return false;
-            if (action == "match")
+            if (action == "history-media")
+            {
+                if (!match && historyOpen)
+                { mediaCancellation?.Dispose(); mediaCancellation = new(); mediaOperation = FetchMedia(request, mediaCancellation.Token); }
+            }
+            else if (action == "match")
             {
                 if (resume) Status("paused", state.Progress);
                 state = state with { MatchPaused = true }; publish(state);
@@ -168,8 +202,8 @@ public sealed class UpdateSession : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         Task pending;
-        lock (gate) { closing = true; consent = resume = false; cancellation?.Cancel(); historyCancellation?.Cancel(); pending = Task.WhenAll(operation, historyOperation); }
+        lock (gate) { closing = true; consent = resume = false; cancellation?.Cancel(); historyCancellation?.Cancel(); mediaCancellation?.Cancel(); pending = Task.WhenAll(operation, historyOperation, mediaOperation); }
         await pending;
-        lock (gate) { cancellation?.Dispose(); cancellation = null; historyCancellation?.Dispose(); historyCancellation = null; }
+        lock (gate) { cancellation?.Dispose(); cancellation = null; historyCancellation?.Dispose(); historyCancellation = null; mediaCancellation?.Dispose(); mediaCancellation = null; }
     }
 }
