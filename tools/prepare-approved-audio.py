@@ -24,7 +24,7 @@ def main():
     for item in json.loads((SRC/'verified-inputs.json').read_text()):
         assert hashlib.sha256((SRC/item['file']).read_bytes()).hexdigest() == item['sha256'], item
     mapping = {
-        'rocket':'rocket/variant-1.wav', 'explosion':'explosion-short/explosion-1.wav',
+        'rocket':'../rocket-reload-2026-10-31/rocket.wav', 'explosion':'explosion-short/explosion-1.wav',
         'shield-hit':'shield-v2/hit-0-0.wav', 'weapon-pickup':'weapon-pickup/pickup-2.wav',
         'shield-pickup':'shield-charge/charge-2.wav', 'damage-pickup':'bonus-review/damage-3.wav',
         'speed-pickup':'bonus-review/speed-1.wav', 'heal-pickup':'healing-v2/heal-2.wav',

@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
     {
         [Test] public void ShotgunUnlocksOnBoltEndAt33TicksAndPreservesSemiAutoEdge()
         {
-            var p=ProvingProfile.CreateCombatDefault();Assert.That(p.Version,Is.EqualTo(9));
+            var p=ProvingProfile.CreateCombatDefault();Assert.That(p.Version,Is.EqualTo(10));
             Assert.That(p.Get("combat.cooldownSeconds"),Is.EqualTo(.66f));
             var life=new CombatLife("bolt",p);life.CollectWeapon(WeaponId.Shotgun);
             life.Select(WeaponSelection.Shotgun);life.Advance(1);
@@ -39,6 +39,41 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==release),Is.True);
                 migrated.Select(DesignLabHistory.ReleaseId,migrated.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Last().Number);
                 Assert.That(migrated.Selected.Snapshot.Get("combat.cooldownSeconds"),Is.EqualTo(.66f));
+                var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
+        [Test] public void RocketUnlocksOnFirstTickAfterReloadWithoutAutoFire()
+        {
+            var p=ProvingProfile.CreateCombatDefault();Assert.That(p.Get("rocket.cooldownSeconds"),Is.EqualTo(.78f));
+            var life=new CombatLife("reload",p);life.CollectWeapon(WeaponId.RocketLauncher);
+            life.Select(WeaponSelection.RocketLauncher);life.Advance(1);
+            for(int cycle=0;cycle<3;cycle++)
+            {
+                life.Fire(false);Assert.That(life.Fire(true),Is.True);
+                for(int tick=0;tick<38;tick++)life.Advance(.02);
+                life.Fire(false);Assert.That(life.Fire(true),Is.False,"Reload still active at0.76s");
+                life.Advance(.02);Assert.That(life.Read().CooldownRemaining,Is.Zero);
+                Assert.That(life.Fire(true),Is.False,"A fresh trigger press is required");
+            }
+        }
+        [Test] public void RocketReloadTimingPreservesV9HashesAndCustomCooldown()
+        {
+            var current=new LabBundle{Profiles=new System.Collections.Generic.List<ProvingProfile>{ProvingProfile.CreateCombatDefault()}};
+            var old=new LabBundle{Profiles=current.Profiles.Select(p=>(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeRocketReloadTiming",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(p,null)).ToList()};
+            Assert.That(old.Profiles[0].Version,Is.EqualTo(9));Assert.That(old.Get("rocket.cooldownSeconds"),Is.EqualTo(1.2f));
+            Assert.That(old.Descriptors.Single(d=>d.Path=="rocket.cooldownSeconds").Step,Is.EqualTo(.05f));
+            var path=Path.Combine(Path.GetTempPath(),"rocket-timing-"+Guid.NewGuid()+".json");
+            try
+            {
+                var history=new DesignLabHistory(path,old);string release=history.Selected.Hash;
+                history.Create("Custom rocket");var draft=history.Selected.Snapshot;draft.Set("rocket.cooldownSeconds",1.4f);history.Save(draft);string custom=history.Selected.Hash;
+                var migrated=new DesignLabHistory(path,current);Assert.That(migrated.StorageError,Is.Null);
+                Assert.That(migrated.Selected.Snapshot.Get("rocket.cooldownSeconds"),Is.EqualTo(1.4f));
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==custom),Is.True);
+                Assert.That(migrated.Profiles.SelectMany(p=>p.Revisions).Any(r=>r.Hash==release),Is.True);
+                migrated.Select(DesignLabHistory.ReleaseId,migrated.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions.Last().Number);
+                Assert.That(migrated.Selected.Snapshot.Get("rocket.cooldownSeconds"),Is.EqualTo(.78f));
                 var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);Assert.That(reopened.Selected.Hash,Is.EqualTo(migrated.Selected.Hash));
             }
             finally{if(File.Exists(path))File.Delete(path);}
@@ -75,7 +110,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 Assert.That(life.Fire(true),Is.True);life.ClearHeldInput();int ticks=0;
                 do{life.Advance(.02f);life.ClearHeldInput();ticks++;}while(!life.Fire(true)&&ticks<300);
                 float damage=weapon==WeaponId.Plasma?24:combat.Get(weapon==WeaponId.Rifle?"rifle.damage":weapon==WeaponId.Shotgun?"shot.damage":"rocket.maximumDamage");
-                int expected=weapon==WeaponId.Rifle?5:weapon==WeaponId.Shotgun?33:weapon==WeaponId.RocketLauncher?60:9;
+                int expected=weapon==WeaponId.Rifle?5:weapon==WeaponId.Shotgun?33:weapon==WeaponId.RocketLauncher?39:9;
                 Assert.That(ticks,Is.EqualTo(expected));
                 TestContext.WriteLine($"DPS weapon={weapon} damage={damage} ticks={ticks} period={ticks*.02f:F3}s actualDps={damage/(ticks*.02f):F4} all-projectiles-hit, no boost");
             }

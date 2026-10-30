@@ -3,9 +3,20 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Reconstruct the exact v9 registry; old snapshots and custom tuning remain immutable.
+        internal ProvingProfile BeforeRocketReloadTiming()
+        {
+            if(id!="unity-combat-state-v1"||version<10)return this;
+            var p=DetachedCopy();p.version=9;
+            p.RebalanceDefault("rocket.cooldownSeconds",1.2f);
+            var d=p.FindDescriptor("rocket.cooldownSeconds");d.Step=.05f;
+            d.Description="Минимальная пауза между отдельными нажатиями огня.";
+            return p;
+        }
         // Preserve historical tuning and hashes while the new default follows the authored bolt.
         internal ProvingProfile BeforeShotgunBoltTiming()
         {
+            if(id=="unity-combat-state-v1"&&version>=10)return BeforeRocketReloadTiming().BeforeShotgunBoltTiming();
             if(id!="unity-combat-state-v1"||version<9)return this;
             var p=DetachedCopy();p.version=8;
             p.RebalanceDefault("combat.cooldownSeconds",.7f);

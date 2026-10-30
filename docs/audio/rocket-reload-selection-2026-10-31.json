@@ -1,0 +1,17 @@
+{
+  "selected_preview": "planning main@f6d7b9ee/rocket-reload-v1-20261031/02-servo-single.wav",
+  "source_sha256": "54b8c4baacdae0006a552c4898bae05fee12eb1ba8848f1863412f081fb0e052",
+  "crop_frames": [
+    7200,
+    44151
+  ],
+  "runtime_sha256": "3f56cc106674b9efca6756e040d369b978cc4664808b04c523e56a55d8f72745",
+  "reload_source_sha256": "c1c5dcb1da309d004835ea24ff74d596d7fb6990f6e8cd9415daf359059f7193",
+  "audio_end_seconds": 0.7698125,
+  "cooldown_seconds": 0.78,
+  "tick_seconds": 0.02,
+  "ticks": 39,
+  "extra_tick_quantization_seconds": 0.010187500000000016,
+  "pcm_equal": true,
+  "reference_pcm_used": false
+}

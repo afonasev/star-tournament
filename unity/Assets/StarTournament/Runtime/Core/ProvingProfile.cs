@@ -499,7 +499,7 @@ namespace StarTournament.ProvingGround
         /// <summary>Scene-independent lifecycle tuning, consumed by the native session adapter.</summary>
         public static ProvingProfile CreateCombatDefault()
         {
-            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 9 };
+            var profile = new ProvingProfile { id = "unity-combat-state-v1", version = 10 };
             profile.Add("combat.maximumHealth", "combat", "Здоровье", "Полное здоровье каждой новой жизни.", "health", 1, 1000, 1, 100);
             profile.Add("armor.maximum", "armor-pickup", "Максимум брони", "Верхняя граница брони участника.", "armor", 1, 1000, 1, 100);
             profile.Add("armor.pickupAmount", "armor-pickup", "Броня от бонуса", "Количество брони от одного центрального бонуса.", "armor", 1, 1000, 1, 50);
