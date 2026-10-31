@@ -10,6 +10,9 @@ namespace StarTournament.ProvingGround
     {
         sealed class Patch {public GameObject Root;public Mesh Mesh;public int Participant,Life;public double Born;public bool Shield;}
         readonly NativeCombatSession session;readonly GameObject[] bodies;readonly ProvingProfile profile,blood;
+        readonly ImmutableBodyHitPoseCache[] poseCaches;
+        bool reusePoses=true;
+        static readonly Unity.Profiling.ProfilerMarker ObserveMarker=new Unity.Profiling.ProfilerMarker("Hit.Feedback.Observe");
         readonly double[] lastBlood,lastShield;readonly List<Patch> patches=new List<Patch>();
         readonly MaterialPropertyBlock block=new MaterialPropertyBlock();
         Material bloodMaterial,shieldMaterial;bool disposed;
@@ -17,11 +20,29 @@ namespace StarTournament.ProvingGround
         public HitFeedbackPresentation(NativeCombatSession session,GameObject[] bodies,ProvingProfile tuning,ProvingProfile bloodProfile)
         {
             this.session=session;this.bodies=bodies;profile=tuning.DetachedCopy();blood=bloodProfile.DetachedCopy();
+            poseCaches=new ImmutableBodyHitPoseCache[bodies.Length];
             lastBlood=new double[bodies.Length];lastShield=new double[bodies.Length];
             for(int i=0;i<bodies.Length;i++){lastBlood[i]=lastShield[i]=double.NegativeInfinity;bodies[i].GetComponent<TrooperVisual>()?.ConfigureHitFeedback(profile);}
             session.Damaged+=Observe;session.StateRestored+=Clear;
         }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+        long freshProjections,freshFinds,surfaceRequests;
+        public long ObserveTicks {get;private set;}
+        public void SetPoseReuseForDiagnostics(bool enabled){reusePoses=enabled;foreach(var cache in poseCaches)cache?.Clear();}
+        public long[] PoseReuseDiagnostics()
+        {long builds=freshProjections,finds=freshFinds,reuses=0;foreach(var cache in poseCaches)if(cache!=null){builds+=cache.ProjectionBuilds;finds+=cache.FindCalls;reuses+=cache.ContactReuses;}return new[]{builds,finds,reuses,surfaceRequests};}
+#endif
         public void Observe(DamageNotice notice)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+            long began=System.Diagnostics.Stopwatch.GetTimestamp();
+            try{using(ObserveMarker.Auto())ObserveCore(notice);}
+            finally{ObserveTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-began;}
+#else
+            using(ObserveMarker.Auto())ObserveCore(notice);
+#endif
+        }
+        void ObserveCore(DamageNotice notice)
         {
             int p=notice.Participant;
             if(disposed||p<0||p>=bodies.Length||!bodies[p]||!notice.Impact.Valid||notice.HealthLost+notice.ArmorLost<=0)return;
@@ -31,7 +52,20 @@ namespace StarTournament.ProvingGround
             bool shield=notice.ArmorLost>0&&notice.Time-lastShield[p]>=profile.Get("hit.shieldInterval");
             if(!stain&&!shield)return;
             // Rate-limit the shot, not each pellet: one shot may create several bounded patches.
-            var projection=new SkinnedContactPatch.Projection(bodies[p]);
+            // Actor GLB topology is immutable; only its animated pose changes.
+            SkinnedContactPatch.Projection projection=null;ImmutableBodyHitPoseCache pose=null;
+            if(reusePoses)
+            {
+                if(poseCaches[p]==null||!ReferenceEquals(poseCaches[p].Body,bodies[p]))poseCaches[p]=new ImmutableBodyHitPoseCache(bodies[p]);
+                pose=poseCaches[p];
+            }
+            else
+            {
+                projection=new SkinnedContactPatch.Projection(bodies[p],immutableTopology:true);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+                freshProjections++;
+#endif
+            }
             bool placed=false;
             if(notice.Contacts!=null&&notice.Contacts.Count>0)
             {
@@ -44,7 +78,10 @@ namespace StarTournament.ProvingGround
             bool Place(FatalImpact impact)
             {
                 if(!impact.Valid)return false;
-                var contact=projection.Find(impact.Point,impact.Direction);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+                surfaceRequests++;if(pose==null)freshFinds++;
+#endif
+                var contact=pose!=null?pose.Find(impact.Point,impact.Direction):projection.Find(impact.Point,impact.Direction);
                 if(contact==null)return false;
                 if(stain)Add(contact,notice,false);
                 if(shield)Add(contact,notice,true);
@@ -95,6 +132,9 @@ namespace StarTournament.ProvingGround
                 if(!patch.Root||life.Life!=patch.Life||life.Dead||session.Time-patch.Born>=profile.Get(patch.Shield?"hit.shieldSeconds":"hit.bloodSeconds")){Remove(i);continue;}
                 RenderPatch(patch,session.Time);
             }
+            // FixedUpdate notices are complete. Release large posed arrays after rendering;
+            // only the small signature buffers survive until the next frame.
+            foreach(var cache in poseCaches)cache?.Clear();
         }
         void Remove(int index)
         {
@@ -106,6 +146,7 @@ namespace StarTournament.ProvingGround
         public void ClearParticipant(int participant)
         {
             for(int i=patches.Count-1;i>=0;i--)if(patches[i].Participant==participant)Remove(i);
+            poseCaches[participant]?.Clear();
             lastBlood[participant]=lastShield[participant]=double.NegativeInfinity;bodies[participant].GetComponent<TrooperVisual>()?.ClearHit();
         }
         public void Clear(){for(int i=0;i<bodies.Length;i++)ClearParticipant(i);}

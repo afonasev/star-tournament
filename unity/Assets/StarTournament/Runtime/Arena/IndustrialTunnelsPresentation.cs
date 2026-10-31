@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
 {
     /// <summary>Static renderer-only service kit. Canonical solids remain the sole physics/nav owner.</summary>
-    public sealed partial class IndustrialTunnelsPresentation:MonoBehaviour
+    public sealed partial class IndustrialTunnelsPresentation:MonoBehaviour,IArenaMeshOwner
     {
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
@@ -28,17 +28,19 @@ namespace StarTournament.ProvingGround
             warm=Emissive("Amber service lamp",new Color(1,.56f,.19f));white=Emissive("White base luminaire",new Color(.86f,.94f,1));
             mold=new Material(Shader.Find("StarTournament/TunnelGrime")){name="Lower wall damp / mold"};mold.SetFloat("_Opacity",P("surface.mold"));owned.Add(mold);
             CreateSectorMaterials();
-            int decorated=0;
+            var slice=new LoadingWorkSlice();float tile=P("surface.tile");
+            var targets=new ArenaPresentationLookup(transform.parent);
             foreach(var s in definition.Solids)
             {
-                if(decorated++%16==0)yield return null;
-                var target=transform.parent.Find(s.Id);var renderer=target.GetComponent<Renderer>();
+                if(slice.Expired){yield return null;slice.Restart();}
+                var target=targets.Find(s.Id);var renderer=target.GetComponent<Renderer>();
                 if(s.Surface=="tunnel-grille")
                 {
                     renderer.enabled=false;Grille(s.Position,s.Size);continue;
                 }
-                var mesh=Instantiate(target.GetComponent<MeshFilter>().sharedMesh);owned.Add(mesh);var vertices=mesh.vertices;var normals=mesh.normals;var uv=mesh.uv;
-                for(int i=0;i<uv.Length;i++){var v=Vector3.Scale(vertices[i],s.Size);var n=normals[i];uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/P("surface.tile");}
+                var source=target.GetComponent<MeshFilter>().sharedMesh;var data=targets.Read(source);
+                var mesh=Instantiate(source);owned.Add(mesh);var vertices=data.Vertices;var normals=data.Normals;var uv=(Vector2[])data.Uv.Clone();
+                for(int i=0;i<uv.Length;i++){var v=Vector3.Scale(vertices[i],s.Size);var n=normals[i];uv[i]=(Mathf.Abs(n.y)>.5f?new Vector2(v.x,v.z):Mathf.Abs(n.x)>.5f?new Vector2(v.z,v.y):new Vector2(v.x,v.y))/tile;}
                 mesh.uv=uv;target.GetComponent<MeshFilter>().sharedMesh=mesh;renderer.sharedMaterial=s.Material=="floor"?floor:steel;
                 if(s.Id.StartsWith("shell-",StringComparison.Ordinal))WallDetails(s,definition);
             }
@@ -62,6 +64,7 @@ namespace StarTournament.ProvingGround
                 var go=new GameObject(entry.Key.name);go.transform.SetParent(transform,false);var mesh=new Mesh{name=go.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(entry.Value.ToArray());owned.Add(mesh);
                 go.AddComponent<MeshFilter>().sharedMesh=mesh;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=entry.Key;r.shadowCastingMode=entry.Key==white||entry.Key==warm||entry.Key==mold?ShadowCastingMode.Off:ShadowCastingMode.On;
             }
+            batches.Clear();cube=null;tube=null;
         }
         Material Material(string name,Color c,Texture texture=null,VisualMaterialRole role=VisualMaterialRole.Wall)
         {var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name,color=c};m.SetFloat("_Metallic",P("surface.metallic"));m.SetFloat("_Smoothness",P("surface.smoothness"));if(texture)m.SetTexture("_BaseMap",texture);owned.Add(m);NativeVisualMaterials.Register(this,m,role);return m;}
@@ -147,5 +150,8 @@ namespace StarTournament.ProvingGround
             var m=new Mesh{name="Tunnel twelve-sided pipe"};m.SetVertices(v);m.SetUVs(0,uv);m.SetTriangles(t,0);m.RecalculateNormals();return m;
         }
         void OnDestroy(){RenderSettings.ambientLight=oldAmbient;RenderSettings.ambientMode=oldMode;foreach(var o in owned)if(o)DestroyImmediate(o);}
+        IEnumerable<Mesh> IArenaMeshOwner.ReadOwnedMeshes()=>ArenaMeshResidency.OwnedMeshes(owned);
+        IEnumerable<Mesh> IArenaMeshOwner.ReadDiagnosticMeshes()=>System.Array.Empty<Mesh>();
+        void IArenaMeshOwner.ReleaseUnusedMeshes(HashSet<int> referenced)=>ArenaMeshResidency.ReleaseUnused(owned,referenced);
     }
 }

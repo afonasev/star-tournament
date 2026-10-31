@@ -13,7 +13,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             internal Vector3[] Baked;
             internal int[] Triangles;
         }
-        public static Contact Find(GameObject body,Vector3 point,Vector3 direction)
+        public static Contact Find(GameObject body,Vector3 point,Vector3 direction,bool preciseNormals=false)
         {
             if(!body||direction.sqrMagnitude==0)return null;
             direction.Normalize();Contact closest=null,fallback=null;float nearest=float.PositiveInfinity,fallbackDistance=float.PositiveInfinity;
@@ -31,7 +31,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     var a=skin.transform.TransformPoint(local[triangles[i]]);
                     var b=skin.transform.TransformPoint(local[triangles[i+1]]);
                     var c=skin.transform.TransformPoint(local[triangles[i+2]]);
-                    var normal=Vector3.Cross(b-a,c-a).normalized;
+                    var crossNormal=Vector3.Cross(b-a,c-a);
+                    var normal=preciseNormals&&crossNormal.sqrMagnitude>0?crossNormal/crossNormal.magnitude:crossNormal.normalized;
+                    if(preciseNormals&&normal.sqrMagnitude==0)continue;
                     // Contact patches belong to the entering side, not the exit/back surface.
                     if(Vector3.Dot(normal,direction)>0)continue;
                     if(closest==null)
@@ -68,7 +70,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             if(u<0||u>1)return false;var q=Vector3.Cross(start,ab);float v=Vector3.Dot(direction,q)*inverse;
             if(v<0||u+v>1)return false;distance=Vector3.Dot(ac,q)*inverse;return distance>=0;
         }
-        public static GameObject Create(Contact contact,float diameter,Material material,string name,out Mesh mesh)
+        public static GameObject Create(Contact contact,float diameter,Material material,string name,out Mesh mesh,bool preciseNormals=false)
         {
             mesh=null;if(contact==null||diameter<=0)return null;
             var skin=contact.Skin;var source=skin.sharedMesh;
@@ -82,7 +84,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 int a=contact.Triangles[i],b=contact.Triangles[i+1],c=contact.Triangles[i+2];
                 var wa=skin.transform.TransformPoint(contact.Baked[a]);var wb=skin.transform.TransformPoint(contact.Baked[b]);var wc=skin.transform.TransformPoint(contact.Baked[c]);
-                var normal=Vector3.Cross(wb-wa,wc-wa).normalized;
+                var crossNormal=Vector3.Cross(wb-wa,wc-wa);
+                var normal=preciseNormals&&crossNormal.sqrMagnitude>0?crossNormal/crossNormal.magnitude:crossNormal.normalized;
                 if(Vector3.Dot(normal,contact.Normal)<.35f)continue;
                 // A surface triangle must intersect the contact sphere. Bounds alone would leak across limbs.
                 var nearest=ClosestPoint(contact.Point,wa,wb,wc);

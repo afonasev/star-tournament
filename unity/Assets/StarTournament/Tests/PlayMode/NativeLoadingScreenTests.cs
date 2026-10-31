@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed class NativeLoadingScreenTests
@@ -75,7 +76,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
             var ground=scene.GetRootGameObjects().SelectMany(x=>x.GetComponentsInChildren<ProvingGround>()).Single();
-            var buttons=ground.GetComponentsInChildren<Button>(true);buttons.Single(b=>b.name=="main-action-0").onClick.Invoke();
+            var buttons=ground.GetComponentsInChildren<Button>(true);buttons.Single(b=>b.name=="main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,4);
             // Existing explicit all-AI diagnostic action exercises the same UI loading path.
             var begin=buttons.Single(b=>b.name=="Диагностика четырёх камер · без управления");
             begin.onClick.Invoke();Assert.That(ground.IsLoading,Is.True);Assert.That(ground.Running,Is.False);
@@ -102,8 +103,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var ground=Ground();
             pad=InputSystem.AddDevice<Gamepad>();
             typeof(ProvingGround).GetField("menuDevice",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(ground,pad);
-            B(ground,"main-action-0").onClick.Invoke();B(ground,"setup-next").onClick.Invoke();B(ground,"setup-next").onClick.Invoke();
-            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.North));yield return null;yield return null;
+            B(ground,"main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,2);ground.SetSeatAi(1,true);
+            var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+            Assert.That(input.Assign(0,pad),Is.True);yield return null;
+            B(ground,"roster-card-0").onClick.Invoke();yield return null;
+            B(ground,"inline-identity-0").onClick.Invoke();yield return null;
+            B(ground,"inline-profile-0-0").onClick.Invoke();yield return null;
+            InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;
             InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;
             Assert.That(B(ground,"Начать — четыре игрока").interactable,Is.True);
         }
@@ -124,7 +130,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator MissingActorAssetRecoversEditableSetupAndCanRetry()
         {
             yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var ground=Ground();
-            B(ground,"main-action-0").onClick.Invoke();var prefab=ground.TrooperBodyPrefab;ground.TrooperBodyPrefab=null;
+            B(ground,"main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,4);var prefab=ground.TrooperBodyPrefab;ground.TrooperBodyPrefab=null;
+            LogAssert.Expect(LogType.Exception,new Regex("^InvalidOperationException: Trooper assets missing; run Prepare in Editor"));
             B(ground,"Диагностика четырёх камер · без управления").onClick.Invoke();yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.Running,Is.False);Assert.That(ground.LoadingScreen.Visible,Is.False);
             Assert.That(ground.GetComponentsInChildren<Text>().Any(t=>t.text.Contains("Trooper assets missing")),Is.True);
@@ -134,12 +141,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator FailedSpawnKeepsPartialCamerasDisabledDuringRosterEditingAndRetry()
         {
-            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var ground=Ground();B(ground,"main-action-0").onClick.Invoke();
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var ground=Ground();B(ground,"main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,4);
             var cameras=(Camera[])typeof(ProvingGround).GetField("cameras",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
             var old=cameras[0];B(ground,"Диагностика четырёх камер · без управления").onClick.Invoke();
             float deadline=Time.realtimeSinceStartup+120;
             while(cameras[0]==null||cameras[0]==old){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
             var arena=ground.GetComponentInChildren<ProvingArena>();
+            LogAssert.Expect(LogType.Exception,new Regex("^InvalidOperationException: Нет безопасного размещения: NoValidPlacement"));
             typeof(ProvingArena).GetProperty("Spawns").SetValue(arena,Array.Empty<Vector3>());
             yield return NativeLoadingTestScene.Wait(ground);Assert.That(ground.Running,Is.False);
             typeof(ProvingGround).GetMethod("SetSeatCount",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,new object[]{2});
@@ -151,7 +159,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return SceneManager.LoadSceneAsync("ProvingGround",LoadSceneMode.Additive);scene=SceneManager.GetSceneByName("ProvingGround");
             yield return null;yield return SceneManager.UnloadSceneAsync(scene);scene=default;
-            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var ground=Ground();B(ground,"main-action-0").onClick.Invoke();
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var ground=Ground();B(ground,"main-action-0").onClick.Invoke();NativeSetupFixture.UnboundHumans(ground,4);
             B(ground,"Диагностика четырёх камер · без управления").onClick.Invoke();yield return null;yield return null;
             yield return SceneManager.UnloadSceneAsync(scene);scene=default;yield return null;
             Assert.That(UnityEngine.Object.FindObjectsByType<NativeLoadingScreen>(FindObjectsSortMode.None),Is.Empty);
@@ -168,7 +176,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 if(!string.IsNullOrEmpty(source))File.Copy(source,path);
                 else
                 {
-                    yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");var initial=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(Ground());
+                    yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");yield return NativeLoadingTestScene.WaitLabHistory(Ground());var initial=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(Ground());
                     var bundle=((LabBundle)typeof(DesignLabHistory).GetField("shipped",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(initial)).Clone();
                     yield return SceneManager.UnloadSceneAsync(scene);scene=default;
                     var history=new DesignLabHistory(path,bundle,releases:LabReleaseCatalog.Load(),resetToLatestDefault:true,persistMigration:false);history.Create("Loading QA");

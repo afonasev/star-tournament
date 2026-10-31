@@ -70,7 +70,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var view=UnityEngine.Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Trooper/TrooperArms.prefab"),camera.transform);
             try
             {
-                var visual=view.AddComponent<TrooperVisual>();var profile=ProvingProfile.CreateTrooperDefault();
+                var visual=view.AddComponent<TrooperVisual>();var profile=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeStableArmEntry",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);
                 visual.Initialize(TrooperVisual.ClipNames.Select(n=>UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/StarTournament/Trooper/"+n+".anim")).ToArray(),profile,true);
                 var type=typeof(TrooperVisual).Assembly.GetType("StarTournament.ProvingGround.FirstPersonWeaponSwitch");
                 var transition=Activator.CreateInstance(type,new object[]{view,camera});var apply=type.GetMethod("Apply");
@@ -94,7 +94,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var mesh=new Mesh();
             try
             {
-                var profile=ProvingProfile.CreateTrooperDefault();profile.Set("view.switchShoulderDegrees",shoulderDegrees);profile.Set("view.switchElbowDegrees",elbowDegrees);
+                var profile=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeStableArmEntry",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ProvingProfile.CreateTrooperDefault(),null);profile.Set("view.switchShoulderDegrees",shoulderDegrees);profile.Set("view.switchElbowDegrees",elbowDegrees);
                 var visual=view.AddComponent<TrooperVisual>();visual.Initialize(TrooperVisual.ClipNames.Select(n=>UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/StarTournament/Trooper/"+n+".anim")).ToArray(),profile,true);
                 var type=typeof(TrooperVisual).Assembly.GetType("StarTournament.ProvingGround.FirstPersonWeaponSwitch");var transition=Activator.CreateInstance(type,new object[]{view,camera});var apply=type.GetMethod("Apply");
                 foreach(var skin in view.GetComponentsInChildren<SkinnedMeshRenderer>())

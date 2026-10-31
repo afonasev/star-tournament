@@ -18,8 +18,8 @@ namespace StarTournament.ProvingGround
             if(!IsReady||IsLoading)return;
             if(repeating ? !diagnostic&&!input.Ready : ((!diagnostics&&(!input.Ready||!IdentitiesReady()))||!ValidSetup()))return;
             var configuration=repeating?frozenConfiguration:Configuration;
-            var mode=repeating?frozenRoster.Mode:SetupMode;
-            var count=repeating?Composition.ParticipantCount:RosterTotal;
+            var mode=repeating?frozenRoster.Mode:TrainingSelected?NativeMatchMode.Training:SetupMode;
+            var count=repeating?(frozenRoster.Mode==NativeMatchMode.Training?Composition.LocalCount:Composition.ParticipantCount):RosterTotal;
             loadingScreen.ShowMatch(AuthoredArenaCatalog.Name(repeating?frozenMatchArena.Definition.MapId:SelectedMapId),mode,count,configuration);
             updateBridge?.PauseBeforeMatch();
             worldReady=false;gameAudio?.StopEffects();
@@ -78,6 +78,7 @@ namespace StarTournament.ProvingGround
             if(failure==null)yield break;
             if(match)
             {
+                Debug.LogException(failure);
                 // Recover UI without reconstructing a possibly damaged projection/actor.
                 try
                 {

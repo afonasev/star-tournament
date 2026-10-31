@@ -84,9 +84,9 @@ namespace StarTournament.ProvingGround
         public void ShowMatch(string map,NativeMatchMode mode,int count,NativeMatchConfiguration configuration)
         {
             PositionIndicator(false);gameObject.SetActive(true);startup.SetActive(false);match.SetActive(true);started=Time.unscaledTime;failed=false;
-            mapName.text=map;modeLabel.text=mode==NativeMatchMode.Teams?"Командный матч":"Каждый за себя";
+            mapName.text=map;modeLabel.text=mode==NativeMatchMode.Training?"Свободная тренировка":mode==NativeMatchMode.Teams?"Командный матч":"Каждый за себя";
             participants.text=count.ToString(CultureInfo.InvariantCulture);
-            targetGroup.SetActive(configuration.TargetEnabled);target.text=configuration.TargetPoints.ToString("N0",CultureInfo.GetCultureInfo("ru-RU"))+" очков";
+            targetGroup.SetActive(mode!=NativeMatchMode.Training&&configuration.TargetEnabled);target.text=configuration.TargetPoints.ToString("N0",CultureInfo.GetCultureInfo("ru-RU"))+" очков";
             status.text="Подготовка арены";
         }
         public void ShowError(string message){failed=true;status.text=message;}

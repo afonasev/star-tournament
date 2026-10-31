@@ -8,18 +8,32 @@ namespace StarTournament.ProvingGround
     {
         static readonly Dictionary<string,Material> rifleMaterials=new Dictionary<string,Material>();
         Renderer shotgun;
+        public ShotgunAmmoDisplay ShotgunDisplay {get;private set;}
+        public ForgeAmmoDisplay ForgeDisplay {get;private set;}
+        public PulseAmmoDisplay PulseDisplay {get;private set;}
+        public RifleAmmoDisplay RifleDisplay {get;private set;}
+        Renderer batteryRenderer;
+        Material batteryMaterial;
+        public float CutterChargeFraction {get;private set;}=0;
         GameObject rifle,pulse,cutter,plasma;
         Transform rifleMuzzle,cutterMuzzle,pulseMuzzle,plasmaMuzzle;
+        public float PulseGripScale { get; private set; }=1;
         public float PlasmaViewScale { get; private set; }=1;
         public Vector3 PlasmaMuzzle=>plasmaMuzzle?plasmaMuzzle.position:transform.position;
         public Vector3 PulseMuzzle=>pulseMuzzle?pulseMuzzle.position:transform.position;
+        public ProvingProfile CutterGripProfile {get;private set;}
         public Vector3 CutterMuzzle=>cutterMuzzle?cutterMuzzle.position:transform.position;
         public Vector3 RifleMuzzle => rifleMuzzle ? rifleMuzzle.position : transform.position;
+        // The imported marker locates the bore, but retains Blender's 90-degree
+        // empty rotation. The rifle mesh is authored along its own +Z barrel axis.
+        public Vector3 RifleDirection => rifle ? rifle.transform.forward : transform.forward;
         public void Initialize(GameObject prefab,ProvingProfile profile,GameObject pulsePrefab=null,GameObject cutterPrefab=null,ProvingProfile cutterProfile=null,GameObject plasmaPrefab=null,ProvingProfile plasmaProfile=null,GameObject plasmaLod1Prefab=null)
         {
             if(!prefab)throw new System.ArgumentException("Rifle GLB missing",nameof(prefab));
             var mount=GetComponentsInChildren<Transform>(true).Single(x=>x.name=="trooper:rig:weapon-mount");
             shotgun=GetComponentsInChildren<Renderer>(true).Single(x=>x.name=="weapon:joined");
+            ShotgunDisplay=new GameObject("shotgun-ammo-display").AddComponent<ShotgunAmmoDisplay>();
+            ShotgunDisplay.Initialize(shotgun.transform,profile,gameObject.layer);
             rifle=Object.Instantiate(prefab,mount);rifle.name="automatic-rifle";
             rifle.transform.localPosition=Vector3.zero;rifle.transform.localRotation=Quaternion.identity;
             // The imported grip already carries the authored rig scale; a second correction made the model fill the viewport.
@@ -29,27 +43,48 @@ namespace StarTournament.ProvingGround
             {
                 if(gameObject.layer>=15)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
                 var imported=renderer.sharedMaterials;
-                for(int i=0;i<imported.Length;i++)imported[i]=RifleMaterial(imported[i]?.name);
+                // COBALT carries its authored PBR maps and distinct metal/rubber finishes.
+                // Retain legacy mapping only for historical rifle assets.
+                for(int i=0;i<imported.Length;i++)
+                    if(imported[i] && !imported[i].name.StartsWith("cobalt",System.StringComparison.Ordinal))
+                        imported[i]=RifleMaterial(imported[i].name);
                 renderer.sharedMaterials=imported;
             }
+            RifleDisplay=new GameObject("cobalt-ammo-display").AddComponent<RifleAmmoDisplay>();
+            RifleDisplay.Initialize(rifle.transform,profile,gameObject.layer);
             rifleMuzzle=rifle.GetComponentsInChildren<Transform>(true).Single(x=>x.name=="rifle-muzzle");
             if(pulsePrefab)
             {
                 pulse=Object.Instantiate(pulsePrefab,mount);pulse.name="pulse-launcher";
                 pulse.transform.localPosition=Vector3.zero;pulse.transform.localRotation=Quaternion.identity;
-                pulse.transform.localScale=Vector3.one*profile.Get("presentation.rocketModelScale");
+                var rig=GetComponent<TrooperVisual>()?.Tuning;
+                PulseGripScale=rig!=null&&rig.Version>=32?rig.Get("grip.crimson.detail.scale"):1;
+                pulse.transform.localScale=Vector3.one*profile.Get("presentation.rocketModelScale")*PulseGripScale;
                 pulseMuzzle=pulse.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="pulse-muzzle");
+                PulseDisplay=new GameObject("pulse-ammo-display").AddComponent<PulseAmmoDisplay>();
+                PulseDisplay.Initialize(pulse.transform,profile,gameObject.layer);
                 foreach(var t in pulse.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
                 foreach(var r in pulse.GetComponentsInChildren<Renderer>(true))
                 { if(gameObject.layer>=15)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off; }
             }
             if(cutterPrefab)
             {
-                var cp=cutterProfile??ProvingProfile.CreateCutterDefault();
+                var cp=cutterProfile??ProvingProfile.CreateCutterDefault();CutterGripProfile=cp;
                 cutter=Object.Instantiate(cutterPrefab,mount);cutter.name="cutter";
                 cutter.transform.localPosition=new Vector3(cp.Get("cutter.modelX"),cp.Get("cutter.modelY"),cp.Get("cutter.modelZ"));
                 cutter.transform.localRotation=Quaternion.Euler(cp.Get("cutter.modelPitch"),cp.Get("cutter.modelYaw"),cp.Get("cutter.modelRoll"));cutter.transform.localScale=Vector3.one*cp.Get("cutter.modelScale");
                 cutterMuzzle=cutter.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="cutter-muzzle");
+                batteryRenderer=cutter.GetComponentsInChildren<Renderer>(true).SingleOrDefault(r=>r.name=="SEAM battery charge");
+                if(batteryRenderer)
+                {
+                    var defaults=ProvingProfile.CreateCutterDefault();
+                    float Read(string key){var path="cutter.seam.battery."+key;return cp.Descriptors.Any(d=>d.Path==path)?cp.Get(path):defaults.Get(path);}
+                    batteryMaterial=new Material(Resources.Load<Shader>("CutterBattery")){name="SEAM charge display"};
+                    batteryMaterial.SetColor("_ChargedColor",new Color(Read("red"),Read("green"),Read("blue"))*Read("intensity"));
+                    batteryMaterial.SetColor("_DarkColor",new Color(Read("darkLevel"),Read("darkLevel"),Read("darkLevel"),1));
+                    batteryMaterial.SetFloat("_Charge",0);batteryRenderer.sharedMaterial=batteryMaterial;
+                    batteryRenderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;batteryRenderer.receiveShadows=false;
+                }
                 foreach(var t in cutter.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
                 foreach(var renderer in cutter.GetComponentsInChildren<Renderer>(true))if(gameObject.layer>=15)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
@@ -61,12 +96,23 @@ namespace StarTournament.ProvingGround
                 PlasmaViewScale=gameObject.layer>=15?pp.Get("plasma.viewScale"):1;
                 plasma.transform.localScale=Vector3.one*pp.Get("plasma.modelScale")*PlasmaViewScale;
                 plasmaMuzzle=plasma.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="forge-muzzle");
+                ForgeDisplay=new GameObject("forge-ammo-display").AddComponent<ForgeAmmoDisplay>();
+                ForgeDisplay.Initialize(plasma.transform,profile,gameObject.layer);
                 if(gameObject.layer<15)AddForgeLod(plasma,plasmaLod1Prefab);
                 foreach(var t in plasma.GetComponentsInChildren<Transform>(true))t.gameObject.layer=gameObject.layer;
                 foreach(var r in plasma.GetComponentsInChildren<Renderer>(true))if(gameObject.layer>=15)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             }
             Show(WeaponId.Rifle);
         }
+        // Only the authoritative energy ratio enters presentation. The asset/shader owns
+        // exactly sixteen cells; changing their number would require authoring a new cartridge.
+        public void UpdateCutterCharge(double energy,float capacity)
+        {
+            float next=capacity>0?Mathf.Clamp01((float)(energy/capacity)):0;
+            if(next==CutterChargeFraction)return;
+            CutterChargeFraction=next;if(batteryMaterial)batteryMaterial.SetFloat("_Charge",next);
+        }
+        void OnDestroy(){ForgeDisplay?.ReleaseResources();if(batteryMaterial)Destroy(batteryMaterial);}
         public static void AddForgeLod(GameObject root,GameObject lowPrefab)
         {
             if(!lowPrefab)return;
@@ -77,16 +123,24 @@ namespace StarTournament.ProvingGround
         }
         public void HideForCorpse()
         {
+            ShotgunDisplay?.SetVisible(false);
+            PulseDisplay?.SetVisible(false);
+            ForgeDisplay?.SetVisible(false);
+            RifleDisplay?.SetVisible(false);
             foreach(var renderer in GetComponentsInChildren<Renderer>(true))
-                if(renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"))renderer.enabled=false;
+                if(renderer.GetComponent<ShotgunAmmoDisplay>()!=null||renderer.name=="weapon:joined"||renderer.transform.GetComponentsInParent<Transform>(true).Any(t=>t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"))renderer.enabled=false;
         }
         public WeaponId ShownWeapon { get; private set; }
         public void Show(WeaponId weapon)
         {
             ShownWeapon=weapon;
             if(shotgun)shotgun.enabled=weapon==WeaponId.Shotgun;
+            ShotgunDisplay?.SetVisible(weapon==WeaponId.Shotgun);
+            PulseDisplay?.SetVisible(weapon==WeaponId.RocketLauncher);
             if(rifle)rifle.SetActive(weapon==WeaponId.Rifle);
+            RifleDisplay?.SetVisible(weapon==WeaponId.Rifle);
             if(plasma)plasma.SetActive(weapon==WeaponId.Plasma);
+            ForgeDisplay?.SetVisible(weapon==WeaponId.Plasma);
             if(cutter)cutter.SetActive(weapon==WeaponId.Cutter);
             if(pulse)pulse.SetActive(weapon==WeaponId.RocketLauncher);
         }
@@ -97,7 +151,7 @@ namespace StarTournament.ProvingGround
             if(pulse)renderers.AddRange(pulse.GetComponentsInChildren<Renderer>(true));
             if(plasma)renderers.AddRange(plasma.GetComponentsInChildren<Renderer>(true));
             if(cutter)renderers.AddRange(cutter.GetComponentsInChildren<Renderer>(true));
-            foreach(var renderer in renderers)
+            foreach(var renderer in renderers.Where(r=>r!=batteryRenderer&&r.GetComponent<ForgeAmmoDisplay>()==null&&r.GetComponent<PulseAmmoDisplay>()==null&&r.GetComponent<RifleAmmoDisplay>()==null))
                 for(int slot=0;slot<renderer.sharedMaterials.Length;slot++)
                 {
                     var material=renderer.sharedMaterials[slot];if(!material)continue;
@@ -124,13 +178,18 @@ namespace StarTournament.ProvingGround
     public sealed class CombatPresentation : System.IDisposable
     {
         sealed class Corpse { public int Participant; public GameObject Root; public double Expires; public TrooperVisual Visual; public DeathRagdoll Ragdoll; }
-        sealed class PelletEffect { public GameObject Root, Trace; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
+        sealed class PelletEffect { public GameObject Root, Trace, Core; public ParticleSystem[] ImpactParticles; public float ImpactTime; public PelletContact Surface; public Vector3 Start, TraceEnd, End, Normal; public double Begins; public bool Contact, Emitted; public int Shooter, Barrel; public WeaponId Weapon; }
         readonly NativeCombatSession session;
         readonly BloodPresentation bloodPresentation;
         readonly RocketPresentation rocketPresentation;
         internal RocketPresentation RocketEffectsForReview=>rocketPresentation;
         readonly RifleBulletPresentation riflePresentation;
+        readonly CobaltShotPresentation cobaltShot;
+        public CobaltShotPresentation CobaltShotForReview=>cobaltShot;
         readonly PlasmaPresentation plasmaPresentation;
+        readonly ForgeReactorPresentation forgeReactor;
+        readonly float forgeAmmoCapacity;
+        public ForgeReactorPresentation ForgeReactorForReview=>forgeReactor;
         readonly CutterPresentation cutterPresentation;
         readonly ProvingProfile movement, tuning, deathProfile;
         DeathPhysicsWorld deathPhysics;
@@ -151,6 +210,7 @@ namespace StarTournament.ProvingGround
         readonly List<Corpse> corpses = new List<Corpse>();
         readonly List<PelletEffect> pellets = new List<PelletEffect>();
         Material shotMaterial, traceMaterial, rifleTraceMaterial;
+        readonly ShotgunDetailArt shotgunArt;
         public int ActiveShotEffectCount => pellets.Count+riflePresentation.ActiveCount+plasmaPresentation.ActiveCount;
         public CombatPresentation(NativeCombatSession session, ProvingProfile movement, ProvingProfile tuning,
             Transform owner, PhysicsScene physics, Camera[] cameras, GameObject[] bodies, GameObject[] views, NativeMatchComposition composition=null,ProvingProfile deathProfile=null,ProvingProfile bloodProfile=null,GameObject rocketPrefab=null,ProvingProfile rocketEffects=null,ProvingProfile hitProfile=null)
@@ -160,6 +220,7 @@ namespace StarTournament.ProvingGround
                 throw new System.ArgumentException("Presentation ownership mismatch");
             this.deathProfile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(deathProfile??ProvingProfile.CreateDeathDefault()));
             this.composition=composition;local=composition?.Read().LocalParticipants ?? Enumerable.Range(0,cameras.Length).ToArray();
+            shotgunArt=new ShotgunDetailArt(movement);
             this.session=session; this.movement=movement; this.tuning=tuning; this.owner=owner; this.physics=physics;
             this.cameras=cameras; this.bodies=bodies; this.views=views;
             weaponSwitches=new FirstPersonWeaponSwitch[views.Length];
@@ -170,7 +231,10 @@ namespace StarTournament.ProvingGround
             cutterPresentation=new CutterPresentation(session,owner,bodies,views,local);
             rocketPresentation=new RocketPresentation(session,movement,owner,rocketPrefab,rocketEffects);
             plasmaPresentation=new PlasmaPresentation(session,owner,seat=>Muzzle(seat,0,WeaponId.Plasma));
-            riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle));
+            forgeAmmoCapacity=session.PlasmaProfile.Get("plasma.pickupAmmo");
+            forgeReactor=new ForgeReactorPresentation(session,owner,bodies,views,local);
+            cobaltShot=new CobaltShotPresentation(session,movement,owner,bodies,views,local);
+            riflePresentation=new RifleBulletPresentation(session,movement,owner,seat=>Muzzle(seat,0,WeaponId.Rifle),cobaltShot);
             deathEye=new Vector3[bodies.Length]; deathFeet=new Vector3[bodies.Length]; killerPoint=new Vector3[bodies.Length]; orbitStart=new Vector3[bodies.Length];
             deathTime=new double[bodies.Length]; tracking=new bool[bodies.Length];
             session.StateRestored+=OnStateRestored;
@@ -181,9 +245,9 @@ namespace StarTournament.ProvingGround
         }
         void OnFire(int seat,float damage)
         {
-            bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time);
+            bodies[seat].GetComponent<TrooperVisual>()?.Fire(session.Time,session.Life(seat).SelectedWeapon);
             if(session.Life(seat).SelectedWeapon==WeaponId.Shotgun)bodies[seat].GetComponent<VectorShotPresentation>()?.Fire(session.Time);
-            int view=ViewOf(seat);if(view>=0){views[view].GetComponent<TrooperVisual>()?.Fire(session.Time);if(session.Life(seat).SelectedWeapon==WeaponId.Shotgun)views[view].GetComponent<VectorShotPresentation>()?.Fire(session.Time);}
+            int view=ViewOf(seat);if(view>=0){views[view].GetComponent<TrooperVisual>()?.Fire(session.Time,session.Life(seat).SelectedWeapon);if(session.Life(seat).SelectedWeapon==WeaponId.Shotgun)views[view].GetComponent<VectorShotPresentation>()?.Fire(session.Time);}
         }
         void OnShotResolved(ShotNotice notice)
         {
@@ -193,11 +257,16 @@ namespace StarTournament.ProvingGround
             if(notice.Weapon==WeaponId.Plasma){plasmaPresentation.Launch(notice.Sequence,notice.Shooter);return;}
             if(notice.Weapon==WeaponId.Rifle)
             {
+                cobaltShot.Fire(notice.Shooter);
                 riflePresentation.Launch(notice.Sequence,notice.Shooter);
                 return;
             }
             if(notice.Weapon==WeaponId.RocketLauncher)
-                rocketPresentation.Launch(notice.Sequence,Muzzle(notice.Shooter,0,notice.Weapon)-notice.Origin);
+                {
+                    var muzzle=Muzzle(notice.Shooter,0,notice.Weapon);
+                    var direction=session.Rockets.Single(r=>r.Id==notice.Sequence).Direction;
+                    rocketPresentation.Launch(notice.Sequence,muzzle-notice.Origin,muzzle,direction);
+                }
             int capacity=(int)movement.Get("presentation.shotMaxEffects");
             for(int pelletIndex=0;pelletIndex<notice.Pellets.Length;pelletIndex++)
             {
@@ -207,7 +276,8 @@ namespace StarTournament.ProvingGround
                 var trace=GameObject.CreatePrimitive(PrimitiveType.Capsule);trace.name="pellet-streak";trace.transform.SetParent(root.transform,false);
                 // Destroy is deferred; disable now so another fixed tick cannot collide with a visual.
                 var collider=trace.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
-                var traceRenderer=trace.GetComponent<Renderer>();traceRenderer.material=TraceMaterial(notice.Weapon);
+                var traceRenderer=trace.GetComponent<Renderer>();traceRenderer.sharedMaterial=TraceMaterial(notice.Weapon);
+                traceRenderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;traceRenderer.receiveShadows=false;
                 // No intermediate frame may expose the shot-time pose before the final view pose is sampled.
                 traceRenderer.enabled=false;
                 var muzzle=Muzzle(notice.Shooter,pelletIndex,notice.Weapon);
@@ -223,7 +293,7 @@ namespace StarTournament.ProvingGround
                 if(contact)
                     foreach(var existing in pellets)
                         if(existing.Contact && Vector3.Distance(existing.End,pellet.Endpoint)<movement.Get("presentation.shotImpactSize")*2f) { contact=false;break; }
-                pellets.Add(new PelletEffect{Root=root,Trace=trace,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon,Shooter=notice.Shooter,Barrel=pelletIndex});
+                pellets.Add(new PelletEffect{Root=root,Trace=trace,Core=notice.Weapon==WeaponId.Shotgun?shotgunArt.Core(root.transform,root.layer):null,Surface=pellet.Contact,Start=start,TraceEnd=traceEnd,End=pellet.Endpoint,Normal=pellet.Normal,Begins=notice.Time,Contact=contact,Weapon=notice.Weapon,Shooter=notice.Shooter,Barrel=pelletIndex});
             }
         }
         Material ShotMaterial()
@@ -237,6 +307,7 @@ namespace StarTournament.ProvingGround
         }
         Material TraceMaterial(WeaponId weapon)
         {
+            if(weapon==WeaponId.Shotgun)return shotgunArt.Metal; // Lit metal, no emission or bloom tracer.
             if(weapon==WeaponId.Rifle)
             {
                 if(rifleTraceMaterial)return rifleTraceMaterial;
@@ -264,7 +335,7 @@ namespace StarTournament.ProvingGround
             // so an automatic follow-up cannot freeze the previous shot's animated barrel.
             var visual=source.GetComponent<TrooperVisual>();
             if(visual)visual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
-            visual?.Fire(session.Time);
+            visual?.Fire(session.Time,life.SelectedWeapon);
             visual?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
             if(view>=0)weaponSwitches[view]?.Apply(life,session.WeaponSwitchSeconds);
             else source.GetComponent<WeaponModelPresentation>()?.Show(life.SelectedWeapon);
@@ -294,29 +365,50 @@ namespace StarTournament.ProvingGround
             }
             // First draw has a nonzero segment whose tail is still at the rendered muzzle.
             // Its age is derived from the configured fixed tick and existing trace window, not another timer setting.
-            effect.Begins=session.Time-Mathf.Min(1f/movement.Get("simulation.fixedTickHz"),flight*TraceWindowFraction);
+            effect.Begins=session.Time-Mathf.Min(1f/movement.Get("simulation.fixedTickHz"),flight*TraceFraction(effect));
             effect.Emitted=true;effect.Trace.GetComponent<Renderer>().enabled=true;
+            if(effect.Core)effect.Core.GetComponent<Renderer>().enabled=true;
+        }
+        float TraceFraction(PelletEffect effect)
+        {
+            if(effect.Weapon!=WeaponId.Shotgun)return TraceWindowFraction;
+            var distance=Vector3.Distance(effect.Start,effect.TraceEnd);
+            return distance>0?Mathf.Min(TraceWindowFraction,movement.Get(ProvingProfile.VectorPrecisionPrefix+"traceLength")/distance):TraceWindowFraction;
         }
         void RenderPellets()
         {
             float flight=movement.Get("presentation.shotFlightSeconds"), impact=movement.Get("presentation.shotImpactSeconds");
             for(int i=pellets.Count-1;i>=0;i--)
             {
-                var effect=pellets[i];if(!effect.Emitted)BeginVisiblePellet(effect,flight);
+                var effect=pellets[i];
+                float lifetime=effect.Weapon==WeaponId.Shotgun?impact*Mathf.Max(movement.Get(ProvingProfile.VectorPrecisionPrefix+"chipLifetimeScale"),movement.Get(ProvingProfile.VectorPrecisionPrefix+"dustLifetimeScale")):impact;
+                if(!effect.Emitted)BeginVisiblePellet(effect,flight);
                 float elapsed=(float)(session.Time-effect.Begins);
                 if(elapsed<flight)
                 {
                     float progress=Mathf.Clamp01(elapsed/flight);var head=Vector3.Lerp(effect.Start,effect.TraceEnd,progress);
-                    var tail=Vector3.Lerp(effect.Start,effect.TraceEnd,Mathf.Max(0,progress-TraceWindowFraction));
+                    var tail=Vector3.Lerp(effect.Start,effect.TraceEnd,Mathf.Max(0,progress-TraceFraction(effect)));
                     Vector3 delta=head-tail;effect.Trace.transform.SetPositionAndRotation((head+tail)*.5f,Quaternion.FromToRotation(Vector3.up,delta.normalized));
-                    float width=movement.Get(effect.Weapon==WeaponId.Rifle?"presentation.rifleTracerWidth":"presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);continue;
+                    float width=movement.Get(effect.Weapon==WeaponId.Rifle?"presentation.rifleTracerWidth":"presentation.shotTracerWidth");effect.Trace.transform.localScale=new Vector3(width,delta.magnitude*.5f,width);
+                    if(effect.Core){effect.Core.transform.position=head;effect.Core.transform.localScale=Vector3.one*width;}
+                    continue;
                 }
-                if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Contact)CreateImpact(effect);}
-                if(elapsed>=flight+impact){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
+                if(effect.Trace){Object.Destroy(effect.Trace);effect.Trace=null;if(effect.Core){Object.Destroy(effect.Core);effect.Core=null;}if(effect.Contact)CreateImpact(effect);}
+                if(effect.ImpactParticles!=null)
+                {
+                    float age=Mathf.Clamp(elapsed-flight,0,lifetime),delta=age-effect.ImpactTime;
+                    if(delta>0)foreach(var ps in effect.ImpactParticles){ps.Simulate(delta,true,false,false);ps.Pause();}
+                    effect.ImpactTime=age;
+                }
+                if(elapsed>=flight+lifetime){Object.Destroy(effect.Root);pellets.RemoveAt(i);}
             }
         }
         void CreateImpact(PelletEffect effect)
         {
+            if(effect.Weapon==WeaponId.Shotgun)
+            {
+                effect.ImpactParticles=shotgunArt.Impact(effect.Root.transform,effect.End,effect.Normal,effect.Surface,movement,(uint)(effect.Barrel+1));return;
+            }
             var impact=GameObject.CreatePrimitive(PrimitiveType.Sphere);impact.name="shot-impact";impact.transform.SetParent(effect.Root.transform,false);
             impact.transform.position=effect.End+effect.Normal*.01f;impact.transform.localScale=Vector3.one*movement.Get("presentation.shotImpactSize");
             var collider=impact.GetComponent<Collider>();if(collider){collider.enabled=false;Object.Destroy(collider);}
@@ -324,6 +416,10 @@ namespace StarTournament.ProvingGround
         }
         void OnStateRestored()
         {
+            foreach(var pellet in pellets)if(pellet.Root){pellet.Root.SetActive(false);Object.Destroy(pellet.Root);}
+            pellets.Clear();
+            foreach(var body in bodies)if(body)body.GetComponent<VectorShotPresentation>()?.Clear(session.Time);
+            foreach(var view in views)if(view)view.GetComponent<VectorShotPresentation>()?.Clear(session.Time);
             foreach(var corpse in corpses)if(corpse.Root){corpse.Root.SetActive(false);Object.Destroy(corpse.Root);}
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
             System.Array.Clear(tracking,0,tracking.Length);
@@ -346,7 +442,7 @@ namespace StarTournament.ProvingGround
         public void Dispose()
         {
             if(disposed)return;disposed=true;
-            hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
+            forgeReactor.Dispose();shotgunArt.Dispose();hitFeedback.Dispose();bloodPresentation.Dispose();rocketPresentation.Dispose();riflePresentation.Dispose();cobaltShot.Dispose();plasmaPresentation.Dispose();cutterPresentation.Dispose();
             session.StateRestored-=OnStateRestored;session.Died-=OnDeath; session.Respawned-=OnRespawn; session.Fired-=OnFire;session.ShotResolved-=OnShotResolved;
             foreach(var corpse in corpses) if(corpse.Root) { corpse.Root.SetActive(false); Object.Destroy(corpse.Root); }
             corpses.Clear();deathPhysics?.Dispose();deathPhysics=null;
@@ -453,18 +549,35 @@ namespace StarTournament.ProvingGround
                 if(bodyVisual)bodyVisual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
                 if(!life.Dead)bodies[p].GetComponent<TrooperVisual>()?.Render(session.Time,session.Pose(p).Velocity,life.Health,life.Life,session.Pose(p).Grounded);
                 // Both representations use the same simulation phase: the model changes only at the lift apex.
-                bodies[p].GetComponent<WeaponModelPresentation>()?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
+                var bodyWeapon=bodies[p].GetComponent<WeaponModelPresentation>();
+                bodyWeapon?.Show(WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon);
+                bodyWeapon?.ShotgunDisplay?.SetAmmo(life.ShotgunAmmo);
+                bodyWeapon?.PulseDisplay?.SetAmmo(life.RocketAmmo,session.RocketAmmoCapacity);
+                bodyWeapon?.ForgeDisplay?.SetAmmo(life.PlasmaAmmo,forgeAmmoCapacity);
+                if(life.Dead)bodyWeapon?.ForgeDisplay?.SetVisible(false);
+                if(life.Dead)bodyWeapon?.PulseDisplay?.SetVisible(false);
+                bodyWeapon?.RifleDisplay?.Render(life.RifleAmmo,session.RifleStartingAmmo,session.Time,life.Life);
+                if(life.Dead){bodyWeapon?.ShotgunDisplay?.SetVisible(false);bodyWeapon?.RifleDisplay?.SetVisible(false);}
             }
             for(int v=0;v<cameras.Length;v++)
             {
                 int i=local[v];var life=session.Life(i); var pose=session.Pose(i);
+                views[v].GetComponent<WeaponModelPresentation>()?.ShotgunDisplay?.SetAmmo(life.ShotgunAmmo);
+                views[v].GetComponent<WeaponModelPresentation>()?.PulseDisplay?.SetAmmo(life.RocketAmmo,session.RocketAmmoCapacity);
+                var viewWeapon=views[v].GetComponent<WeaponModelPresentation>();
+                viewWeapon?.ForgeDisplay?.SetAmmo(life.PlasmaAmmo,forgeAmmoCapacity);
+                if(life.Dead)viewWeapon?.ForgeDisplay?.SetVisible(false);
+                viewWeapon?.RifleDisplay?.Render(life.RifleAmmo,session.RifleStartingAmmo,session.Time,life.Life);
+                if(life.Dead)viewWeapon?.RifleDisplay?.SetVisible(false);
                 if(!life.Dead)
                 {
+                    // The grip solver uses world-space joints. Sample under this
+                    // frame's camera, matching PrepareShotPose and frozen re-renders.
+                    cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     var viewVisual=views[v].GetComponent<TrooperVisual>();
                     if(viewVisual)viewVisual.EquippedWeapon=WeaponSwitchPose.Read(life,session.WeaponSwitchSeconds).Weapon;
                     views[v].GetComponent<TrooperVisual>()?.Render(session.Time,pose.Velocity,life.Health,life.Life,pose.Grounded);
                     weaponSwitches[v]?.Apply(life,session.WeaponSwitchSeconds);
-                    cameras[v].transform.SetPositionAndRotation(pose.Position+Vector3.up*movement.Get("camera.eyeHeight"),Quaternion.Euler(pose.Pitch,pose.Yaw,0));
                     continue;
                 }
                 Vector3 position=deathEye[i], target;
@@ -499,7 +612,7 @@ namespace StarTournament.ProvingGround
                 if(direction.sqrMagnitude>0) cameras[v].transform.SetPositionAndRotation(position,Quaternion.LookRotation(direction));
             }
             // Capture a new trace only after all cameras, animation and weapon-switch joints are final for this frame.
-            RenderPellets();riflePresentation.Render();plasmaPresentation.Render();cutterPresentation.Render();
+            RenderPellets();riflePresentation.Render();plasmaPresentation.Render();cutterPresentation.Render();cobaltShot.Render();forgeReactor.Render();
         }
     }
 }

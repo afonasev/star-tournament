@@ -1,11 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Profiling;
 
 namespace StarTournament.ProvingGround
 {
     /// <summary>Maps authoritative hit-volume contacts onto visible skin without physics queries or asset mutation.</summary>
     public static class SkinnedContactPatch
     {
+        // Profile real surface work independently from GPU rendering and weapon effects.
+        static readonly ProfilerMarker FindMarker=new ProfilerMarker("F23.Contact.Find");
+        static readonly ProfilerMarker SnapshotMarker=new ProfilerMarker("F23.Contact.Snapshot");
+        static readonly ProfilerMarker CreateMarker=new ProfilerMarker("F23.Contact.Create");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+        public static bool OriginalTransformLookupForDiagnostics {get;set;}
+#endif
         public sealed class Contact
         {
             public SkinnedMeshRenderer Skin;
@@ -18,12 +26,19 @@ namespace StarTournament.ProvingGround
         // for that notice, then reuse it for every contact and both overlay kinds.
         public sealed class Projection
         {
-            readonly SkinnedMeshRenderer[] skins;
+            readonly SkinnedMeshRenderer[] skins;readonly bool immutableTopology;
             readonly Dictionary<SkinnedMeshRenderer,Snapshot> snapshots=new Dictionary<SkinnedMeshRenderer,Snapshot>();
-            public Projection(GameObject body)
-            {skins=body?body.GetComponentsInChildren<SkinnedMeshRenderer>(true):System.Array.Empty<SkinnedMeshRenderer>();}
+            // Opt in only for immutable imported body meshes. Generic/dynamic mesh
+            // callers retain fresh source reads; poses are never cached across hits.
+            public Projection(GameObject body,bool immutableTopology=false)
+            {this.immutableTopology=immutableTopology;skins=body?body.GetComponentsInChildren<SkinnedMeshRenderer>(true):System.Array.Empty<SkinnedMeshRenderer>();}
+            // Caller-owned pose reuse supplies only original body skins; generated
+            // overlays may be detached/destroyed while this projection remains alive.
+            internal Projection(SkinnedMeshRenderer[] sourceSkins,bool immutableTopology)
+            {this.immutableTopology=immutableTopology;skins=sourceSkins;}
             public Contact Find(Vector3 point,Vector3 direction)
             {
+                using var measurement=FindMarker.Auto();
                 if(direction.sqrMagnitude==0)return null;
                 direction.Normalize();Contact closest=null,fallback=null;float nearest=float.PositiveInfinity,fallbackDistance=float.PositiveInfinity;
                 foreach(var skin in skins)
@@ -33,7 +48,7 @@ namespace StarTournament.ProvingGround
                     var origin=point-direction*depth;
                     if(!skin.bounds.IntersectRay(new Ray(origin,direction))&&skin.bounds.SqrDistance(point)>skin.bounds.extents.sqrMagnitude)continue;
                     if(!snapshots.TryGetValue(skin,out var snapshot))
-                    {snapshot=new Snapshot(skin);snapshots.Add(skin,snapshot);}
+                    {snapshot=new Snapshot(skin,immutableTopology);snapshots.Add(skin,snapshot);}
                     var world=snapshot.World;var triangles=snapshot.Triangles;
                     foreach(var block in snapshot.Blocks)
                     {
@@ -42,7 +57,8 @@ namespace StarTournament.ProvingGround
                         for(int i=block.Start;i<block.End;i+=3)
                         {
                             var a=world[triangles[i]];var b=world[triangles[i+1]];var c=world[triangles[i+2]];
-                            var normal=Vector3.Cross(b-a,c-a).normalized;
+                            var normal=SurfaceNormal(a,b,c);
+                            if(normal.sqrMagnitude==0)continue;
                             if(Vector3.Dot(normal,direction)>0)continue;
                             if(closest==null&&BoxDistanceSquared(point,a,b,c)<fallbackDistance)
                             {
@@ -60,20 +76,38 @@ namespace StarTournament.ProvingGround
                 return closest??fallback;
             }
         }
-        internal sealed class Snapshot
+        // Imported body topology and bind-space attributes are immutable for the
+        // asset lifetime. Weak keys release this data when the mesh is unloaded.
+        // Baked vertices, world positions and block bounds remain per-impact data.
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Mesh,SourceGeometry> ImmutableGeometry
+            =new System.Runtime.CompilerServices.ConditionalWeakTable<Mesh,SourceGeometry>();
+        static SourceGeometry CreateGeometry(Mesh mesh)=>new SourceGeometry(mesh);
+        sealed class SourceGeometry
         {
-            public readonly Vector3[] Baked,World;
-            public readonly int[] Triangles;
-            public readonly TriangleBlock[] Blocks;
-            readonly Mesh source;
+            readonly Mesh source;public readonly int[] Triangles;
             Vector3[] vertices,normals;BoneWeight[] weights;Matrix4x4[] bindposes;
             public Vector3[] Vertices=>vertices??(vertices=source.vertices);
             public Vector3[] Normals=>normals??(normals=source.normals);
             public BoneWeight[] Weights=>weights??(weights=source.boneWeights);
             public Matrix4x4[] Bindposes=>bindposes??(bindposes=source.bindposes);
-            public Snapshot(SkinnedMeshRenderer skin)
+            public SourceGeometry(Mesh source){this.source=source;Triangles=source.triangles;}
+        }
+        internal sealed class Snapshot
+        {
+            public readonly Vector3[] Baked,World;
+            public readonly int[] Triangles;
+            public readonly TriangleBlock[] Blocks;
+            readonly SourceGeometry geometry;
+            public Vector3[] Vertices=>geometry.Vertices;
+            public Vector3[] Normals=>geometry.Normals;
+            public BoneWeight[] Weights=>geometry.Weights;
+            public Matrix4x4[] Bindposes=>geometry.Bindposes;
+            public Snapshot(SkinnedMeshRenderer skin,bool immutableTopology=false)
             {
-                source=skin.sharedMesh;Triangles=source.triangles;
+                using var measurement=SnapshotMarker.Auto();
+                var source=skin.sharedMesh;
+                geometry=immutableTopology?ImmutableGeometry.GetValue(source,CreateGeometry):new SourceGeometry(source);
+                Triangles=geometry.Triangles;
                 var mesh=new Mesh();
                 try{skin.BakeMesh(mesh);Baked=mesh.vertices;}
                 finally{Destroy(mesh);}
@@ -82,7 +116,15 @@ namespace StarTournament.ProvingGround
                 World=new Vector3[Baked.Length];
                 // Keep native TransformPoint arithmetic: thin triangles amplify even tiny
                 // matrix-rounding differences in their normals and contact UV basis.
-                for(int i=0;i<Baked.Length;i++)World[i]=skin.transform.TransformPoint(Baked[i]);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || STAR_TOURNAMENT_DEVELOPMENT_QA
+                if(OriginalTransformLookupForDiagnostics)
+                {for(int i=0;i<Baked.Length;i++)World[i]=skin.transform.TransformPoint(Baked[i]);}
+                else
+#endif
+                {
+                    var transform=skin.transform;
+                    for(int i=0;i<Baked.Length;i++)World[i]=transform.TransformPoint(Baked[i]);
+                }
                 // Consecutive authored triangles have useful spatial locality. Fixed-size
                 // blocks preserve their order and cost linear time to build per pose.
                 const int blockIndices=96; // 32 triangles; acceleration granularity only.
@@ -130,6 +172,14 @@ namespace StarTournament.ProvingGround
             t.name=="automatic-rifle"||t.name=="pulse-launcher"||t.name=="cutter"||t.name=="forge-plasma"||t.name.StartsWith("hit-contact-"))return true;
             return false;
         }
+        static Vector3 SurfaceNormal(Vector3 a,Vector3 b,Vector3 c)
+        {
+            // Vector3.normalized intentionally returns zero below 1e-5. Dense
+            // authored F23 faces can be smaller while still nondegenerate; a
+            // zero normal suppresses their contact patch and admits back faces.
+            var cross=Vector3.Cross(b-a,c-a);float length=cross.magnitude;
+            return length>0?cross/length:Vector3.zero;
+        }
         static bool Intersect(Vector3 origin,Vector3 direction,Vector3 a,Vector3 b,Vector3 c,out float distance)
         {
             distance=0;var ab=b-a;var ac=c-a;var cross=Vector3.Cross(direction,ac);float determinant=Vector3.Dot(ab,cross);
@@ -140,6 +190,7 @@ namespace StarTournament.ProvingGround
         }
         public static GameObject Create(Contact contact,float diameter,Material material,string name,out Mesh mesh)
         {
+            using var measurement=CreateMarker.Auto();
             mesh=null;if(contact==null||diameter<=0)return null;
             var skin=contact.Skin;var source=skin.sharedMesh;
             var sourceVertices=contact.Pose.Vertices;var sourceNormals=contact.Pose.Normals;var sourceWeights=contact.Pose.Weights;
@@ -158,7 +209,7 @@ namespace StarTournament.ProvingGround
                     // AABB rejection is conservative; the exact sphere/triangle test below
                     // still defines the patch, including edges and layered surfaces.
                     if(BoxDistanceSquared(contact.Point,wa,wb,wc)>radius*radius)continue;
-                    var normal=Vector3.Cross(wb-wa,wc-wa).normalized;
+                    var normal=SurfaceNormal(wa,wb,wc);
                     if(Vector3.Dot(normal,contact.Normal)<.35f)continue;
                     // A surface triangle must intersect the contact sphere. Bounds alone would leak across limbs.
                     var nearest=ClosestPoint(contact.Point,wa,wb,wc);
