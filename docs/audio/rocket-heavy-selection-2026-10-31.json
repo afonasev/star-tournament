@@ -1,0 +1,63 @@
+{
+  "shot_source": "/Users/eaafonasev/Projects/star-tournament/planning/docs/evidence/rocket-shot-v3-20261031/01-ignition-shot-only.wav",
+  "shot_sha256": "074de4a5e39f9a94eac67f7b85cc241d6cd5d2e1fe28b514cec4d4a2a208745b",
+  "reload_source": "/Users/eaafonasev/Projects/star-tournament/planning/docs/evidence/rocket-reload-v1-20261031/02-servo-reload-only.wav",
+  "reload_sha256": "c1c5dcb1da309d004835ea24ff74d596d7fb6990f6e8cd9415daf359059f7193",
+  "shot_pcm_unchanged": true,
+  "reload_pcm_unchanged": true,
+  "time_stretch": false,
+  "pitch_shift": 0,
+  "gain_change_db": 0,
+  "shot_end_seconds": 0.62,
+  "reload_start_seconds": 0.7801875,
+  "reload_duration_seconds": 0.4198125,
+  "pause_seconds": 0.1601875,
+  "cycle_seconds": 1.2,
+  "ready_tick": 60,
+  "files": [
+    {
+      "file": "shot.wav",
+      "sha256": "fdaed0b5d4a7929d524f23f602212344aab26f9895d419c3b86c72fda280abc6",
+      "frames": 29760,
+      "seconds": 0.62
+    },
+    {
+      "file": "reload.wav",
+      "sha256": "c954160caad42afed65f6b2d0b7e0771135f05e6078a2ffa32a8d6663cbf1a09",
+      "frames": 20151,
+      "seconds": 0.4198125
+    },
+    {
+      "file": "rocket.wav",
+      "sha256": "0951f4a717c7f4cd6db1b77ba89c0e3a68bef8379aeeace0cb0f3f24e417cb0f",
+      "frames": 57600,
+      "seconds": 1.2
+    },
+    {
+      "file": "rocket-single.wav",
+      "sha256": "c6e78795f873d9565872be974bdf5ed48cc14b9f52fcb26a1efed13750a4e9c8",
+      "frames": 69600,
+      "seconds": 1.45
+    },
+    {
+      "file": "rocket-series.wav",
+      "sha256": "bd6e16af9b71232dba7ec6c600fe94a1285f86d49d042a4241a20763df28f754",
+      "frames": 242400,
+      "seconds": 5.05
+    },
+    {
+      "file": "rocket-review.wav",
+      "sha256": "86af5e5e537f812ab8737a9fb7d84a4be2eeb04cc6751754053f2acbc5b2482e",
+      "frames": 336000,
+      "seconds": 7.0
+    }
+  ],
+  "levels": {
+    "lufs": -20.83,
+    "true_peak_dbtp": -3.44
+  },
+  "reference_pcm_used": false,
+  "human_acceptance": "Shot1/reload2 selected; final gap mix awaiting listening",
+  "evidence_root": "/Users/eaafonasev/Projects/star-tournament/planning/docs/evidence/rocket-gap-v5-20261031",
+  "files_are_relative_to": "evidence_root"
+}
