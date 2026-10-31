@@ -91,7 +91,7 @@ namespace StarTournament.ProvingGround
             bool back=TryTakeMenuBack(input.DeviceAt(settingsSeat) as Gamepad,settingsSeat>=0);
             if(back){settingsView.Back();lastAudioSelection=EventSystem.current?EventSystem.current.currentSelectedGameObject:null;}
             else if(settingsSeat>=0){if(input.DeviceAt(settingsSeat) is Gamepad assigned&&assigned.buttonNorth.wasPressedThisFrame)settingsView.ResetShortcut();}
-            else foreach(var pad in Gamepad.all)if(pad.buttonNorth.wasPressedThisFrame){settingsView.ResetShortcut();break;}
+            else if(MenuUiDevice is Gamepad pad&&pad.buttonNorth.wasPressedThisFrame)settingsView.ResetShortcut();
         }
         void InitializeGraphicsPreferences()
         {

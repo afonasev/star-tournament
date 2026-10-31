@@ -7,8 +7,8 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingGround
     {
-        const string KeyboardHelp="КЛАВИАТУРА / МЫШЬ\n\nW A S D — движение\nМышь — взгляд\nПробел — прыжок\nЛКМ — огонь (удержание для Резака)\n1 / 2 / 3 / 4 — винтовка / дробовик / Pulse / Резак\nQ / E, колесо — предыдущее / следующее оружие\nTab (удерживать) — таблица результатов\nEsc — пауза";
-        const string GamepadHelp="ГЕЙМПАД  ·  XBOX / PLAYSTATION / SWITCH\n\nЛевый стик — движение\nПравый стик — взгляд\nLT / L2 / ZL: короткое нажатие — плавно к горизонту; удерживание — фиксация высоты прицела\nНижняя кнопка (A / × / B) — прыжок\nПравый триггер (RT / R2 / ZR) — огонь\nD-pad ← / ↑ / → / ↓ — винтовка / дробовик / Pulse / Резак\nLB / L1 / L — предыдущее оружие\nRB / R1 / R — следующее оружие\nView / Share / − (удерживать) — таблица\nMenu / Options / + — пауза";
+        const string KeyboardHelp="КЛАВИАТУРА / МЫШЬ\n\nW A S D — движение\nМышь — взгляд\nПробел — прыжок\nЛКМ — огонь (удержание для лазера)\n1 / 2 / 3 / 4 / 5 — автомат / дробовик / ракетница / лазер / плазмомёт\nQ / E, колесо — предыдущее / следующее оружие\nTab (удерживать) — таблица результатов\nEsc — пауза";
+        const string GamepadHelp="ГЕЙМПАД  ·  XBOX / PLAYSTATION / SWITCH\n\nЛевый стик — движение\nПравый стик — взгляд\nLT / L2 / ZL: короткое нажатие — плавно к горизонту; удерживание — фиксация высоты прицела\nНижняя кнопка (A / × / B) — прыжок\nПравый триггер (RT / R2 / ZR) — огонь\nD-pad ← / ↑ / → / ↓ — автомат / дробовик / ракетница / лазер\nLB / L1 / L — предыдущее оружие\nRB / R1 / R — следующее оружие\nView / Share / − (удерживать) — таблица\nMenu / Options / + — пауза";
         Slider NumericSetting(Transform parent,string name,string title,Vector2 min,Vector2 max,NumericDescriptor d,UnityEngine.Events.UnityAction<float> changed,int font=22)
         {
             var row=Panel(parent,name+"-row",min,max,MenuCard);

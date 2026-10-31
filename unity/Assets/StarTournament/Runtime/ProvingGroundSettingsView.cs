@@ -111,7 +111,7 @@ namespace StarTournament.ProvingGround
             {
                 var device=InMatch?owner.input.DeviceAt(Seat):owner.menuDevice;
                 if(!CanHintAssignedShortcut()||!(device is Gamepad)||!device.added||!device.enabled||!owner.menuGamepadCursor||!owner.menuWindowFocused||owner.textEntryPanel||owner.textClosing||BackActionTarget()!=null||!string.IsNullOrEmpty(settingsWriteError.text))return "";
-                return MenuGamepadHints.Glyph(MenuGamepadHints.Family(device.layout,device.description.product),MenuPadButton.East)+" — к разделам";
+                return "к разделам";
             }
             public void Back()
             {
@@ -248,7 +248,6 @@ namespace StarTournament.ProvingGround
                 settingsInterfacePage=Panel(content.transform,"settings-interface",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
                 settingsFpsToggle=BooleanSetting(settingsInterfacePage.transform,"settings-fps","Показывать FPS",new Vector2(.02f,.78f),new Vector2(.98f,.96f),SetMenuFps);
                 settingsBotTextToggle=BooleanSetting(settingsInterfacePage.transform,"settings-bot-reaction-text","Реакции ботов: текст",new Vector2(.02f,.53f),new Vector2(.98f,.71f),v=>{NativeBotReactionPreferences.SetText(v);owner.RefreshSettingsUi();});
-                settingsBotVoiceToggle=BooleanSetting(settingsInterfacePage.transform,"settings-bot-reaction-voice","Реакции ботов: голос",new Vector2(.02f,.28f),new Vector2(.98f,.46f),v=>{NativeBotReactionPreferences.SetVoice(v);if(!v)owner.gameAudio?.StopBotReaction();owner.RefreshSettingsUi();});
                 Label(settingsInterfacePage.transform,"settings-bot-reactions-help","Реакции ботов общие для всех игроков",20,new Vector2(.04f,.06f),new Vector2(.96f,.20f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
 
                 settingsAudioPage=Panel(content.transform,"settings-audio",new Vector2(.04f,.06f),new Vector2(.96f,.76f),new Color32(20,33,48,245));
@@ -258,6 +257,7 @@ namespace StarTournament.ProvingGround
                 settingsMusicSlider=NumericSetting(settingsAudioPage.transform,"settings-music","Музыка",new Vector2(.02f,.51f),new Vector2(.98f,.73f),Profile.Descriptor("audio.musicDefaultPercent"),v=>{NativeAudioPreferences.SetMusic(Mathf.RoundToInt(v));RefreshAudio();});
                 settingsEffectsSlider=NumericSetting(settingsAudioPage.transform,"settings-effects","Эффекты",new Vector2(.02f,.26f),new Vector2(.98f,.48f),percent,v=>{NativeAudioPreferences.SetEffects(Mathf.RoundToInt(v),Profile);RefreshAudio();});
                 settingsVoiceSlider=NumericSetting(settingsAudioPage.transform,"settings-voice","Речь",new Vector2(.02f,.01f),new Vector2(.98f,.23f),percent,v=>{NativeAudioPreferences.SetVoice(Mathf.RoundToInt(v));RefreshAudio();});
+                settingsBotVoiceToggle=BooleanSetting(settingsAudioPage.transform,"settings-bot-reaction-voice","Реакции ботов: голос",new Vector2(.02f,.28f),new Vector2(.98f,.46f),v=>{NativeBotReactionPreferences.SetVoice(v);if(!v)owner.gameAudio?.StopBotReaction();owner.RefreshSettingsUi();});
 
                 settingsHelpPage=Panel(content.transform,"settings-help-page",Vector2.zero,Vector2.one,new Color32(20,33,48,245));
                 settingsHelpScroll=ListViewport(settingsHelpPage.transform,"help-viewport",new Vector2(.015f,.12f),new Vector2(.985f,.985f),out helpDiagram);
@@ -403,12 +403,12 @@ namespace StarTournament.ProvingGround
                 Link(settingsDevicesBack,settingsDevicesBack,settingsDevicesBack);
                 if(settingsDevicesBack.GetComponent<SettingsHelpScrollNavigation>()==null)settingsDevicesBack.gameObject.AddComponent<SettingsHelpScrollNavigation>().Scroll=deviceScroll;
                 Link(settingsFpsToggle,settingsSectionButtons[2],settingsBotTextToggle,settingsSectionButtons[2]);
-                Link(settingsBotTextToggle,settingsFpsToggle,settingsBotVoiceToggle,settingsSectionButtons[2]);
-                Link(settingsBotVoiceToggle,settingsBotTextToggle,settingsBackButton,settingsSectionButtons[2]);
+                Link(settingsBotTextToggle,settingsFpsToggle,settingsBackButton,settingsSectionButtons[2]);
+                Link(settingsBotVoiceToggle,settingsVoiceSlider,settingsBackButton,settingsSectionButtons[3]);
                 Link(settingsMasterSlider,settingsSectionButtons[3],settingsMusicSlider,settingsSectionButtons[3]);
                 Link(settingsMusicSlider,settingsMasterSlider,settingsEffectsSlider,settingsSectionButtons[3]);
                 Link(settingsEffectsSlider,settingsMusicSlider,settingsVoiceSlider,settingsSectionButtons[3]);
-                Link(settingsVoiceSlider,settingsEffectsSlider,settingsBackButton,settingsSectionButtons[3]);
+                Link(settingsVoiceSlider,settingsEffectsSlider,settingsBotVoiceToggle,settingsSectionButtons[3]);
                 for(int i=0;i<resolutionChoices.Length;i++)
                     Link(resolutionChoices[i],i==0?resolutionCancelButton:resolutionChoices[i-1],
                         i==resolutionChoices.Length-1?resolutionCancelButton:resolutionChoices[i+1]);
