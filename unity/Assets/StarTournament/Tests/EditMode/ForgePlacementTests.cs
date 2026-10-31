@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(bowl.Pickups.Single(p=>p.Kind==ArenaPickupKind.Plasma).Anchor,Is.EqualTo(new Vector3(12,4,21)));
             Assert.That(bowl.Pickups.Single(p=>p.Kind==ArenaPickupKind.Pulse).Id,Is.EqualTo("pulse-south"));
             Assert.That(IndustrialTunnelsCatalog.Build().Pickups.Single(p=>p.Kind==ArenaPickupKind.Plasma).Anchor,Is.EqualTo(new Vector3(0,0,19)));
-            foreach(var pair in new[]{(bowl,old),(LunarLaboratoryCatalog.Build(),AuthoredArenaCatalog.Resolve(LunarLaboratoryCatalog.Id,"8")),(WellArenaCatalog.Build(),AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"6"))})
+            foreach(var pair in new[]{(bowl,old),(LunarLaboratoryCatalog.Build(),AuthoredArenaCatalog.Resolve(LunarLaboratoryCatalog.Id,"8")),(AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"7"),AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,"6"))})
             {
                 Assert.That(pair.Item1.Identity,Is.Not.EqualTo(pair.Item2.Identity));
                 Assert.That(pair.Item1.Solids.Select(s=>JsonUtility.ToJson(s)),Is.EqualTo(pair.Item2.Solids.Select(s=>JsonUtility.ToJson(s))));

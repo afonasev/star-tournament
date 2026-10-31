@@ -30,7 +30,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         }
         [Test]public void PreviousGripRegistryHasNoForgeAndRetainsEveryOtherDescriptor()
         {
-            var current=ProvingProfile.CreateTrooperDefault();var old=Before(current,"BeforeForgeGrip");Assert.That(current.Version,Is.EqualTo(21));Assert.That(old.Version,Is.EqualTo(20));
+            var current=Before(ProvingProfile.CreateTrooperDefault(),"BeforeCobaltGrip");var old=Before(current,"BeforeForgeGrip");Assert.That(current.Version,Is.EqualTo(21));Assert.That(old.Version,Is.EqualTo(20));
             Assert.That(old.Descriptors.Any(d=>d.Path.StartsWith("grip.Plasma.")),Is.False);
             foreach(var d in old.Descriptors){Assert.That(JsonUtility.ToJson(current.Descriptors.Single(x=>x.Path==d.Path)),Is.EqualTo(JsonUtility.ToJson(d)));Assert.That(current.Get(d.Path),Is.EqualTo(old.Get(d.Path)));}
             Assert.That(Before(current,"BeforeArticulatedFingerGrips").Descriptors.Any(d=>d.Path.StartsWith("grip.Plasma.")),Is.False);
@@ -58,7 +58,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
                 var old=new LabBundle{Profiles={Before(current.Profiles[0],"BeforeForgeGrip")}};
                 var first=new DesignLabHistory(path,old);first.Create("Custom grip");var draft=first.Selected.Snapshot;draft.Set("grip.Cutter.supportZ",.5f);first.Save(draft);
                 string hash=first.Selected.Hash;string bytes=JsonUtility.ToJson(first.Selected.Snapshot);
-                var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);Assert.That(next.Selected.Snapshot.Get("grip.Cutter.supportZ"),Is.EqualTo(.5f));Assert.That(next.Selected.Snapshot.Get("plasma.damage"),Is.EqualTo(20));
+                var next=new DesignLabHistory(path,current);Assert.That(next.StorageError,Is.Null);Assert.That(next.Selected.Snapshot.Get("grip.Cutter.supportZ"),Is.EqualTo(.5f));Assert.That(next.Selected.Snapshot.Get("plasma.damage"),Is.EqualTo(24));
                 var saved=next.Profiles.SelectMany(x=>x.Revisions).Single(x=>x.Hash==hash);Assert.That(JsonUtility.ToJson(saved.Snapshot),Is.EqualTo(bytes));
             }
             finally{if(File.Exists(path))File.Delete(path);}
