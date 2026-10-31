@@ -26,7 +26,7 @@ namespace StarTournament.ProvingGround
         public float Get(string path) => Profile(path).Get(path);
         public void Set(string path,float value) => Profile(path).Set(path,value);
         public IEnumerable<NumericDescriptor> Descriptors => Profiles.SelectMany(p => p.Descriptors);
-        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1"||Profile(path).Id==ProvingProfile.TunnelsAuthoringId||Profile(path).Id=="lunar-laboratory-authoring-v1"||Profile(path).Id=="well-authoring-v1";
+        public bool IsAuthoring(string path)=>Profile(path).Id=="combat-bowl-ring-r7-authoring-v1"||Profile(path).Id==ProvingProfile.TunnelsAuthoringId||Profile(path).Id=="lunar-laboratory-authoring-v1"||Profile(path).Id=="well-authoring-v1"||Profile(path).Id==ProvingProfile.FiringRangeAuthoringId;
         public bool IsDiagnostic(string path)=>path.StartsWith("bots.evaluation.")||path=="weapon.probeRange"||path=="weapon.probeCooldown";
         public bool IsLevelAuthoring(string path)
         {
@@ -221,7 +221,16 @@ namespace StarTournament.ProvingGround
             // Reuse exact trusted catalogue validation and compatibility migration. No user IO.
             return new DesignLabHistory(null,shipped,releases:releases,resetToLatestDefault:true,persistMigration:false);
         }
+        // Critical startup needs only the selected Default. Validate the entire catalogue first;
+        // the background history still merges and migrates every published/local revision.
+        public static DesignLabHistory ResolveStartupDefault(LabBundle shipped,LabReleaseCatalog releases)
+        {
+            if(releases==null)throw new ArgumentNullException(nameof(releases));
+            return new DesignLabHistory(null,shipped,null,releases,true,false,default,null,false,true);
+        }
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default,string legacyPath=null,bool authoring=false)
+            :this(path,shipped,atomicPublish,releases,resetToLatestDefault,persistMigration,cancellationToken,legacyPath,authoring,false){}
+        DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish,LabReleaseCatalog releases,bool resetToLatestDefault,bool persistMigration,CancellationToken cancellationToken,string legacyPath,bool authoring,bool startupDefaultOnly)
         {
             double start=Clock(),stage=start;long memory=GC.GetTotalMemory(false);int collections=GC.CollectionCount(0);
             startupCancellation=cancellationToken;startupCancellation.ThrowIfCancellationRequested();
@@ -229,6 +238,13 @@ namespace StarTournament.ProvingGround
             this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;this.releases=releases?.Clone();
             data=NewFile();
             stage=Clock();if(this.releases!=null)ValidateReleases();startupDiagnostics.CatalogueSeconds=Clock()-stage;
+            if(startupDefaultOnly)
+            {
+                var defaults=this.releases.Entries.Where(e=>e.ProfileId==ReleaseId).ToArray();
+                var latest=defaults.OrderByDescending(e=>e.Revision).ThenByDescending(e=>e.Sequence).First();
+                latest.ProfileName=defaults.OrderBy(e=>e.Sequence).Last().ProfileName;
+                this.releases.Entries=new List<LabReleaseEntry>{latest};
+            }
             string source=VersionedUserData.ReadPath(path,legacyPath);
             if(File.Exists(source))
             try
@@ -280,7 +296,7 @@ namespace StarTournament.ProvingGround
                 ||releases.Entries.Select(e=>e.Sequence).Distinct().Count()!=releases.Entries.Count
                 ||!releases.Entries.Any(e=>e.ProfileId==ReleaseId))throw new InvalidDataException("Некорректный релизный каталог");
             string key;
-            using(var sha=SHA256.Create())key=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(shipped)+"\n"+JsonUtility.ToJson(releases))));
+            using(var sha=SHA256.Create())key=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(shipped)+"\n"+JsonUtility.ToJson(releases)+"\n"+releases.PackagedIdentity)));
             lock(releaseValidationLock)
             {
                 if(validatedReleases.TryGetValue(key,out var cached)){releases.Entries=cached.Clone().Entries;return;}
@@ -288,8 +304,10 @@ namespace StarTournament.ProvingGround
                 {
                     startupCancellation.ThrowIfCancellationRequested();
                     var file=NewFile();var r=Revision(e.Snapshot,2,e.Date);file.Profiles[0].Revisions.Add(r);
-                    ValidateFile(file);e.Snapshot=r.Snapshot;
-                    if(e.Hash!=e.Snapshot.Hash())throw new InvalidDataException("Релизный hash не соответствует доверенному реестру");
+                    releases.ValidatePackagedEntry(e);
+                    ValidateFile(file);
+                    if(e.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Релизный hash не соответствует доверенному реестру");
+                    e.Snapshot=releases.PackagedSnapshot(e.ProfileId,e.Hash)??r.Snapshot;
                 }
                 if(validatedReleases.Count>=4)validatedReleases.Clear();
                 validatedReleases.Add(key,releases.Clone());
@@ -378,10 +396,51 @@ namespace StarTournament.ProvingGround
                 if(historicalCache.TryGetValue(key,out var warm))
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
-            var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWellDensity(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeWellWorkZones(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<11
+                    ?p.BeforeRocketHeavyCycle():p).ToList()};
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<10
+                    ?p.BeforeRocketReloadTiming():p).ToList()};
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<9
+                    ?p.BeforeGamepadWeaponTuning().BeforeShotgunBoltTiming():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??6)<6)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeRapidFire()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??14)<14)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCutterGamepadRadius()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??13)<13)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamThumbContact()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??12)<12)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeThickerLegacyCutterCore()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??11)<11)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeLegacyCutterCoreWidth()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??10)<10)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeLegacyCutterBeam()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??9)<9)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamBattery()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??8)<8)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamForearmSwivel()).ToList()};
+            if(!sought.Profiles.Any(p=>p.Id==ProvingProfile.FiringRangeAuthoringId))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!=ProvingProfile.FiringRangeAuthoringId).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??7)<7)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamContactSurface()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??6)<6)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamFidelity()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="cutter-beam-v1")?.Version??4)<5)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeSeamPresentation()).ToList()};
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgePickupsIfNeeded(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id==ProvingProfile.RocketEffectsId)?.Version??3)<4)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePulseMk2()).ToList()};
             if(!sought.Profiles.Any(p=>p.Id=="forge-plasma-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="forge-plasma-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??5)<5)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeHeavyTuning()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??4)<4)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeCadence()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??3)<3)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeReactor()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="forge-plasma-v1")?.Version??2)<2)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeViewScale()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="single-screen-lobby-v1")?.Version??1)<2)
@@ -389,6 +448,32 @@ namespace StarTournament.ProvingGround
             // New lobby defaults are additive shell metadata. Keep exact historical registries/hashes.
             if(!sought.Profiles.Any(p=>p.Id=="single-screen-lobby-v1"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Where(p=>p.Id!="single-screen-lobby-v1").ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??34)<34)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWorldArmFit()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??33)<33)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCrimsonRecoil()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??32)<32)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCrimsonDetail()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??31)<31)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCrimsonShoulder()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??30)<30)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeHeavyAgileGait()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??29)<29)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCommonForearms()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??28)<28)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeStableArmEntry()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??27)<27)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeUnifiedArmGrips()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??26)<26)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCloserWeaponView()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??25)<25)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCobaltThumb()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??24)<24)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVectorThumb()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??23)<23)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVectorGrip()).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??22)<22)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCobaltGrip()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-trooper-presentation-v1")?.Version??21)<21)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeGrip()).ToList()};
             // Reconstruct exact trusted pre-unification metadata before older additive transforms.
@@ -432,6 +517,8 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id==ProvingProfile.TunnelsArtId?p.BeforeArenaPickupMarkings():p).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="lunar-laboratory-presentation-v1")?.Version??5)<5)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.Id=="lunar-laboratory-presentation-v1"?p.BeforeArenaPickupMarkings():p).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??7)<7)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellWayfinding()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??6)<6)
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeWellPickupMarkings()).ToList()};
             if((sought.Profiles.FirstOrDefault(p=>p.Id=="well-gameplay-presentation-v1")?.Version??5)<5)
@@ -465,6 +552,18 @@ namespace StarTournament.ProvingGround
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeTimedKillChains()).ToList()};
             // Project the exact trusted predecessor before the existing legacy search.
             // Historical snapshots/hashes stay intact; migration appends the new control.
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.ForgeDisplayPrefix+"radius"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeForgeDisplay()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.PulseDisplayPrefix+"diameter"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforePulseDisplay()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.RifleDisplayPrefix+"width"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeRifleDisplay()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.ShotgunDisplayPrefix+"width"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeShotgunDisplay()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.VectorPrecisionPrefix+"flashScale"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeVectorPrecisionEffects()).ToList()};
+            if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.CobaltFxPrefix+"enabled"))
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeCobaltShotEffects()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path=="presentation.shotTracerRed"))
                 shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeShotgunTracerColor()).ToList()};
             if(!sought.Descriptors.Any(d=>d.Path==ProvingProfile.BotBanterIntervalPath))
@@ -738,7 +837,7 @@ namespace StarTournament.ProvingGround
                     if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
                     double validationStart=Clock();var issues=trusted.Validate();
                     if(collectingStartupDiagnostics){startupDiagnostics.SnapshotValidationSeconds+=Clock()-validationStart;startupDiagnostics.SnapshotValidations++;}
-                    if(issues.Count!=0)throw new InvalidDataException("Несовместимый снимок "+p.Id+" v"+r.Number+": "+string.Join("; ",issues.Take(1).Select(i=>i.Path+": "+i.Message))+(issues.Count>1?"; ещё ошибок: "+(issues.Count-1):""));r.Snapshot=trusted;
+                    if(issues.Count!=0)throw new InvalidDataException("Несовместимый снимок "+p.Id+" v"+r.Number+": "+string.Join("; ",issues.Take(1).Select(i=>i.Path+": "+i.Message))+(issues.Count>1?"; ещё ошибок: "+(issues.Count-1):""));r.Snapshot=releases?.PackagedSnapshot(p.Id,r.Hash)??trusted;
                 }
             }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
@@ -798,6 +897,11 @@ namespace StarTournament.ProvingGround
                 if(!preserveSavedValues)
                 {
                     value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,value);
+                    // Update only the reserved packaged Default; preserve named/author experiments
+                    // and immutable source revisions. Scene defaults alone are overridden at startup.
+                    if(isDefault&&snapshot.Profile(d.Path).Id=="forge-plasma-v1"&&snapshot.Profile(d.Path).Version<5&&
+                        (d.Path=="plasma.cooldownSeconds"||d.Path=="plasma.speed"||d.Path=="plasma.orbRadius"||d.Path=="plasma.damage"))
+                        value=currentDescriptor.DefaultValue;
                     // The packaged Default adopts this behavior update. Named local
                     // profiles keep their tuning; original release snapshots stay intact.
                     if(isDefault&&ProvingProfile.BotCombatMovementDefaults.Contains(d.Path)&&snapshot.Profile(d.Path).Version<4)
@@ -816,11 +920,43 @@ namespace StarTournament.ProvingGround
                 }
                 // Authoring and runtime Default share the approved radius migration.
                 // Named profiles and immutable source revisions retain their saved values.
+                // Published pre-COBALT Default contains the old scene grip values even
+                // where descriptor metadata was already newer. Retune only this reserved
+                // shipped profile; named/custom profiles and source revisions stay exact.
+                // PULSE's packaged scene still carried the pre-Mk2 palm placement.
+                // Adopt the actual authored grip only for the reserved shipped Default.
+                if(isDefault&&!preserveSavedValues&&d.Path.StartsWith("grip.RocketLauncher.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<27)
+                    value=currentDescriptor.DefaultValue;
+                if(isDefault&&!preserveSavedValues&&(d.Path.StartsWith("grip.Rifle.left.Thumb.",StringComparison.Ordinal)||d.Path=="grip.Rifle.thumbOpposition")&&snapshot.Profile(d.Path).Version<25)
+                    value=currentDescriptor.DefaultValue;
+                if(isDefault&&d.Path.StartsWith("grip.Rifle.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<22)
+                    value=currentDescriptor.DefaultValue;
+                // The packaged Vector Default also contains scene-tuned values.
+                // Migrate that system row only; every intentional authored/named save stays exact.
+                if(isDefault&&!preserveSavedValues&&d.Path.StartsWith("grip.Shotgun.",StringComparison.Ordinal)&&snapshot.Profile(d.Path).Version<24)
+                    value=currentDescriptor.DefaultValue;
+                // Only untouched shipped Default adopts F8; named experiments and historical bytes stay exact.
+                if(isDefault&&d.Path=="cutter.seam.legacyCoreWidth"&&snapshot.Profile(d.Path).Version==11&&Mathf.Approximately(value,.003f))
+                    value=currentDescriptor.DefaultValue;
                 if(isDefault)value=ProvingProfile.UpgradeUniformPickupRadius(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 if(isDefault&&preserveSavedValues)value=ProvingProfile.UpgradeRifleSteelValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 if(isDefault&&preserveSavedValues&&snapshot.Profile(d.Path).Version>=3&&snapshot.Profile(d.Path).Version<=4)value=ProvingProfile.UpgradeWellDetailValue(d.Path,snapshot.Profile(d.Path).Version,value,currentDescriptor);
                 next.Set(d.Path,value);
             }
+            // Saved profiles predating the switch controls retain the originally introduced lift.
+            if(preserveSavedValues&&currentDescriptors.ContainsKey("view.switchShoulderDegrees")&&!snapshot.Descriptors.Any(d=>d.Path=="view.switchShoulderDegrees"))
+                next.Set("view.switchShoulderDegrees",60);
+            if(preserveSavedValues&&currentDescriptors.ContainsKey("view.commonForearmsEnabled")&&!snapshot.Descriptors.Any(d=>d.Path=="view.commonForearmsEnabled"))
+                next.Set("view.commonForearmsEnabled",0);
+            if(preserveSavedValues&&currentDescriptors.ContainsKey("view.armEntryEnabled")&&!snapshot.Descriptors.Any(d=>d.Path=="view.armEntryEnabled"))
+                next.Set("view.armEntryEnabled",0);
+            // New right-arm fitting must not silently reinterpret an intentional saved pose.
+            if(preserveSavedValues)
+                foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
+                {
+                    var path="grip."+weapon+".primaryWristAlignment";
+                    if(currentDescriptors.ContainsKey(path)&&!snapshot.Descriptors.Any(d=>d.Path==path))next.Set(path,0);
+                }
             // Version3 used the office controls for both floors and stair annexes.
             // Preserve that custom stair lighting when the controls become independent.
             if(currentDescriptors.ContainsKey("lunar.stairLamp")&&currentDescriptors.ContainsKey("lunar.stairFill")

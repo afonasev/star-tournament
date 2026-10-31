@@ -290,9 +290,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         {
             var profile=ProvingProfile.CreateRocketEffectsDefault();profile=priorVersion==1?profile.BeforePulseRefinement():profile.BeforePulseVisibility();
             profile.Set("pulseFx.fireSizeVariation",.7f);profile.EnsureRocketEffectsDescriptors();
-            Assert.That(profile.Version,Is.EqualTo(3));Assert.That(profile.Get("pulseFx.blastRadiusScale"),Is.EqualTo(.8f));
+            Assert.That(profile.Version,Is.EqualTo(ProvingProfile.CreateRocketEffectsDefault().Version));Assert.That(profile.Get("pulseFx.blastRadiusScale"),Is.EqualTo(.8f));
             Assert.That(profile.Get("pulseFx.fireSizeVariation"),Is.EqualTo(.7f));
             string json=JsonUtility.ToJson(profile);profile.EnsureRocketEffectsDescriptors();Assert.That(JsonUtility.ToJson(profile),Is.EqualTo(json));
+        }
+        [Test]public void PulseMk2UpgradePreservesV3SnapshotAndCustomSettings()
+        {
+            var old=Shipped();old.Profiles=old.Profiles.Select(p=>p.BeforePulseMk2()).ToList();
+            var history=new DesignLabHistory(path,old);history.Create("Pulse v3");var draft=history.Selected.Snapshot;
+            draft.Set("pulseFx.exhaustLength",.72f);history.Save(draft);var prior=history.Selected;string json=JsonUtility.ToJson(prior.Snapshot);
+            var upgraded=new DesignLabHistory(path,Shipped());Assert.That(upgraded.StorageError,Is.Null);
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.exhaustLength"),Is.EqualTo(.72f));
+            Assert.That(upgraded.Selected.Snapshot.Get("pulseFx.ignitionSeconds"),Is.EqualTo(.09f));
+            var preserved=upgraded.SelectedProfile.Revisions.Single(r=>r.Number==prior.Number);
+            Assert.That(preserved.Hash,Is.EqualTo(prior.Hash));Assert.That(JsonUtility.ToJson(preserved.Snapshot),Is.EqualTo(json));
+            Assert.That(new DesignLabHistory(path,Shipped()).StorageError,Is.Null);
         }
         [Test]public void PulseV2VisibilityUpgradePreservesHistoryAndUsesSelectedScale()
         {

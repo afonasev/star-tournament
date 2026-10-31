@@ -12,6 +12,23 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static LabBundle Baseline()=>new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
         static LabReleaseEntry Entry(int sequence,string id,string name,int number,LabBundle snapshot)=>new LabReleaseEntry{
             Sequence=sequence,ProfileId=id,ProfileName=name,Revision=number,Date="20261007",Hash=snapshot.Hash(),Snapshot=snapshot.Clone()};
+        [Test]public void StartupResolverPreservesPublishedSelectionAndValidatesOlderEntries()
+        {
+            var baseline=Baseline();var catalog=LabReleaseCatalog.Factory(baseline);
+            var published=baseline.Clone();published.Set("rifle.damage",40);
+            catalog.Entries.Add(Entry(4,DesignLabHistory.ReleaseId,"Default",6,published));
+            var alternative=baseline.Clone();alternative.Set("rifle.damage",50);
+            catalog.Entries.Add(Entry(5,"alternative","Alternative",1,alternative));
+            string before=UnityEngine.JsonUtility.ToJson(catalog);
+            var expected=DesignLabHistory.ResolvePublishedDefault(baseline,catalog);
+            var startup=DesignLabHistory.ResolveStartupDefault(baseline,catalog);
+            Assert.That(startup.Selected.Snapshot.Hash(),Is.EqualTo(expected.Selected.Snapshot.Hash()));
+            Assert.That(UnityEngine.JsonUtility.ToJson(startup.SavedIdentity(startup.SelectedProfileId,startup.Selected.Number)),
+                Is.EqualTo(UnityEngine.JsonUtility.ToJson(expected.SavedIdentity(expected.SelectedProfileId,expected.Selected.Number))));
+            Assert.That(UnityEngine.JsonUtility.ToJson(catalog),Is.EqualTo(before),"Startup must not trim the original catalogue");
+            catalog.Entries[0].Hash="damaged older entry";
+            Assert.Throws<System.IO.InvalidDataException>(()=>DesignLabHistory.ResolveStartupDefault(baseline,catalog));
+        }
         [Test]public void PublishedDefaultResolverIgnoresLocalHistoryAndPreservesCatalogueTuning()
         {
             var baseline=Baseline();var catalogue=LabReleaseCatalog.Factory(baseline);
@@ -32,6 +49,24 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             var normal=new DesignLabHistory(path,baseline,releases:catalogue,resetToLatestDefault:true,persistMigration:false);
             Assert.That(normal.Selected.Snapshot.Hash(),Is.EqualTo(resolved.Selected.Snapshot.Hash()));
             CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+        }
+        [Test]public void PackagedAuthorityStaysDetachedAndRejectsChangedReleaseIdentity()
+        {
+            var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene(
+                "Assets/StarTournament/Scenes/ProvingGround.unity",UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+                var baseline=ground.CaptureLabAuthoringBaseline();var catalog=LabReleaseCatalog.Load();
+                var entry=catalog.Entries.Last();string exact=UnityEngine.JsonUtility.ToJson(entry.Snapshot);
+                entry.Snapshot.Descriptors.First().Label="caller metadata";
+                var history=new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false);
+                var retained=history.Profiles.Single(p=>p.Id==entry.ProfileId).Revisions.Single(r=>r.ReleaseSequence==entry.Sequence&&r.Hash==entry.Hash);
+                Assert.That(UnityEngine.JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(exact));
+                entry.Date="2099-01-01";
+                Assert.Throws<InvalidDataException>(()=>new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false));
+            }
+            finally{UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene,true);}
         }
         [Test,Order(-1)]public void PackagedSceneAndCatalogPreserveEveryPublishedSnapshot()
         {
