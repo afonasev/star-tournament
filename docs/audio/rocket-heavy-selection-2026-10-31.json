@@ -1,36 +1,19 @@
 {
   "shot_source": "/Users/eaafonasev/Projects/star-tournament/planning/docs/evidence/rocket-shot-v3-20261031/01-ignition-shot-only.wav",
   "shot_sha256": "074de4a5e39f9a94eac67f7b85cc241d6cd5d2e1fe28b514cec4d4a2a208745b",
-  "shot_crop": [
-    7200,
-    36960
-  ],
-  "shot_pcm_unchanged": true,
   "reload_source": "/Users/eaafonasev/Projects/star-tournament/planning/docs/evidence/rocket-reload-v1-20261031/02-servo-reload-only.wav",
   "reload_sha256": "c1c5dcb1da309d004835ea24ff74d596d7fb6990f6e8cd9415daf359059f7193",
-  "reload_start_seconds": 0.35,
-  "reload_duration_seconds": 0.85,
+  "shot_pcm_unchanged": true,
+  "reload_pcm_unchanged": true,
+  "time_stretch": false,
+  "pitch_shift": 0,
+  "gain_change_db": 0,
+  "shot_end_seconds": 0.62,
+  "reload_start_seconds": 0.7801875,
+  "reload_duration_seconds": 0.4198125,
+  "pause_seconds": 0.1601875,
   "cycle_seconds": 1.2,
   "ready_tick": 60,
-  "tick_seconds": 0.02,
-  "pitch_shift": 0,
-  "stretch_attempts": [
-    {
-      "tempo": 0.4938970588235294,
-      "frames": 38608,
-      "filter": "atempo=0.702778100700,atempo=0.702778100700"
-    },
-    {
-      "tempo": 0.46502538624567474,
-      "frames": 41592,
-      "filter": "atempo=0.681927698694,atempo=0.681927698694"
-    }
-  ],
-  "tail_rms_last50ms": 0.015071849103686275,
-  "levels": {
-    "lufs": -20.04,
-    "true_peak_dbtp": -3.44
-  },
   "files": [
     {
       "file": "shot.wav",
@@ -40,38 +23,41 @@
     },
     {
       "file": "reload.wav",
-      "sha256": "958d762e5cf1fb34071add27606fa9545e8cd4e0a8a90797f36483c5dce41007",
-      "frames": 40800,
-      "seconds": 0.85
+      "sha256": "c954160caad42afed65f6b2d0b7e0771135f05e6078a2ffa32a8d6663cbf1a09",
+      "frames": 20151,
+      "seconds": 0.4198125
     },
     {
       "file": "rocket.wav",
-      "sha256": "e548b76669fb585b938721bc467418c3dc09fe5787cbd123f5e75a95b9edba95",
+      "sha256": "0951f4a717c7f4cd6db1b77ba89c0e3a68bef8379aeeace0cb0f3f24e417cb0f",
       "frames": 57600,
       "seconds": 1.2
     },
     {
       "file": "rocket-single.wav",
-      "sha256": "9eef9bc96aa2f6b0b381e672ae7c0f81c5c61b2963b4e441e36f7eca1ff9f77a",
+      "sha256": "c6e78795f873d9565872be974bdf5ed48cc14b9f52fcb26a1efed13750a4e9c8",
       "frames": 69600,
       "seconds": 1.45
     },
     {
       "file": "rocket-series.wav",
-      "sha256": "1e9997800cfdc3eca64827530db9c48cd73371488a3f5749b68a658a8c72796f",
+      "sha256": "bd6e16af9b71232dba7ec6c600fe94a1285f86d49d042a4241a20763df28f754",
       "frames": 242400,
       "seconds": 5.05
     },
     {
       "file": "rocket-review.wav",
-      "sha256": "cb25e9d422704c634821b06175ed597bfe263c2307d61effe963e26607511002",
+      "sha256": "86af5e5e537f812ab8737a9fb7d84a4be2eeb04cc6751754053f2acbc5b2482e",
       "frames": 336000,
       "seconds": 7.0
     }
   ],
+  "levels": {
+    "lufs": -20.83,
+    "true_peak_dbtp": -3.44
+  },
   "reference_pcm_used": false,
-  "origin": "Original Stable Audio 3, chosen firing1 and reload2",
-  "human_acceptance": "Shot1 selected; stretched final mix awaiting listening",
-  "evidence_root": "/Users/eaafonasev/Projects/star-tournament/planning/docs/evidence/rocket-heavy-cycle-v4-20261031",
+  "human_acceptance": "Shot1/reload2 selected; final gap mix awaiting listening",
+  "evidence_root": "/Users/eaafonasev/Projects/star-tournament/planning/docs/evidence/rocket-gap-v5-20261031",
   "files_are_relative_to": "evidence_root"
 }
