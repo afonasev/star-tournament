@@ -7,6 +7,27 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class WeaponRebalanceTests
     {
+        [TestCase(false,11)] [TestCase(true,9)]
+        public void PreparingCombatDescriptorsPreservesCurrentVersionMetadataAndCustomValues(bool native,int version)
+        {
+            var profile=native?ProvingProfile.CreateNativeCombatDefault():ProvingProfile.CreateCombatDefault();
+            profile.Set(native?"rifle.damage":"combat.cooldownSeconds",native?47:.85f);
+            profile.Set(native?"shot.damage":"rocket.cooldownSeconds",native?91:1.4f);
+            string exact=JsonUtility.ToJson(profile);
+            for(int i=0;i<2;i++)
+                if(native)profile.EnsureNativeCombatDescriptors();else profile.EnsureCombatDescriptors();
+            Assert.That(profile.Version,Is.EqualTo(version));
+            Assert.That(JsonUtility.ToJson(profile),Is.EqualTo(exact));
+        }
+        [Test] public void PreparingHistoricalCombatDescriptorsDoesNotClaimTheNewTimingRegistry()
+        {
+            var profile=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeShotgunBoltTiming",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                .Invoke(ProvingProfile.CreateCombatDefault(),null);
+            string exact=JsonUtility.ToJson(profile);
+            profile.EnsureCombatDescriptors();
+            Assert.That(profile.Version,Is.EqualTo(8));
+            Assert.That(JsonUtility.ToJson(profile),Is.EqualTo(exact));
+        }
         [Test] public void ShotgunUnlocksOnBoltEndAt33TicksAndPreservesSemiAutoEdge()
         {
             var p=ProvingProfile.CreateCombatDefault();Assert.That(p.Version,Is.EqualTo(11));

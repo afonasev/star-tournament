@@ -325,6 +325,7 @@ namespace StarTournament.ProvingGround
         }
         public void EnsureNativeCombatDescriptors()
         {
+            int previousVersion=version;
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="spawn.spacing"||d.Path=="spawn.inset");values.RemoveAll(v=>v.Path=="spawn.spacing"||v.Path=="spawn.inset");
             UpgradeBodyDamage();
@@ -337,7 +338,7 @@ namespace StarTournament.ProvingGround
                 descriptors.Add(JsonUtility.FromJson<NumericDescriptor>(JsonUtility.ToJson(descriptor)));
                 values.Add(new ProvingProfileValue{Path=descriptor.Path,Value=current.Get(descriptor.Path)});
             }
-            version=8;
+            version=Math.Max(previousVersion,8);
         }
         internal ProvingProfile BeforeModeTargets()
         {
@@ -381,7 +382,9 @@ namespace StarTournament.ProvingGround
             valueIndex=null;
             descriptors.RemoveAll(d=>d.Path=="combat.emptyRefillAmmo");
             values.RemoveAll(v=>v.Path=="combat.emptyRefillAmmo");
-            version=8;
+            // Append missing fields to old serialized scenes without relabelling a newer
+            // registry as v8: historical Lab metadata is resolved by that version.
+            version=Math.Max(version,8);
             var current=CreateCombatDefault();
             var cadence=FindDescriptor("rifle.cooldownSeconds");
             if(cadence!=null)

@@ -50,6 +50,24 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(normal.Selected.Snapshot.Hash(),Is.EqualTo(resolved.Selected.Snapshot.Hash()));
             CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
         }
+        [Test]public void PackagedAuthorityStaysDetachedAndRejectsChangedReleaseIdentity()
+        {
+            var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene(
+                "Assets/StarTournament/Scenes/ProvingGround.unity",UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+                var baseline=ground.CaptureLabAuthoringBaseline();var catalog=LabReleaseCatalog.Load();
+                var entry=catalog.Entries.Last();string exact=UnityEngine.JsonUtility.ToJson(entry.Snapshot);
+                entry.Snapshot.Descriptors.First().Label="caller metadata";
+                var history=new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false);
+                var retained=history.Profiles.Single(p=>p.Id==entry.ProfileId).Revisions.Single(r=>r.ReleaseSequence==entry.Sequence&&r.Hash==entry.Hash);
+                Assert.That(UnityEngine.JsonUtility.ToJson(retained.Snapshot),Is.EqualTo(exact));
+                entry.Date="2099-01-01";
+                Assert.Throws<InvalidDataException>(()=>new DesignLabHistory(path,baseline,releases:catalog,persistMigration:false));
+            }
+            finally{UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene,true);}
+        }
         [Test,Order(-1)]public void PackagedSceneAndCatalogPreserveEveryPublishedSnapshot()
         {
             var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene(

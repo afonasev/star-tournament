@@ -296,7 +296,7 @@ namespace StarTournament.ProvingGround
                 ||releases.Entries.Select(e=>e.Sequence).Distinct().Count()!=releases.Entries.Count
                 ||!releases.Entries.Any(e=>e.ProfileId==ReleaseId))throw new InvalidDataException("Некорректный релизный каталог");
             string key;
-            using(var sha=SHA256.Create())key=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(shipped)+"\n"+JsonUtility.ToJson(releases))));
+            using(var sha=SHA256.Create())key=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(shipped)+"\n"+JsonUtility.ToJson(releases)+"\n"+releases.PackagedIdentity)));
             lock(releaseValidationLock)
             {
                 if(validatedReleases.TryGetValue(key,out var cached)){releases.Entries=cached.Clone().Entries;return;}
@@ -304,8 +304,10 @@ namespace StarTournament.ProvingGround
                 {
                     startupCancellation.ThrowIfCancellationRequested();
                     var file=NewFile();var r=Revision(e.Snapshot,2,e.Date);file.Profiles[0].Revisions.Add(r);
-                    ValidateFile(file);e.Snapshot=r.Snapshot;
-                    if(e.Hash!=e.Snapshot.Hash())throw new InvalidDataException("Релизный hash не соответствует доверенному реестру");
+                    releases.ValidatePackagedEntry(e);
+                    ValidateFile(file);
+                    if(e.Hash!=r.Snapshot.Hash())throw new InvalidDataException("Релизный hash не соответствует доверенному реестру");
+                    e.Snapshot=releases.PackagedSnapshot(e.ProfileId,e.Hash)??r.Snapshot;
                 }
                 if(validatedReleases.Count>=4)validatedReleases.Clear();
                 validatedReleases.Add(key,releases.Clone());
@@ -835,7 +837,7 @@ namespace StarTournament.ProvingGround
                     if(trusted.Descriptors.Any(d=>(trusted.IsAuthoring(d.Path)||trusted.IsDiagnostic(d.Path))&&trusted.Get(d.Path)!=registry.Get(d.Path)))throw new InvalidDataException("Read-only metadata changed");
                     double validationStart=Clock();var issues=trusted.Validate();
                     if(collectingStartupDiagnostics){startupDiagnostics.SnapshotValidationSeconds+=Clock()-validationStart;startupDiagnostics.SnapshotValidations++;}
-                    if(issues.Count!=0)throw new InvalidDataException("Несовместимый снимок "+p.Id+" v"+r.Number+": "+string.Join("; ",issues.Take(1).Select(i=>i.Path+": "+i.Message))+(issues.Count>1?"; ещё ошибок: "+(issues.Count-1):""));r.Snapshot=trusted;
+                    if(issues.Count!=0)throw new InvalidDataException("Несовместимый снимок "+p.Id+" v"+r.Number+": "+string.Join("; ",issues.Take(1).Select(i=>i.Path+": "+i.Message))+(issues.Count>1?"; ещё ошибок: "+(issues.Count-1):""));r.Snapshot=releases?.PackagedSnapshot(p.Id,r.Hash)??trusted;
                 }
             }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);

@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 for(int p=0;p<humans;p++)AllWeapons(ground.Session.Life(p));
                 var cameras=ground.GetComponentsInChildren<Camera>().ToArray();Assert.That(cameras.Length,Is.EqualTo(humans));
                 var output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RANGE_EVIDENCE");
-                if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);Capture(cameras[0],Path.Combine(output,"range-"+humans+"-first-person.png"));}
+                if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);yield return Capture(cameras[0],Path.Combine(output,"range-"+humans+"-first-person.png"));}
                 var before=ground.Session;var frozen=JsonUtility.ToJson(ground.Composition.Read());
                 ground.Session.ApplyDamage(humans,ground.Session.Life(humans).Life,10000);ground.EnableNativeInputReview();ground.OpenPauseReviewSeat(0);double timer=ground.Session.Life(humans).RespawnRemaining;
                 yield return new WaitForSeconds(.1f);Assert.That(ground.Session.Life(humans).RespawnRemaining,Is.EqualTo(timer));ground.ResumeNativeInputReview();
@@ -92,18 +92,27 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var lightObject=new GameObject("comparison-light");SceneManager.MoveGameObjectToScene(lightObject,scene);var light=lightObject.AddComponent<Light>();light.type=LightType.Directional;light.intensity=1;light.transform.rotation=Quaternion.Euler(50,-25,0);
             var cameraObject=new GameObject("review-camera");SceneManager.MoveGameObjectToScene(cameraObject,scene);var camera=cameraObject.AddComponent<Camera>();camera.transform.position=new Vector3(0,3,-22);camera.transform.rotation=Quaternion.Euler(3,0,0);camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.1f,.15f,.2f);
             var output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RANGE_EVIDENCE");int before=owner.GetComponentsInChildren<MeshRenderer>().Count(r=>r.enabled);
-            var beforePixels=Pixels(camera);if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);File.WriteAllBytes(Path.Combine(output,"optimization-before.png"),beforePixels);}
-            art.SetCombined(true);int after=owner.GetComponentsInChildren<MeshRenderer>().Count(r=>r.enabled);var afterPixels=Pixels(camera);
+            byte[] beforePixels=null;yield return Pixels(camera,data=>beforePixels=data);if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);File.WriteAllBytes(Path.Combine(output,"optimization-before.png"),beforePixels);}
+            art.SetCombined(true);int after=owner.GetComponentsInChildren<MeshRenderer>().Count(r=>r.enabled);byte[] afterPixels=null;yield return Pixels(camera,data=>afterPixels=data);
             Assert.That(after,Is.LessThan(before));Assert.That(owner.GetComponentsInChildren<Collider>(),Is.Empty);Assert.That(afterPixels,Is.EqualTo(beforePixels),"Static combine must preserve exact rendered pixels");
-            if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);File.WriteAllText(Path.Combine(output,"optimization.txt"),"before active renderers="+before+"\nafter active renderers="+after+"\nexact pixels equal\nnew texture assets=0; new lights=0; collision unchanged; LOD N/A for low-poly room shell\n");Capture(camera,Path.Combine(output,"optimization-after.png"));}
+            if(!string.IsNullOrEmpty(output)){Directory.CreateDirectory(output);File.WriteAllText(Path.Combine(output,"optimization.txt"),"before active renderers="+before+"\nafter active renderers="+after+"\nexact pixels equal\nnew texture assets=0; new lights=0; collision unchanged; LOD N/A for low-poly room shell\n");yield return Capture(camera,Path.Combine(output,"optimization-after.png"));}
             yield return null;
         }
-        static byte[] Pixels(Camera camera)
+        static IEnumerator Pixels(Camera camera,Action<byte[]> complete)
         {
             var target=new RenderTexture(1280,720,24);var prior=camera.targetTexture;var rect=camera.rect;var active=RenderTexture.active;var image=new Texture2D(1280,720,TextureFormat.RGB24,false);
-            try{camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;camera.Render();RenderTexture.active=target;image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();return image.EncodeToPNG();}
+            try
+            {
+                Assert.That(SystemInfo.graphicsDeviceType,Is.Not.EqualTo(UnityEngine.Rendering.GraphicsDeviceType.Null));
+                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;
+                // SRP completes the target during the player loop, after Camera.Render returns.
+                for(int frame=0;frame<3;frame++){camera.Render();yield return null;}
+                RenderTexture.active=target;image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();
+                var pixels=image.GetPixels32();Assert.That(pixels.Any(pixel=>!pixel.Equals(pixels[0])),Is.True,"Range evidence must contain rendered geometry, not a uniform uninitialized target");
+                complete(image.EncodeToPNG());
+            }
             finally{camera.targetTexture=prior;camera.rect=rect;RenderTexture.active=active;UnityEngine.Object.DestroyImmediate(image);UnityEngine.Object.DestroyImmediate(target);}
         }
-        static void Capture(Camera camera,string path)=>File.WriteAllBytes(path,Pixels(camera));
+        static IEnumerator Capture(Camera camera,string path){yield return Pixels(camera,data=>File.WriteAllBytes(path,data));}
     }
 }
