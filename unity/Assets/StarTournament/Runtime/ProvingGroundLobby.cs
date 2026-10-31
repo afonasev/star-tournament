@@ -147,14 +147,17 @@ namespace StarTournament.ProvingGround
             foreach(var b in seatIdentityButtons)if(b)b.gameObject.SetActive(false);
             var title=setupScreen.transform.Find("setup-brand").GetComponent<Text>();title.text="Подготовка матча";title.fontSize=40;title.fontStyle=FontStyle.Bold;title.color=Color.white;Layout(title.rectTransform,new Vector2(.05f,.915f),new Vector2(.95f,.97f));
             lobbyPreview.Show(SelectedMapId);lobbyMap.transform.Find("label").GetComponent<Text>().text=AuthoredArenaCatalog.Name(SelectedMapId);
-            lobbyMode.GetComponentInChildren<Text>().text=(SetupMode==NativeMatchMode.Teams?"Командный бой":"Каждый за себя");
-            lobbyTime.GetComponentInChildren<Text>().text=Configuration.DurationMinutes+" мин";
-            lobbyTarget.GetComponentInChildren<Text>().text=(Configuration.TargetEnabled?Configuration.TargetPoints.ToString():"Без цели");
+            lobbyMode.GetComponentInChildren<Text>().text=TrainingSelected?"Тренировка":(SetupMode==NativeMatchMode.Teams?"Командный бой":"Каждый за себя");
+            lobbyMode.interactable=lobbyTime.interactable=lobbyTarget.interactable=!TrainingSelected;
+            lobbyTime.GetComponentInChildren<Text>().text=TrainingSelected?"Без таймера":Configuration.DurationMinutes+" мин";
+            lobbyTarget.GetComponentInChildren<Text>().text=TrainingSelected?"Без счёта":(Configuration.TargetEnabled?Configuration.TargetPoints.ToString():"Без цели");
             RefreshRosterUi();StyleLobbySurfaces();
             var footer=new[]{setupPrevious,rosterAddBot,rosterAddHuman,start};var labels=new[]{"Назад","Добавить бота","Присоединиться","Начать матч"};
             var footerMin=new[]{new Vector2(.025f,.055f),new Vector2(.18f,.055f),new Vector2(.38f,.055f),new Vector2(.695f,.055f)};
             var footerMax=new[]{new Vector2(.16f,.13f),new Vector2(.37f,.13f),new Vector2(.60f,.13f),new Vector2(.975f,.13f)};
             for(int i=0;i<footer.Length;i++){footer[i].gameObject.SetActive(phase==Phase.Setup);Layout((RectTransform)footer[i].transform,footerMin[i],footerMax[i]);footer[i].GetComponent<MenuPresentation>().Compact=false;var t=footer[i].GetComponentInChildren<Text>();t.text=labels[i];t.fontSize=23;t.alignment=TextAnchor.MiddleCenter;Layout(t.rectTransform,Vector2.zero,Vector2.one);t.rectTransform.offsetMin=new Vector2(58,0);t.rectTransform.offsetMax=new Vector2(-58,0);}
+            rosterAddBot.interactable=!TrainingSelected;
+            if(TrainingSelected)start.GetComponentInChildren<Text>().text="На полигон";
             start.interactable=SetupBlockingReason()=="";start.GetComponent<Image>().color=MenuGold;start.GetComponentInChildren<Text>().color=MenuInk;
             setupMessage.text=setupError??SetupBlockingReason();
             if(lobbyDialog&&lobbyDialog.activeSelf)lobbyDialog.transform.SetAsLastSibling();
@@ -214,7 +217,7 @@ namespace StarTournament.ProvingGround
         }
         void CloseLobbyDialog()
         {
-            if(lobbyDialog)lobbyDialog.SetActive(false);lobbyBack=null;setupTransitionFrame=Time.frameCount;RefreshInterface();Select(lobbyOpener??lobbyMap);
+            if(lobbyDialog)lobbyDialog.SetActive(false);lobbyJoinDevice=null;lobbyBack=null;setupTransitionFrame=Time.frameCount;RefreshInterface();Select(lobbyOpener??lobbyMap);
         }
         void OpenLobbyMaps()
         {
@@ -226,15 +229,15 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<SetupMapIds.Length;i++)
             {
                 string id=SetupMapIds[i];int col=i%2,row=i/2;
-                var button=RosterButton(panel,"lobby-map-"+id,"",new Vector2(.045f+col*.47f,.49f-row*.34f),new Vector2(.485f+col*.47f,.81f-row*.34f),()=>{if(Time.frameCount<=lobbyDialogFrame)return;SelectAuthoredMap(id);CloseLobbyDialog();});
+                var button=RosterButton(panel,"lobby-map-"+id,"",new Vector2(.045f+col*.47f,.60f-row*.25f),new Vector2(.485f+col*.47f,.82f-row*.25f),()=>{if(Time.frameCount<=lobbyDialogFrame)return;SelectAuthoredMap(id);CloseLobbyDialog();});
                 button.GetComponent<MenuPresentation>().Compact=false;((RectTransform)button.transform).offsetMin=((RectTransform)button.transform).offsetMax=Vector2.zero;button.GetComponent<MenuActionHint>().HideFocusedConfirm=true;
                 var image=new GameObject("map-art",typeof(RectTransform),typeof(ArenaPreviewGraphic));image.transform.SetParent(button.transform,false);Layout((RectTransform)image.transform,new Vector2(.012f,.02f),new Vector2(.988f,.98f));image.GetComponent<ArenaPreviewGraphic>().Show(id);image.GetComponent<ArenaPreviewGraphic>().raycastTarget=false;
                 var shade=Panel(button.transform,"map-caption-backing",new Vector2(.012f,.02f),new Vector2(.988f,.22f),new Color32(6,15,24,230));shade.GetComponent<Image>().raycastTarget=false;
                 var caption=button.transform.Find("label").GetComponent<Text>();caption.text=AuthoredArenaCatalog.Name(id);caption.fontSize=26;caption.alignment=TextAnchor.MiddleLeft;Layout(caption.rectTransform,new Vector2(.04f,.02f),new Vector2(.96f,.22f));caption.transform.SetAsLastSibling();
                 lobbyChoices.Add(button);
             }
-            for(int i=0;i<4;i++)SetupNavigation(lobbyChoices[i],i>=2?lobbyChoices[i-2]:lobbyChoices[i],i<2?lobbyChoices[i+2]:lobbyDialogBack,lobbyChoices[i%2==1?i-1:i],lobbyChoices[i%2==0?i+1:i]);
-            SetupNavigation(lobbyDialogBack,lobbyChoices[2],lobbyDialogBack,lobbyDialogBack,lobbyDialogBack);
+            for(int i=0;i<SetupMapIds.Length;i++)SetupNavigation(lobbyChoices[i],i>=2?lobbyChoices[i-2]:lobbyChoices[i],i+2<SetupMapIds.Length?lobbyChoices[i+2]:lobbyDialogBack,lobbyChoices[i%2==1?i-1:i],lobbyChoices[i%2==0&&i+1<SetupMapIds.Length?i+1:i]);
+            SetupNavigation(lobbyDialogBack,lobbyChoices[SetupMapIds.Length-1],lobbyDialogBack,lobbyDialogBack,lobbyDialogBack);
             Select(lobbyChoices[Mathf.Max(0,Array.IndexOf(SetupMapIds,SelectedMapId))]);
             RouteInlineInput();
         }

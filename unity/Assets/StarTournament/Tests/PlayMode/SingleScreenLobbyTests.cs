@@ -291,19 +291,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             foreach(int i in Enumerable.Range(0,8)){EventSystem.current.SetSelectedGameObject(B("roster-card-"+i).gameObject);yield return null;}
             yield return Capture("15-uneven-teams");yield return Capture("16-uneven-teams-4k",3840,2160);
             var identity=Field<LocalIdentitySession>("identities").GuestAt(0).Id;yield return Press(GamepadButton.North);
+            Assert.That(Field<NativeTeam[]>("teamAssignments")[0],Is.EqualTo(NativeTeam.TeamA),"Y opens editor without changing team");yield return Click("inline-team-0");yield return Click("inline-team-choice-0-1");
             Assert.That(Field<NativeTeam[]>("teamAssignments")[0],Is.EqualTo(NativeTeam.TeamB));Assert.That(Field<LocalIdentitySession>("identities").GuestAt(0).Id,Is.EqualTo(identity));
         }
-        [UnityTest] public IEnumerator GenericGamepadFallbackKeepsTextHintReadable()
+        [UnityTest] public IEnumerator GenericGamepadFallbackUsesXboxButtonArtwork()
         {
             var generic=InputSystem.AddDevice<Gamepad>();
             try
             {
+                Assert.That(Field<SeatInputCoordinator>("input").Replace(0,generic),Is.True);
                 typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);
                 EventSystem.current.SetSelectedGameObject(B("lobby-map").gameObject);yield return null;
                 var hint=B("lobby-map").GetComponent<MenuActionHint>();hint.Refresh();
                 Assert.That(hint.HideFocusedConfirm,Is.True);Assert.That(hint.GlyphLabel.enabled,Is.False,"Lobby hides redundant confirm even for generic pads");
                 var shortcut=B("roster-add-bot").GetComponent<MenuActionHint>();shortcut.Refresh();
-                Assert.That(shortcut.GlyphLabel.enabled,Is.True);Assert.That(shortcut.GlyphLabel.text,Is.EqualTo("Левая"));
+                Assert.That(shortcut.GlyphLabel.enabled,Is.True);Assert.That(shortcut.GlyphLabel.text,Is.EqualTo("X"));
                 yield return Capture("01-cold-lobby-generic");
             }
             finally{InputSystem.RemoveDevice(generic);}
@@ -329,7 +331,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var generic=InputSystem.AddDevice<Gamepad>();
                 try
                 {
-                    typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);typeof(ProvingGround).GetField("menuGamepadCursor",Private).SetValue(ground,true);
+                    Assert.That(Field<SeatInputCoordinator>("input").Replace(0,generic),Is.True);
+                typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);typeof(ProvingGround).GetField("menuGamepadCursor",Private).SetValue(ground,true);
                     yield return null;Canvas.ForceUpdateCanvases();
                     var botCard=B("roster-card-2");var editBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(botCard.transform,botCard.transform.Find("participant-name").GetComponent<Text>().rectTransform);
                     var hintBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(botCard.transform,botCard.GetComponent<MenuActionHint>().GlyphLabel.rectTransform);
@@ -441,7 +444,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var generic=InputSystem.AddDevice<Gamepad>();
                 try
                 {
-                    typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);typeof(ProvingGround).GetField("menuGamepadCursor",Private).SetValue(ground,true);
+                    Assert.That(Field<SeatInputCoordinator>("input").Replace(0,generic),Is.True);
+                typeof(ProvingGround).GetField("menuDevice",Private).SetValue(ground,generic);typeof(ProvingGround).GetField("menuGamepadCursor",Private).SetValue(ground,true);
                     yield return Click("lobby-mode");yield return null;AssertAdjacentHintGeometry();yield return Capture("11-generic-ffa");
                     foreach(var hint in ground.GetComponentsInChildren<MenuActionHint>().Where(h=>h.GlyphLabel&&h.GlyphLabel.enabled))
                     {
@@ -496,7 +500,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     using(StateEvent.From(device,out var press)){device.dpad.WriteValueIntoEvent(Vector2.right,press);InputSystem.QueueEvent(press);}yield return null;yield return null;
                     using(StateEvent.From(device,out var release)){device.dpad.WriteValueIntoEvent(Vector2.zero,release);InputSystem.QueueEvent(release);}yield return null;
                     Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.SameAs(pad));
-                    var hint=EventSystem.current.currentSelectedGameObject.GetComponent<MenuActionHint>();
+                    var hint=EventSystem.current.currentSelectedGameObject.GetComponent<MenuActionHint>();hint.Device=()=>device;
                     Assert.That(hint.HideFocusedConfirm,Is.True);hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False);
                     Assert.That(hint.transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.False);
                     hint.ShortcutActive=()=>true;

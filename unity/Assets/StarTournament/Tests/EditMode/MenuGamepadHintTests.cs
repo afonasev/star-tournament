@@ -9,8 +9,8 @@ namespace StarTournament.ProvingGround.Tests
         [TestCase("Gamepad","DualSense Wireless Controller","×","○","△","Options","□")]
         [TestCase("SwitchProControllerHID","Pro Controller","B","A","X","+","Y")]
         [TestCase("Gamepad","Nintendo Switch Pro Controller","B","A","X","+","Y")]
-        [TestCase("Gamepad","Unknown Controller","Нижняя","Правая","Верхняя","Start","Левая")]
-        [TestCase("EightBitDoSn30ProGamepad","8Bitdo SN30 Pro","Нижняя","Правая","Верхняя","Start","Левая")]
+        [TestCase("Gamepad","Unknown Controller","A","B","Y","Menu","X")]
+        [TestCase("EightBitDoSn30ProGamepad","8Bitdo SN30 Pro","A","B","Y","Menu","X")]
         public void PhysicalConfirmBackAndAdditionalShortcutsUseAdvertisedFamily(string layout,string product,string confirm,string back,string reset,string apply,string delete)
         {
             var family=MenuGamepadHints.Family(layout,product);
@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround.Tests
             var pad=InputSystem.AddDevice<Gamepad>();var keyboard=InputSystem.AddDevice<Keyboard>();
             try
             {
-                Assert.That(MenuGamepadHints.Label("Назад",pad,true,MenuPadButton.East),Is.EqualTo("Назад · Правая"));
+                Assert.That(MenuGamepadHints.Label("Назад",pad,true,MenuPadButton.East),Is.EqualTo("Назад · B"));
                 Assert.That(MenuGamepadHints.Label("Назад",pad,false,MenuPadButton.East),Is.EqualTo("Назад"));
                 Assert.That(MenuGamepadHints.Label("Назад",keyboard,true,MenuPadButton.East),Is.EqualTo("Назад"));
                 InputSystem.DisableDevice(pad);Assert.That(MenuGamepadHints.Label("Назад",pad,true,MenuPadButton.East),Is.EqualTo("Назад"));
