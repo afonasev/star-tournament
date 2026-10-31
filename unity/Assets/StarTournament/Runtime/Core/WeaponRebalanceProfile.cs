@@ -3,9 +3,18 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        // Keep the short-lived v10 cadence immutable after restoring the slower authored cycle.
+        internal ProvingProfile BeforeRocketHeavyCycle()
+        {
+            if(id!="unity-combat-state-v1"||version<11)return this;
+            var p=DetachedCopy();p.version=10;
+            p.RebalanceDefault("rocket.cooldownSeconds",.78f);
+            return p;
+        }
         // Reconstruct the exact v9 registry; old snapshots and custom tuning remain immutable.
         internal ProvingProfile BeforeRocketReloadTiming()
         {
+            if(id=="unity-combat-state-v1"&&version>=11)return BeforeRocketHeavyCycle().BeforeRocketReloadTiming();
             if(id!="unity-combat-state-v1"||version<10)return this;
             var p=DetachedCopy();p.version=9;
             p.RebalanceDefault("rocket.cooldownSeconds",1.2f);

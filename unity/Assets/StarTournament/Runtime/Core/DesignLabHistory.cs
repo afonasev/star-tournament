@@ -396,6 +396,9 @@ namespace StarTournament.ProvingGround
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWellDensity(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeWellWorkZones(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
+                (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<11
+                    ?p.BeforeRocketHeavyCycle():p).ToList()};
+            shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
                 (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<10
                     ?p.BeforeRocketReloadTiming():p).ToList()};
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
