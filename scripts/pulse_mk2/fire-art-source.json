@@ -1,0 +1,8 @@
+{
+  "tool": "built-in imagegen",
+  "output": "unity/Assets/StarTournament/Resources/PulseMk2/FireAtlas.png",
+  "sha256": "9bfeddb84887e138918548faab10e3066e909907334fb6778562efb33cbde8f4",
+  "prompt": "Production game VFX sprite sheet of turbulent orange fire cloud, transparent background, 4 columns x 4 rows, sixteen cells, no text or borders. Centered compact fire cloud with coherent swirling detail at same overall size. Ivory-yellow hot filaments, orange rolling lobes, dark amber crevices, curling wisps. No scene, characters, weapons or objects. Alpha-blended particle billboard.",
+  "revision": "padded-v2",
+  "edit_prompt": "Preserve 4x4 cells, shrink each cloud to 60% cell width, fully transparent 20% margin each side, no cell-crossing fire; preserve detailed pyro."
+}

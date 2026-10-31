@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -36,6 +37,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             // Actual authoritative floor sweep, safely away from participants.
             state.Rockets[0].Position=new Vector3(0,.1f,0);state.Rockets[0].Direction=Vector3.down;session.Restore(state);
             session.Tick(new LocalAction[2],.02f);session.Tick(new LocalAction[2],.08f);presentation.Render();
+        }
+        [UnityTest,Explicit("P5 actual Pulse VFX inventory and matched Editor render capture; diagnostic, not Player FPS or acceptance")]
+        public IEnumerator P5BaselineCapturesPulseEffectsCostAndFrame()
+        {
+            var directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RENDER_COST_OUTPUT");Assert.That(directory,Is.Not.Null.And.Not.Empty);Directory.CreateDirectory(directory);
+            var flight=Flight();presentation.Render();
+            // Preserve construction-owned flight materials in the inventory after contact removes the rocket renderers.
+            var flightMaterials=owner.GetComponentsInChildren<Renderer>(true).Where(r=>r is LineRenderer||r is ParticleSystemRenderer).SelectMany(r=>r.sharedMaterials).ToArray();
+            Contact(flight);presentation.Render();
+            var systems=owner.GetComponentsInChildren<ParticleSystem>(true);var particleRenderers=systems.Select(s=>s.GetComponent<ParticleSystemRenderer>()).Where(r=>r).Cast<Renderer>().Concat(owner.GetComponentsInChildren<LineRenderer>(true)).ToArray();
+            SecondaryRenderingCostDiagnostics.Write(directory,"pulse-vfx",particleRenderers,flightMaterials);SecondaryRenderingCostDiagnostics.WriteParticles(directory,"pulse-vfx",systems);
+            File.WriteAllLines(Path.Combine(directory,"pulse-vfx-settings.txt"),new[]{"profile="+effectsIdentity(),"active_bursts="+presentation.ActiveBursts,"pooled_bursts="+presentation.PooledBursts,"active_lights="+presentation.ActiveLights,"live_particles="+presentation.LiveParticles,"editor="+Application.unityVersion,"gpu="+SystemInfo.graphicsDeviceName,"graphics="+SystemInfo.graphicsDeviceType,"quality="+QualitySettings.names[QualitySettings.GetQualityLevel()],"resolution=1280x720 DefaultHDR","timing=NotRun; this test inventories native objects and renders one frame only"});
+            var cameraGo=new GameObject("P5 pulse VFX baseline camera");cameraGo.transform.position=new Vector3(0,2.3f,-7);cameraGo.transform.LookAt(new Vector3(0,.8f,0));var camera=cameraGo.AddComponent<Camera>();camera.enabled=false;camera.fieldOfView=55;camera.nearClipPlane=.05f;camera.farClipPlane=100;
+            SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"pulse-vfx.png"));UnityEngine.Object.Destroy(cameraGo);yield return null;
+            string effectsIdentity()=>ProvingProfile.CreateRocketEffectsDefault().Id+"@"+ProvingProfile.CreateRocketEffectsDefault().Version;
         }
         [UnityTest]public IEnumerator PauseFreezesParticlesRestoreClearsBurstAndRecreatesFlightWithoutChangingState()
         {
@@ -113,6 +129,79 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int i=0;i<2;i++){state.Rockets[i].Position=new Vector3(i,.1f,0);state.Rockets[i].Direction=Vector3.down;}session.Restore(state);Advance(.1f);presentation.Render();
             Assert.That(presentation.ActiveBursts,Is.EqualTo(2));Assert.That(presentation.ActiveLights,Is.EqualTo(1));
             Advance(.3f);presentation.Render();Assert.That(presentation.ActiveLights,Is.Zero);
+        }
+        [UnityTest,Explicit("Editor art review with STAR_TOURNAMENT_PULSE_EVIDENCE; capture diagnostic, not gameplay or device acceptance")]public IEnumerator Mk2ActualEffectsReview()
+        {
+            string directory=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_PULSE_EVIDENCE");
+            Assert.That(directory,Is.Not.Null.And.Not.Empty);Directory.CreateDirectory(directory);
+            presentation.Dispose();
+            #if UNITY_EDITOR
+            var prefab=UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/StarTournament/Art/pulse-projectile.glb");
+            #else
+            GameObject prefab=null;
+            #endif
+            Assert.That(prefab,Is.Not.Null);
+            // Isolate art from arena occlusion; physics/contact fixture remains intact.
+            foreach(var renderer in arena.GetComponentsInChildren<Renderer>())renderer.enabled=false;
+            var floor=GameObject.CreatePrimitive(PrimitiveType.Plane);floor.name="Pulse review backdrop";floor.transform.SetParent(owner.transform);floor.transform.position=new Vector3(0,-.02f,0);floor.transform.localScale=Vector3.one*3;
+            floor.GetComponent<Collider>().enabled=false;UnityEngine.Object.Destroy(floor.GetComponent<Collider>());
+            var backdrop=new Material(Shader.Find("Universal Render Pipeline/Lit"));backdrop.SetColor("_BaseColor",new Color(.09f,.095f,.10f));backdrop.SetFloat("_Smoothness",.1f);floor.GetComponent<Renderer>().sharedMaterial=backdrop;
+            presentation=new RocketPresentation(session,profile,owner.transform,prefab);
+            var go=new GameObject("Pulse Mk II review camera");go.transform.SetParent(owner.transform);var camera=go.AddComponent<Camera>();camera.enabled=false;
+            camera.transform.position=new Vector3(1,2,-4);camera.transform.LookAt(new Vector3(0,.9f,0));camera.fieldOfView=50;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.025f,.03f,.04f);
+            var light=go.AddComponent<Light>();light.type=LightType.Point;light.intensity=3;light.range=12;
+            var flight=Flight();flight.Rockets[0].Position=new Vector3(0,1,0);flight.Rockets[0].Direction=Vector3.right;flight.Rockets[0].Distance=1;session.Restore(flight);presentation.Render();yield return null;
+            SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"fx-01-flight.png"));
+            var widePosition=camera.transform.position;var wideRotation=camera.transform.rotation;
+            camera.transform.position=new Vector3(.1f,1.14f,-.85f);camera.transform.LookAt(new Vector3(-.08f,1,0));
+            SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"fx-01-projectile-closeup.png"));
+            camera.transform.SetPositionAndRotation(widePosition,wideRotation);
+            presentation.Launch(flight.Rockets[0].Id,Vector3.zero,new Vector3(-.6f,1,0),Vector3.right);presentation.Render();
+            SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"fx-02-launch.png"));
+            camera.transform.position=new Vector3(1,3,-9);camera.transform.LookAt(new Vector3(0,.4f,0));
+            Contact(flight);yield return null;SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"fx-03-impact-early.png"));
+            Advance(.12f);presentation.Render();SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"fx-04-impact-fire.png"));
+            floor.GetComponent<Renderer>().enabled=false;
+            SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"fx-04-fire-without-floor.png"));
+            floor.GetComponent<Renderer>().enabled=true;
+            Advance(.38f);presentation.Render();SecondaryRenderingCostDiagnostics.Capture(camera,Path.Combine(directory,"fx-05-impact-smoke.png"));
+            UnityEngine.Object.Destroy(go);UnityEngine.Object.Destroy(backdrop);yield return null;
+        }
+        [UnityTest]public IEnumerator Mk2IgnitionFollowsSuppliedDirectionFreezesAndClearsOnRestore()
+        {
+            var flight=Flight();var point=new Vector3(2,3,4);var direction=Vector3.left;
+            string before=JsonUtility.ToJson(session.Capture());
+            presentation.Launch(flight.Rockets[0].Id,Vector3.zero,point,direction);presentation.Render();
+            Assert.That(presentation.ActiveIgnitions,Is.EqualTo(1));
+            var flame=owner.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Muzzle ignition");
+            Assert.That(flame.GetPosition(0),Is.EqualTo(point));
+            Assert.That(Vector3.Dot((flame.GetPosition(2)-point).normalized,direction),Is.GreaterThan(.999f));
+            var end=flame.GetPosition(2);float width=flame.widthMultiplier;
+            yield return new WaitForSecondsRealtime(.05f);presentation.Render();
+            Assert.That(flame.GetPosition(2),Is.EqualTo(end));Assert.That(flame.widthMultiplier,Is.EqualTo(width));
+            Assert.That(JsonUtility.ToJson(session.Capture()),Is.EqualTo(before));
+            Advance(.12f);presentation.Render();Assert.That(presentation.ActiveIgnitions,Is.Zero);
+            presentation.Launch(flight.Rockets[0].Id,Vector3.zero,point,direction);session.Restore(flight);presentation.Render();
+            Assert.That(presentation.ActiveIgnitions,Is.Zero);
+        }
+        [UnityTest]public IEnumerator Mk2SoftContactRequestsOnlyOwnedCameraDepthAndRestoresOptions()
+        {
+            var go=new GameObject("Pulse depth camera");go.transform.SetParent(owner.transform);go.AddComponent<Camera>();
+            var data=go.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+            data.requiresDepthOption=UnityEngine.Rendering.Universal.CameraOverrideOption.UsePipelineSettings;
+            var foreign=new GameObject("Unrelated depth camera");foreign.transform.SetParent(owner.transform.parent);
+            foreign.AddComponent<Camera>();var other=foreign.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();other.requiresDepthOption=UnityEngine.Rendering.Universal.CameraOverrideOption.Off;
+            try
+            {
+                var flight=Flight();presentation.Render();Assert.That(data.requiresDepthOption,Is.EqualTo(UnityEngine.Rendering.Universal.CameraOverrideOption.UsePipelineSettings));
+                Contact(flight);Assert.That(data.requiresDepthTexture,Is.True);Assert.That(other.requiresDepthOption,Is.EqualTo(UnityEngine.Rendering.Universal.CameraOverrideOption.Off));
+                Advance(3);presentation.Render();Assert.That(data.requiresDepthOption,Is.EqualTo(UnityEngine.Rendering.Universal.CameraOverrideOption.UsePipelineSettings));
+                Contact(flight);Assert.That(data.requiresDepthTexture,Is.True);
+                session.Restore(flight);presentation.Render();Assert.That(data.requiresDepthOption,Is.EqualTo(UnityEngine.Rendering.Universal.CameraOverrideOption.UsePipelineSettings));
+                Contact(flight);presentation.Dispose();presentation=null;Assert.That(data.requiresDepthOption,Is.EqualTo(UnityEngine.Rendering.Universal.CameraOverrideOption.UsePipelineSettings));
+            }
+            finally{UnityEngine.Object.Destroy(foreign);}
+            yield return null;
         }
         [UnityTearDown]public IEnumerator Cleanup(){presentation?.Dispose();if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);}
     }

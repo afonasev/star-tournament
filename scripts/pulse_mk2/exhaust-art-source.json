@@ -1,0 +1,8 @@
+{
+  "tool": "built-in imagegen",
+  "output": "unity/Assets/StarTournament/Resources/PulseMk2/Exhaust.png",
+  "sha256": "38d9ae42c852f088439d47c95e08d9b91ec087e9ce258b8bc7f69f498d291b1f",
+  "source": "/Users/eaafonasev/.codex/generated_images/01a179b3-f493-7930-8cc5-98d6e4335e4c/exec-cb77640e-d420-4e74-85f5-d1dba18dfc31.png",
+  "prompt": "Single horizontal transparent RGBA turbulent orange rocket exhaust. Broad white-yellow root at left, tapering fine wisps to right. Cellular rolling pyro detail; transparent upper/lower margins. No rocket/nozzle/scene/text/atlas.",
+  "alpha": "preserved from generated image; no post-edit"
+}
