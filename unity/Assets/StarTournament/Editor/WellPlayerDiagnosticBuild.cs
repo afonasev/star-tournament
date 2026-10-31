@@ -11,6 +11,8 @@ namespace StarTournament.ProvingGround.Editor
         // Dedicated identity isolates PlayerPrefs and history from the human's game.
         public static void Build() => BuildDiagnostic("Well Player Diagnostic","tech.afonasev.well-player-diagnostic");
         public static void BuildRenderingBaseline() => BuildDiagnostic("Rendering Baseline QA 20261025","tech.afonasev.rendering-baseline-20261025");
+        public static void BuildRenderingFinal() => BuildDiagnostic("Rendering Final QA 20261026","tech.afonasev.rendering-final-20261026");
+        public static void BuildWellFrameProfile() => BuildDiagnostic("Well Frame QA 20261026","tech.afonasev.well-frame-20261026");
         static void BuildDiagnostic(string productName,string applicationId)
         {
             string output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_PLAYER_OUTPUT");

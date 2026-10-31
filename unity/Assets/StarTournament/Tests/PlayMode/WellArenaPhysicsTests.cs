@@ -11,7 +11,7 @@ namespace StarTournament.ProvingGround.Tests
         GameObject root;ProvingArena arena;ProvingProfile movement;NativeNavigationProvider routes;
         [SetUp] public void Setup()
         {
-            root=new GameObject("well-physics");movement=ProvingProfile.CreateDefault();arena=root.AddComponent<ProvingArena>();arena.Build(AuthoredArenaCatalog.Freeze(WellArenaCatalog.Id,movement),movement);
+            root=new GameObject("well-physics");movement=ProvingProfile.CreateDefault();arena=root.AddComponent<ProvingArena>();arena.Build(ArenaFreezeSnapshot.Create(AuthoredArenaCatalog.Resolve(WellArenaCatalog.Id,Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_PHYSICS_REVISION")),movement),movement);
             routes=new NativeNavigationProvider(arena,movement,ProvingProfile.CreateNavigationDefault());
         }
         [UnityTearDown] public IEnumerator Cleanup(){UnityEngine.Object.Destroy(root);yield return null;}
@@ -42,7 +42,7 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(selected.Length,Is.EqualTo(8));
             foreach(var pickup in arena.Definition.Pickups)
             {
-                var motor=Motor(arena.Definition.Spawns.First(x=>x.y==pickup.Anchor.y));for(int i=0;i<5;i++)motor.Tick(default,1/60f);
+                var motor=Motor(arena.Definition.Spawns.OrderBy(x=>Mathf.Abs(x.y-pickup.Anchor.y)).First());for(int i=0;i<5;i++)motor.Tick(default,1/60f);
                 var session=new NativeCombatSession(new[]{motor},arena,Physics.defaultPhysicsScene,movement,ProvingProfile.CreateCombatDefault(),combat);
                 if(pickup.Kind==ArenaPickupKind.Damage)session.Tick(new LocalAction[1],(float)session.DamagePickup.Remaining+1/60f);
                 if(pickup.Kind==ArenaPickupKind.Speed)session.Tick(new LocalAction[1],(float)session.SpeedPickups.Single(x=>x.InstanceId==pickup.Id).Remaining+1/60f);

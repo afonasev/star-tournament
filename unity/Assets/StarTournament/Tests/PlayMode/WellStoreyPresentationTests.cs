@@ -27,7 +27,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Exact authored map stays unchanged");
                 Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24));
                 int vertices=filters.Sum(f=>f.sharedMesh.vertexCount);Assert.That(vertices,Is.LessThan(650000));Assert.That(renderers.Length,Is.LessThan(64));
-                Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(56));
+                Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(62));
                 var materials=renderers.SelectMany(r=>r.sharedMaterials).Distinct().ToArray();var floorMaterials=materials.Where(m=>m.name.StartsWith("Well storey")&&m.name.EndsWith(" floor")).OrderBy(m=>m.name).ToArray();
                 Assert.That(floorMaterials.Length,Is.EqualTo(3));Assert.That(floorMaterials.Select(m=>m.GetTexture("_BaseMap")).Distinct().Count(),Is.EqualTo(3));
                 for(int f=0;f<3;f++)
@@ -81,7 +81,7 @@ namespace StarTournament.ProvingGround.Tests
                     }
                 }
                 foreach(var material in materials)Assert.That(material.shader.isSupported,Is.True,material.name);
-                var report=new List<string>{"stage="+stage,"map="+arena.Definition.Identity,"renderers="+renderers.Length,"vertices="+vertices,"lights=24","cosmetic_colliders=0","furniture=56"};
+                var report=new List<string>{"stage="+stage,"map="+arena.Definition.Identity,"renderers="+renderers.Length,"vertices="+vertices,"lights=24","cosmetic_colliders=0","furniture=62"};
                 foreach(var m in floorMaterials)report.Add(m.name+" colour="+m.color+" texture="+m.GetTexture("_BaseMap").name);
                 File.WriteAllLines(Path.Combine(directory,"audit.txt"),report);
                 for(int f=0;f<3;f++)

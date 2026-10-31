@@ -6,7 +6,46 @@ namespace StarTournament.ProvingGround
     public static class WellFurniturePlan
     {
         public static bool IsFurniture(ArenaSolid solid)=>solid.Surface!=null&&solid.Surface.StartsWith("well-furniture-");
-        public static ArenaSolid[] Build()=>BuildRevisionFour();
+        public const string WorkZonesProfile="well-work-zones-v1";
+        public const string DensityProfile="well-room-gallery-density-v1";
+        public static ArenaSolid[] Build()
+        {
+            var result=new List<ArenaSolid>(BuildRevisionEight());
+            // Immutable revision-9 authoring, exposed through existing map Lab descriptors.
+            void Add(int floor,string zone,string kind,float x,float z,Vector3 size)
+                =>result.Add(new ArenaSolid{Id="furniture-f"+floor+"-density-"+zone+"-"+kind,Position=new Vector3(x,floor*WellArenaCatalog.Storey+size.y/2,z),Size=size,Rotation=Quaternion.identity,Material="equipment",Surface="well-furniture-"+kind,Layer=ProvingArena.WorldLayer,Support=""});
+            Add(0,"room","bench",-17,-20.8f,new Vector3(3.2f,1.14f,1.3f));
+            Add(1,"room","bench",15.3f,21.2f,new Vector3(1.1f,1.14f,2.7f));
+            Add(2,"room","bench",17.3f,-20.2f,new Vector3(1.3f,1.14f,2.8f));
+            for(int floor=0;floor<3;floor++)
+            {
+                int side=floor==1?1:-1;
+                Add(floor,"gallery","cabinet",side*11,-side*15.25f,new Vector3(1.1f,1.9f,.9f));
+            }
+            return result.ToArray();
+        }
+        /// <summary>Frozen revision-8 work zones; all 56 bodies and their order stay exact.</summary>
+        public static ArenaSolid[] BuildRevisionEight()
+        {
+            var result=BuildRevisionFour();
+            // Immutable revision-8 authoring; sizes/positions are exposed by the map Lab profile.
+            // Reuse four existing bodies. Shipping cases and every other body remain exact.
+            foreach(var solid in result)
+            {
+                if(solid.Id=="furniture-f0-corner-bench-1-1")
+                {
+                    solid.Position=new Vector3(17.3f,solid.Position.y,20.7f);
+                    solid.Size=new Vector3(1.3f,solid.Size.y,3.6f);
+                }
+                else if(solid.Id=="furniture-f1-corridor-bench")
+                    solid.Position=new Vector3(-18.2f,solid.Position.y,6.4f);
+                else if(solid.Id=="furniture-f2-corner-bench--1-1")
+                    solid.Position=new Vector3(-17,solid.Position.y,23.85f);
+                else if(solid.Id=="furniture-f2-cabinet--1-1")
+                    solid.Position=new Vector3(-14.55f,solid.Position.y,22.35f);
+            }
+            return result;
+        }
         /// <summary>Frozen revision-4 furniture, retained for historical map and Lab hashes.</summary>
         public static ArenaSolid[] BuildRevisionFour()
         {
@@ -53,6 +92,10 @@ namespace StarTournament.ProvingGround
         }
         public static Vector3 Front(ArenaSolid solid)
         {
+            if(solid.Id.Contains("-density-"))
+                return solid.Surface.EndsWith("cabinet")||solid.Size.x>=solid.Size.z?Vector3.back*Mathf.Sign(solid.Position.z):Vector3.left*Mathf.Sign(solid.Position.x);
+            // Only the new island is turned; frozen predecessors retain their original front.
+            if(solid.Id=="furniture-f0-corner-bench-1-1"&&solid.Size.z>solid.Size.x)return Vector3.left;
             if(solid.Id.Contains("-corridor-cabinet"))return Vector3.back*Mathf.Sign(solid.Position.z);
             bool xFace=solid.Id.Contains("cabinet")||solid.Id.Contains("side-bench")||solid.Id.Contains("supply")||solid.Id.Contains("-corridor-bench");
             return xFace?Vector3.left*Mathf.Sign(solid.Position.x):Vector3.back*Mathf.Sign(solid.Position.z);

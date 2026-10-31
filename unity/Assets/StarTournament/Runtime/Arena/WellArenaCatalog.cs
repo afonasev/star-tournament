@@ -6,16 +6,16 @@ namespace StarTournament.ProvingGround
     /// <summary>Structure 03; north = +Z. Dimensions are immutable map authoring, not editable balance.</summary>
     public static class WellArenaCatalog
     {
-        public const string Id="well-laboratory-v1", Revision="7", Identity=Id+"@"+Revision;
+        public const string Id="well-laboratory-v1", Revision="9", Identity=Id+"@"+Revision;
         public const float Storey=7.2f, Slab=.8f, ClearHeight=Storey-Slab, Edge=24.8f, Pit=9.6f;
         const float DoorHeight=3.2f, DoorHalf=1.6f, Wall=.3f;
         public static string Support(int floor)=>"support:well-"+floor;
-        public static ProvingProfile AuthoringProfile(bool previousForgePlacement=false)
+        public static ProvingProfile AuthoringProfile(bool previousForgePlacement=false,bool previousWorkZones=false,bool previousDensity=false)
         {
-            var definition=Build(previousForgePlacement);var p=ProvingProfile.CreateCombatBowlAuthoringDefault(definition);
-            p.SetIdentityForWell(previousForgePlacement?6:7);p.AddWellLiftAuthoring(definition.Lifts);return p;
+            var definition=Build(previousForgePlacement,previousWorkZones,previousDensity);var p=ProvingProfile.CreateCombatBowlAuthoringDefault(definition);
+            p.SetIdentityForWell(previousForgePlacement?6:previousWorkZones?7:previousDensity?8:9);p.AddWellLiftAuthoring(definition.Lifts);return p;
         }
-        public static ArenaDefinition Build(bool previousForgePlacement=false)
+        public static ArenaDefinition Build(bool previousForgePlacement=false,bool previousWorkZones=false,bool previousDensity=false)
         {
             var solids=new List<ArenaSolid>();var transitions=new List<NativeNavigationTransition>();
             var spawns=new List<Vector3>();var regions=new List<ArenaSpawnRegion>();
@@ -127,7 +127,7 @@ namespace StarTournament.ProvingGround
             }
             foreach(var floor in solids.Where(s=>s.Id.StartsWith("f2-")&&(s.Id.EndsWith("north")||s.Id.EndsWith("south")||s.Id.EndsWith("west")||s.Id.EndsWith("east"))).ToArray())
                 Box("roof-"+floor.Id,floor.Position+Vector3.up*Storey,floor.Size);
-            solids.AddRange(WellFurniturePlan.Build());
+            solids.AddRange(previousForgePlacement||previousWorkZones?WellFurniturePlan.BuildRevisionFour():previousDensity?WellFurniturePlan.BuildRevisionEight():WellFurniturePlan.Build());
             var items=new List<ArenaPickupDefinition>();
             void Item(string id,ArenaPickupKind kind,float x,float z,int f)=>items.Add(new ArenaPickupDefinition{Id=id,Kind=kind,Anchor=new Vector3(x,f*Storey,z),Support=Support(f)});
             Item("damage-garden",ArenaPickupKind.Damage,0,0,0);
@@ -142,9 +142,10 @@ namespace StarTournament.ProvingGround
                 Anchor=new Vector3(side*(25.5f+Storey/2*2.4f+1.2f),Storey*1.5f,0),Support="support:stair-"+side+"-1-mid"});
             Item("heal-H",ArenaPickupKind.FullHeal,0,0,2);
             Item("cutter-03",ArenaPickupKind.Cutter,21,21,2);Item("armor-03",ArenaPickupKind.Armor,-21,-21,2);
+            string revision=previousForgePlacement?"6":previousWorkZones?"7":previousDensity?"8":Revision;
             return new ArenaDefinition
             {
-                MapId=Id,Revision=Revision,Identity=Identity,ProfileFingerprint="authored:"+Identity,
+                MapId=Id,Revision=revision,Identity=Id+"@"+revision,ProfileFingerprint="authored:"+Id+"@"+revision,
                 Solids=solids.ToArray(),Transitions=transitions.ToArray(),Spawns=spawns.ToArray(),SpawnRegions=regions.ToArray(),
                 RouteAnchors=new[]{new Vector3(0,0,18),new Vector3(-21,Storey,0),new Vector3(0,2*Storey,-18)},Pickups=items.ToArray(),
                 Lifts=new[]{new ArenaLiftDefinition{Id="north",Center=new Vector3(0,0,28.7f),Size=new Vector3(6.8f,.3f,6.2f),Bottom=0,Top=2*Storey,InitialHeight=2*Storey},new ArenaLiftDefinition{Id="south",Center=new Vector3(0,0,-28.7f),Size=new Vector3(6.8f,.3f,6.2f),Bottom=0,Top=2*Storey,InitialHeight=0}}

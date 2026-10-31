@@ -24,10 +24,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();ground.SendMessage("OpenSetup");ground.SelectAuthoredMap(WellArenaCatalog.Id);
                 var composition=new NativeMatchComposition(NativeMatchRoster.Ffa(2),Enumerable.Range(0,2).Select(i=>new NativeParticipantInfo(NativeParticipantKind.Bot,"Well bot "+i,NativeParticipantColors.For(i),(int)NativeBotDifficulty.Normal)).ToArray(),new[]{0});
                 ground.StartBotReview(composition,7219);yield return NativeLoadingTestScene.Wait(ground);ground.OpenPauseReviewSeat(0);ground.SendMessage("LateUpdate");yield return null;
+                var output=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WELL_CIRCLES_OUTPUT");Assert.That(output,Is.Not.Null.And.Not.Empty);
+                var pickupNames=new System.Collections.Generic.HashSet<string>(ground.Session.WeaponPickups.Select(p=>p.InstanceId+"-presentation"));
+                SecondaryRenderingCostDiagnostics.Write(output,"weapon-pickups",ground.GetComponentsInChildren<Renderer>(true).Where(r=>r.transform.GetComponentsInParent<Transform>(true).Any(t=>pickupNames.Contains(t.name))));
                 var arena=ground.CameraReviewArena;var definition=arena.Definition;
                 Assert.That(JsonUtility.ToJson(definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())),"Presentation preserves exact map @5");
                 var skin=arena.GetComponentInChildren<WellArenaPresentation>();var rings=skin.GetComponentsInChildren<MeshFilter>().Single(m=>m.name=="Well permanent pickup circles");var mesh=rings.sharedMesh;
-                Assert.That(definition.Pickups.Length,Is.EqualTo(11));Assert.That(mesh.vertexCount,Is.EqualTo(11*64*2));Assert.That(mesh.triangles.Length,Is.EqualTo(11*64*6));
                 Assert.That(rings.GetComponentsInChildren<Collider>(),Is.Empty);Assert.That(rings.GetComponentsInChildren<Light>(),Is.Empty);
                 var renderer=rings.GetComponent<MeshRenderer>();Assert.That(renderer.sharedMaterial.color,Is.EqualTo(Color.white));Assert.That(renderer.shadowCastingMode,Is.EqualTo(ShadowCastingMode.Off));Assert.That(renderer.receiveShadows,Is.False);
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24));Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);
@@ -48,6 +50,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     var previous=RenderTexture.active;RenderTexture.active=rt;var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);
                     try{image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();File.WriteAllBytes(Path.Combine(directory,ids[i]+".png"),image.EncodeToPNG());}finally{RenderTexture.active=previous;Object.Destroy(image);}
                 }
+                // Keep the authored-count contract exact; capture current-source views before its
+                // known stale baseline assertion (current Well revision has 13, not 11, pickups).
+                Assert.That(definition.Pickups.Length,Is.EqualTo(11));Assert.That(mesh.vertexCount,Is.EqualTo(11*64*2));Assert.That(mesh.triangles.Length,Is.EqualTo(11*64*6));
                 var before=mesh.vertices;var weapon=ground.Session.WeaponPickups.Single(p=>p.InstanceId=="shotgun-02");ground.PlaceCombatReviewSeat(0,weapon.Anchor,0);
                 ground.Session.Tick(new LocalAction[2],1/60f);ground.SendMessage("LateUpdate");yield return null;
                 Assert.That(ground.Session.WeaponPickups.Single(p=>p.InstanceId=="shotgun-02").Available,Is.False,"Real pickup enters cooldown");

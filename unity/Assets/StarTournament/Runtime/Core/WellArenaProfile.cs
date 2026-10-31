@@ -4,6 +4,8 @@ namespace StarTournament.ProvingGround
     {
         internal void SetIdentityForWell(int revision=5)
         {id="well-authoring-v1";version=revision;foreach(var d in descriptors){d.Path="well.map."+d.Path;d.Description="Колодец, "+(revision==1?"планировка 02":"структура 03")+": immutable геометрия; изменения требуют новой ревизии и QA.";}foreach(var v in values)v.Path="well.map."+v.Path;}
+        internal ProvingProfile BeforeWellDensity(int soughtVersion)=>id=="well-authoring-v1"&&version>=9&&soughtVersion==8?WellArenaCatalog.AuthoringProfile(previousDensity:true):this;
+        internal ProvingProfile BeforeWellWorkZones(int soughtVersion)=>id=="well-authoring-v1"&&version>=8&&soughtVersion==7?WellArenaCatalog.AuthoringProfile(previousWorkZones:true):this;
         internal ProvingProfile BeforeWellSecondFloorWeapons()=>id=="well-authoring-v1"?WellArenaRevisionFour.AuthoringProfile():this;
         internal ProvingProfile BeforeWellFurniture()=>id=="well-authoring-v1"?WellArenaRevisionTwo.AuthoringProfile():this;
         internal ProvingProfile BeforeWellCorridorCover()=>id=="well-authoring-v1"?WellArenaRevisionThree.AuthoringProfile():this;
@@ -62,7 +64,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateWellDefault()
         {
-            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=6};
+            var p=new ProvingProfile{id="well-gameplay-presentation-v1",version=7};
             void V(string key,string group,string label,string desc,string unit,float min,float max,float step,float value)=>p.Add("well."+key,group,label,desc,unit,min,max,step,value);
             V("liftSpeed","well-lifts","Скорость лифта","Быстрый рейс; влияет на окно выхода на втором этаже.","m/s",1,8,.1f,4);
             V("idleDepartureSeconds","well-lifts","Автоотправка пустого лифта","Игровое время простоя пустой платформы до рейса к противоположному крайнему этажу; посадка сбрасывает таймер.","s",1,120,1,15);
@@ -97,16 +99,29 @@ namespace StarTournament.ProvingGround
             V("pickupRingRadius","well-pickups","Радиус круга предмета","Белая напольная разметка всех точек, в стиле Combat Bowl; ограничена шириной Н-моста.","m",.5f,1.4f,.05f,1.35f);
             V("pickupRingWidth","well-pickups","Толщина круга предмета","Ширина постоянной белой линии, не влияет на радиус подбора.","m",.02f,.15f,.01f,.06f);
             V("pickupRingHeight","well-pickups","Высота краски над полом","Устраняет мерцание и скрытие разметки под плитняком сада, без коллизии.","m",.035f,.06f,.005f,.04f);
+            // well-wayfinding-plaques-v1: presentation-only readability, not authored map data.
+            V("signReaderHeight","well-art","Высота табличек этажа","Общая высота центров информационных табличек у лифтов.","m",1.95f,2.35f,.05f,2.1f);
+            V("signHeaderHeight","well-art","Высота указателей проходов","Полоса над реальными проёмами и окнами, свободная от перемычек/оборудования.","m",3.9f,4,.05f,3.95f);
+            V("signAtriumHeight","well-art","Высота номеров атриума","Общая полоса этажных идентификаторов выше вентиляции и ниже потолка.","m",5.7f,5.8f,.05f,5.75f);
+            V("signTextHeight","well-art","Высота печати табличек","Базовый размер букв; общие пропорции ролей и безопасное вписывание сохраняются.","m",.2f,.32f,.01f,.26f);
             return p;
         }
 
+        internal ProvingProfile BeforeWellWayfinding()
+        {
+            if(id!="well-gameplay-presentation-v1"||version<7)return this;
+            var copy=DetachedCopy();copy.version=6;
+            foreach(var path in new[]{"well.signReaderHeight","well.signHeaderHeight","well.signAtriumHeight","well.signTextHeight"})
+            {copy.descriptors.RemoveAll(d=>d.Path==path);copy.values.RemoveAll(v=>v.Path==path);}
+            return copy;
+        }
         internal static readonly string[] WellDaylightChanged={"well.daylight","well.innerAngle","well.fill","well.lamp","well.lampRange","well.daylightShadow"};
         internal static readonly float[] WellDaylightPrevious={.8f,100,.42f,7,12,.45f};
         static readonly string[] WellDaylightAdded={"sunPitch","sunYaw","sunRed","sunGreen","sunBlue","fillRed","fillGreen","fillBlue","lampShadow","localLightScale","gradingExposure","bloomScale"};
         internal ProvingProfile BeforeWellPickupMarkings()
         {
             if(id!="well-gameplay-presentation-v1"||version<6)return this;
-            var copy=DetachedCopy();copy.version=5;
+            var copy=BeforeWellWayfinding().DetachedCopy();copy.version=5;
             foreach(var path in new[]{"well.pickupRingRadius","well.pickupRingWidth","well.pickupRingHeight"})
             {copy.descriptors.RemoveAll(d=>d.Path==path);copy.values.RemoveAll(v=>v.Path==path);}
             return copy;

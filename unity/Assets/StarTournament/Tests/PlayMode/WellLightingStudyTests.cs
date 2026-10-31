@@ -68,8 +68,8 @@ namespace StarTournament.ProvingGround.Tests
                         yield return null;yield return null;
                         Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(WellArenaCatalog.Build())));
                         Assert.That(lamps.Length,Is.EqualTo(24));Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);
-                        Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(56));
-                        report.AppendLine(variant+" colorSpace="+QualitySettings.activeColorSpace+" ambient="+RenderSettings.ambientLight+" key="+key.intensity+" keyRotation="+key.transform.eulerAngles+" lamp="+lamps[0].intensity+" lamps=24 geometry=exact colliders=0 furniture=56");
+                        Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(62));
+                        report.AppendLine(variant+" colorSpace="+QualitySettings.activeColorSpace+" ambient="+RenderSettings.ambientLight+" key="+key.intensity+" keyRotation="+key.transform.eulerAngles+" lamp="+lamps[0].intensity+" lamps=24 geometry=exact colliders=0 furniture=62");
                         var eyes=new List<Vector3>();var targets=new List<Vector3>();var names=new List<string>();
                         for(int floor=0;floor<3;floor++)
                         {

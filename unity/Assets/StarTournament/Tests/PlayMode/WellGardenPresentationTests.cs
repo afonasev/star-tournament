@@ -31,12 +31,14 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(JsonUtility.ToJson(arena.Definition),Is.EqualTo(JsonUtility.ToJson(baseline)));
                 Assert.That(skin.GetComponentsInChildren<Collider>(),Is.Empty);
                 Assert.That(skin.GetComponentsInChildren<Light>().Length,Is.EqualTo(24));Assert.That(skin.GetComponentsInChildren<Light>().Count(l=>l.shadows!=LightShadows.None),Is.EqualTo(3));
-                Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(56));
+                Assert.That(arena.Definition.Solids.Count(WellFurniturePlan.IsFurniture),Is.EqualTo(62));
                 int vertices=filters.Sum(f=>f.sharedMesh.vertexCount),renderers=skin.GetComponentsInChildren<MeshRenderer>().Length;
-                Assert.That(vertices,Is.LessThan(650000));Assert.That(renderers,Is.LessThan(64));
                 var garden=filters.Single(f=>f.name=="Well natural garden");var mesh=garden.sharedMesh;
                 Assert.That(mesh.subMeshCount,Is.EqualTo(6));
-                var grassMaterial=garden.GetComponent<MeshRenderer>().sharedMaterials[2];
+                var gardenMaterials=garden.GetComponent<MeshRenderer>().sharedMaterials;
+                var opaqueTextures=new[]{gardenMaterials[0],gardenMaterials[1],gardenMaterials[5]}.Select(m=>m.GetTexture("_BaseMap") as Texture2D).ToArray();
+                Assert.That(opaqueTextures.All(t=>t&&t.format==TextureFormat.RGB24&&!t.isReadable),Is.True,"Opaque garden albedos do not retain unused alpha or CPU-readable pixel data");
+                var grassMaterial=gardenMaterials[2];
                 Assert.That(grassMaterial.IsKeywordEnabled("_ALPHATEST_ON"),Is.True);
                 Assert.That(grassMaterial.color,Is.EqualTo(Color.white));
                 var grassTexture=(Texture2D)grassMaterial.GetTexture("_BaseMap");Assert.That(grassTexture,Is.Not.Null);
@@ -106,7 +108,19 @@ namespace StarTournament.ProvingGround.Tests
                     try{RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();File.WriteAllBytes(Path.Combine(directory,names[i]+".png"),image.EncodeToPNG());}
                     finally{RenderTexture.active=previous;Object.Destroy(image);}
                 }
-                File.WriteAllText(Path.Combine(directory,"audit.json"),"{\"map\":\""+arena.Definition.Identity+"\",\"lights\":24,\"furniture\":56,\"cosmetic_colliders\":0,\"vertices\":"+vertices+",\"renderers\":"+renderers+",\"garden_vertices\":"+mesh.vertexCount+"}");
+                var gardenRenderer=garden.GetComponent<MeshRenderer>();
+                File.WriteAllText(Path.Combine(directory,"garden-cost.csv"),
+                    "category,mesh_id,mesh_bytes,vertices,triangles,submeshes,renderer_count,shadow_cast,receive_shadows,material,shader,texture,texture_id,texture_bytes,width,height,format,mipmaps,readable,quality,rt_width,rt_height\n"+
+                    string.Join("\n",gardenRenderer.sharedMaterials.Select((material,index)=>
+                    {
+                        var texture=material.HasProperty("_BaseMap")?material.GetTexture("_BaseMap") as Texture2D:null;
+                        return string.Join(",",new[]{"well-garden",mesh.GetInstanceID().ToString(),UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(mesh).ToString(),mesh.vertexCount.ToString(),(mesh.GetIndexCount(index)/3).ToString(),mesh.subMeshCount.ToString(),"1",gardenRenderer.shadowCastingMode.ToString(),gardenRenderer.receiveShadows.ToString(),material.name,material.shader.name,texture?texture.name:"none",texture?texture.GetInstanceID().ToString():"",texture?UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(texture).ToString():"",texture?texture.width.ToString():"",texture?texture.height.ToString():"",texture?texture.format.ToString():"",texture?texture.mipmapCount.ToString():"",texture?texture.isReadable.ToString():"",QualitySettings.names[QualitySettings.GetQualityLevel()],rt.width.ToString(),rt.height.ToString()}.Select(x=>"\""+(x??"").Replace("\"","\"\"")+"\""));
+                    }))+"\n");
+                File.WriteAllText(Path.Combine(directory,"audit.json"),"{\"map\":\""+arena.Definition.Identity+"\",\"lights\":24,\"furniture\":62,\"cosmetic_colliders\":0,\"vertices\":"+vertices+",\"renderers\":"+renderers+",\"garden_vertices\":"+mesh.vertexCount+"}");
+                // Preserve the original source assertions, but capture the diagnostic views first.
+                // The established 538-renderer/23,929,841 summed-child-vertex baseline exceeds
+                // these limits; moving the checks does not relax them or hide the FAIL.
+                Assert.That(vertices,Is.LessThan(650000));Assert.That(renderers,Is.LessThan(64));
             }
             finally{if(visual)visual.ResetWorld();camera.targetTexture=null;Object.Destroy(rt);Object.Destroy(root);}yield return null;
         }

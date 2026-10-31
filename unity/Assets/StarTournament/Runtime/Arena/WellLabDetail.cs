@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 namespace StarTournament.ProvingGround
 {
@@ -7,7 +8,7 @@ namespace StarTournament.ProvingGround
     {
         readonly Transform parent;readonly List<Object> owned;readonly ProvingProfile profile;
         readonly Dictionary<Material,List<CombineInstance>> batches=new Dictionary<Material,List<CombineInstance>>();
-        readonly Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
+        Mesh cube,cylinder;readonly Dictionary<Vector3,Mesh> bevels=new Dictionary<Vector3,Mesh>();
         readonly Dictionary<Vector3,Mesh> doorBevels=new Dictionary<Vector3,Mesh>();
         readonly Material trim,panel,screen,green,porcelain,alloy,blue,amber,sage;readonly Material[] displays;
         // Fixed tessellation/texture resolution are bounded resource tiers, not gameplay tuning.
@@ -44,8 +45,6 @@ namespace StarTournament.ProvingGround
         static float Height(string kind,int x,int y)
         {
             x=(x%TextureSize+TextureSize)%TextureSize;y=(y%TextureSize+TextureSize)%TextureSize;
-            float u=x/(float)TextureSize,v=y/(float)TextureSize;
-            float cloud=Mathf.Sin(u*Mathf.PI*4+Mathf.Sin(v*Mathf.PI*6))*Mathf.Cos(v*Mathf.PI*4);
             // Authored material motifs in one repeat: floor aggregate, large wall panels, perforated ceiling cassettes.
             // Their scale and contrast remain controlled by the existing Well art profile.
             if(kind=="floor-bio")return Noise(x,y,32)*.04f+Noise(x,y,2)*.25f+(Grain(x/3,y/3)>.28f?.45f:0);
@@ -59,25 +58,33 @@ namespace StarTournament.ProvingGround
             if(kind=="ceiling")
             {
                 int px=x%(TextureSize/2),py=y%(TextureSize/4);
-                int seam=Mathf.Min(px,TextureSize/2-1-px,py,TextureSize/4-1-py);
+                int seam=Mathf.Min(Mathf.Min(px,TextureSize/2-1-px),Mathf.Min(py,TextureSize/4-1-py));
                 bool hole=seam>8&&x%12<3&&y%12<3;
                 return seam<2?-.15f:hole?-.09f:Grain(x,y)*.008f;
             }
             if(kind=="soil")return Noise(x,y,32)*.4f+Noise(x,y,8)*.4f+Noise(x,y,2)*.25f+Grain(x,y)*.18f;
             if(kind=="metal")return Mathf.Sin(y*2.3f)*.05f+Grain(x,y)*.04f;
-            int edge=Mathf.Min(x,y,TextureSize-1-x,TextureSize-1-y);
+            float u=x/(float)TextureSize,v=y/(float)TextureSize;
+            float cloud=Mathf.Sin(u*Mathf.PI*4+Mathf.Sin(v*Mathf.PI*6))*Mathf.Cos(v*Mathf.PI*4);
+            int edge=Mathf.Min(Mathf.Min(x,y),Mathf.Min(TextureSize-1-x,TextureSize-1-y));
             return (edge<1?-.18f:edge<3?-.05f:0)+cloud*.015f+Grain(x,y)*(kind=="floor"?.04f:.008f);
         }
-        public static Texture2D Texture(string kind,ProvingProfile profile,bool normal=false)
+        public static Texture2D Texture(string kind,ProvingProfile profile,bool normal=false,TextureFormat format=TextureFormat.RGBA32)
         {
-            var texture=new Texture2D(TextureSize,TextureSize,TextureFormat.RGBA32,true,normal){name="Well "+kind+(normal?" relief":" texture"),wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};
-            var pixels=new Color[TextureSize*TextureSize];
-            for(int y=0;y<TextureSize;y++)for(int x=0;x<TextureSize;x++)
+            var texture=new Texture2D(TextureSize,TextureSize,format,true,normal){name="Well "+kind+(normal?" relief":" texture"),wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=4};
+            var pixels=new Color[TextureSize*TextureSize];float grain=profile.Get("well.surfaceGrain");
+            // Height is profile-independent. Evaluate each texel once instead of four
+            // identical neighbouring evaluations for every normal-map texel.
+            float[] heights=null;
+            if(normal){heights=new float[pixels.Length];ArenaTextureWork.Rows(TextureSize,y=>{for(int x=0;x<TextureSize;x++)heights[y*TextureSize+x]=Height(kind,x,y);});}
+            float jointContrast=!normal&&(kind=="ceramic"||kind.StartsWith("floor")||kind=="ceiling")?profile.Get("well.jointContrast"):0;
+            ArenaTextureWork.Rows(TextureSize,y=>
+            {for(int x=0;x<TextureSize;x++)
             {
-                float n=Grain(x,y),grain=profile.Get("well.surfaceGrain"),u=x/(float)(TextureSize-1),v=y/(float)(TextureSize-1);
+                float n=Grain(x,y),u=x/(float)(TextureSize-1),v=y/(float)(TextureSize-1);
                 if(normal)
                 {
-                    float dx=Height(kind,x-1,y)-Height(kind,x+1,y),dy=Height(kind,x,y-1)-Height(kind,x,y+1);
+                    float dx=heights[y*TextureSize+(x+TextureSize-1)%TextureSize]-heights[y*TextureSize+(x+1)%TextureSize],dy=heights[((y+TextureSize-1)%TextureSize)*TextureSize+x]-heights[((y+1)%TextureSize)*TextureSize+x];
                     float relief=kind=="floor-bio"?3:kind.StartsWith("floor")?18:10;
                     var direction=new Vector3(dx*grain*relief,dy*grain*relief,1).normalized;
                     // Uncompressed desktop normals use RGB with alpha 1 (URP RG-or-AG multiplies R by A).
@@ -95,16 +102,16 @@ namespace StarTournament.ProvingGround
                 {
                     // Full-height enamel sheets: vertical joints dominate, with a narrow horizontal closure.
                     int vertical=Mathf.Min(x,TextureSize-1-x),horizontal=Mathf.Min(y,TextureSize-1-y);
-                    if(vertical<2)value-=profile.Get("well.jointContrast");
+                    if(vertical<2)value-=jointContrast;
                     else if(vertical<4)value+=.035f;
-                    if(horizontal<1)value-=profile.Get("well.jointContrast")*.35f;
+                    if(horizontal<1)value-=jointContrast*.35f;
                     value+=Height(kind,x,y)*grain;
                 }
                 if(kind.StartsWith("floor"))
                 {
                     int cell=TextureSize/2,px=x%cell,py=y%cell;
-                    int edge=Mathf.Min(px,py,cell-1-px,cell-1-py);
-                    if(edge<1)value-=profile.Get("well.jointContrast");else if(edge<2)value+=.035f;
+                    int edge=Mathf.Min(Mathf.Min(px,py),Mathf.Min(cell-1-px,cell-1-py));
+                    if(edge<1)value-=jointContrast;else if(edge<2)value+=.035f;
                     value+=Height(kind,x,y)*grain*(kind=="floor-bio"?8:kind=="floor-electronics"?3:6);
                     // Subtle aggregate flecks and panel-to-panel value changes, never gameplay randomness.
                     value+=Grain(x/cell,y/cell)*grain*.5f;
@@ -112,16 +119,17 @@ namespace StarTournament.ProvingGround
                 if(kind=="ceiling")
                 {
                     int px=x%(TextureSize/2),py=y%(TextureSize/4);
-                    int seam=Mathf.Min(px,TextureSize/2-1-px,py,TextureSize/4-1-py);
-                    if(seam<2)value-=profile.Get("well.jointContrast")*1.5f;
+                    int seam=Mathf.Min(Mathf.Min(px,TextureSize/2-1-px),Mathf.Min(py,TextureSize/4-1-py));
+                    if(seam<2)value-=jointContrast*1.5f;
                     else if(seam<4)value+=.025f;
-                    else if(seam>8&&x%12<3&&y%12<3)value-=profile.Get("well.jointContrast")*.8f;
+                    else if(seam>8&&x%12<3&&y%12<3)value-=jointContrast*.8f;
                     value+=Grain(x,y)*grain*.15f;
                 }
                 if(kind=="metal")value-=.09f*(.5f+.5f*Mathf.Sin(y*2.3f));
                 if(kind=="soil")value=.83f+Height(kind,x,y)*.45f;
                 pixels[y*TextureSize+x]=new Color(value,value,value,1);
             }
+            });
             texture.SetPixels(pixels);texture.Apply(true,true);return texture;
         }
         public void Box(Material m,Vector3 center,Vector3 size,Quaternion rotation)
@@ -367,5 +375,6 @@ namespace StarTournament.ProvingGround
                 Render(mesh,pair.Key,"Well details / "+pair.Key.name);
             }
         }
+        public IEnumerable<Mesh> ReadDiagnosticMeshes()=>batches.Values.SelectMany(instances=>instances).Select(instance=>instance.mesh).Where(mesh=>mesh);
     }
 }
