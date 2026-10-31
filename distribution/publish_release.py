@@ -17,6 +17,7 @@ import urllib.request
 from release_compatibility import validate as validate_compatibility, verify_payload
 from upload_github_assets import REPO, upload, tls_context
 from legacy_release_relay import ReleaseRedirects
+from release_media import prepare as prepare_media
 from release_changelog import previous_release, resolve, render, validate_body, git, version_key
 
 RUNTIMES = ('win-x64', 'osx-arm64')
@@ -329,10 +330,16 @@ def prepare_changelog(review_path, repo, source_ref, version, channel, token, ou
     previous=changelog_baseline(version,channel,token,repo)
     review_bytes=review_path.read_bytes()
     review=json.loads(review_bytes.decode('utf-8'))
-    body=render(review,repo,source_ref,channel,previous)
+    body=render(review,repo,source_ref,channel,previous,version=version)
     identity=dict(schema=1,version=version,source_ref=source_ref,channel=channel,previous_release=previous,
                   body_sha256=hashlib.sha256(body.encode()).hexdigest(),
                   review_sha256=hashlib.sha256(review_bytes).hexdigest())
+    # Reject a changed review/body before materializing any new local media on resume.
+    for name,value in [('release-notes.md',body.encode('utf-8')),('release-notes.review.json',review_bytes)]:
+        path=output/name
+        if path.is_symlink() or (path.exists() and path.read_bytes()!=value): raise ValueError('Existing release notes identity differs; inspect output before resuming')
+    media=prepare_media(review,review_path.parent,version,output)
+    if media: identity['media']=[dict(name=path.name,size=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest()) for path in media]
     output.mkdir(parents=True,exist_ok=True)
     files=[('release-notes.md',body.encode('utf-8')),
            ('release-notes.identity.json',(json.dumps(identity,ensure_ascii=False,sort_keys=True,indent=2)+'\n').encode('utf-8')),
@@ -343,6 +350,18 @@ def prepare_changelog(review_path, repo, source_ref, version, channel, token, ou
     for name,value in files:
         path=output/name;next_path=output/(name+'.tmp');next_path.write_bytes(value);next_path.replace(path)
     return body
+
+
+def changelog_assets(output):
+    notes_identity=json.loads((output/'release-notes.identity.json').read_text())
+    result=[]
+    for item in notes_identity.get('media',[]):
+        if not re.fullmatch(r'history-[0-9a-f]{64}\.png',item['name']): raise ValueError('Unsafe release media name')
+        actual=identity(output/'history-media'/item['name'])
+        if (actual['name'],actual['size'],actual['sha256']) != (item['name'],item['size'],item['sha256']):
+            raise ValueError('Prepared release media identity differs before upload')
+        result.append(actual)
+    return result
 
 
 def publish(version, date, channel, assets, token, source_ref, draft_only=False, *, body=None):
@@ -409,6 +428,7 @@ def main():
             if runtime=='win-x64':cmd+=['--nsis-host',a.nsis_host]
             subprocess.run(cmd,check=True)
     assets=collect(a.output,a.version,a.date,a.channel,a.source_ref,legacy_bridge=bridge_snapshot,new_install_only=a.new_install_only)
+    assets.extend(changelog_assets(a.output))
     (a.output/'asset-manifest.json').write_text(json.dumps(assets,indent=2)+'\n')
     release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref,a.draft_only,body=body)
     (a.output/'publication.json').write_text(json.dumps(dict(release=release,readback=checks),indent=2)+'\n')
