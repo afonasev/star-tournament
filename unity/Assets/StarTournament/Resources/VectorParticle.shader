@@ -1,6 +1,6 @@
 Shader "StarTournament/VectorParticle"
 {
- Properties { _MainTex("Soft particle",2D)="white"{} }
+ Properties { _MainTex("Soft particle",2D)="white"{} _Radiance("Radiance",Float)=1 }
  SubShader
  {
   Tags { "Queue"="Transparent" "RenderType"="Transparent" "RenderPipeline"="UniversalPipeline" }
@@ -17,7 +17,8 @@ Shader "StarTournament/VectorParticle"
    struct Varyings { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; half4 color:COLOR; };
    TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
    Varyings vert(Attributes a){Varyings o;o.positionCS=TransformObjectToHClip(a.positionOS.xyz);o.uv=a.uv;o.color=a.color;return o;}
-   half4 frag(Varyings i):SV_Target{return SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,i.uv)*i.color;}
+   half _Radiance;
+   half4 frag(Varyings i):SV_Target{half4 c=SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,i.uv)*i.color;c.rgb*=_Radiance;return c;}
    ENDHLSL
   }
  }

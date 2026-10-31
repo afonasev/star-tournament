@@ -1,0 +1,24 @@
+[
+  {
+    "file": "reference-coating-albedo.png",
+    "sha256": "9d56ca1b2b0c052badc95fc69565c5c24e5430485e7beeb28800cdaa61838462",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generation": "Built-in imagegen, 2026-10-29",
+    "prompt_summary": "Seamless PBR albedo: dark graphite ceramic-coated steel, fine matte pigment, sparse tiny abrasions and chips, mostly intact coating; flat uniform illumination; no panels, bolts, seams or text.",
+    "status": "wired into F19 art source; physical UV scale; derived matching relief, no runtime promotion"
+  },
+  {
+    "file": "reference-cloth-albedo.png",
+    "sha256": "59605cd7e4728806b60fa9d137a964cae5cb36234ac33ce2b0454399eca0d16c",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generation": "Built-in imagegen, 2026-10-29",
+    "prompt_summary": "Seamless PBR albedo: dense charcoal-black woven nylon/aramid, about 32 yarn crossing groups across tile, fine fibers; no rubber or quilting; flat uniform illumination; no seams, objects or text.",
+    "status": "wired into F19 art source; physical UV scale; derived matching relief, no runtime promotion"
+  }
+]

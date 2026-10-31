@@ -32,11 +32,11 @@ def mix_material(source, name, tint):
     return result
 
 
-def palette():
+def palette(skip_prefix=()):
     """Keep image bytes and relief; split neutral armor from assigned-color marks."""
     cache = {}
     for obj in bpy.context.scene.objects:
-        if obj.type != 'MESH' or obj.name == 'weapon:joined' or 'gloves' in obj.name:
+        if obj.type != 'MESH' or obj.name == 'weapon:joined' or 'gloves' in obj.name or obj.name.startswith(skip_prefix):
             continue
         # Repartition after runtime collapse too: the reducer can move a paint
         # seam. Restore its original role before cutting the final exact boundary.

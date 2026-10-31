@@ -31,14 +31,22 @@ for m in bpy.data.materials:
   else:base.default_value=tint
 s=bpy.context.scene;s.render.engine='CYCLES';s.cycles.samples=24;s.cycles.use_denoising=True;s.render.resolution_x=1200;s.render.resolution_y=1200;s.render.resolution_percentage=100
 s.world=bpy.data.worlds.new('Studio');s.world.use_nodes=True;s.world.node_tree.nodes['Background'].inputs[0].default_value=(.40,.40,.40,1);s.world.node_tree.nodes['Background'].inputs[1].default_value=.5
+reference_studio='--reference-studio' in sys.argv
+if reference_studio:
+ s.world.node_tree.nodes['Background'].inputs[0].default_value=(.07,.075,.085,1)
+ s.world.node_tree.nodes['Background'].inputs[1].default_value=.4
 s.view_settings.view_transform='AgX';s.view_settings.look='AgX - Medium High Contrast';s.view_settings.exposure=-.65
 bpy.ops.mesh.primitive_plane_add(size=200);floor=bpy.context.object
 m=bpy.data.materials.new('studio floor');m.diffuse_color=(.35,.35,.35,1);floor.data.materials.append(m)
+if reference_studio:m.diffuse_color=(.045,.050,.058,1)
+if '--reference-stage' in sys.argv:
+ m.use_nodes=True;m.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value=(.045,.050,.058,1)
+ m.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value=.85
 for pos,power,size in [((2,-3,4),480,3),((-2,-1,2.5),290,2),((1,2,3),600,2)]:
- bpy.ops.object.light_add(type='AREA',location=pos);o=bpy.context.object;o.data.energy=power;o.data.shape='DISK';o.data.size=size;o.rotation_euler=(Vector((0,0,1))-o.location).to_track_quat('-Z','Y').to_euler()
+ bpy.ops.object.light_add(type='AREA',location=pos);o=bpy.context.object;o.data.energy=power*(.35 if pos[0]<0 and '--reference-stage' in sys.argv else 1);o.data.shape='DISK';o.data.size=size;o.rotation_euler=(Vector((0,0,1))-o.location).to_track_quat('-Z','Y').to_euler()
 bpy.ops.object.camera_add();cam=bpy.context.object;s.camera=cam;cam.data.type='ORTHO'
-for name,center,offset,scale in [('model-front',(0,0,.9),(2,-4,1.2),2.05),('model-back',(0,0,.9),(-2,4,1),2.05),('helmet',(0,0,1.66),(.35,-.65,.14),.43),('torso',(0,0,1.33),(.3,-1,.08),.61)]:
+for name,center,offset,scale in [('model-front',(0,0,.9),(2,-4,1.2),2.05),('model-back',(0,0,.9),(-2,4,1),2.05),('model-side',(0,0,.9),(4,0,.3),2.05),('helmet',(0,0,1.66),(.35,-.65,.14),.43),('torso',(0,0,1.33),(.3,-1,.08),.61),('torso-side',(0,0,1.35),(1,-.35,.10),.65),('lower',(0,0,.56),(.4,-1,.16),1.08)]:
  if '--views' in sys.argv and name not in sys.argv[sys.argv.index('--views')+1].split(','):continue
  center=Vector(center);cam.location=center+Vector(offset);cam.rotation_euler=(center-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=scale;s.render.filepath=str(OUT/(name+'.png'));bpy.ops.render.render(write_still=True)
-(OUT/'render-source.json').write_text(json.dumps({'source':str(source.relative_to(ROOT)),'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'blender':bpy.app.version_string,'view':'studio; display teal override; imported actual mesh; no gameplay evidence','pose':'bent-leg diagnostic' if '--pose' in sys.argv else 'neutral review'},indent=2)+'\n')
+(OUT/'render-source.json').write_text(json.dumps({'source':str(source.relative_to(ROOT)),'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'blender':bpy.app.version_string,'reference_stage':'--reference-stage' in sys.argv,'renderer_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'view':('dark reference studio' if reference_studio else 'neutral studio')+'; display teal override; imported actual mesh; no gameplay evidence','pose':'bent-leg diagnostic' if '--pose' in sys.argv else 'neutral review'},indent=2)+'\n')
 print('VECTOR_REVIEW_RENDERED')

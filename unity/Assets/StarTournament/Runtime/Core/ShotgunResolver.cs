@@ -59,21 +59,21 @@ namespace StarTournament.ProvingGround
             return ResolveSegment(origin,direction,targets,shooter,0,Mathf.Min(RangeFor(weapon),worldDistance));
         }
         /// <summary>Swept point bullet against current authoritative zones; no distance cutoff.</summary>
-        public PelletHit ResolveSegment(Vector3 origin,Vector3 direction,CombatTarget[] targets,int shooter,int shooterLife,float limit)
+        public PelletHit ResolveSegment(Vector3 origin,Vector3 direction,CombatTarget[] targets,int shooter,int shooterLife,float limit,float radius=0)
         {
             float nearest = limit;
             int targetIndex = -1; HitZone selected = default;
             for (int i = 0; i < targets.Length; i++)
             {
                 if (targets[i].Seat == shooter && (shooterLife==0 || targets[i].Life==shooterLife)) continue;
-                var hit=ResolveTarget(origin,direction,targets[i],nearest);
+                var hit=ResolveTarget(origin,direction,targets[i],nearest,radius);
                 if(hit.TargetIndex>=0){nearest=hit.Distance;targetIndex=i;selected=hit.Zone;}
 
             }
             return new PelletHit(targetIndex, selected, nearest);
         }
         /// <summary>Same head/torso/limb intersection for every weapon; callers decide participant blocking.</summary>
-        public PelletHit ResolveTarget(Vector3 origin,Vector3 direction,CombatTarget target,float limit)
+        public PelletHit ResolveTarget(Vector3 origin,Vector3 direction,CombatTarget target,float limit,float radius=0)
         {
             float nearest=limit;bool found=false;HitZone selected=default;
             var inverse = Quaternion.Euler(0, -target.Pose.Yaw, 0);
@@ -83,16 +83,39 @@ namespace StarTournament.ProvingGround
                 // Strict comparison makes world occlusion win exact ties; roster order breaks target ties.
                 if (distance >= 0 && distance < nearest) { nearest = distance; found = true; selected = zone; }
             }
-            Consider(Sphere(o, d, Vector3.up * headY, headRadius), HitZone.Head);
+            Consider(Sphere(o, d, Vector3.up * headY, headRadius+radius), HitZone.Head);
             var bounds = new Bounds(Vector3.up * torsoY, new Vector3(torsoX, torsoHeight, torsoZ) * 2);
-            if(bounds.Contains(o))Consider(0,HitZone.Torso);
+            if(radius>0)Consider(RoundedBox(o,d,bounds,radius),HitZone.Torso);
+            else if(bounds.Contains(o))Consider(0,HitZone.Torso);
             else if (bounds.IntersectRay(new Ray(o, d), out float torso)) Consider(torso, HitZone.Torso);
             for (int side = -1; side <= 1; side += 2)
             {
-                Consider(Capsule(o, d, side * armX, armBottom, armTop, armRadius), HitZone.Limb);
-                Consider(Capsule(o, d, side * legX, legBottom, legTop, legRadius), HitZone.Limb);
+                Consider(Capsule(o, d, side * armX, armBottom, armTop, armRadius+radius), HitZone.Limb);
+                Consider(Capsule(o, d, side * legX, legBottom, legTop, legRadius+radius), HitZone.Limb);
             }
             return new PelletHit(found?0:-1,selected,nearest);
+        }
+        // Exact Minkowski sum: face slabs plus twelve rounded edges (end caps cover corners).
+        // Inflating all AABB axes together would incorrectly include the square corner regions.
+        static float RoundedBox(Vector3 origin,Vector3 direction,Bounds bounds,float radius)
+        {
+            var o=origin-bounds.center;var half=bounds.extents;float best=float.PositiveInfinity;
+            if((o-new Bounds(Vector3.zero,half*2).ClosestPoint(o)).sqrMagnitude<=radius*radius)return 0;
+            for(int axis=0;axis<3;axis++)
+            {
+                var size=half*2;size[axis]+=radius*2;
+                var face=new Bounds(Vector3.zero,size);
+                if(face.Contains(o))best=0;
+                else if(face.IntersectRay(new Ray(o,direction),out float t))best=Mathf.Min(best,t);
+                int a=(axis+1)%3,b=(axis+2)%3;
+                for(int sa=-1;sa<=1;sa+=2)for(int sb=-1;sb<=1;sb+=2)
+                {
+                    var center=Vector3.zero;center[a]=sa*half[a];center[b]=sb*half[b];var q=o-center;
+                    float edge=Capsule(new Vector3(q[a],q[axis],q[b]),new Vector3(direction[a],direction[axis],direction[b]),0,-half[axis],half[axis],radius);
+                    if(edge>=0)best=Mathf.Min(best,edge);
+                }
+            }
+            return float.IsInfinity(best)?-1:best;
         }
         static float Sphere(Vector3 o, Vector3 d, Vector3 center, float radius)
         {
