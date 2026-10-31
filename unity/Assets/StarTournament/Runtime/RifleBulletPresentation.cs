@@ -14,18 +14,25 @@ namespace StarTournament.ProvingGround
         readonly ProvingProfile profile;
         readonly Transform owner;
         readonly Func<int,Vector3> muzzle;
+        readonly CobaltShotPresentation effects;
         readonly Dictionary<uint,int> pendingLaunches=new Dictionary<uint,int>();
         readonly Material material;
         readonly Dictionary<uint,LineRenderer> flights=new Dictionary<uint,LineRenderer>();
         readonly Dictionary<uint,LaunchOffset> offsets=new Dictionary<uint,LaunchOffset>();
         readonly List<Impact> impacts=new List<Impact>();
-        public int ActiveCount=>flights.Count+impacts.Count;
-        public RifleBulletPresentation(NativeCombatSession session,ProvingProfile profile,Transform owner,Func<int,Vector3> muzzle=null)
+        public int ActiveCount=>flights.Count+impacts.Count+(effects?.ActiveContacts??0);
+        public RifleBulletPresentation(NativeCombatSession session,ProvingProfile profile,Transform owner,Func<int,Vector3> muzzle=null,CobaltShotPresentation effects=null)
         {
-            this.session=session;this.profile=profile;this.owner=owner;this.muzzle=muzzle;
+            this.session=session;this.profile=profile;this.owner=owner;this.muzzle=muzzle;this.effects=effects;
             var color=new Color(P("rifleTracerRed"),P("rifleTracerGreen"),P("rifleTracerBlue"));
             material=new Material(Shader.Find("Universal Render Pipeline/Unlit")??Shader.Find("Unlit/Color")){name="Rifle bullet",color=color};
             if(material.HasProperty("_BaseColor"))material.SetColor("_BaseColor",color);
+            if(effects!=null&&effects.Enabled)
+            {
+                UnityEngine.Object.Destroy(material);
+                material=new Material(Shader.Find("StarTournament/CobaltShot")){name="COBALT finite bullet trace"};
+                material.SetFloat("_Tracer",1);material.SetFloat("_Radiance",profile.Get(ProvingProfile.CobaltFxPrefix+"tracerRadiance"));material.SetFloat("_Core",profile.Get(ProvingProfile.CobaltFxPrefix+"tracerCore"));
+            }
             session.RifleBulletHit+=Contact;session.StateRestored+=Clear;
         }
         float P(string key)=>profile.Get("presentation."+key);
@@ -36,6 +43,7 @@ namespace StarTournament.ProvingGround
         {
             if(flights.TryGetValue(e.Bullet.Id,out var line)){line.gameObject.SetActive(false);UnityEngine.Object.Destroy(line.gameObject);flights.Remove(e.Bullet.Id);}
             offsets.Remove(e.Bullet.Id);pendingLaunches.Remove(e.Bullet.Id);
+            if(effects!=null&&effects.Enabled){effects.Contact(e);return;}
             var root=GameObject.CreatePrimitive(PrimitiveType.Sphere);root.name="Rifle contact "+e.Bullet.Id;root.transform.SetParent(owner);
             var collider=root.GetComponent<Collider>();collider.enabled=false;UnityEngine.Object.Destroy(collider);
             root.GetComponent<Renderer>().sharedMaterial=material;
@@ -63,6 +71,12 @@ namespace StarTournament.ProvingGround
                 {
                     var root=new GameObject("Rifle flight "+b.Id);root.transform.SetParent(owner);
                     flights[b.Id]=line=root.AddComponent<LineRenderer>();line.sharedMaterial=material;line.positionCount=2;line.useWorldSpace=true;
+                    if(effects!=null&&effects.Enabled)
+                    {
+                        line.textureMode=LineTextureMode.Stretch;
+                        line.startColor=new Color(P("rifleTracerRed"),P("rifleTracerGreen"),P("rifleTracerBlue"));line.endColor=line.startColor;
+                        line.numCapVertices=3;
+                    }
                     line.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
                 }
                 line.startWidth=line.endWidth=P("rifleTracerWidth");
@@ -80,7 +94,7 @@ namespace StarTournament.ProvingGround
         void Clear()
         {
             foreach(var line in flights.Values)if(line)UnityEngine.Object.Destroy(line.gameObject);flights.Clear();offsets.Clear();pendingLaunches.Clear();
-            foreach(var impact in impacts)if(impact.Root)UnityEngine.Object.Destroy(impact.Root);impacts.Clear();
+            foreach(var impact in impacts)if(impact.Root)UnityEngine.Object.Destroy(impact.Root);impacts.Clear();effects?.Clear();
         }
         public void Dispose(){session.RifleBulletHit-=Contact;session.StateRestored-=Clear;Clear();UnityEngine.Object.Destroy(material);}
     }

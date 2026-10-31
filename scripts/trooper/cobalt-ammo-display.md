@@ -1,0 +1,9 @@
+# COBALT integrated display C
+
+Approved concept and native evidence: shared planning `docs/evidence/add-cobalt-ammo-display/`.
+
+The assembled weapon includes the existing PBR GLB and a procedural attachment authored in `RifleAmmoDisplay.BuildMesh`, with placement/size/animation in `RifleDisplayProfile`. No binary GLB re-export is needed for this stateful module. Units are the GLB asset metres, +Y up and +Z muzzle; display local +X runs towards the stock, front normal points towards the upper-left observer. Mesh: clipped 24-vertex / 22-triangle six-millimetre enclosure, no hidden back face, no collider, no shadow or probe passes. One shared opaque material draws glass, bevel, ten slots and seven-segment digits in a single pass; no texture, light, canvas, text GameObjects or per-frame mesh rebuild.
+
+Display artwork fixes ten slots, lime digits, and green/yellow/red normalized ramp. These are art topology/palette invariants. Named profile metadata owns physical placement, dimensions, tilt, intensity and response timings. Current simulation RifleStartingAmmo sets full scale; it is never inferred from the sketch. Minimum two digits; all Int32 digits are preserved. Cached property blocks are uploaded only when visible values change. Default profile construction is lazy for legacy parameter fallback. Shared immutable mesh/material cache is bounded to one of each per scripting domain, including after scene restart; live instances do not create copies.
+
+Presentation reads RifleAmmo and session.Time; it never mutates combat state. Digit changes are immediate; segment interpolation and subtle digit response freeze on pause. Rewind synchronizes to restored state. Respawn animates from empty. Switching follows the existing weapon parent and apex timing. Body identity/boost tint does not recolor this status display.
