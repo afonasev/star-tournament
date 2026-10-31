@@ -3,10 +3,111 @@ namespace StarTournament.ProvingGround
 {
     public sealed partial class ProvingProfile
     {
+        internal ProvingProfile BeforeWorldArmFit()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<34)return this;
+            var p=DetachedCopy();p.version=33;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.world."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.world."));p.valueIndex=null;return p;
+        }
+        internal ProvingProfile BeforeCrimsonRecoil()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<33)return this;
+            var p=BeforeWorldArmFit().DetachedCopy();p.version=32;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson.recoil."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson.recoil."));p.valueIndex=null;return p;
+        }
+        internal ProvingProfile BeforeCrimsonDetail()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<32)return this;
+            var p=BeforeCrimsonRecoil().DetachedCopy();p.version=31;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson.detail."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson.detail."));p.valueIndex=null;return p;
+        }
+        internal ProvingProfile BeforeCrimsonShoulder()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<31)return this;
+            var p=BeforeCrimsonDetail().DetachedCopy();p.version=30;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.crimson."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.crimson."));p.valueIndex=null;return p;
+        }
+        internal ProvingProfile BeforeHeavyAgileGait()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<30)return this;
+            var p=BeforeCrimsonShoulder().DetachedCopy();p.version=29;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("animation.heavy."));p.values.RemoveAll(v=>v.Path.StartsWith("animation.heavy."));p.valueIndex=null;
+            foreach(var pair in new[]{("animation.stepLengthMeters",.65f),("animation.stepSeconds",.28f),("animation.stepHeightMeters",.09f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
+        internal ProvingProfile BeforeCommonForearms()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<29)return this;
+            var p=BeforeHeavyAgileGait().DetachedCopy();p.version=28;
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.common"));p.values.RemoveAll(v=>v.Path.StartsWith("view.common"));p.valueIndex=null;return p;
+        }
+        internal ProvingProfile BeforeStableArmEntry()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<28)return this;
+            var p=BeforeCommonForearms().DetachedCopy();p.version=27;
+            p.FindDescriptor("view.switchShoulderDegrees").DefaultValue=60;p.Set("view.switchShoulderDegrees",60);
+            p.descriptors.RemoveAll(d=>d.Path.StartsWith("view.armEntry"));
+            p.values.RemoveAll(v=>v.Path.StartsWith("view.armEntry"));p.valueIndex=null;return p;
+        }
+        internal ProvingProfile BeforeUnifiedArmGrips()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<27)return this;
+            var p=BeforeStableArmEntry().DetachedCopy();p.version=26;
+            foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
+            {
+                var prefix="grip."+weapon+".";
+                p.descriptors.RemoveAll(d=>d.Path==prefix+"primaryWristAlignment");
+                p.values.RemoveAll(v=>v.Path==prefix+"primaryWristAlignment");
+                p.FindDescriptor(prefix+"wristAlignment").DefaultValue=0;p.Set(prefix+"wristAlignment",0);
+            }
+            return p;
+        }
+        internal ProvingProfile BeforeCloserWeaponView()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<26)return this;
+            var p=BeforeUnifiedArmGrips().DetachedCopy();p.version=25;
+            foreach(var pair in new[]{("view.y",-1.46f),("view.z",.05f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
+        internal ProvingProfile BeforeCobaltThumb()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<25)return this;
+            var p=BeforeCloserWeaponView().DetachedCopy();p.version=24;
+            foreach(var old in CreateTrooperDefault(true,true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.left.Thumb.")||d.Path=="grip.Rifle.thumbOpposition"))
+            {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
+            return p;
+        }
+        internal ProvingProfile BeforeVectorThumb()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<24)return this;
+            var p=BeforeCobaltThumb().DetachedCopy();p.version=23;
+            foreach(var pair in new[]{("grip.Shotgun.left.Thumb.Proximal",-38f),("grip.Shotgun.left.Thumb.Intermediate",35f),("grip.Shotgun.left.Thumb.Spread",-45f),("grip.Shotgun.thumbOpposition",67f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
+        internal ProvingProfile BeforeVectorGrip()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<23)return this;
+            var p=BeforeVectorThumb().DetachedCopy();p.version=22;
+            p.descriptors.RemoveAll(d=>d.Path=="grip.Shotgun.primaryWristAlignment");p.values.RemoveAll(v=>v.Path=="grip.Shotgun.primaryWristAlignment");
+            foreach(var old in CreateTrooperDefault(true,false).Descriptors.Where(d=>d.Path.StartsWith("grip.Shotgun.")))
+            {var d=p.FindDescriptor(old.Path);d.DefaultValue=old.DefaultValue;d.Minimum=old.Minimum;d.Maximum=old.Maximum;p.Set(d.Path,old.DefaultValue);}
+            return p;
+        }
+        internal ProvingProfile BeforeCobaltGrip()
+        {
+            if(id!="unity-trooper-presentation-v1"||version<22)return this;
+            var p=BeforeVectorGrip().DetachedCopy();p.version=21;
+            foreach(var pair in new[]{("grip.Rifle.supportZ",.42f),("grip.Rifle.supportY",-.12f)})
+            {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+            return p;
+        }
         internal ProvingProfile BeforeForgeGrip()
         {
             if(id!="unity-trooper-presentation-v1"||version<21)return this;
-            var p=DetachedCopy();p.version=20;
+            var p=BeforeCobaltGrip().DetachedCopy();p.version=20;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("grip.Plasma."));p.values.RemoveAll(v=>v.Path.StartsWith("grip.Plasma."));return p;
         }
         // Reconstruct exact @19 digit defaults/ranges for saved Lab snapshots.
@@ -207,15 +308,18 @@ namespace StarTournament.ProvingGround
         }
         internal static float SafeSwitchUpgrade(NumericDescriptor old,NumericDescriptor current,float value)
         {
+            // Untouched Rifle contacts follow the COBALT fore-end; explicit Lab tuning survives.
+            if((old.Path.StartsWith("grip.Rifle.",System.StringComparison.Ordinal)||old.Path.StartsWith("grip.Shotgun.",System.StringComparison.Ordinal)||old.Path.StartsWith("grip.RocketLauncher.",System.StringComparison.Ordinal)))
+                return value==old.DefaultValue?current.DefaultValue:value;
             // Untouched equipment defaults adopt the revised fill in serialized scenes and Lab;
             // explicit off and other custom strengths stay unchanged. Historical snapshots are never edited.
-            if(old.Path=="view.fillIntensity")return value==old.DefaultValue?current.DefaultValue:value;
+            if(old.Path=="view.fillIntensity"||old.Path=="view.y"||old.Path=="view.z"||old.Path.EndsWith(".wristAlignment",System.StringComparison.Ordinal))return value==old.DefaultValue?current.DefaultValue:value;
             if(old.Path!="view.switchShoulderDegrees"&&old.Path!="view.switchElbowDegrees")return value;
             // Old authored defaults follow the revised gesture; custom values stay within its safe range.
             return value==old.DefaultValue?current.DefaultValue:UnityEngine.Mathf.Clamp(value,current.Minimum,current.Maximum);
         }
         public static ProvingProfile CreateTrooperDefault()=>CreateTrooperDefault(true);
-        static ProvingProfile CreateTrooperDefault(bool articulated)
+        static ProvingProfile CreateTrooperDefault(bool articulated,bool vectorGrip=true,bool cobaltThumb=true)
         {
             var p=new ProvingProfile{id="unity-trooper-presentation-v1",version=19};
             p.Add("animation.stepSeconds","trooper-animation","Длительность короткого шага","Время переноса стопы при коротком движении; на скорости шаг ускоряется по длине.","seconds",.1f,.6f,.01f,.28f);
@@ -540,6 +644,148 @@ namespace StarTournament.ProvingGround
                 foreach(var d in p.descriptors.Where(d=>d.Path.StartsWith("grip.Cutter.")).ToArray())
                     p.Add(d.Path.Replace("grip.Cutter.","grip.Plasma."),"plasma-grip",d.Label,"FORGE: "+d.Description,d.Unit,d.Minimum,d.Maximum,d.Step,p.Get(d.Path));
                 Fit("grip.Plasma.supportZ",.62f);Fit("grip.Plasma.supportY",-.10f);
+                p.version=22;
+                Fit("grip.Rifle.supportZ",.60f);Fit("grip.Rifle.supportY",-.15f);
+            }
+            if(articulated&&vectorGrip)
+            {
+                p.version=23;
+                void VectorFit(string path,float value)
+                {var d=p.FindDescriptor(path);d.Minimum=System.Math.Min(d.Minimum,value);d.Maximum=System.Math.Max(d.Maximum,value);d.DefaultValue=value;p.Set(path,value);}
+                p.Add("grip.Shotgun.primaryWristAlignment","trooper-grip-Shotgun","Выпрямление правого запястья","Поворот локтя к продолжению правой ладони без изменения позы оружия или длины костей.","ratio",0,1,.05f,1);
+                VectorFit("grip.Shotgun.wristAlignment",1);
+                VectorFit("grip.Shotgun.supportYaw",45);
+                VectorFit("grip.Shotgun.supportX",0.005f);
+                VectorFit("grip.Shotgun.supportY",-0.19f);
+                VectorFit("grip.Shotgun.supportZ",0.43f);
+                VectorFit("grip.Shotgun.left.Index.Proximal",-8);
+                VectorFit("grip.Shotgun.left.Index.Intermediate",-16);
+                VectorFit("grip.Shotgun.left.Index.Distal",13);
+                VectorFit("grip.Shotgun.left.Index.Spread",-23);
+                VectorFit("grip.Shotgun.left.Middle.Proximal",-10);
+                VectorFit("grip.Shotgun.left.Middle.Intermediate",23);
+                VectorFit("grip.Shotgun.left.Middle.Distal",-17);
+                VectorFit("grip.Shotgun.left.Middle.Spread",-14);
+                VectorFit("grip.Shotgun.left.Ring.Proximal",6);
+                VectorFit("grip.Shotgun.left.Ring.Intermediate",27);
+                VectorFit("grip.Shotgun.left.Ring.Distal",-20);
+                VectorFit("grip.Shotgun.left.Ring.Spread",-14);
+                VectorFit("grip.Shotgun.left.Little.Proximal",-6);
+                VectorFit("grip.Shotgun.left.Little.Intermediate",31);
+                VectorFit("grip.Shotgun.left.Little.Distal",-20);
+                VectorFit("grip.Shotgun.left.Little.Spread",-2);
+                VectorFit("grip.Shotgun.left.Thumb.Proximal",-38);
+                VectorFit("grip.Shotgun.left.Thumb.Intermediate",35);
+                VectorFit("grip.Shotgun.left.Thumb.Distal",-4);
+                VectorFit("grip.Shotgun.left.Thumb.Spread",-45);
+                VectorFit("grip.Shotgun.thumbOpposition",67);
+                VectorFit("grip.Shotgun.right.Index.Proximal",-41);
+                VectorFit("grip.Shotgun.right.Index.Intermediate",-2);
+                VectorFit("grip.Shotgun.right.Index.Distal",30);
+                VectorFit("grip.Shotgun.right.Index.Spread",6);
+                VectorFit("grip.Shotgun.right.Middle.Proximal",-30);
+                VectorFit("grip.Shotgun.right.Middle.Intermediate",-5);
+                VectorFit("grip.Shotgun.right.Middle.Distal",-6);
+                VectorFit("grip.Shotgun.right.Middle.Spread",3);
+                VectorFit("grip.Shotgun.right.Ring.Proximal",-48);
+                VectorFit("grip.Shotgun.right.Ring.Intermediate",-8);
+                VectorFit("grip.Shotgun.right.Ring.Distal",-15);
+                VectorFit("grip.Shotgun.right.Ring.Spread",0);
+                VectorFit("grip.Shotgun.right.Little.Proximal",-24);
+                VectorFit("grip.Shotgun.right.Little.Intermediate",-25);
+                VectorFit("grip.Shotgun.right.Little.Distal",-20);
+                VectorFit("grip.Shotgun.right.Little.Spread",-11);
+                VectorFit("grip.Shotgun.right.Thumb.Proximal",-20);
+                VectorFit("grip.Shotgun.right.Thumb.Intermediate",-3);
+                VectorFit("grip.Shotgun.right.Thumb.Distal",0);
+                VectorFit("grip.Shotgun.right.Thumb.Spread",-5);
+                // F02: the support thumb follows the fore-end instead of pointing upright.
+                p.version=24;
+                VectorFit("grip.Shotgun.left.Thumb.Proximal",-21);
+                VectorFit("grip.Shotgun.left.Thumb.Intermediate",10);
+                VectorFit("grip.Shotgun.left.Thumb.Spread",-11);
+                VectorFit("grip.Shotgun.thumbOpposition",35);
+            }
+            if(articulated&&vectorGrip&&cobaltThumb)
+            {
+                p.version=25;
+                // F2: distribute flexion smoothly along the support thumb; all other contacts remain exact.
+                foreach(var pair in new[]{("Proximal",-10f),("Intermediate",10f),("Distal",0f),("Spread",-20f)})
+                {var path="grip.Rifle.left.Thumb."+pair.Item1;p.FindDescriptor(path).DefaultValue=pair.Item2;p.Set(path,pair.Item2);}
+                p.FindDescriptor("grip.Rifle.thumbOpposition").DefaultValue=44;p.Set("grip.Rifle.thumbOpposition",44);
+                // Approved B moves the complete view rig; contact poses and world models stay exact.
+                p.version=26;
+                foreach(var pair in new[]{("view.y",-1.49f),("view.z",.01f)})
+                {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+                p.version=27;
+                foreach(var weapon in new[]{WeaponId.Rifle,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})
+                {
+                    var prefix="grip."+weapon+".";
+                    p.FindDescriptor(prefix+"wristAlignment").DefaultValue=1;p.Set(prefix+"wristAlignment",1);
+                    p.Add(prefix+"primaryWristAlignment","trooper-grip-"+weapon,"Выпрямление правого запястья","Общая подгонка локтя к продолжению ладони без смещения оружия и растяжения костей.","ratio",0,1,.05f,1);
+                }
+                p.version=28;
+                // A short shared lift keeps wrists below the singular crossing of the viewport edge.
+                p.FindDescriptor("view.switchShoulderDegrees").DefaultValue=10;p.Set("view.switchShoulderDegrees",10);
+                p.Add("view.armEntryEnabled","trooper-view","Общие точки выхода рук","Закрепляет обе оси предплечий у нижней границы своего viewport для всех оружий; выключение сохраняет прежнюю подгонку.","toggle",0,1,1,1);
+                p.Add("view.armEntryLeftX","trooper-view","Выход левой руки","Смещение оси левого предплечья от центра нижнего края в долях высоты viewport; сохраняет подгонку при split-screen.","viewport-height",-.5f,.5f,.005f,0);
+                p.Add("view.armEntryRightX","trooper-view","Выход правой руки","Смещение оси правого предплечья от центра нижнего края в долях высоты viewport; сохраняет подгонку при split-screen.","viewport-height",0,1,.005f,.4f);
+                p.version=29;
+                p.Add("view.commonForearmsEnabled","trooper-view","Общая поза предплечий","Одинаковые положение, глубина и направление предплечий; кисти и пальцы сохраняют отдельную подгонку.","toggle",0,1,1,1);
+                p.Add("view.commonWristLimit","trooper-view","Предел изгиба кисти","Максимальный угол направления ладони относительно общего предплечья при подгонке к рукояти.","degrees",0,45,1,35);
+                p.Add("view.commonFingerIterations","trooper-view","Подгонка пальцев: итерации","Число малых поправок пальцев к исходным контактам после поворота кисти.","count",0,8,1,4);
+                p.Add("view.commonFingerStep","trooper-view","Подгонка пальцев: шаг","Максимальный поворот фаланги за одну поправку; длины костей сохраняются.","degrees",0,20,1,8);
+                foreach(var side in new[]{"Left","Right"})
+                {
+                    var point=side=="Left"?new[]{.045f,-.28f,.34f}:new[]{.2f,-.3f,.145f};
+                    var direction=side=="Left"?new[]{.65f,.25f,.7f}:new[]{0f,.45f,.9f};
+                    for(int component=0;component<3;component++)
+                    {
+                        string componentName=new[]{"X","Y","Z"}[component];
+                        p.Add("view.common"+side+componentName,"trooper-view","Общее запястье "+side+" "+componentName,"Положение конца предплечья относительно камеры для всех оружий.","meters",-1,1,.005f,point[component]);
+                        p.Add("view.common"+side+"Direction"+componentName,"trooper-view","Направление предплечья "+side+" "+componentName,"Компонент общего направления от локтя к запястью; вектор нормализуется.","ratio",-1,1,.01f,direction[component]);
+                    }
+                }
+                p.version=30;
+                foreach(var pair in new[]{("animation.stepLengthMeters",1.1f),("animation.stepSeconds",.36f),("animation.stepHeightMeters",.12f)})
+                {p.FindDescriptor(pair.Item1).DefaultValue=pair.Item2;p.Set(pair.Item1,pair.Item2);}
+                p.Add("animation.heavy.enabled","trooper-animation","Тяжёлый проворный шаг","Согласует таз, опору и поворот стоп; выключение сохраняет прежний режим постановки ног.","toggle",0,1,1,1);
+                p.Add("animation.heavy.velocityResponseSeconds","trooper-animation","Плавность переноса стопы","Время сглаживания направления цели шага при ускорении и развороте; не задерживает игровой motor.","seconds",.01f,.2f,.01f,.06f);
+                p.Add("animation.heavy.turnStepDegrees","trooper-animation","Переступание при повороте","Угол поворота корпуса относительно опорной стопы, после которого боец переступает.","degrees",10,90,1,35);
+                p.Add("animation.heavy.leanDegrees","trooper-animation","Наклон корпуса в движении","Предельный наклон таза по направлению движения; камера и gameplay не меняются.","degrees",0,12,.5f,4);
+                p.Add("animation.heavy.toePitchDegrees","trooper-animation","Перекат стопы при переносе","Опускает носок после толчка и поднимает перед приземлением; опорная стопа остаётся неподвижной.","degrees",0,30,1,16);
+                p.version=31;
+                p.Add("grip.crimson.enabled","trooper-grip-RocketLauncher","Crimson · плечевой хват","Опирает новую модель на правое плечо; прочие оружия не затрагивает.","toggle",0,1,1,1);
+                p.Add("grip.crimson.shoulderX","trooper-grip-RocketLauncher","Crimson · наружу от плеча","Боковое смещение авторской опоры относительно правого плечевого сустава.","meters",-.15f,.25f,.005f,.025f);
+                p.Add("grip.crimson.shoulderY","trooper-grip-RocketLauncher","Crimson · высота опоры","Высота опоры над правым плечевым суставом; camera и gameplay не меняются.","meters",-.1f,.25f,.005f,.075f);
+                p.Add("grip.crimson.shoulderZ","trooper-grip-RocketLauncher","Crimson · глубина опоры","Смещение опоры вперёд относительно плечевого сустава.","meters",-.25f,.25f,.005f,0);
+                p.Add("grip.crimson.viewX","trooper-grip-RocketLauncher","Crimson · положение FPS X","Сдвигает модель и обе руки вместе; не меняет камеру и мировую модель.","meters",-.3f,.3f,.005f,-.15f);
+                p.Add("grip.crimson.viewY","trooper-grip-RocketLauncher","Crimson · положение FPS Y","Высота плечевой ракетницы в первом лице.","meters",-.3f,.3f,.005f,-.035f);
+                p.Add("grip.crimson.viewZ","trooper-grip-RocketLauncher","Crimson · положение FPS Z","Удаление плечевой ракетницы от камеры.","meters",-.3f,.3f,.005f,.12f);
+                p.version=32;
+                p.Add("grip.crimson.detail.scale","trooper-grip-RocketLauncher","Crimson · размер","Увеличивает модель и расстояние между рукоятями с сохранением плечевой опоры.","ratio",1,1.5f,.05f,1.2f);
+                p.Add("grip.crimson.detail.entryLeftX","trooper-grip-RocketLauncher","Crimson · вход левой руки","Горизонтальная точка входа предплечья под экраном; контакт кисти сохраняется.","ratio",-.7f,.7f,.01f,.08f);
+                p.Add("grip.crimson.detail.entryRightX","trooper-grip-RocketLauncher","Crimson · вход правой руки","Горизонтальная точка входа правого предплечья под экраном.","ratio",-.7f,.7f,.01f,.38f);
+                p.Add("grip.crimson.detail.entryBelow","trooper-grip-RocketLauncher","Crimson · край рук ниже экрана","Смещает локти и открытые края рукавов за нижний край без изменения костей и хвата.","ratio",0,.5f,.01f,.25f);
+
+                p.version=33;
+                p.Add("grip.crimson.recoil.enabled","trooper-grip-RocketLauncher","Crimson · тяжёлая отдача","Визуальный импульс ракетницы и обеих рук от фактического выстрела.","toggle",0,1,1,1);
+                p.Add("grip.crimson.recoil.kickSeconds","trooper-grip-RocketLauncher","Crimson · время удара","Время резкого выхода на пиковую отдачу.","seconds",.01f,.15f,.005f,.04f);
+                p.Add("grip.crimson.recoil.recoverySeconds","trooper-grip-RocketLauncher","Crimson · возврат после удара","Более медленное возвращение оружия в плечевой хват.","seconds",.1f,1,.01f,.48f);
+                p.Add("grip.crimson.recoil.backMeters","trooper-grip-RocketLauncher","Crimson · удар в плечо","Пиковое перемещение оружия назад; длины костей и simulation не меняются.","meters",0,.12f,.005f,.055f);
+                p.Add("grip.crimson.recoil.pitchDegrees","trooper-grip-RocketLauncher","Crimson · подброс ствола","Пиковый подъём дула вокруг плечевого упора; не поворачивает игровую камеру.","degrees",0,15,.5f,7.5f);
+                p.Add("grip.crimson.recoil.rollDegrees","trooper-grip-RocketLauncher","Crimson · крен удара","Небольшой крен корпуса при выстреле.","degrees",-4,4,.25f,-.75f);
+
+                p.version=34;
+                p.Add("grip.world.enabled","trooper-world-grip","Анатомический мировой хват","Отдельная посадка перед бронёй и внешняя плоскость локтей полного персонажа; FPS и gameplay сохраняются.","toggle",0,1,1,1);
+                p.Add("grip.world.elbowForward","trooper-world-grip","Мировой локоть вперёд","Передняя составляющая направления сгиба относительно корпуса.","ratio",0,2,.05f,1);
+                p.Add("grip.world.elbowDown","trooper-world-grip","Мировой локоть вниз","Нижняя составляющая направления сгиба относительно корпуса.","ratio",0,2,.05f,1);
+                foreach(var item in new[]{(WeaponId.Rifle,"COBALT"),(WeaponId.Shotgun,"VECTOR"),(WeaponId.RocketLauncher,"Crimson"),(WeaponId.Cutter,"Резак"),(WeaponId.Plasma,"FORGE")})
+                    p.Add("grip.world."+item.Item1+".forward","trooper-world-grip",item.Item2+" · перед бронёй","Сдвигает мировое оружие и обе кисти вместе, сохраняя длины костей; FPS не меняется.","meters",0,.2f,.005f,item.Item1==WeaponId.Cutter?.12f:item.Item1==WeaponId.RocketLauncher?.08f:.035f);
+                p.Add("grip.world.RocketLauncher.side","trooper-world-grip","Crimson · мировая посадка по X","Боковая коррекция плечевой модели для достижимой опорной рукояти.","meters",-.15f,.15f,.005f,-.06f);
+                p.Add("grip.world.RocketLauncher.primaryElbowForward","trooper-world-grip","Crimson · правый локоть вперёд","Отдельная плоскость правой руки сохраняет просвет у торса при ударе в плечо.","ratio",0,2,.05f,0);
+
+
             }
             return p;
         }

@@ -25,7 +25,7 @@ namespace StarTournament.ProvingGround
         static void AddRocketLife(ProvingProfile p)
         {
             p.Add("rocket.startingAmmo","rocket","Стартовые ракеты","Запас Pulse в начале каждой жизни.","ammo",1,200,1,20);
-            p.Add("rocket.cooldownSeconds","rocket","Пауза Pulse","Минимальная пауза между отдельными нажатиями огня.","seconds",.1f,5,.05f,1.2f);
+            p.Add("rocket.cooldownSeconds","rocket","Пауза Pulse","Минимальная пауза между отдельными нажатиями огня; по умолчанию первый simulation tick после завершения перезарядки.","seconds",.1f,5,.01f,1.2f);
         }
         static void AddRocketCombat(ProvingProfile p)
         {

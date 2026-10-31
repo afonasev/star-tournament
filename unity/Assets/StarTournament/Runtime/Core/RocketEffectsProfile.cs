@@ -3,16 +3,23 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingProfile
     {
         public const string RocketEffectsId="pulse-effects-v1";
+        public ProvingProfile BeforePulseMk2()
+        {
+            if(id!=RocketEffectsId||version<4)return this;
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            bool Added(string path)=>path.StartsWith("pulseFx.ignition")||path=="pulseFx.surfaceFadeMeters"||path=="pulseFx.fireRadiance";
+            p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));p.version=3;return p;
+        }
         public ProvingProfile BeforePulseVisibility()
         {
             if(id!=RocketEffectsId||version<3)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforePulseMk2()));
             p.descriptors.RemoveAll(d=>d.Path=="pulseFx.blastRadiusScale");p.values.RemoveAll(v=>v.Path=="pulseFx.blastRadiusScale");p.version=2;return p;
         }
         public ProvingProfile BeforePulseRefinement()
         {
             if(id!=RocketEffectsId||version<2)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforePulseMk2()));
             var added=new System.Collections.Generic.HashSet<string>{"pulseFx.blastRadiusScale","pulseFx.fireFramesPerSecond","pulseFx.lightIntensity","pulseFx.lightSeconds","pulseFx.lightRangeScale","pulseFx.lightWarmth","pulseFx.lightOffsetScale","pulseFx.maxLights"};
             p.descriptors.RemoveAll(d=>added.Contains(d.Path));p.values.RemoveAll(v=>added.Contains(v.Path));p.version=1;return p;
         }
@@ -27,7 +34,7 @@ namespace StarTournament.ProvingGround
         }
         public static ProvingProfile CreateRocketEffectsDefault()
         {
-            var p=new ProvingProfile{id=RocketEffectsId,version=3};
+            var p=new ProvingProfile{id=RocketEffectsId,version=4};
             p.Add("pulseFx.exhaustLength","rocket-effects","Пламя сопла · длина","Длина плотной горячей струи позади сопла.","meters",.05f,2,.01f,.46f);
             p.Add("pulseFx.exhaustWidth","rocket-effects","Пламя сопла · ширина","Ширина горячей струи у сопла.","meters",.01f,.5f,.01f,.12f);
             p.Add("pulseFx.trailSmokeSize","rocket-effects","Дым следа · размер","Диаметр лёгкого облачка позади ракеты.","meters",.02f,.6f,.01f,.13f);
@@ -65,6 +72,11 @@ namespace StarTournament.ProvingGround
             p.Add("pulseFx.lightOffsetScale","rocket-effects","Свет · отступ","Сдвиг обратно по траектории от контакта, относительно радиуса; улучшает освещение поверхности.","ratio",0,.4f,.01f,.15f);
             p.Add("pulseFx.maxLights","rocket-effects","Свет · лимит","Максимум одновременно активных вспышек; приоритет свежим.","count",0,8,1,4);
             p.Add("pulseFx.blastRadiusScale","rocket-effects","Взрыв · визуальный радиус","Масштаб огня, ядра и дыма относительно игрового радиуса; меньший масштаб сохраняет обзор, не меняя урон и свет.","ratio",.1f,1,.05f,.8f);
+            p.Add("pulseFx.ignitionSeconds","rocket-effects","Pulse Mk II · вспышка запуска","Время короткой вспышки из дула по часам матча.","seconds",.02f,.4f,.01f,.09f);
+            p.Add("pulseFx.ignitionSize","rocket-effects","Pulse Mk II · размер запуска","Поперечный размер огня при запуске, без изменения collision.","meters",.02f,.5f,.01f,.16f);
+            p.Add("pulseFx.ignitionLength","rocket-effects","Pulse Mk II · длина запуска","Длина горячего выброса вперёд от дула.","meters",.02f,1,.01f,.32f);
+            p.Add("pulseFx.surfaceFadeMeters","rocket-effects","Pulse Mk II · мягкий контакт","Расстояние плавного затухания облака у непрозрачной поверхности; не меняет радиус урона.","meters",.01f,1,.01f,.6f);
+            p.Add("pulseFx.fireRadiance","rocket-effects","Pulse Mk II · яркость огня","Яркость горячих деталей текстуры огня; не меняет свет на окружении.","ratio",.1f,4,.1f,2);
             return p;
         }
     }
