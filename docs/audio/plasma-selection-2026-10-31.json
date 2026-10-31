@@ -1,0 +1,18 @@
+{
+  "selection": "User approved brighter Stable Audio 3 SFX variant 1 on 2026-10-31",
+  "source_preview": "planning/docs/evidence/plasma-brighter-v6-20261030/plasma-brighter-single.wav",
+  "source_preview_sha256": "a36f2399ab15814fc14e57699caeeac174bcbf914f60ccd4259af7e34fb2b105",
+  "recipe": "planning/docs/evidence/plasma-brighter-v6-20261030/prepare.py",
+  "generation": "Stable Audio 3 sm-sfx, text-only, seed 301051; no Quake III input",
+  "preview_samples_removed_at_start": 7200,
+  "selected_samples": 48000,
+  "format": {
+    "rate": 48000,
+    "channels": 1,
+    "bits": 16
+  },
+  "runtime_asset": "unity/Assets/StarTournament/Resources/Audio/plasma.wav",
+  "runtime_sha256": "f2a4d427c6aa2c3b338aa32e913b2b2c5be02ee73cb824cc157188757f5b3c09",
+  "pcm_sha256": "3151bc53e4f9e5597cd061530eeb345b430a9d7f006fcae49f2d2a60dcdfa263",
+  "acceptance_scope": "Exact standalone WAV approved; Player mix acceptance separate."
+}
