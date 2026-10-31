@@ -48,10 +48,20 @@ namespace StarTournament.ProvingGround
     public sealed class NativeCombatSession
     {
         readonly CharacterMotor[] motors;
+        readonly int trainingHumans;
+        readonly float trainingTargetYaw;
+        public bool Training=>arena.Definition.MapId==FiringRangeCatalog.Id;
+        public bool IsTrainingTarget(int participant)=>Training&&participant>=trainingHumans;
+        void EquipTrainingHuman(int participant)
+        {
+            if(!Training||IsTrainingTarget(participant))return;
+            foreach(var weapon in new[]{WeaponId.Shotgun,WeaponId.RocketLauncher,WeaponId.Cutter,WeaponId.Plasma})lives[participant].CollectWeapon(weapon);
+        }
         readonly CutterBeam[] beams;
         readonly ProvingProfile cutter;
         readonly ProvingProfile plasma;
         public ProvingProfile PlasmaProfile=>JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(plasma));
+        readonly Collider[] plasmaWorldOverlap=new Collider[1];
         readonly List<PlasmaBoltState> plasmaBolts=new List<PlasmaBoltState>();
         public PlasmaBoltState[] PlasmaBolts=>plasmaBolts.ToArray();
         public event Action<PlasmaBoltContact> PlasmaBoltHit;
@@ -66,6 +76,7 @@ namespace StarTournament.ProvingGround
         readonly float friendlyMultiplier,selfMultiplier;
         readonly List<RocketState> rockets=new List<RocketState>();
         public RocketState[] Rockets => rockets.ToArray();
+        public float RocketAmmoCapacity {get;} // Frozen reserve for the weapon-local instrument; no mutable presentation state.
         public float RocketBlastRadius => rocketResolver.Radius; // Read-only frozen combat configuration, not presentation state.
         readonly List<RifleBulletState> rifleBullets=new List<RifleBulletState>();
         readonly float rifleSpeed;
@@ -101,6 +112,7 @@ namespace StarTournament.ProvingGround
         readonly LabRevisionReference designProfile;
         public LabRevisionReference DesignProfile=>designProfile?.Clone();
         public int ParticipantCount => lives.Length;
+        public int RifleStartingAmmo => lives[0].RifleStartingAmmo;
         public void Stop() { stopped=true; ClearInput(); }
         public SafeSpawnSelector Spawns { get; }
         public double Time { get; private set; }
@@ -181,12 +193,16 @@ namespace StarTournament.ProvingGround
             ProvingProfile movement, ProvingProfile lifecycle, ProvingProfile combat, NativeMatchState match = null,LabRevisionReference designProfile = null, ProvingProfile cutterProfile=null, ProvingProfile plasmaProfile=null)
         {
             if(match != null && match.Roster.Count != motors.Length) throw new ArgumentException("Roster/motor count mismatch");
+            if(arena.Definition.MapId==FiringRangeCatalog.Id&&(match!=null||motors.Length<13||motors.Length>NativeMatchRoster.TrainingCapacity))throw new ArgumentException("Invalid training session");
+            trainingHumans=arena.Definition.MapId==FiringRangeCatalog.Id?motors.Length-FiringRangeCatalog.TargetCount:0;
+            trainingTargetYaw=trainingHumans>0?FiringRangeCatalog.AuthoringProfile().Get("range.map.targetYaw"):0;
             this.designProfile=designProfile?.Clone();
             plasma=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(plasmaProfile??ProvingProfile.CreatePlasmaDefault()));
             if(plasma.Id!="forge-plasma-v1"||plasma.Validate().Count!=0)throw new ArgumentException("Invalid FORGE profile");
             cutter=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(cutterProfile??ProvingProfile.CreateCutterDefault()));
             beams=new CutterBeam[motors.Length];for(int i=0;i<beams.Length;i++)beams[i]=new CutterBeam(cutter,motors.Length);
             ArenaIdentity=arena.Definition.Identity;
+            RocketAmmoCapacity=lifecycle.Get("rocket.startingAmmo");
             pickupHeightTolerance=lifecycle.Get("pickup.maximumHeightDifference");this.arena=arena;this.motors = motors; this.physics = physics; Match=match;
             this.movement = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(movement));
             var tuning = JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(combat));
@@ -196,13 +212,18 @@ namespace StarTournament.ProvingGround
             rocketResolver = new RocketResolver(tuning,this.movement);rifleSpeed=tuning.Get("rifle.speed");
             Spawns = new SafeSpawnSelector(physics, arena, this.movement, tuning);
             lives = new CombatLife[motors.Length]; releaseRequired = new bool[motors.Length];speedRemaining=new double[motors.Length];
-            for (int i = 0; i < lives.Length; i++) lives[i] = new CombatLife("player-"+(i+1), lifecycle,cutter,plasma);
+            for (int i = 0; i < lives.Length; i++){lives[i] = new CombatLife("player-"+(i+1), lifecycle,cutter,plasma);EquipTrainingHuman(i);}
             damagePickup=new DamageBoostPickup(arena.Definition.DamagePickupAnchor,lifecycle,arena.Definition.Pickups.FirstOrDefault(x=>x.Kind==ArenaPickupKind.Damage)?.Id??"damage-disabled");damageRemaining=new double[motors.Length];damageWasOutside=new bool[motors.Length];HasDamagePickup=arena.Definition.HasDamagePickup;HasSpeedPickup=!arena.Definition.DisableSpeedPickup;
             weaponPickups=arena.Definition.Pickups.Where(x=>WeaponPickup.IsWeapon(x.Kind)).Select(x=>new WeaponPickup(x,lifecycle)).ToArray();
             healPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.FullHeal).Select(x=>new FullHealPickup(x.Anchor,lifecycle,x.Id)).ToArray();
             armorPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.Armor).Select(x=>new ArmorPickup(x.Anchor,lifecycle,x.Id)).ToArray();
             speedPickups=arena.Definition.Pickups.Where(x=>x.Kind==ArenaPickupKind.Speed).Select(x=>new SpeedPickup(x.Anchor,lifecycle,x.Id)).ToArray();
             armorPickupWasOutside=new bool[armorPickups.Length,motors.Length];speedPickupWasOutside=new bool[speedPickups.Length,motors.Length];
+            if(Training)for(int i=trainingHumans;i<motors.Length;i++)
+            {
+                motors[i].Initialize(this.movement,arena.Definition.TrainingTargets[i-trainingHumans],arena);
+                var pose=motors[i].State;pose.Yaw=trainingTargetYaw;pose.Grounded=true;motors[i].RestoreState(pose);
+            }
             ResetPickupContacts();
 
         }
@@ -262,11 +283,12 @@ namespace StarTournament.ProvingGround
             }
             for (int i = 0; i < lives.Length; i++)
             {
+                if(IsTrainingTarget(i))actions[i]=default;
                 var weaponBeforeAdvance=Life(i).SelectedWeapon;lives[i].Advance(seconds);
                 if(weaponBeforeAdvance!=Life(i).SelectedWeapon)Match?.RecordWeaponSwitch(i);
                 damageRemaining[i]=Math.Max(0,damageRemaining[i]-seconds);
                 speedRemaining[i]=Math.Max(0,speedRemaining[i]-seconds); motors[i].SetHorizontalSpeedMultiplier(speedRemaining[i]>0?speedPickup.Multiplier:1);
-                if (!Life(i).Dead)
+                if (!Life(i).Dead&&!IsTrainingTarget(i))
                 {
                     var before=motors[i].State.Position;motors[i].Tick(actions[i], seconds);
                     var delta=motors[i].State.Position-before;Match?.RecordMovement(i,new Vector2(delta.x,delta.z).magnitude,motors[i].AcceptedJumpThisTick);
@@ -275,6 +297,8 @@ namespace StarTournament.ProvingGround
             Physics.SyncTransforms();
             for(int i=0;i<lives.Length;i++)
             {
+                if(IsTrainingTarget(i))continue;
+                if(Training&&!Life(i).Dead&&healPickups.Any(item=>item.InRange(Pose(i).Position)&&PickupReach(Pose(i).Position,item.Read().Anchor)))lives[i].RefillRifle();
                 foreach(var item in weaponPickups)
                     if(!Life(i).Dead&&item.InRange(Pose(i).Position)&&PickupReach(Pose(i).Position,item.Read().Anchor))
                         if(item.TryCollect(Pose(i).Position,PickupSupport(Pose(i).Position),lives[i]))PickupCollected?.Invoke(i,item.Read().InstanceId,NativeBotPickupKind.Weapon);
@@ -359,12 +383,16 @@ namespace StarTournament.ProvingGround
             if(Match?.Phase==NativeMatchPhase.Finished) return;
             for (int i = 0; i < lives.Length; i++) if (lives[i].ReadyToRespawn)
             {
-                if (!Spawns.TryChoose(LiveTargets(), out var spawn))
+                Vector3 spawn;
+                if(Training)spawn=IsTrainingTarget(i)?arena.Definition.TrainingTargets[i-trainingHumans]:arena.Definition.Spawns[i];
+                else if (!Spawns.TryChoose(LiveTargets(), out spawn))
                     throw new InvalidOperationException("Fixed arena has no physically safe respawn slot");
                 if (lives[i].Respawn(Life(i).Life))
                 {
                     beams[i].Reset();
                     motors[i].Initialize(movement, spawn);
+                    if(IsTrainingTarget(i)){var pose=motors[i].State;pose.Yaw=trainingTargetYaw;pose.Grounded=true;motors[i].RestoreState(pose);}
+                    EquipTrainingHuman(i);
                     releaseRequired[i] = actions[i].FireHeld || actions[i].Fire;
                     Physics.SyncTransforms(); // Reserve this live capsule before the next participant chooses.
                     Respawned?.Invoke(i);
@@ -427,16 +455,22 @@ namespace StarTournament.ProvingGround
         }
         void AdvancePlasmaBolts(float seconds)
         {
-            float travel=plasma.Get("plasma.speed")*seconds;
+            float travel=plasma.Get("plasma.speed")*seconds,radius=plasma.Version>=4?plasma.Get("plasma.orbRadius"):0;
             var targets=LiveTargets();
             for(int index=0;index<plasmaBolts.Count;)
             {
                 var b=plasmaBolts[index];
-                bool world=physics.Raycast(b.Position,b.Direction,out var wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
-                var hit=resolver.ResolveSegment(b.Position,b.Direction,targets,b.Owner,b.OwnerLife,world?wall.distance:travel);
+                // SphereCast ignores colliders containing the initial sphere; overlap handles that case.
+                bool overlap=physics.OverlapSphere(b.Position,radius,plasmaWorldOverlap,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore)>0;
+                bool swept=radius>0?physics.SphereCast(b.Position,radius,b.Direction,out var wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore):physics.Raycast(b.Position,b.Direction,out wall,travel,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore);
+                bool world=overlap||swept;float wallDistance=overlap?0:wall.distance;
+                var wallPoint=overlap?plasmaWorldOverlap[0].ClosestPoint(b.Position):wall.point;
+                var wallNormal=overlap?(b.Position-wallPoint).normalized:wall.normal;
+                if(wallNormal.sqrMagnitude<.001f)wallNormal=-b.Direction;
+                var hit=resolver.ResolveSegment(b.Position,b.Direction,targets,b.Owner,b.OwnerLife,world?wallDistance:travel,radius);
                 if(hit.TargetIndex<0&&!world)
                 { b.Position+=b.Direction*travel;b.Distance+=travel;plasmaBolts[index]=b;index++;continue; }
-                float distance=hit.TargetIndex>=0?hit.Distance:wall.distance;
+                float distance=hit.TargetIndex>=0?hit.Distance:wallDistance;
                 b.Position+=b.Direction*distance;b.Distance+=distance;
                 // Remove before damage callbacks: a snapshot must never retain a spent bullet.
                 plasmaBolts.RemoveAt(index);
@@ -444,11 +478,11 @@ namespace StarTournament.ProvingGround
                 if(hit.TargetIndex>=0)
                 {
                     var target=targets[hit.TargetIndex];
-                    contact=new PelletNotice(b.Direction,b.Position,-b.Direction,PelletContact.Participant,target.Seat,target.Life);
-                    applied=ApplyDamagePolicy(target.Seat,target.Life,plasma.Get("plasma.damage")*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Plasma,b.Id,b.Direction,b.Position)).Applied;
+                    contact=new PelletNotice(b.Direction,b.Position+b.Direction*radius,-b.Direction,PelletContact.Participant,target.Seat,target.Life);
+                    applied=ApplyDamagePolicy(target.Seat,target.Life,plasma.Get("plasma.damage")*b.DamageMultiplier,b.Owner,b.OwnerLife,false,new FatalImpact(WeaponId.Plasma,b.Id,b.Direction,contact.Endpoint)).Applied;
                     if(b.AccuracyTracked&&IsEnemy(b.Owner,target.Seat))Match?.RecordAccuracy(b.Owner,WeaponId.Plasma,0,1);
                 }
-                else contact=new PelletNotice(b.Direction,b.Position,wall.normal,PelletContact.World);
+                else contact=new PelletNotice(b.Direction,wallPoint,wallNormal,PelletContact.World);
                 if(applied>0)targets=LiveTargets();
                 PlasmaBoltHit?.Invoke(new PlasmaBoltContact(b,contact,applied,Time));
             }
@@ -460,12 +494,15 @@ namespace StarTournament.ProvingGround
             var origin=pose.Position+Vector3.up*movement.Get("camera.eyeHeight");
             float limit=float.PositiveInfinity;
             if(physics.Raycast(origin,direction,out var wall,beams[shooter].Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))limit=wall.distance;
+            float radius=cutter.Descriptor("cutter.damageRadius")!=null?cutter.Get("cutter.damageRadius"):0;
+            // The whole beam volume stops at cover, including an edge outside its axis.
+            if(radius>0&&physics.SphereCast(origin,radius,direction,out var edge,beams[shooter].Range,1<<ProvingArena.WorldLayer,QueryTriggerInteraction.Ignore))limit=Mathf.Min(limit,edge.distance);
             var distances=new float[lives.Length];var identities=new int[lives.Length];
             for(int i=0;i<lives.Length;i++)
             {
                 identities[i]=Life(i).Life;
                 if(i==shooter||Life(i).Dead){distances[i]=-1;continue;}
-                var hit=resolver.ResolveTarget(origin,direction,new CombatTarget(i,identities[i],Pose(i)),limit);
+                var hit=resolver.ResolveTarget(origin,direction,new CombatTarget(i,identities[i],Pose(i)),limit,radius);
                 distances[i]=hit.TargetIndex<0?-1:hit.Distance;
             }
             bool began=!beams[shooter].Read().Active&&Life(shooter).CutterEnergy>0;float applied=0;

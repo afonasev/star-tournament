@@ -12,5 +12,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var identities=(LocalIdentitySession)typeof(ProvingGround).GetField("identities",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
             for(int seat=0;seat<count;seat++)identities.ClearSeat(seat);
         }
+        public static void GuestIdentity(ProvingGround ground,int seat,UnityEngine.InputSystem.InputDevice device)
+        {
+            const BindingFlags flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            var identities=(LocalIdentitySession)typeof(ProvingGround).GetField("identities",flags).GetValue(ground);
+            var fps=(FpsDisplay)typeof(ProvingGround).GetField("fps",flags).GetValue(ground);
+            identities.ChooseGuest(seat,device.deviceId,MouseSensitivityPreference.Resolve(ground.Profile),fps.Visible);
+            typeof(ProvingGround).GetMethod("RefreshInterface",flags).Invoke(ground,null);
+        }
     }
 }

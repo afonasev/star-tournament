@@ -20,10 +20,13 @@ namespace StarTournament.ProvingGround
             public bool restartAcknowledged,matchPaused;
             public History history;
         }
-        [Serializable] public sealed class HistoryItem { public string version,date,russian,english; public bool installed; }
+        [Serializable] public sealed class HistoryItem { public string version,date,russian,english; public bool installed; public HistoryBlock[] russianBlocks,englishBlocks; }
+        [Serializable] public sealed class HistoryBlock { public string kind,text,sha256,path,state; public int width,height,offset,length; }
         [Serializable] public sealed class History { public string state,error; public HistoryItem[] items; }
         public History HistoryState {get{ReadSnapshot();return shown?.history;}}
         public void RequestHistory(){if(enabled)QueueCommand("history");}
+        public void RequestHistoryMedia(string version){if(enabled)QueueCommand("history-media",version);}
+        public void CloseHistory(){if(enabled)QueueCommand("history-close");}
         public sealed class View
         {
             public string Message, Button, Action;
@@ -91,12 +94,13 @@ namespace StarTournament.ProvingGround
             commandError=null;if(command=="restart")restartRequested=true;
             QueueCommand(command);
         }
+        [Serializable] sealed class CommandPayload { public string action,id; }
         void QueueCommand(string action,string id="")
         {
             if(cancellation==null||cancellation.IsCancellationRequested)return;
             lock(commandGate)
             {
-                commands.Enqueue("{\"action\":\""+action+"\",\"id\":\""+id+"\"}");writing=true;
+                commands.Enqueue(JsonUtility.ToJson(new CommandPayload{action=action,id=id}));writing=true;
                 if(writerRunning)return;writerRunning=true;
             }
             var token=cancellation.Token;

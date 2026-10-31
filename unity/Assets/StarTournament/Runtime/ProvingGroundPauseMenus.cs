@@ -275,15 +275,20 @@ namespace StarTournament.ProvingGround
                 seatPauseWaiting[seat].SetActive(active&&(!human||page==SeatPausePage.Closed));
                 seatPauseActions[seat].SetActive(human&&page==SeatPausePage.Actions);
                 seatSettingsViews[seat].Root.SetActive(human&&page==SeatPausePage.Settings);
-                // A settings view follows the same full-panel proportions as the shell, within this viewport.
-                Layout((RectTransform)seatPauseCards[seat].transform,page==SeatPausePage.Settings?Vector2.zero:new Vector2(.11f,.09f),page==SeatPausePage.Settings?Vector2.one:new Vector2(.89f,.91f));
-                if(page!=SeatPausePage.Settings)
+                // Hidden cards need no geometry writes. Alternating stretch and compact
+                // anchors otherwise invalidates their entire settings hierarchy every frame.
+                if(active)
                 {
-                    // Keep action dialogs compact on a full viewport; retain proportional sizing in split-screen.
-                    var cardRect=(RectTransform)seatPauseCards[seat].transform;
-                    var viewport=(RectTransform)cardRect.parent;
-                    float width=Mathf.Min(viewport.rect.width*.78f,760),height=Mathf.Min(viewport.rect.height*.82f,650);
-                    cardRect.anchorMin=cardRect.anchorMax=new Vector2(.5f,.5f);cardRect.sizeDelta=new Vector2(width,height);cardRect.anchoredPosition=Vector2.zero;
+                    // A settings view follows the full-panel shell proportions in this viewport.
+                    Layout((RectTransform)seatPauseCards[seat].transform,page==SeatPausePage.Settings?Vector2.zero:new Vector2(.11f,.09f),page==SeatPausePage.Settings?Vector2.one:new Vector2(.89f,.91f));
+                    if(page!=SeatPausePage.Settings)
+                    {
+                        // Keep action dialogs compact; retain proportional split-screen sizing.
+                        var cardRect=(RectTransform)seatPauseCards[seat].transform;
+                        var viewport=(RectTransform)cardRect.parent;
+                        float width=Mathf.Min(viewport.rect.width*.78f,760),height=Mathf.Min(viewport.rect.height*.82f,650);
+                        cardRect.anchorMin=cardRect.anchorMax=new Vector2(.5f,.5f);cardRect.sizeDelta=new Vector2(width,height);cardRect.anchoredPosition=Vector2.zero;
+                    }
                 }
                 seatPauseRepeat[seat].SetActive(human&&page==SeatPausePage.ConfirmRepeat);
                 seatPauseExit[seat].SetActive(human&&page==SeatPausePage.ConfirmExit);

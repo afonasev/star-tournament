@@ -9,7 +9,7 @@ namespace StarTournament.ProvingGround
     public sealed partial class ProvingGround
     {
         public const string LastPlayedMapPreferenceKey="star-tournament.last-played-map";
-        static readonly string[] SetupMapIds={CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id};
+        static readonly string[] SetupMapIds={CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id,FiringRangeCatalog.Id};
         int setupTransitionFrame=-1;
         bool setupGamepadNavigation=true;
 

@@ -166,6 +166,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("main-action-0").onClick.Invoke();yield return null;
             var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var seats=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",flags).GetValue(ground);Assert.That(seats.Replace(0,pad),Is.True);
             int before=(int)typeof(ProvingGround).GetField("setupStep",flags).GetValue(ground);
             typeof(ProvingGround).GetMethod("OpenSettings",flags).Invoke(ground,new object[]{-1});yield return null;
             yield return Press(GamepadButton.East);
@@ -213,7 +214,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     var field=ground.GetComponentsInChildren<InputField>(true).Single(x=>x.name=="profile-name-input");string original=field.text;
                     EventSystem.current.SetSelectedGameObject(field.gameObject);yield return null;
                     InputSystem.QueueStateEvent(device,new GamepadState().WithButton(GamepadButton.South));yield return null;yield return null;InputSystem.QueueStateEvent(device,new GamepadState());yield return null;yield return null;
-                    Assert.That(Button("text-space").GetComponentInChildren<Text>().text,Is.EqualTo("Пробел · "+north[i]));Assert.That(Button("text-delete").GetComponentInChildren<Text>().text,Is.EqualTo("Удалить · "+west[i]));Assert.That(Button("text-cancel").GetComponentInChildren<Text>().text,Is.EqualTo("Отмена · "+back[i]));Assert.That(Button("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить · "+start[i]));
+                    Assert.That(Button("text-space").GetComponentInChildren<Text>().text,Is.EqualTo("Пробел"));Assert.That(Button("text-space").GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo(north[i]));Assert.That(Button("text-space").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);Assert.That(Button("text-delete").GetComponentInChildren<Text>().text,Is.EqualTo("Удалить"));Assert.That(Button("text-delete").GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo(west[i]));Assert.That(Button("text-delete").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);Assert.That(Button("text-cancel").GetComponentInChildren<Text>().text,Is.EqualTo("Отмена"));Assert.That(Button("text-cancel").GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo(back[i]));Assert.That(Button("text-cancel").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);Assert.That(Button("text-apply").GetComponentInChildren<Text>().text,Is.EqualTo("Применить"));Assert.That(Button("text-apply").GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("≡"));Assert.That(Button("text-apply").transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);
                     Assert.That(backHint.GlyphLabel.enabled,Is.False,"A covered parent must not advertise the modal's Back input");
                     if(!string.IsNullOrEmpty(output))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"family-"+i+"-keyboard-720.png"),1280,720);
                     InputSystem.QueueStateEvent(device,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;InputSystem.QueueStateEvent(device,new GamepadState());yield return null;yield return null;
@@ -237,11 +238,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(Button("settings-back").GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
                 yield return Press(GamepadButton.DpadRight);yield return null;
                 var hint=Button("settings-back").GetComponent<MenuActionHint>();Assert.That(hint.GlyphLabel.enabled,Is.False,"Parameter Back selects navigation, not Close");
-                Assert.That(ground.GetComponentsInChildren<Text>().Single(x=>x.name=="settings-back-context").text,Is.EqualTo("B — к разделам"));
+                var context=ground.GetComponentsInChildren<Text>().Single(x=>x.name=="settings-back-context");Assert.That(context.text,Is.EqualTo("к разделам"));Assert.That(context.transform.Find("context-button").GetComponent<Image>().enabled,Is.True);Assert.That(context.transform.Find("context-button/context-glyph").GetComponent<Text>().text,Is.EqualTo("B"));
+                var reset=Button("settings-reset-all");Assert.That(reset.GetComponentInChildren<Text>().text,Is.EqualTo("Сбросить все настройки"));Assert.That(reset.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Y"));Assert.That(reset.transform.Find("gamepad-action-button").GetComponent<Image>().enabled,Is.True);
                 string output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_BACK_HINT_QA_IMAGES");
                 if(!string.IsNullOrEmpty(output)){System.IO.Directory.CreateDirectory(output);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(output,"settings-parameter-back-720.png"),1280,720);}
                 yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-0"));Assert.That(Button("settings-back").gameObject.activeInHierarchy,Is.True);
-                yield return Press(GamepadButton.North);Assert.That(Focus,Is.EqualTo("settings-reset-cancel"));Assert.That(Button("settings-reset-cancel").GetComponent<MenuActionHint>().GlyphLabel.text,Does.Contain("B"));Assert.That(hint.GlyphLabel.enabled,Is.False);
+                yield return Press(GamepadButton.North);Assert.That(Focus,Is.EqualTo("settings-reset-cancel"));Assert.That(string.Join("",Button("settings-reset-cancel").GetComponentsInChildren<Text>().Where(t=>t.enabled&&(t.name=="gamepad-action-hint"||t.name=="gamepad-shortcut-hint")).Select(t=>t.text)),Does.Contain("B"));Assert.That(hint.GlyphLabel.enabled,Is.False);
                 yield return Press(GamepadButton.East);Assert.That(Button("settings-back").gameObject.activeInHierarchy,Is.True,"Reset Back must not also close settings");
                 yield return Press(GamepadButton.East);Assert.That(Button("main-action-4").gameObject.activeInHierarchy,Is.True);
             }
@@ -431,9 +433,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"));
             Assert.That(scroll.content.GetComponentsInChildren<Text>(true).Single(t=>t.name=="help-lt-aim-text").text,
                 Does.Contain("короткое нажатие — сброс к горизонту"));
+            string ammoOutput=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_AMMO_QA_IMAGES");
+            if(!string.IsNullOrEmpty(ammoOutput)){System.IO.Directory.CreateDirectory(ammoOutput);yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(ammoOutput,"help-gamepad-names.png"));}
             CaptureLtHelp(scroll.content.GetComponentInParent<Canvas>());
             yield return Press(GamepadButton.DpadLeft);yield return Press(GamepadButton.South);
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-keyboard"));
+            if(!string.IsNullOrEmpty(ammoOutput))yield return EditorUiCapture.Capture(ground,System.IO.Path.Combine(ammoOutput,"help-keyboard-names.png"));
             yield return Press(GamepadButton.South);
             Assert.That(scroll.content.GetComponentInChildren<RawImage>().texture.name,Is.EqualTo("help-gamepad"),"Previous arrow wraps from keyboard to gamepad");
             yield return Press(GamepadButton.South);
@@ -443,6 +448,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-section-2"));
             yield return Press(GamepadButton.South);Assert.That(Focus,Is.EqualTo("settings-ui-scale"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-high-contrast"));
+            yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-ammo-hud"));
             yield return Press(GamepadButton.DpadDown);Assert.That(Focus,Is.EqualTo("settings-fps"));
             Assert.That(ground.GetComponentsInChildren<Text>().Count(t=>t.text.ToUpperInvariant().Contains("ПОКАЗЫВАТЬ FPS")),Is.EqualTo(1));
             yield return Press(GamepadButton.East);Assert.That(Focus,Is.EqualTo("settings-section-2"));

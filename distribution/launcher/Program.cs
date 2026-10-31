@@ -195,7 +195,7 @@ static class Launcher
         using var history = new ReleaseHistory(config, Path.Combine(UpdateFeedback.LogRoot, Path.GetFileName(config.AppId) + ".history.json"));
         await using var updates = new UpdateSession(Check, Download,
             () => AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target")),
-            next => AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)), initial, history.Fetch);
+            next => AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)), initial, history.Fetch, history.FetchMedia);
         updates.Start();
         var executable = Path.GetFullPath(Path.Combine(baseDir, config.GameExecutable));
         if (!executable.StartsWith(Path.GetFullPath(baseDir), StringComparison.Ordinal))

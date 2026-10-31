@@ -39,7 +39,7 @@ check-tooling: ## Test QA command routing and XML contracts without Unity.
 build: ## Build the local macOS Development Player (not a distributable release).
 	$(UNITY_TOOLS) build
 
-unity-editor: ## Open this project's Unity Editor (do not run alongside tests or Player QA).
+unity-editor: ## Open this project's Editor through shared runner; one Editor per project path.
 	$(UNITY_TOOLS) editor
 
 unity-run: ## Open the already-built local macOS Development Player.
@@ -59,5 +59,5 @@ trooper-unity-shipping: ## Explicitly create Unity trooper derivatives; requires
 	scripts/trooper/unity_shipping.sh
 
 .PHONY: storage-check
-storage-check: ## Check compact documentation and evidence storage.
+storage-check:
 	python3 tools/worktree_storage.py check

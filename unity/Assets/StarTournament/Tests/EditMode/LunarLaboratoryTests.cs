@@ -5,6 +5,38 @@ namespace StarTournament.ProvingGround.Tests
 {
     public class LunarLaboratoryTests
     {
+        [Test] public void LunarPrimitiveSphereRecordsLosslessStarOptimizationCandidates()
+        {
+            var primitive=GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            try
+            {
+                var mesh=primitive.GetComponent<MeshFilter>().sharedMesh;var vertices=mesh.vertices;var triangles=mesh.triangles;
+                var unique=new System.Collections.Generic.HashSet<Vector3>(vertices);
+                int degenerate=0;for(int i=0;i<triangles.Length;i+=3){var a=vertices[triangles[i]];var b=vertices[triangles[i+1]];var c=vertices[triangles[i+2]];if(Vector3.Cross(b-a,c-a).sqrMagnitude<1e-12f)degenerate++;}
+                Assert.That(mesh.bounds.extents,Is.EqualTo(Vector3.one*.5f),"preserve Unity's built-in star sphere size");
+                Debug.Log($"LUNAR_STAR_SPHERE_AUDIT|vertices={mesh.vertexCount}|triangles={triangles.Length/3}|unique_positions={unique.Count}|duplicate_positions={mesh.vertexCount-unique.Count}|degenerate_triangles={degenerate}|normals={mesh.normals.Length}|tangents={mesh.tangents.Length}|uv={mesh.uv.Length}|colors={mesh.colors.Length}|bytes={UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(mesh)}|attributes={string.Join(",",mesh.GetVertexAttributes().Select(a=>a.attribute+":"+a.format+"x"+a.dimension))}");
+            }
+            finally {Object.DestroyImmediate(primitive);}
+        }
+        [Test] public void LunarStarMeshWeldsDuplicatePositionsWithoutChangingTriangleSurface()
+        {
+            var primitive=GameObject.CreatePrimitive(PrimitiveType.Sphere);Mesh candidate=null;
+            try
+            {
+                var source=primitive.GetComponent<MeshFilter>().sharedMesh;var sourceVertices=source.vertices;var sourceTriangles=source.triangles;
+                var factory=typeof(LunarLaboratoryPresentation).GetMethod("CreateLunarStarMesh",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Public);
+                candidate=(Mesh)factory.Invoke(null,new object[]{source});
+                var vertices=candidate.vertices;var triangles=candidate.triangles;
+                Assert.That(vertices.Length,Is.EqualTo(386));Assert.That(triangles.Length,Is.EqualTo(sourceTriangles.Length));
+                Assert.That(new System.Collections.Generic.HashSet<Vector3>(vertices).Count,Is.EqualTo(vertices.Length));
+                Assert.That(candidate.bounds,Is.EqualTo(source.bounds));
+                Assert.That(candidate.normals,Is.Empty);Assert.That(candidate.tangents,Is.Empty);Assert.That(candidate.uv,Is.Empty);Assert.That(candidate.uv2,Is.Empty);
+                for(int i=0;i<sourceTriangles.Length;i++)Assert.That(vertices[triangles[i]],Is.EqualTo(sourceVertices[sourceTriangles[i]]),$"triangle vertex {i}");
+                Assert.That(UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(candidate),Is.LessThan(UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(source)));
+                Debug.Log($"LUNAR_STAR_WELDED_MESH|source_vertices={source.vertexCount}|candidate_vertices={candidate.vertexCount}|triangles={triangles.Length/3}|source_bytes={UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(source)}|candidate_bytes={UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(candidate)}|channels={string.Join(",",candidate.GetVertexAttributes().Select(a=>a.attribute.ToString()))}");
+            }
+            finally {if(candidate)Object.DestroyImmediate(candidate);Object.DestroyImmediate(primitive);}
+        }
         [Test] public void LunarRegistryUpgradePreservesPreviousLabHash()
         {
             var path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"lunar-lab-"+System.Guid.NewGuid()+".json");

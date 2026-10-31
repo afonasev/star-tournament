@@ -88,15 +88,16 @@ namespace StarTournament.ProvingGround
         public IEnumerator BuildSteps(ArenaFreezeSnapshot frozen, ProvingProfile profile, ProvingProfile artProfile=null,bool asynchronous=true)
         {
             if(frozen==null) throw new System.ArgumentException("ARENA_FREEZE_MISSING_INPUT|family:unknown|element:snapshot");
+            var trace=new ArenaBuildTrace(frozen.MapId);
             ClearProjection();
             var definition=frozen.Definition; frozen.RequireDefinition(definition); Definition=definition; FrozenSnapshot=frozen; supports.Clear();
             floor = Material(new Color32(24, 36, 55, 255));
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
-            int projected=0;
-            foreach(var solid in Definition.Solids){if(asynchronous&&projected++%32==0)yield return null;var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
+            var slice=new LoadingWorkSlice();
+            foreach(var solid in Definition.Solids){if(asynchronous&&slice.Expired){yield return null;slice.Restart();}var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
             navigationTransitions=Definition.Transitions;Spawns=(Vector3[])Definition.Spawns.Clone();LowerRoutePoint=Definition.RouteAnchors[0];UpperRoutePoint=Definition.RouteAnchors[1];
-            Physics.SyncTransforms();
+            Physics.SyncTransforms();trace.Mark("solids");
             Surface = gameObject.AddComponent<NavMeshSurface>();
             Surface.collectObjects = CollectObjects.Children;
             Surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
@@ -122,7 +123,7 @@ namespace StarTournament.ProvingGround
                 yield return NavMeshBuilder.UpdateNavMeshDataAsync(Surface.navMeshData,settings,sources,bakeBounds);
             }
             else Surface.navMeshData=NavMeshBuilder.BuildNavMeshData(settings,sources,bakeBounds,Vector3.zero,Quaternion.identity);
-            Surface.AddData();
+            Surface.AddData();trace.Mark("navigation");
             if(Definition.MapId==WellArenaCatalog.Id)
             {
                 WellProfile=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(artProfile??ProvingProfile.CreateWellDefault()));
@@ -148,8 +149,13 @@ namespace StarTournament.ProvingGround
                 var steps=decoration.AddComponent<IndustrialTunnelsPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateIndustrialTunnelsPresentation());
                 while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
-            gameObject.AddComponent<ArenaRenderChunks>().Build(transform);
+            if(Definition.MapId==FiringRangeCatalog.Id)
+            {var decoration=new GameObject("Firing range presentation");decoration.transform.SetParent(transform,false);decoration.AddComponent<FiringRangePresentation>().Build(Definition);}
+            trace.Mark("presentation");
+            gameObject.AddComponent<ArenaRenderChunks>().Build(transform);trace.Mark("render-chunks");
+            ArenaMeshResidency.ReleaseUnreferencedOwnedMeshes(transform);trace.Mark("mesh-residency");
         }
+        internal void SpawnsFromDefinition()=>Spawns=(Vector3[])Definition.Spawns.Clone();
         public bool TryRoute(Vector3 from, Vector3 to, float sampleDistance, out NavMeshPath path)
         {
             path = new NavMeshPath();

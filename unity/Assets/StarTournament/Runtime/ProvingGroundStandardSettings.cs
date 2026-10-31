@@ -12,7 +12,7 @@ namespace StarTournament.ProvingGround
         {
             GameObject settingsGraphicsPage,resetDialog;
             Slider settingsDeadzoneSlider,settingsScaleSlider;
-            Toggle settingsInvertX,settingsInvertY,settingsContrast;
+            Toggle settingsInvertX,settingsInvertY,settingsContrast,settingsAmmoHud;
             Button settingsAutoButton,settingsFrameCap,settingsQualityButton,resetAllButton,resetCancel,resetConfirm;
             Text settingsWriteError;
             bool resetOpen;
@@ -90,22 +90,28 @@ namespace StarTournament.ProvingGround
                 }
                 settingsScaleSlider=owner.NumericSetting(settingsInterfacePage.transform,StandardName("settings-ui-scale"),"Масштаб интерфейса",new Vector2(.02f,.81f),new Vector2(.98f,.99f),NativeUserPreferences.ScaleDescriptor,v=>SaveStandard(()=>NativeUserPreferences.SetScale(v)));
                 settingsContrast=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-high-contrast"),"Повышенный контраст",new Vector2(.02f,.61f),new Vector2(.98f,.79f),v=>SaveStandard(()=>NativeUserPreferences.SetContrast(v)));
-                Layout((RectTransform)settingsFpsToggle.transform,new Vector2(.02f,.41f),new Vector2(.98f,.59f));
-                Layout((RectTransform)settingsBotTextToggle.transform,new Vector2(.02f,.21f),new Vector2(.98f,.39f));
-                Layout((RectTransform)settingsBotVoiceToggle.transform,new Vector2(.02f,.01f),new Vector2(.98f,.19f));
+                settingsAmmoHud=owner.BooleanSetting(settingsInterfacePage.transform,StandardName("settings-ammo-hud"),"Показывать боезапас в интерфейсе",new Vector2(.02f,.41f),new Vector2(.98f,.59f),v=>SaveStandard(()=>NativeUserPreferences.SetAmmoHud(v)));
+                Layout((RectTransform)settingsFpsToggle.transform,new Vector2(.02f,.21f),new Vector2(.98f,.39f));
+                Layout((RectTransform)settingsBotTextToggle.transform,new Vector2(.02f,.01f),new Vector2(.98f,.19f));
+                Selectable[] audioControls={settingsMasterSlider,settingsMusicSlider,settingsEffectsSlider,settingsVoiceSlider,settingsBotVoiceToggle};
+                for(int i=0;i<audioControls.Length;i++)
+                {
+                    var control=audioControls[i];var row=control is Slider?control.transform.parent:control.transform;
+                    Move(row,settingsAudioPage.transform,new Vector2(.02f,.81f-i*.20f),new Vector2(.98f,.99f-i*.20f));
+                }
                 foreach(var hint in settingsInterfacePage.GetComponentsInChildren<Text>(true).Where(t=>t.name.EndsWith("settings-bot-reactions-help")))hint.gameObject.SetActive(false);
 
                 resetAllButton=MenuButton(settingsScreen.transform,StandardName("settings-reset-all"),"Сбросить все настройки",new Vector2(.05f,.035f),new Vector2(.34f,.09f),OpenReset);
                 settingsWriteError=Label(settingsScreen.transform,StandardName("settings-save-error"),"",17,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(255,218,184,255));
                 var backContext=Label(settingsScreen.transform,StandardName("settings-back-context"),"",18,new Vector2(.36f,.015f),new Vector2(.95f,.09f),TextAnchor.MiddleLeft,new Color32(153,173,187,255));
-                backContext.gameObject.AddComponent<MenuContextHint>().Value=BackContextCaption;
+                var contextHint=backContext.gameObject.AddComponent<MenuContextHint>();contextHint.Value=BackContextCaption;contextHint.Device=()=>InMatch?owner.input.DeviceAt(Seat):owner.menuDevice;
                 resetDialog=Panel(settingsScreen.transform,StandardName("settings-reset-dialog"),Vector2.zero,Vector2.one,SelectorBackdrop);
                 var card=Panel(resetDialog.transform,"card",new Vector2(.18f,.20f),new Vector2(.82f,.80f),MenuCard);owner.StyleSelectorCard(card,false);
                 Label(card.transform,"title","Сбросить все настройки?",30,new Vector2(.06f,.76f),new Vector2(.94f,.94f),TextAnchor.MiddleLeft,MenuGold);
                 Label(card.transform,"body","Экран, графика, звук, управление и интерфейс, включая личные предпочтения, вернутся к исходным значениям.\n\nПрофили, прогресс, история и лаборатория сохранятся. Согласие на статистику не изменится.",22,new Vector2(.06f,.30f),new Vector2(.94f,.75f),TextAnchor.UpperLeft,Color.white);
                 resetCancel=MenuButton(card.transform,StandardName("settings-reset-cancel"),"Отмена",new Vector2(.06f,.10f),new Vector2(.48f,.24f),CloseReset);
                 resetConfirm=MenuButton(card.transform,StandardName("settings-reset-confirm"),"Сбросить всё",new Vector2(.52f,.10f),new Vector2(.94f,.24f),ConfirmReset);
-                foreach(var c in new Selectable[]{settingsQualityButton,settingsAutoButton,settingsFrameCap,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsScaleSlider,settingsContrast,resetAllButton,resetCancel,resetConfirm})AddStandardFocus(c);
+                foreach(var c in new Selectable[]{settingsQualityButton,settingsAutoButton,settingsFrameCap,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsScaleSlider,settingsContrast,settingsAmmoHud,resetAllButton,resetCancel,resetConfirm})AddStandardFocus(c);
                 var canvas=settingsScreen.GetComponentInParent<Canvas>();
                 if(canvas&&!canvas.GetComponent<NativeInterfacePreferences>())canvas.gameObject.AddComponent<NativeInterfacePreferences>();
                 CreateSettingsExplanations(aaLabel);
@@ -182,6 +188,7 @@ namespace StarTournament.ProvingGround
                 Action(settingsDevicesButton,"Подключённые устройства и их назначение игрокам.");
                 Numeric(settingsScaleSlider,"Выше — крупнее меню и HUD, но меньше свободного места.");
                 Boolean(settingsContrast,"Усиливает контраст интерфейса для лучшей читаемости.");
+                Boolean(settingsAmmoHud,"Показывает иконку оружия и запас патронов или заряда в углу экрана.");
                 Boolean(settingsFpsToggle,"Показывает число кадров в секунду для оценки плавности.");
                 Boolean(settingsBotTextToggle,"Показывает текстовые реплики ботов; общая настройка игроков.");
                 Boolean(settingsBotVoiceToggle,"Включает озвучку реплик ботов; громкость задаётся в «Речь».");
@@ -200,7 +207,7 @@ namespace StarTournament.ProvingGround
                 Chain(screen,settingsSectionButtons[0]);
                 Chain(new Selectable[]{settingsQualityButton,settingsAntialiasingButton,settingsShadowsToggle}.Concat(visualToggles).ToArray(),settingsSectionButtons[4]);
                 Chain(new Selectable[]{settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsReturnDelaySlider,settingsAutoLevelToggle,settingsHelpButton,settingsDevicesButton},settingsSectionButtons[1]);
-                Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsFpsToggle,settingsBotTextToggle,settingsBotVoiceToggle},settingsSectionButtons[2]);
+                Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsAmmoHud,settingsFpsToggle,settingsBotTextToggle},settingsSectionButtons[2]);
             }
             void Chain(Selectable[] controls,Button section)
             {for(int i=0;i<controls.Length;i++)Link(controls[i],i==0?section:controls[i-1],i==controls.Length-1?resetAllButton:controls[i+1],section);}
@@ -210,14 +217,15 @@ namespace StarTournament.ProvingGround
                 var look=MenuGamepadLook();
                 RefreshNumericSetting(settingsDeadzoneSlider,"Мёртвая зона стика",look.Deadzone*100,"%");
                 RefreshNumericSetting(settingsScaleSlider,"Масштаб интерфейса",NativeUserPreferences.Scale,"%");
-                RefreshToggle(settingsInvertX,look.InvertX);RefreshToggle(settingsInvertY,look.InvertY);RefreshToggle(settingsContrast,NativeUserPreferences.HighContrast);
+                RefreshToggle(settingsInvertX,look.InvertX);RefreshToggle(settingsInvertY,look.InvertY);RefreshToggle(settingsContrast,NativeUserPreferences.HighContrast);RefreshToggle(settingsAmmoHud,NativeUserPreferences.ShowAmmoHud);
                 settingsFrameCap.GetComponentInChildren<Text>().text=NativeUserPreferences.FrameCap<0?"Без ограничения":NativeUserPreferences.FrameCap+" FPS";
                 settingsQualityButton.GetComponentInChildren<Text>().text=NativeVisualPreferences.QualityNames[NativeVisualPreferences.Quality];
                 resetDialog.SetActive(resetOpen);resetAllButton.gameObject.SetActive(!settingsHelpOpen&&!settingsDevicesOpen);
                 for(int i=0;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 resetAllButton.interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
-                var pad=InMatch?owner.input.DeviceAt(Seat) as UnityEngine.InputSystem.Gamepad:owner.menuDevice as UnityEngine.InputSystem.Gamepad;
-                resetAllButton.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Сбросить все настройки",pad,owner.menuGamepadCursor&&resetAllButton.IsInteractable()&&CanHintAssignedShortcut()&&CanResetShortcut(),MenuPadButton.North);
+                resetAllButton.GetComponentInChildren<Text>().text="Сбросить все настройки";
+                var resetHint=resetAllButton.GetComponent<MenuActionHint>();resetHint.Shortcut=MenuPadButton.North;
+                resetHint.ShortcutActive=()=>CanHintAssignedShortcut()&&CanResetShortcut();resetHint.Refresh();
             }
             void ChooseAutoResolution()
             {var d=Screen.currentResolution;int w=d.width>0?d.width:Screen.width,h=d.height>0?d.height:Screen.height;displayReturnButton=settingsAutoButton;owner.BeginDisplayChange(this,w,h,EffectiveDisplayMode(),true);}

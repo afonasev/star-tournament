@@ -46,7 +46,7 @@ namespace StarTournament.ProvingGround
             labSavedPresentation="Баланс матча: "+selection.SelectedProfileName+"\nВерсия "+saved.Number+" · "+date;
         }
         bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
-        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,PlasmaProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,HitFeedbackProfile,LobbyProfile}};
+        LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,PlasmaProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,FiringRangeAuthoring,HitFeedbackProfile,LobbyProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
         void PrepareLabRegistry()
         {
@@ -121,7 +121,7 @@ namespace StarTournament.ProvingGround
             // Capture trusted baseline before published values change live profile owners.
             historyStartupBaseline=CurrentLabBundle().Clone();
             historyStartupCatalogue=LabReleaseCatalog.Load();
-            var published=DesignLabHistory.ResolvePublishedDefault(historyStartupBaseline,historyStartupCatalogue);
+            var published=DesignLabHistory.ResolveStartupDefault(historyStartupBaseline,historyStartupCatalogue);
             CacheLabIdentity(published);labBaseline=activeLabSnapshot.Clone();labDraft=labBaseline.Clone();
             ApplySavedLabRevision();
             if(labProjectRoot!=null)yield return LoadDesignLabHistory(true);
@@ -190,20 +190,23 @@ namespace StarTournament.ProvingGround
             // Runtime profile objects retain their identity for fixture/authoring references.
             // Match creation copies their values into separate frozen owners.
             foreach(var profile in CurrentLabBundle().Profiles)
-                foreach(var descriptor in profile.Descriptors)profile.Set(descriptor.Path,saved.Get(descriptor.Path));
+                foreach(var descriptor in profile.Descriptors)
+                    if(profile.Id!=ProvingProfile.FiringRangeAuthoringId||saved.Profiles.Any(p=>p.Id==profile.Id))profile.Set(descriptor.Path,saved.Get(descriptor.Path));
         }
         // Translate presentation only; historical descriptor bytes and Lab hashes remain unchanged.
-        static string LabText(string text)=>text.Replace("Салага","Рекрут");
+        static string LabText(string text)=>GameDisplayNames.Text(text.Replace("Салага","Рекрут"));
         static string GroupLabel(string group)
         {
             if(group=="visual-polish")return "Графика → Свет и эффекты";
             switch(group)
             {
-                case "well-lifts":return "Колодец → Лифты";case "well-bots":return "Колодец → Боты";case "well-light":return "Колодец → Свет";case "well-art":return "Колодец → Оформление";
+                case "well-lifts":return "Станция Вега → Лифты";case "well-bots":return "Станция Вега → Боты";case "well-light":return "Станция Вега → Свет";case "well-art":return "Станция Вега → Оформление";
                 case "tunnel-light":return "Тоннели → Свет";case "tunnel-surface":return "Тоннели → Поверхности";
                 case "map-geometry":return "Карта → Геометрия (read-only)";case "map-spawn":return "Карта → Спавны (read-only)";case "map-transitions":return "Карта → Переходы (read-only)";case "map-routes":return "Карта → Маршруты (read-only)";case "map-bonuses":return "Карта → Бонусы (read-only)";
+                case "cobalt-shot-effects":return "Оружие → Автомат · выстрел";
+                case "trooper-world-grip":return "Оформление → Мировой хват";
                 case "hit-reaction":return "Оформление → Реакция на попадание";case "hit-body-blood":return "Оформление → Кровь на бойце";case "hit-shield":return "Оформление → Вспышки щита";
-                case "plasma-grip":return "Оружие → FORGE · хват";case "plasma":return "Оружие → FORGE";case "plasma-effects":return "Оружие → FORGE · оформление";case "cutter-effects":return "Оружие → Резак · оформление";case "cutter-bots":return "Боты → Резак";case "cutter":return "Оружие → Резак";case "rocket-effects":return "Оружие → Pulse · оформление";case "rocket":return "Оружие → Pulse";case "rifle":return "Оружие → Винтовка";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
+                case "plasma-grip":return "Оружие → Плазмомёт · хват";case "plasma":return "Оружие → Плазмомёт";case "plasma-effects":return "Оружие → Плазмомёт · оформление";case "cutter-effects":return "Оружие → Лазер · оформление";case "cutter-bots":return "Боты → Лазер";case "cutter":return "Оружие → Лазер";case "rocket-effects":return "Оружие → Ракетница · оформление";case "rocket":return "Оружие → Ракетница";case "rifle":return "Оружие → Автомат";case "cobalt-display-v1":return "Оружие → Автомат · дисплей";case "pulse-display-v1":return "Оружие → Ракетница · счётчик";case "shotgun-display-v1":return "Оружие → Дробовик · дисплей";case "shotgun":return "Оружие → Дробовик";case "weapon-switch":return "Оружие → Переключение";
                 case "weapon-pickup":return "Бонусы → Оружие";case "full-heal":return "Бонусы → Полное исцеление";case "armor-pickup":return "Бонусы → Броня";case "damage-boost":return "Бонусы → Урон";case "speed-pickup":return "Бонусы → Скорость";
                 case "pickups":return "Бонусы → Подбор";case "combat":return "Игрок → Здоровье";case "motor":return "Игрок → Движение";
                 case "capsule":return "Игрок → Капсула";case "camera":return "Камера → Вид игрока";case "input":return "Игрок → Управление";
@@ -212,7 +215,7 @@ namespace StarTournament.ProvingGround
                 case "bot-evaluation":return "Боты → Контрольная оценка (read-only)";case "bots":return "Боты → Восприятие";case "bot-navigation":return "Боты → Навигация";case "bot-behavior":return "Боты → Поведение";
                 case "lobby":return "Матч → Лобби";case "match":return "Матч → Правила";case "score":return "Матч → Очки";case "teams":return "Матч → Команды";
                 case "damage-policy":return "Оружие → Урон союзникам и себе";case "hit-zones":return "Игрок → Зоны попадания";case "presentation":return "Оформление → Сцена";case "shot-feedback":return "Оформление → Выстрел";case "audio":return "Оформление → Звук";case "music":return "Оформление → Музыка";
-                case "vector-shot-feedback":return "Оформление → Vector";case "simulation":return "Матч → Симуляция";
+                case "vector-shot-feedback":return "Оформление → Дробовик";case "simulation":return "Матч → Симуляция";
                 default:return GroupDisplayNames.TryGetValue(group,out var label)?label:"Оформление → "+group;
             }
         }

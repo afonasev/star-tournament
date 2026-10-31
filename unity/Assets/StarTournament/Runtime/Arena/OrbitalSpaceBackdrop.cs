@@ -31,7 +31,8 @@ namespace StarTournament.ProvingGround
             var pixels=new Color[SpaceTextureSize*SpaceTextureSize];
             float radius=p.Get(face==0?"ring.planetRadius":face==1?"ring.secondPlanetRadius":"ring.sunRadius");
             float cx=p.Get("ring.celestialHorizontal"),cy=p.Get("ring.celestialElevation"),brightness=p.Get("ring.skyValue");
-            for(int y=0;y<SpaceTextureSize;y++)for(int x=0;x<SpaceTextureSize;x++)
+            ArenaTextureWork.Rows(SpaceTextureSize,y=>
+            {for(int x=0;x<SpaceTextureSize;x++)
             {
                 float u=(x+.5f)/SpaceTextureSize,v=(y+.5f)/SpaceTextureSize;
                 uint hash=unchecked((uint)(x*73856093)^(uint)(y*19349663)^(uint)(face*83492791));hash^=hash>>13;
@@ -61,6 +62,7 @@ namespace StarTournament.ProvingGround
                 }
                 pixels[y*SpaceTextureSize+x]=color;
             }
+            });
             texture.SetPixels(pixels);texture.Apply(true,true);return texture;
         }
     }

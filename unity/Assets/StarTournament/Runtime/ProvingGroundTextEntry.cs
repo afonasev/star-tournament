@@ -58,7 +58,9 @@ namespace StarTournament.ProvingGround
             var button=MenuButton(textEntryPanel.transform,name,caption,min,max,()=>
             {if(Time.frameCount<=textOpenedFrame||!textEntryPanel)return;action();if(textEntryPanel)RefreshTextEntry();});
             bool extra=name=="text-space"||name=="text-delete"||name=="text-cancel"||name=="text-apply";
-            button.GetComponent<MenuActionHint>().Initialize(button,()=>textPad,()=>menuGamepadCursor&&menuWindowFocused&&textUsingPad&&!extra);
+            var hint=button.GetComponent<MenuActionHint>();hint.HideFocusedConfirm=extra;
+            hint.Shortcut=extra?(name=="text-space"?MenuPadButton.North:name=="text-delete"?MenuPadButton.West:name=="text-cancel"?MenuPadButton.East:MenuPadButton.Start):(MenuPadButton?)null;
+            hint.Initialize(button,()=>textPad,()=>menuGamepadCursor&&menuWindowFocused&&textUsingPad);
             button.GetComponent<MenuPresentation>().Height=56;
             button.GetComponentInChildren<Text>().fontSize=24;
             return button;
@@ -106,11 +108,10 @@ namespace StarTournament.ProvingGround
             textEntryCount.text=textDraft.Text.Length+(textDraft.Limit>0?" / "+textDraft.Limit:"");
             textEntryStatus.text=textPad!=null&&(!textPad.added||!textPad.enabled)?"Геймпад отключён. Черновик сохранён; нажмите нижнюю кнопку подключённого геймпада или используйте клавиатуру и мышь.":textDraft.Complete?"":"Введите корректное число.";
             textApply.interactable=textDraft.Complete;
-            bool hints=menuGamepadCursor;
-            textSpace.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Пробел",textPad,hints&&textSpace.IsInteractable(),MenuPadButton.North);
-            textDelete.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Удалить",textPad,hints&&textDelete.IsInteractable(),MenuPadButton.West);
-            textCancel.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Отмена",textPad,hints&&textCancel.IsInteractable(),MenuPadButton.East);
-            textApply.GetComponentInChildren<Text>().text=MenuGamepadHints.Label("Применить",textPad,hints&&textApply.IsInteractable(),MenuPadButton.Start);
+            textSpace.GetComponentInChildren<Text>().text="Пробел";textSpace.GetComponent<MenuActionHint>().Refresh();
+            textDelete.GetComponentInChildren<Text>().text="Удалить";textDelete.GetComponent<MenuActionHint>().Refresh();
+            textCancel.GetComponentInChildren<Text>().text="Отмена";textCancel.GetComponent<MenuActionHint>().Refresh();
+            textApply.GetComponentInChildren<Text>().text="Применить";textApply.GetComponent<MenuActionHint>().Refresh();
         }
         void CloseTextEntry(bool apply)
         {

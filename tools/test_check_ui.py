@@ -35,7 +35,7 @@ class UiGateTests(unittest.TestCase):
     def test_exact_expected_case_set_passes(self):
         self.assertEqual(self.validate(complete_xml()), len(EXPECTED_CASES['FourPlayerMenuTests']))
         fixtures = ('FourPlayerMenuTests', 'IndependentPauseMenuTests')
-        self.assertEqual(self.validate(complete_xml(fixtures), fixtures), 20)
+        self.assertEqual(self.validate(complete_xml(fixtures), fixtures), 21)
 
     def test_expected_nunit_names_match_selected_test_methods(self):
         sources = {

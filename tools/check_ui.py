@@ -41,6 +41,7 @@ EXPECTED_CASES = {
         'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PauseShowsTheFrozenSavedBalanceWithoutChangingMatch': 1,
         'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.PersonalSettingsAndGlobalConfirmationStayScoped': 1,
         'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.QualityChangesAcrossSeatsPreserveIndependentPreferencesAndFrozenBalance': 1,
+        'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.ResolutionPopupsStayAboveTheirOwnSeatAndPreserveOtherSeats': 1,
         'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SectionPreviewChangesOnlyItsOwnViewportWithoutSubmit': 1,
         'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SettingsHaveIdenticalCapabilitiesAndHelpInEveryViewport': 1,
         'StarTournament.ProvingGround.Tests.PlayMode.IndependentPauseMenuTests.SplitScreenDrawsOneGlobalFpsCounter': 1,

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace StarTournament.ProvingGround
 {
-    public enum NativeMatchMode { Ffa, Teams }
+    public enum NativeMatchMode { Ffa, Teams, Training }
     public enum NativeTeam { None, TeamA, TeamB }
 
     [Serializable]
@@ -19,6 +19,8 @@ namespace StarTournament.ProvingGround
     {
         // Structural product limits (GAME_SPEC §2), not balance tuning or device counts.
         public const int MinimumParticipants = 2, MaximumParticipants = 8;
+        // Twelve authored targets plus four local seats; separate from the competitive roster limit.
+        public const int TrainingCapacity = 16;
         readonly NativeTeam[] teams;
         public NativeMatchMode Mode { get; }
         public int Count => teams.Length;
@@ -26,11 +28,13 @@ namespace StarTournament.ProvingGround
         public NativeMatchRoster(NativeMatchMode mode, NativeTeam[] assignments)
         {
             if (assignments == null) throw new ArgumentNullException(nameof(assignments));
-            ValidateCount(assignments.Length);
-            if (mode != NativeMatchMode.Ffa && mode != NativeMatchMode.Teams)
+            if(mode==NativeMatchMode.Training)
+            { if(assignments.Length<13||assignments.Length>TrainingCapacity)throw new ArgumentOutOfRangeException(nameof(assignments)); }
+            else ValidateCount(assignments.Length);
+            if (mode != NativeMatchMode.Ffa && mode != NativeMatchMode.Teams && mode != NativeMatchMode.Training)
                 throw new ArgumentException("Unknown match mode", nameof(mode));
             teams = (NativeTeam[])assignments.Clone();
-            if (mode == NativeMatchMode.Ffa && teams.Any(t => t != NativeTeam.None))
+            if (mode != NativeMatchMode.Teams && teams.Any(t => t != NativeTeam.None))
                 throw new ArgumentException("FFA participants cannot have teams");
             if (mode == NativeMatchMode.Teams &&
                 (teams.Any(t => t != NativeTeam.TeamA && t != NativeTeam.TeamB) ||

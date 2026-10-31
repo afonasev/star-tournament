@@ -80,17 +80,19 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             return names;
         }
         IEnumerator Click(string name){EventSystem.current.SetSelectedGameObject(B(name).gameObject);B(name).onClick.Invoke();yield return null;yield return null;}
-        [UnityTest] public IEnumerator SetupShortcutHintsFollowDeviceAndEditorAvailability()
+        [UnityTest] public IEnumerator SetupShortcutHintsRequirePrimaryDeviceAndEditorAvailability()
         {
             yield return Load();ground.AddBot();yield return null;
             var start=B("Начать — четыре игрока");
             Assert.That(start.GetComponentInChildren<Text>().text,Is.EqualTo("Начать матч"));
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
-            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("Start"));
-            keyboard=InputSystem.AddDevice<Keyboard>();
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.text,Is.EqualTo("≡"));
+            keyboard=InputSystem.AddDevice<Keyboard>();mouse=InputSystem.AddDevice<Mouse>();
+            var input=(SeatInputCoordinator)typeof(ProvingGround).GetField("input",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);Assert.That(input.Replace(0,keyboard),Is.True);
             InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.LeftShift));yield return null;yield return null;
             InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
-            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Keyboard hides pad shortcuts");
+            Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.False,"Primary keyboard hides pad shortcuts");
+            Assert.That(input.Replace(0,pad),Is.True);
             yield return Press(GamepadButton.DpadRight);
             Assert.That(start.GetComponent<MenuActionHint>().GlyphLabel.enabled,Is.True);
             Assert.That(B("roster-add-human").GetComponentInChildren<Text>().text,Is.EqualTo("Присоединиться"));
@@ -138,7 +140,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator MapDraftSurvivesReentryButColdReloadUsesDefaults()
         {
             yield return Load();yield return Click("lobby-map");yield return Click("lobby-map-"+IndustrialTunnelsCatalog.Id);
-            ground.AddBot();yield return Press(GamepadButton.Start);yield return NativeLoadingTestScene.Wait(ground);
+            for(int i=0;i<3;i++)ground.AddBot();yield return Press(GamepadButton.Start);yield return NativeLoadingTestScene.Wait(ground);
             Assert.That(ground.Running,Is.True);Assert.That(PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey),Is.EqualTo(IndustrialTunnelsCatalog.Id));
             typeof(ProvingGround).GetMethod("ToMainMenu",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(ground,null);
             yield return Press(GamepadButton.South);Assert.That(ground.SelectedMapId,Is.EqualTo(IndustrialTunnelsCatalog.Id));
