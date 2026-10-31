@@ -12,16 +12,30 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     public sealed class TrooperPresentationTests
     {
         Scene scene; ProvingGround ground; readonly Gamepad[] pads=new Gamepad[4];
+#if UNITY_EDITOR
+        bool previousAsyncCompilation;
+#endif
         Button Button(string name)=>ground.GetComponentsInChildren<Button>(true).Single(b=>b.name==name);
         IEnumerator Load(int count)
         {
+#if UNITY_EDITOR
+            previousAsyncCompilation=UnityEditor.ShaderUtil.allowAsyncCompilation;UnityEditor.ShaderUtil.allowAsyncCompilation=false;
+#endif
             yield return NativeLoadingTestScene.Load(); scene=SceneManager.GetSceneByName("ProvingGround"); yield return null;
             ground=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Assert.That(ground.GetComponentsInChildren<LineRenderer>(true)
+                .Where(r=>r.transform.parent && r.transform.parent.name=="Cutter beams")
+                .All(r=>!r.enabled),Is.True,"Setup must never expose uninitialized SEAM beam segments");
             for(int i=0;i<4;i++)pads[i]=InputSystem.AddDevice<Gamepad>();
-            ground.StartCombatReview(pads.Take(count).ToArray()); yield return null;
+            ground.StartCombatReview(pads.Take(count).ToArray(),ensureOpponent:count==1); yield return null;
+            Assert.That(ground.Running,Is.True,ground.CombatReviewDiagnostic());
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
+#if UNITY_EDITOR
+            UnityEditor.ShaderUtil.allowAsyncCompilation=previousAsyncCompilation;
+#endif
             foreach(var p in pads)if(p!=null&&p.added)InputSystem.RemoveDevice(p);
             if(scene.IsValid())yield return SceneManager.UnloadSceneAsync(scene);
         }
@@ -65,8 +79,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var samples=new System.Collections.Generic.List<string>{"weapon,time,offset_x,offset_y,mount_x,mount_y,mount_z"};
             foreach(WeaponId weapon in System.Enum.GetValues(typeof(WeaponId)))
             {
-                var life=snapshot.Lives[0];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;life.Ammo=CombatLife.AmmoFor(life,weapon);
-                life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;snapshot.Lives[0]=life;
+                // Crimson has an accepted shoulder-specific placement in addition to
+                // the common ground-step offset; it is not a locomotion displacement.
+                var placement=weapon==WeaponId.RocketLauncher&&first.Tuning.Version>=31&&first.Tuning.Get("grip.crimson.enabled")>0?
+                    new Vector3(first.Tuning.Get("grip.crimson.viewX"),first.Tuning.Get("grip.crimson.viewY"),first.Tuning.Get("grip.crimson.viewZ")):Vector3.zero;
+                var life=snapshot.Lives[0];life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
+                life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
+                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}
+                // Derive the selected total after filling the owned slot, as Restore requires.
+                life.Ammo=CombatLife.AmmoFor(life,weapon);snapshot.Lives[0]=life;
                 snapshot.Time=start;ground.Session.Restore(snapshot);first.ResetPose(start);previous=Vector3.zero;float maximumOffset=0;
                 for(int tick=0;tick<=65;tick++)
                 {
@@ -74,7 +95,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                     ground.SendMessage("LateUpdate");maximumOffset=Mathf.Max(maximumOffset,first.WalkOffset.magnitude);
                     Assert.That(first.State,Is.EqualTo("aim"));Assert.That(second.WalkOffset,Is.EqualTo(Vector3.zero));
                     Assert.That(second.transform.localPosition,Is.EqualTo(stationary));
-                    Assert.That(Vector3.Distance(first.transform.localPosition,rest+first.WalkOffset),Is.LessThan(.000001f));
+                    Assert.That(Vector3.Distance(first.transform.localPosition,rest+placement+first.WalkOffset),Is.LessThan(.000001f));
                     var point=camera.transform.InverseTransformPoint(mount.position);
                     samples.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0},{1:F3},{2:F6},{3:F6},{4:F6},{5:F6},{6:F6}",weapon,ground.Session.Time,first.WalkOffset.x,first.WalkOffset.y,point.x,point.y,point.z));
                     if(tick>0)maximumStep=Mathf.Max(maximumStep,Vector3.Distance(previous,point));previous=point;
@@ -100,13 +121,420 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             for(int tick=0;tick<100;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
             Assert.That(Vector3.Distance(first.transform.localPosition,rest),Is.LessThan(.00001f));
         }
+        [UnityTest] public IEnumerator CrimsonHeavyRecoilNativeReview()
+        {
+            yield return Load(1);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-10,0,14),0,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            foreach(var v in ground.GetComponentsInChildren<TrooperVisual>(true))foreach(var d in ProvingProfile.CreateTrooperDefault().Descriptors)v.Tuning.Set(d.Path,d.DefaultValue);
+            var snapshot=ground.Session.Capture();snapshot.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].RocketAmmo=8;snapshot.Lives[0].Ammo=8;snapshot.Lives[0].SwitchRemaining=0;
+            ground.Session.Restore(snapshot);ground.SendMessage("LateUpdate");yield return null;
+            var view=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var body=ground.transform.Find("player-1/trooper-presentation").GetComponent<TrooperVisual>();
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_RECOIL_EVIDENCE");
+            var go=new GameObject("Crimson recoil world camera");var review=go.AddComponent<Camera>();review.enabled=false;review.fieldOfView=42;review.nearClipPlane=.05f;review.farClipPlane=150;review.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18));review.clearFlags=CameraClearFlags.Skybox;
+            var target=body.transform.position+Vector3.up*1.40f;go.transform.position=target+body.transform.right*2.2f+Vector3.up*.15f;go.transform.LookAt(target);
+            var visuals=new[]{view,body};
+            var mounts=visuals.Select(v=>v.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="trooper:rig:weapon-mount")).ToArray();
+            var hands=visuals.Select(v=>new[]{"LeftHand","RightHand"}.Select(n=>v.GetComponentsInChildren<Transform>(true).Single(t=>t.name==n)).ToArray()).ToArray();
+            var quiet=ground.Session.Capture();var actions=new LocalAction[ground.Session.ParticipantCount];bool checkedPeak=false,checkedRest=false;
+            var lines=new System.Collections.Generic.List<string>{"frame,time,fp_pitch,world_pitch,fp_back,world_back"};
+            if(!string.IsNullOrEmpty(output))System.IO.Directory.CreateDirectory(output);
+            for(int frame=0;frame<90;frame++)
+            {
+                actions[0].Fire=frame==15;ground.Session.Tick(actions,1f/60);ground.SendMessage("LateUpdate");
+                if(frame==15){Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1));Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("07"));}
+                if(frame==18||frame==65)
+                {
+                    var positions=mounts.Select(m=>m.position).ToArray();var rotations=mounts.Select(m=>m.rotation).ToArray();
+                    var contacts=hands.Select((pair,index)=>pair.Select(h=>mounts[index].InverseTransformPoint(h.position)).ToArray()).ToArray();
+                    string state=JsonUtility.ToJson(ground.Session.Capture());ground.SendMessage("LateUpdate");ground.SendMessage("LateUpdate");
+                    Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(state),"Presentation cannot advance paused simulation");
+                    for(int v=0;v<2;v++){Assert.That(Vector3.Distance(mounts[v].position,positions[v]),Is.LessThan(.0001f));Assert.That(Quaternion.Angle(mounts[v].rotation,rotations[v]),Is.LessThan(.02f));visuals[v].Tuning.Set("grip.crimson.recoil.enabled",0);}
+                    ground.SendMessage("LateUpdate");
+                    for(int v=0;v<2;v++)
+                    {
+                        float angle=Quaternion.Angle(mounts[v].rotation,rotations[v]);float travel=Vector3.Distance(mounts[v].position,positions[v]);
+                        if(frame==18){Assert.That(angle,Is.GreaterThan(5),"Peak muzzle rise");Assert.That(travel,Is.GreaterThan(.03f),"Heavy impulse moves actual model");}
+                        else {Assert.That(angle,Is.LessThan(.02f));Assert.That(travel,Is.LessThan(.0001f));}
+                        for(int h=0;h<2;h++)Assert.That(Vector3.Distance(mounts[v].InverseTransformPoint(hands[v][h].position),contacts[v][h]),Is.LessThan(.025f),"Hands follow the same rigid recoil without losing grip");
+                        visuals[v].Tuning.Set("grip.crimson.recoil.enabled",1);
+                    }
+                    ground.SendMessage("LateUpdate");if(frame==18)checkedPeak=true;else checkedRest=true;
+                }
+                if(!string.IsNullOrEmpty(output))
+                {
+                    CaptureSingleView(output,"recoil-fp-"+frame.ToString("D3"),camera,960,540);
+                    CaptureSingleView(output,"recoil-world-"+frame.ToString("D3"),review,960,540);
+                    lines.Add(frame+","+ground.Session.Time.ToString("F4",System.Globalization.CultureInfo.InvariantCulture)+","+mounts[0].localEulerAngles.x+","+mounts[1].localEulerAngles.x+","+mounts[0].localPosition.z+","+mounts[1].localPosition.z);
+                }
+                yield return null;
+            }
+            Assert.That(checkedPeak&&checkedRest,Is.True);
+            // A restore at the same active recoil time must clear the transient kick.
+            foreach(var visual in visuals)visual.Fire(ground.Session.Time,WeaponId.RocketLauncher);
+            actions[0].Fire=false;ground.Session.Tick(actions,.05f);ground.SendMessage("LateUpdate");
+            var activeSnapshot=ground.Session.Capture();ground.Session.Restore(activeSnapshot);ground.SendMessage("LateUpdate");
+            var resetPositions=mounts.Select(m=>m.position).ToArray();var resetRotations=mounts.Select(m=>m.rotation).ToArray();
+            foreach(var visual in visuals)visual.Tuning.Set("grip.crimson.recoil.enabled",0);ground.SendMessage("LateUpdate");
+            for(int v=0;v<2;v++){Assert.That(Vector3.Distance(mounts[v].position,resetPositions[v]),Is.LessThan(.0001f));Assert.That(Quaternion.Angle(mounts[v].rotation,resetRotations[v]),Is.LessThan(.02f));visuals[v].Tuning.Set("grip.crimson.recoil.enabled",1);}
+            ground.Session.Restore(quiet);ground.SendMessage("LateUpdate");
+            Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("08"));
+            if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"recoil.csv"),lines);
+            Object.Destroy(go);
+        }
+        [UnityTest] public IEnumerator CrimsonShoulderNativeReview()
+        {
+            yield return Load(1);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-10,0,14),0,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[ground.Session.ParticipantCount],.02f);
+            foreach(var v in ground.GetComponentsInChildren<TrooperVisual>(true))
+                foreach(var d in ProvingProfile.CreateTrooperDefault().Descriptors)v.Tuning.Set(d.Path,d.DefaultValue);
+            var snapshot=ground.Session.Capture();snapshot.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].RocketAmmo=8;snapshot.Lives[0].Ammo=8;snapshot.Lives[0].SwitchRemaining=0;
+            ground.Session.Restore(snapshot);ground.SendMessage("LateUpdate");yield return null;
+            var view=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var body=ground.transform.Find("player-1/trooper-presentation").GetComponent<TrooperVisual>();
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_CRIMSON_EVIDENCE");
+            Assert.That(view.EquippedWeapon,Is.EqualTo(WeaponId.RocketLauncher));
+            Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("08"));
+            var bones=body.GetComponentsInChildren<Transform>(true);var shoulder=bones.Single(t=>t.name=="RightUpperArm");var saddle=bones.Single(t=>t.name=="crimson-shoulder");
+            Assert.That(Vector3.Distance(saddle.position,shoulder.position),Is.LessThan(.2f),"World saddle is located at shoulder, not chest or outstretched hands");
+            var model=bones.Single(t=>t.name=="pulse-launcher");
+            var renderers=model.GetComponentsInChildren<Renderer>();var bounds=renderers[0].bounds;
+            foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);
+            Assert.That(bounds.size.magnitude,Is.GreaterThan(.70f),"Launcher has increased world mass silhouette");
+            string before=JsonUtility.ToJson(ground.Session.Capture());
+            if(!string.IsNullOrEmpty(output))
+            {
+                System.IO.Directory.CreateDirectory(output);
+                for(int n=0;n<4;n++){camera.Render();yield return null;ground.SendMessage("LateUpdate");}
+                CaptureSingleView(output,"Crimson-first-person",camera,1600,900);
+                var lines=new System.Collections.Generic.List<string>();
+                foreach(var t in bones.Where(t=>t.name=="RightUpperArm"||t.name=="RightHand"||t.name=="LeftHand"||t.name=="crimson-shoulder"||t.name=="pulse-muzzle"||t.name=="trooper:rig:weapon-mount"))lines.Add(t.name+":"+body.transform.InverseTransformPoint(t.position).ToString("F4"));
+                foreach(var t in view.GetComponentsInChildren<Transform>(true).Where(t=>t.name=="LeftLowerArm"||t.name=="RightLowerArm"||t.name=="LeftHand"||t.name=="RightHand"))lines.Add("FP "+t.name+":"+camera.WorldToViewportPoint(t.position).ToString("F4"));
+                System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"pose.txt"),lines);
+                var go=new GameObject("Crimson scene review camera");var review=go.AddComponent<Camera>();review.enabled=false;review.fieldOfView=42;review.nearClipPlane=.05f;review.farClipPlane=150;review.cullingMask=~((1<<15)|(1<<16)|(1<<17)|(1<<18));
+                review.clearFlags=CameraClearFlags.Skybox;
+                var target=body.transform.position+Vector3.up*1.30f;
+                foreach(var angle in new[]{45,90,270})
+                {
+                    go.transform.position=target+Quaternion.AngleAxis(angle,Vector3.up)*body.transform.forward*2.8f+Vector3.up*.15f;go.transform.LookAt(target);
+                    for(int n=0;n<3;n++){review.Render();yield return null;}
+                    CaptureSingleView(output,"Crimson-world-"+angle,review,1600,1100);
+                }
+                Object.Destroy(go);
+            }
+            Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+            var actions=new LocalAction[ground.Session.ParticipantCount];ground.Session.Tick(actions,.02f);actions[0].Fire=true;ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+            Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1));
+            Assert.That(view.GetComponent<WeaponModelPresentation>().PulseDisplay.DisplayText,Is.EqualTo("07"));
+            if(!string.IsNullOrEmpty(output))CaptureSingleView(output,"Crimson-launch",camera,1600,900);
+        }
+        [UnityTest] public IEnumerator PulseMk2StaticGripReview()
+        {
+            yield return Load(2);
+            // The async Lab validation uses JsonUtility; finish it before this short scene witness can tear down the Editor.
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Assert.That(ground.CombatReviewDiagnostic(),Does.Contain("phase=Running"),"Native review must enter the match before selecting a weapon");
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            foreach(var descriptor in ProvingProfile.CreateTrooperDefault().Descriptors)visual.Tuning.Set(descriptor.Path,descriptor.DefaultValue);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-10,0,14),12,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
+            var snapshot=ground.Session.Capture();snapshot.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;snapshot.Lives[0].RocketOwned=true;snapshot.Lives[0].RocketAmmo=20;snapshot.Lives[0].Ammo=20;snapshot.Lives[0].SwitchRemaining=0;
+            ground.Session.Restore(snapshot);visual.ResetPose(snapshot.Time);ground.SendMessage("LateUpdate");yield return null;
+            Assert.That(visual.EquippedWeapon,Is.EqualTo(WeaponId.RocketLauncher));
+            string before=JsonUtility.ToJson(ground.Session.Capture());
+            string directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_PULSE_EVIDENCE");
+            if(!string.IsNullOrEmpty(directory))
+            {
+                System.IO.Directory.CreateDirectory(directory);CaptureSingleView(directory,"PulseMk2-initial-upload",camera);CaptureGrip(directory,"RocketLauncher",visual,camera);
+                // Allow queued texture uploads and temporary review objects to finish before the final seat frame.
+                yield return null;ground.SendMessage("LateUpdate");CaptureSingleView(directory,"PulseMk2",camera);
+            }
+            Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+            var actions=new LocalAction[2];actions[0].Fire=true;ground.Session.Tick(actions,.02f);ground.Session.ClearInput();ground.SendMessage("LateUpdate");
+            Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1));
+            var ignition=ground.GetComponentsInChildren<LineRenderer>().Single(r=>r.name=="Muzzle ignition");
+            Assert.That(ignition.gameObject.activeInHierarchy,Is.True);
+            if(!string.IsNullOrEmpty(directory))CaptureSingleView(directory,"PulseMk2-launch",camera);
+            if(!string.IsNullOrEmpty(directory))
+            {
+                // Native arena witness: actual session rocket and collision, no replacement backdrop.
+                var shot=ground.Session.Rockets.Single();var side=Vector3.Cross(Vector3.up,shot.Direction).normalized;
+                var reviewGo=new GameObject("Pulse arena projectile review");reviewGo.transform.SetParent(ground.transform);
+                var review=reviewGo.AddComponent<Camera>();review.CopyFrom(camera);review.enabled=false;review.rect=new Rect(0,0,1,1);review.nearClipPlane=.01f;review.fieldOfView=45;
+                // Match the world camera while omitting all first-person-only layers.
+                review.cullingMask&=~((1<<15)|(1<<16)|(1<<17)|(1<<18));
+                Vector3 contact=Vector3.zero;bool contacted=false;
+                System.Action<RocketExplosion> onContact=e=>{contact=e.Position;contacted=true;};
+                ground.Session.RocketExploded+=onContact;
+                try
+                {
+                    for(int tick=0;tick<8;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    Assert.That(ground.Session.Rockets.Count(),Is.EqualTo(1),"Review needs a real unobstructed flight before contact");
+                    shot=ground.Session.Rockets.Single();
+                    review.transform.position=shot.Position+side*.70f+Vector3.up*.12f-shot.Direction*.08f;
+                    review.transform.LookAt(shot.Position-shot.Direction*.10f);
+                    CaptureSingleView(directory,"PulseMk2-projectile-arena",review,1800,1100);
+                    review.transform.position=shot.Position+side*3+Vector3.up*1.1f-shot.Direction*1.2f;review.transform.LookAt(shot.Position);
+                    CaptureSingleView(directory,"PulseMk2-flight-arena",review,1800,1100);
+                    for(int tick=0;tick<250&&!contacted;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    Assert.That(contacted,Is.True,"One fired rocket must hit the authored arena");
+                    yield return null; // Destroyed flight renderers must leave the actual impact frame.
+                    review.transform.position=contact-shot.Direction*5+side*2.2f+Vector3.up*1.8f;review.transform.LookAt(contact+Vector3.up*.35f);
+                    for(int tick=0;tick<6;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    CaptureSingleView(directory,"PulseMk2-impact-arena",review,1800,1100);
+                    for(int tick=0;tick<18;tick++){ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");}
+                    CaptureSingleView(directory,"PulseMk2-smoke-arena",review,1800,1100);
+                    System.IO.File.WriteAllText(System.IO.Path.Combine(directory,"arena-witness.txt"),"Map="+ground.SelectedMapId+". " +"Actual native fired rocket; collision event at "+contact+". No arena renderer hidden. No replacement plane. Session ticks fixed .02 s. Visual witness, not performance/device acceptance.");
+                }
+                finally{ground.Session.RocketExploded-=onContact;Object.Destroy(reviewGo);}
+            }
+        }
+        [UnityTest] public IEnumerator CobaltRifleRetainsAuthoredSurfacesAndNativeGrip()
+        {
+            yield return Load(1);
+            // Complete the existing JsonUtility background reader before this short
+            // visual witness can unload its scene or the batch Editor can exit.
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            var actions=new LocalAction[ground.Session.ParticipantCount];
+            for(int i=0;i<100;i++)ground.Session.Tick(actions,.02f);
+            var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
+            foreach(var descriptor in ProvingProfile.CreateTrooperDefault().Descriptors.Where(d=>d.Path.StartsWith("grip.Rifle.")))
+                Assert.That(visual.Tuning.Get(descriptor.Path),Is.EqualTo(descriptor.DefaultValue),"Ordinary scene startup must adopt COBALT defaults: "+descriptor.Path);
+            visual.ResetPose(ground.Session.Time);
+            ground.Session.Tick(actions,.02f);
+            ground.SendMessage("LateUpdate");yield return null;
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var rifle=visual.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="automatic-rifle");
+            var authored=ground.RiflePrefab.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
+            var display=visual.GetComponent<WeaponModelPresentation>().RifleDisplay;
+            Assert.That(display.Screen.transform.IsChildOf(rifle),Is.True);
+            Assert.That(display.Screen.sharedMaterial.shader,Is.EqualTo(Resources.Load<Shader>("RifleDisplay")));
+            // The later integrated ammo display is a separate runtime attachment.
+            // Preserve exact equality for every authored rifle surface.
+            var actual=rifle.GetComponentsInChildren<Renderer>(true).Where(r=>r!=display.Screen).SelectMany(r=>r.sharedMaterials).Distinct().ToArray();
+            CollectionAssert.AreEquivalent(authored,actual,"Mounted rifle must retain the imported PBR surfaces");
+            Assert.That(actual.All(m=>m && m.name.StartsWith("cobalt") && m.mainTexture),Is.True,"All authored finishes include their texture");
+            foreach(var material in actual)
+            {
+                Assert.That(material.GetTexture("normalTexture"),Is.Not.Null,material.name+" tangent relief must reach the runtime shader");
+                Assert.That(material.GetTexture("metallicRoughnessTexture"),Is.Not.Null,material.name+" surface response must reach the runtime shader");
+            }
+            Assert.That(rifle.GetComponentsInChildren<Collider>(true),Is.Empty,"Visual rifle cannot affect physical combat");
+            var muzzle=rifle.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="rifle-muzzle");
+            Assert.That(camera.transform.InverseTransformPoint(muzzle.position).z,Is.GreaterThan(camera.nearClipPlane));
+            var directory=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            if(!string.IsNullOrEmpty(directory))CaptureSingleView(directory,"COBALT-before-coating-check",camera,1600,900);
+            AssertCobaltRenderedCoating(camera);
+            if(!string.IsNullOrEmpty(directory))
+            {
+                CaptureSingleView(directory,"COBALT-rest",camera,1600,900);
+                CaptureGrip(directory,"COBALT",visual,camera);CaptureWorldModel(directory,"COBALT");
+            }
+            var snapshot=ground.Session.Capture();var life=snapshot.Lives[0];life.ShotgunOwned=true;life.ShotgunAmmo=20;snapshot.Lives[0]=life;ground.Session.Restore(snapshot);
+            foreach(var selection in new[]{WeaponSelection.Shotgun,WeaponSelection.Rifle})
+            {
+                actions[0]=new LocalAction{SelectWeapon=selection};ground.Session.Tick(actions,.02f);actions[0]=default;
+                for(int i=0;i<70;i++)
+                {
+                    ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+                    if(i==12 || i==25 || i==69)
+                    {
+                        yield return null;
+                        if(!string.IsNullOrEmpty(directory))CaptureSingleView(directory,"switch-"+selection+"-"+i,camera,1600,900);
+                    }
+                }
+            }
+            Assert.That(visual.EquippedWeapon,Is.EqualTo(WeaponId.Rifle));
+        }
+        static void RenderNative(Camera camera,RenderTexture target)
+        {
+            if(UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline)
+                UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(camera,new UnityEngine.Rendering.RenderPipeline.StandardRequest{destination=target});
+            else camera.Render();
+        }
+        static void AssertCobaltRenderedCoating(Camera camera)
+        {
+            var target=new RenderTexture(800,450,24);target.Create();
+            var pixels=new Texture2D(800,450,TextureFormat.RGB24,false);
+            var active=RenderTexture.active;var oldTarget=camera.targetTexture;var rect=camera.rect;
+            try
+            {
+                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;
+                // The first manual offscreen submission can show a uniform imported
+                // surface. A controlled pair at identical pose/lighting proved the
+                // second submission resolves the textures; yielding frames or disabling
+                // SRP batching did not. Check rendered pixels after that first submission.
+                RenderNative(camera,target);RenderNative(camera,target);
+                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,800,450),0,0);pixels.Apply();
+                var diagnostic=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+                if(!string.IsNullOrEmpty(diagnostic)){System.IO.Directory.CreateDirectory(diagnostic);System.IO.File.WriteAllBytes(System.IO.Path.Combine(diagnostic,"coating-check.png"),pixels.EncodeToPNG());}
+                // Blue upper-stock strip in the approved closer/lower weapon pose.
+                // Previous x575..615 ROI now samples the dark grip insert.
+                // Keep the original blue-fraction threshold; only move the sampled surface.
+                int blue=0,total=0;
+                for(int y=90;y<105;y++)for(int x=520;x<540;x++)
+                {var c=pixels.GetPixel(x,y);total++;if(c.b>c.r*1.3f&&c.b>c.g*1.15f)blue++;}
+                Assert.That((float)blue/total,Is.GreaterThan(.35f),"Native camera must render COBALT blue coating, not a transient flat material");
+            }
+            finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=active;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
+        }
         [UnityTest] public IEnumerator RifleGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Rifle);
+        static int AssertCobaltBoreAlignment(ProvingGround ground,System.Collections.Generic.List<string> samples)
+        {
+            int checkedCount=0;var particle=new ParticleSystem.Particle[1];
+            foreach(var flash in ground.GetComponentsInChildren<ParticleSystem>().Where(p=>p.name.StartsWith("COBALT muzzle ")&&!p.name.StartsWith("COBALT muzzle smoke ")&&p.particleCount>0))
+            {
+                var mount=ground.GetComponentsInChildren<WeaponModelPresentation>().Single(m=>m.gameObject.layer==flash.gameObject.layer);
+                var rifle=mount.transform.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="automatic-rifle");
+                var bore=rifle.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="rifle-muzzle");
+                // Authored bore center/axis from the model, independently of RifleDirection.
+                Assert.That(Vector3.Distance(rifle.InverseTransformPoint(bore.position),new Vector3(0,.062f,.54f)),Is.LessThan(.0001f));
+                var axis=rifle.TransformVector(Vector3.forward).normalized;flash.GetParticles(particle);
+                var offset=particle[0].position-bore.position;float along=Vector3.Dot(offset,axis),side=Vector3.Cross(offset,axis).magnitude;
+                Assert.That(side,Is.LessThan(.0001f),"Flash must stay on the bore axis through recoil");
+                Assert.That(along,Is.EqualTo(ground.Profile.Get("presentation.cobalt.flashOffset")).Within(.0001f),"Flash must be in front of the bore");
+                samples.Add(System.FormattableString.Invariant($"{ground.Session.Time},{flash.gameObject.layer},{along},{side},{Vector3.Angle(bore.forward,axis)}"));checkedCount++;
+            }
+            return checkedCount;
+        }
+        static void CaptureCobaltMuzzleClose(string output,Camera playerCamera,WeaponModelPresentation mount)
+        {
+            if(string.IsNullOrEmpty(output))return;
+            var rifle=mount.transform.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="automatic-rifle");
+            var go=new GameObject("COBALT independent bore inspection");
+            try
+            {
+                var camera=go.AddComponent<Camera>();camera.CopyFrom(playerCamera);camera.enabled=false;camera.fieldOfView=35;camera.nearClipPlane=.01f;
+                camera.transform.position=mount.RifleMuzzle+rifle.forward*.45f+rifle.right*.3f+rifle.up*.15f;
+                camera.transform.LookAt(mount.RifleMuzzle,rifle.up);
+                CaptureSingleView(output,"COBALT-muzzle-close",camera,1200,900);
+            }
+            finally{Object.Destroy(go);}
+        }
+        [UnityTest] public IEnumerator CobaltShotImpulsesFollowRealBulletsAndClearOnRestore()
+        {
+            yield return Load(1);ground.enabled=false;
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            var actions=new LocalAction[ground.Session.ParticipantCount];
+            for(int i=0;i<100;i++)ground.Session.Tick(actions,.02f);
+            ground.SendMessage("LateUpdate");yield return null;
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var presentation=(CombatPresentation)typeof(ProvingGround).GetField("presentation",flags).GetValue(ground);
+            var fx=presentation.CobaltShotForReview;Assert.That(fx.Enabled,Is.True);Assert.That(fx.LiveParticles,Is.Zero);Assert.That(fx.ActiveLights,Is.Zero);
+            var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_WALK_EVIDENCE");
+            void Capture(string name,int width,int height){if(!string.IsNullOrEmpty(output))CaptureSingleView(output,name,camera,width,height);}
+            Capture("COBALT-idle",1600,900);
+            var alignment=new System.Collections.Generic.List<string>{"sessionTime,layer,alongBarrelMeters,offAxisMeters,legacyMarkerAngleDegrees"};int aligned=0;
+            var saved=ground.Session.Capture();bool contact=false;RifleBulletContact hit=default;
+            System.Action<RifleBulletContact> onContact=e=>{if(e.Bullet.Owner==0){contact=true;hit=e;}};
+            ground.Session.RifleBulletHit+=onContact;
+            try
+            {
+                actions[0].Fire=true;ground.Session.Tick(actions,.02f);actions[0].Fire=false;ground.SendMessage("LateUpdate");yield return null;
+                Assert.That(fx.LiveParticles,Is.GreaterThan(0));Assert.That(fx.ActiveLights,Is.GreaterThan(0));
+                aligned+=AssertCobaltBoreAlignment(ground,alignment);Assert.That(aligned,Is.EqualTo(2),"Local and world muzzle must both be checked");
+                Capture("COBALT-fire",1600,900);
+                CaptureCobaltMuzzleClose(output,camera,ground.transform.Find("seat-camera-1/trooper-view").GetComponent<WeaponModelPresentation>());
+                var lights=ground.GetComponentsInChildren<Light>().Where(l=>l.name.StartsWith("COBALT muzzle light")&&l.enabled).ToArray();
+                foreach(var light in lights)light.enabled=false;Capture("COBALT-fire-without-light-control",1600,900);foreach(var light in lights)light.enabled=true;
+                double clock=ground.Session.Time;int particles=fx.LiveParticles;yield return new WaitForSecondsRealtime(.05f);ground.SendMessage("LateUpdate");
+                Assert.That(ground.Session.Time,Is.EqualTo(clock));Assert.That(fx.LiveParticles,Is.EqualTo(particles),"Paused session must not advance impulses");
+                for(int tick=0;tick<90&&!contact;tick++)
+                {
+                    ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+                    foreach(var line in ground.GetComponentsInChildren<LineRenderer>().Where(l=>l.name.StartsWith("Rifle flight")))
+                        Assert.That(Vector3.Distance(line.GetPosition(0),line.GetPosition(1)),Is.LessThanOrEqualTo(ground.Profile.Get("presentation.rifleTracerLength")+.05f),"Never a continuous beam to contact");
+                    if(tick==1){yield return null;Capture("COBALT-bullet",1600,900);}
+                }
+                Assert.That(contact,Is.True,"Actual scene geometry must receive the physical bullet");
+                Assert.That(hit.Contact.Contact,Is.EqualTo(PelletContact.World));
+                ground.Session.Tick(actions,.04f);ground.SendMessage("LateUpdate");yield return null;Capture("COBALT-impact",1600,900);
+                Assert.That(fx.ActiveContacts,Is.GreaterThan(0));
+                // A real arena close-up of the same authoritative contact, no replacement backdrop.
+                var position=camera.transform.position;var rotation=camera.transform.rotation;
+                camera.transform.position=hit.Contact.Endpoint+hit.Contact.Normal*1.2f+Vector3.up*.3f;camera.transform.LookAt(hit.Contact.Endpoint);
+                int mask=camera.cullingMask;camera.cullingMask&=~(1<<15);Capture("COBALT-impact-close",1200,900);camera.cullingMask=mask;camera.transform.SetPositionAndRotation(position,rotation);
+                for(int i=0;i<35;i++)ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");Assert.That(fx.ActiveLights,Is.Zero);Assert.That(fx.LiveParticles,Is.Zero);
+                ground.Session.Restore(saved);ground.SendMessage("LateUpdate");Assert.That(fx.ActiveContacts,Is.Zero);Assert.That(fx.ActiveLights,Is.Zero);Assert.That(fx.LiveParticles,Is.Zero);
+                var directions=new System.Collections.Generic.Dictionary<uint,Vector3>();
+                var samples=new System.Collections.Generic.List<string>{"frame,id,directionX,directionY,directionZ,segmentLength"};
+                string sequence=string.IsNullOrEmpty(output)?null:System.IO.Path.Combine(output,"burst");if(sequence!=null)System.IO.Directory.CreateDirectory(sequence);
+                for(int tick=0;tick<55;tick++)
+                {
+                    actions[0].Fire=tick<35;ground.Session.Tick(actions,.02f);ground.SendMessage("LateUpdate");
+                    aligned+=AssertCobaltBoreAlignment(ground,alignment);
+                    foreach(var b in ground.Session.RifleBullets.Where(b=>b.Owner==0))
+                    {
+                        directions[b.Id]=b.Direction;
+                        var line=ground.GetComponentsInChildren<LineRenderer>().Single(l=>l.name=="Rifle flight "+b.Id);
+                        float length=Vector3.Distance(line.GetPosition(0),line.GetPosition(1));
+                        Assert.That(length,Is.LessThanOrEqualTo(ground.Profile.Get("presentation.rifleTracerLength")+.05f));
+                        samples.Add(System.FormattableString.Invariant($"{tick},{b.Id},{b.Direction.x},{b.Direction.y},{b.Direction.z},{length}"));
+                    }
+                    yield return null;if(sequence!=null)CaptureSingleView(sequence,"frame-"+tick.ToString("D3"),camera,960,540);
+                }
+                Assert.That(aligned,Is.GreaterThanOrEqualTo(16),"Check multiple shots/recoil phases in both representations");
+                if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"muzzle-alignment.csv"),alignment);
+                Assert.That(directions.Count,Is.GreaterThanOrEqualTo(4));
+                Assert.That(directions.Values.Any(d=>Vector3.Angle(d,directions.Values.First())>.1f),Is.True,"Burst must retain physical spread");
+                if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllLines(System.IO.Path.Combine(output,"burst-directions.csv"),samples);
+                if(!string.IsNullOrEmpty(output))System.IO.File.WriteAllText(System.IO.Path.Combine(output,"cobalt-shot-witness.txt"),"Running="+ground.Running+"; contact="+hit.Contact.Endpoint+"; retainedContacts="+fx.RetainedContacts+"; pause/restore=PASS; finiteTrace=PASS");
+            }
+            finally{ground.Session.RifleBulletHit-=onContact;}
+        }
+        [UnityTest] public IEnumerator PulseMk2MuzzleTracksBatchedMotionAndRestore()
+        {
+            yield return Load(2);
+            typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
+            var camera=ground.transform.Find("seat-camera-1");var view=camera.Find("trooper-view");
+            ground.PlaceCombatReviewSeat(0,new Vector3(-8,0,26),0,90);
+            for(int tick=0;tick<100;tick++)ground.Session.Tick(new LocalAction[2],.02f);
+            var baseline=ground.Session.Capture();baseline.Lives[0].SelectedWeapon=WeaponId.RocketLauncher;baseline.Lives[0].RocketOwned=true;baseline.Lives[0].RocketAmmo=20;baseline.Lives[0].Ammo=20;baseline.Lives[0].SwitchRemaining=0;
+            ShotNotice notice=default;ground.Session.ShotResolved+=n=>notice=n;
+            foreach(int side in new[]{0,-1,1})
+            {
+                ground.Session.Restore(baseline);ground.SendMessage("LateUpdate");yield return null;
+                var oldEye=camera.position;var actions=new LocalAction[2];actions[0].Move=new Vector2(side,0);
+                for(int tick=0;tick<5;tick++)ground.Session.Tick(actions,.02f);
+                actions[0].LookDegrees=side==0?Vector2.zero:new Vector2(side*12,4);actions[0].Fire=true;ground.Session.Tick(actions,.02f);ground.Session.ClearInput();
+                var eye=ground.Session.Pose(0).Position+Vector3.up*ground.Profile.Get("camera.eyeHeight");
+                Assert.That(Vector3.Distance(camera.position,eye),Is.LessThan(.0001f),"Shot must sample this tick's camera");
+                if(side!=0)Assert.That(Vector3.Distance(oldEye,eye),Is.GreaterThan(.01f));
+                var muzzle=view.GetComponent<WeaponModelPresentation>().PulseMuzzle;
+                var rocket=ground.Session.Rockets.Single();var offset=muzzle-notice.Origin;
+                string before=JsonUtility.ToJson(ground.Session.Capture());ground.SendMessage("LateUpdate");Assert.That(JsonUtility.ToJson(ground.Session.Capture()),Is.EqualTo(before));
+                var visual=ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="Pulse rocket "+rocket.Id);
+                var expected=rocket.Position+offset*(1-Mathf.Clamp01(rocket.Distance/ground.Profile.Get("presentation.rocketMuzzleBlendDistance")));
+                Assert.That(Vector3.Distance(visual.position,expected),Is.LessThan(.0001f));
+                var ignition=ground.GetComponentsInChildren<LineRenderer>().Single(r=>r.name=="Muzzle ignition");
+                Assert.That(Vector3.Distance(ignition.GetPosition(0),muzzle),Is.LessThan(.0001f));
+                Assert.That(Vector3.Dot((ignition.GetPosition(2)-muzzle).normalized,rocket.Direction),Is.GreaterThan(.999f));
+                var frozen=visual.position;ground.SendMessage("LateUpdate");Assert.That(visual.position,Is.EqualTo(frozen));
+                for(int tick=0;tick<10;tick++)ground.Session.Tick(new LocalAction[2],.02f);ground.SendMessage("LateUpdate");
+                if(ground.Session.Rockets.Length>0)Assert.That(Vector3.Distance(visual.position,ground.Session.Rockets[0].Position),Is.LessThan(.0001f));
+                ground.Session.Restore(ground.Session.Capture());yield return null;ground.SendMessage("LateUpdate");
+                if(ground.Session.Rockets.Length>0)Assert.That(Vector3.Distance(ground.GetComponentsInChildren<Transform>().Single(t=>t.name=="Pulse rocket "+rocket.Id).position,ground.Session.Rockets[0].Position),Is.LessThan(.0001f));
+            }
+        }
         [UnityTest] public IEnumerator ShotgunGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Shotgun);
         [UnityTest] public IEnumerator RocketGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.RocketLauncher);
         [UnityTest] public IEnumerator CutterGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Cutter);
+        [UnityTest] public IEnumerator PlasmaGripHasNativeFireAndAirbornePhases()=>NativeGripPhases(WeaponId.Plasma);
         IEnumerator NativeGripPhases(WeaponId selectedWeapon)
         {
             yield return Load(2);
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
             typeof(ProvingGround).GetField("FullHealReviewManualTick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,true);
             var visual=ground.transform.Find("seat-camera-1/trooper-view").GetComponent<TrooperVisual>();
             var camera=ground.transform.Find("seat-camera-1").GetComponent<Camera>();
@@ -122,6 +550,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var snapshot=ground.Session.Capture();var life=snapshot.Lives[0];
                 life.SelectedWeapon=weapon;life.PendingWeapon=default;life.SwitchRemaining=0;
                 life.ShotgunOwned=life.RocketOwned=life.CutterOwned=true;
+                if(weapon==WeaponId.Plasma){life.PlasmaOwned=true;life.PlasmaAmmo=100;}
                 life.ShotgunAmmo=life.RocketAmmo=20;life.CutterEnergy=30;life.Ammo=CombatLife.AmmoFor(life,weapon);
                 snapshot.Lives[0]=life;ground.Session.Restore(snapshot);visual.ResetPose(snapshot.Time);
                 var captured=new System.Collections.Generic.HashSet<string>();
@@ -207,24 +636,32 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 foreach(var camera in ground.GetComponentsInChildren<Camera>().Where(c=>c.enabled))
                 {
                     var old=camera.targetTexture;
-                    try{camera.targetTexture=target;camera.Render();}finally{camera.targetTexture=old;}
+                    try{camera.targetTexture=target;RenderNative(camera,target);}finally{camera.targetTexture=old;}
                 }
                 RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,name+".png"),pixels.EncodeToPNG());
             }
             finally{RenderTexture.active=previous;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
         }
-        static void CaptureSingleView(string directory,string weapon,Camera camera)
+        static void CaptureSingleView(string directory,string weapon,Camera camera,int width=1200,int height=1350)
         {
             System.IO.Directory.CreateDirectory(directory);
             // Same seat projection, rendered alone at higher resolution for visual review.
-            var target=new RenderTexture(1200,1350,24);target.Create();
-            var pixels=new Texture2D(1200,1350,TextureFormat.RGB24,false);
+            var target=new RenderTexture(width,height,24);target.Create();
+            var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
             var old=RenderTexture.active;var oldTarget=camera.targetTexture;var rect=camera.rect;
             try
             {
-                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;camera.Render();
-                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,1200,1350),0,0);pixels.Apply();
+                camera.rect=new Rect(0,0,1,1);camera.targetTexture=target;RenderNative(camera,target);
+                if(System.Environment.GetEnvironmentVariable("STAR_CAPTURE_FIRST_SUBMISSION")=="1")
+                {
+                    RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-first-submission.png"),pixels.EncodeToPNG());
+                }
+                // Match the native coating check: the first offscreen submission
+                // can leave imported PBR textures unresolved. Keep pose/light fixed.
+                RenderNative(camera,target);
+                RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-fps.png"),pixels.EncodeToPNG());
             }
             finally{camera.targetTexture=oldTarget;camera.rect=rect;RenderTexture.active=old;target.Release();Object.Destroy(target);Object.Destroy(pixels);}
@@ -323,7 +760,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 {
                     var center=bones.Single(t=>t.name==hand+"MiddleProximal").position;
                     camera.transform.position=center+mount.TransformDirection(sign==2?new Vector3(.15f,-.35f,.6f):new Vector3(sign*.5f,.05f,-.2f));
-                    camera.transform.LookAt(center,mount.up);camera.Render();RenderTexture.active=target;
+                    camera.transform.LookAt(center,mount.up);RenderNative(camera,target);RenderNative(camera,target);RenderTexture.active=target;
                     pixels.ReadPixels(new Rect(0,0,1000,1000),0,0);pixels.Apply();
                     System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,weapon+"-"+hand+"-grip-"+sign+".png"),pixels.EncodeToPNG());
                 }
@@ -586,6 +1023,14 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That((camera.cullingMask&1),Is.Not.Zero);
             foreach(var proxy in proxies)
             {
+                var original=proxy.transform.parent.GetComponent<SkinnedMeshRenderer>();
+                Assert.That(original.shadowCastingMode,Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.Off));
+                Assert.That(proxy.sharedMesh,Is.SameAs(original.sharedMesh));
+                Assert.That(proxy.bones,Is.EqualTo(original.bones));
+                // Identity materials are owned per renderer; equivalent shadow inputs
+                // need not have the same Unity object identity after palette updates.
+                Assert.That(proxy.sharedMaterials.Select(m=>m.shader),Is.EqualTo(original.sharedMaterials.Select(m=>m.shader)));
+                Assert.That(proxy.sharedMaterials.Select(m=>m.renderQueue),Is.EqualTo(original.sharedMaterials.Select(m=>m.renderQueue)));
                 Assert.That(proxy.gameObject.layer,Is.Zero);
                 Assert.That(proxy.shadowCastingMode,Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly));
                 Assert.That(proxy.GetComponents<Collider>(),Is.Empty);

@@ -258,7 +258,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 826073197648860745}
-  m_Mesh: {fileID: 561726918514808017, guid: 676a85dc4611460daf4fdc518db53d8a, type: 3}
+  m_Mesh: {fileID: -1111199070667142503, guid: 676a85dc4611460daf4fdc518db53d8a, type: 3}
 --- !u!23 &6714810453262287846
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -285,13 +285,12 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: -7070334054411039856, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: -5951996183287177270, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: 130685599192804062, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
   - {fileID: -4000457709865584740, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: -363689961884448246, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: 1054160922008081687, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: 4236744657842156693, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: -8654294790975140372, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
+  - {fileID: 8047349972699477711, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
+  - {fileID: 130685599192804062, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
+  - {fileID: 1166975453054719727, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
+  - {fileID: -2263152390105125802, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
+  - {fileID: -5951996183287177270, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -376,8 +375,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4523918369195322392}
+  - {fileID: 4842371238823916652}
   - {fileID: 1667754985172018465}
+  - {fileID: 4523918369195322392}
   m_Father: {fileID: 1934066505100749016}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &922788835796777100
@@ -705,6 +705,37 @@ Transform:
   m_Children:
   - {fileID: 1941450332409813147}
   m_Father: {fileID: 8184483117680560011}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2323972596579245132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4842371238823916652}
+  m_Layer: 0
+  m_Name: retired-b01-fps-node
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4842371238823916652
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2323972596579245132}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8257250869763281361}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2471183590837044380
 GameObject:
@@ -2005,13 +2036,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 3428726588761001003, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: 803824192427878164, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: 7832926743388910344, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: 2532989972892209343, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: -3500011082651556911, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: -3777779783486822674, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
-  - {fileID: -4282715057188260883, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
+  - {fileID: -1297869518082289475, guid: 35f97b49932a46acbc821a97f1aaf389, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2038,7 +2063,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 6980295681182880296, guid: 676a85dc4611460daf4fdc518db53d8a, type: 3}
+  m_Mesh: {fileID: -2901806526867470377, guid: 676a85dc4611460daf4fdc518db53d8a, type: 3}
   m_Bones:
   - {fileID: 1667754985172018465}
   - {fileID: 2637484243424455149}

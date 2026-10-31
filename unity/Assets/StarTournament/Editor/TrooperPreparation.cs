@@ -56,6 +56,25 @@ namespace StarTournament.ProvingGround.Editor
                 if(dot<0 || key.Length-dot!=4 || !int.TryParse(key.Substring(dot+1),out _))continue;
                 if(bodyMaterials.TryGetValue(key.Substring(0,dot),out var shared))materials[key]=shared;
             }
+            // F23 keeps the accepted FPS anatomy and source GLB. Its costume surfaces
+            // use the new world's canonical PBR palette, so both views share real
+            // materials without duplicate slots or changing hand/weapon geometry.
+            if(bodyMaterials.ContainsKey("vector-reference-coated-steel"))
+            {
+                var roles=new System.Collections.Generic.Dictionary<string,string>
+                {
+                    {"vector-fighter-identity-forearm-f9","vector-fighter-identity-reference"},
+                    {"vector-assault-armor-forearm","vector-reference-coated-steel"},
+                    {"material.001","vector-reference-woven-fabric"},
+                    {"orbital-restored-vector-chassis","vector-reference-edge-metal"},
+                    {"vector-ceramic-orbital","vector-fighter-identity-reference"},
+                    {"orbital-seam-thread","vector-reference-webbing"},
+                    {"vector-ceramic","vector-fighter-identity-reference"},
+                    {"strata-oxblood-accent","vector-fighter-identity-reference"},
+                    {"identity-vector-status","vector-fighter-identity-reference"}
+                };
+                foreach(var role in roles)if(materials.ContainsKey(role.Key))materials[role.Key]=bodyMaterials[role.Value];
+            }
             var meshes=source.GetComponentsInChildren<SkinnedMeshRenderer>(true)
                 .Select(r=>r.sharedMesh).Where(m=>m).GroupBy(m=>m.name).ToDictionary(g=>g.Key,g=>g.First());
             ground.TrooperBodyPrefab=Persist(source,"TrooperBody",ground.TrooperClips,materials,meshes);
