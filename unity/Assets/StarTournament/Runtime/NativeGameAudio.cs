@@ -38,7 +38,7 @@ namespace StarTournament.ProvingGround
         readonly Dictionary<string,AudioClip[]> movementClips=new Dictionary<string,AudioClip[]>();
         // Content cardinality, not a tunable mix value: all five approved recordings ship together.
         const int MovementVariantCount=5;
-        readonly int[,] lastMovement=new int[NativeMatchRoster.MaximumParticipants,3];
+        int[,] lastMovement=new int[NativeMatchRoster.MaximumParticipants,3];
         readonly System.Random movementRandom=new System.Random();
         AudioSource[] voices;
         float[] voiceGain,voiceBaseGain;
@@ -49,10 +49,10 @@ namespace StarTournament.ProvingGround
         AudioSource[] rocketSources;
         uint[] rocketIds;
         float[] rocketGain;
-        readonly float[] beamEnvelope=new float[NativeMatchRoster.MaximumParticipants];
-        readonly AudioSpatialMix[] beamMix=new AudioSpatialMix[NativeMatchRoster.MaximumParticipants];
-        readonly AudioSource[] beams;
-        readonly float[] beamGain;
+        float[] beamEnvelope=new float[NativeMatchRoster.MaximumParticipants];
+        AudioSpatialMix[] beamMix=new AudioSpatialMix[NativeMatchRoster.MaximumParticipants];
+        AudioSource[] beams;
+        float[] beamGain;
         readonly AudioSource uiSource;
         readonly AudioSource damageBonusSource;
         readonly AudioSource botReactionSource;
@@ -147,6 +147,12 @@ namespace StarTournament.ProvingGround
             Unbind();BuildVoicePool();session=next;composition=roster;
             musicProfile=musicTuning??profile;
             if(session==null)return;
+            if(beams.Length!=session.ParticipantCount)
+            {
+                foreach(var beam in beams)if(beam)UnityEngine.Object.Destroy(beam.gameObject);
+                beams=new AudioSource[session.ParticipantCount];beamGain=new float[beams.Length];beamEnvelope=new float[beams.Length];beamMix=new AudioSpatialMix[beams.Length];lastMovement=new int[beams.Length,3];
+                for(int i=0;i<beams.Length;i++){beams[i]=Source("cutter-"+i);beams[i].clip=clips["cutter-loop"];beams[i].loop=true;}
+            }
             plasmaGain=session.PlasmaProfile.Get("plasma.audioGain");
             lastPose=new ParticipantState[session.ParticipantCount];lastWeaponState=new CombatLifeState[session.ParticipantCount];weaponReadyPending=new bool[session.ParticipantCount];stepDistance=new float[session.ParticipantCount];lastHit=new double[session.ParticipantCount];
             for(int i=0;i<lastPose.Length;i++){lastPose[i]=session.Pose(i);lastWeaponState[i]=session.Life(i);lastHit[i]=double.NegativeInfinity;}

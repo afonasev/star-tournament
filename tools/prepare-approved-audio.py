@@ -24,18 +24,18 @@ def main():
     for item in json.loads((SRC/'verified-inputs.json').read_text()):
         assert hashlib.sha256((SRC/item['file']).read_bytes()).hexdigest() == item['sha256'], item
     mapping = {
-        'rocket':'rocket/variant-1.wav', 'explosion':'explosion-short/explosion-1.wav',
+        'rocket':'../rocket-heavy-2026-10-31/rocket.wav', 'explosion':'explosion-short/explosion-1.wav',
         'shield-hit':'shield-v2/hit-0-0.wav', 'weapon-pickup':'weapon-pickup/pickup-2.wav',
         'shield-pickup':'shield-charge/charge-2.wav', 'damage-pickup':'bonus-review/damage-3.wav',
         'speed-pickup':'bonus-review/speed-1.wav', 'heal-pickup':'healing-v2/heal-2.wav',
         'damage-bonus-spawn':'remaining/spawn-3.wav', 'damage-bonus-pickup':'damage-alert-v2/alert-3.wav',
         'jump':'remaining/jump-1.wav', 'land':'remaining/land-1.wav',
         'menu_move':'remaining/move-3.wav', 'menu_confirm':'remaining/confirm-3.wav', 'menu_back':'remaining/back-3.wav',
-        'rifle':'variant-2-0.wav', 'shotgun':'../shotgun-heavy-2026-10-25/shotgun-0.wav',
+        'rifle':'variant-2-0.wav', 'shotgun':'../shotgun-bolt-2026-10-31/shotgun.wav',
     }
     for i in range(4): mapping[f'rifle-{i}']=f'variant-2-{i}.wav'
     for i in range(2):
-        mapping[f'shotgun-{i}']=f'../shotgun-heavy-2026-10-25/shotgun-{i}.wav'
+        mapping[f'shotgun-{i}']='../shotgun-bolt-2026-10-31/shotgun.wav'
         mapping[f'body-hit-{i}']=f'body-hit/hit-2-{i}.wav'
     for i,n in enumerate(['2','3','fall-only']): mapping[f'death-{i}']=f'death-v2/death-{n}.wav'
     for name, file in mapping.items(): shutil.copyfile(SRC/file, DST/(name+'.wav'))
