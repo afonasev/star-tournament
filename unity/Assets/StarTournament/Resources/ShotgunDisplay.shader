@@ -27,6 +27,14 @@ Shader "StarTournament/ShotgunDisplay"
    struct Attributes {float4 positionOS:POSITION;float2 uv:TEXCOORD0;};
    struct Varyings {float4 positionCS:SV_POSITION;float2 uv:TEXCOORD0;};
    Varyings vert(Attributes a){Varyings o;o.positionCS=TransformObjectToHClip(a.positionOS.xyz);o.uv=a.uv;return o;}
+   float ammoDigit(int index)
+   {
+    // Every branch stays in bounds even when a graphics backend flattens selection.
+    // The ten decimal cells cover the full nonnegative Int32 ammo value.
+    if(index<4) return index==0?_DigitsA.x:index==1?_DigitsA.y:index==2?_DigitsA.z:_DigitsA.w;
+    if(index<8) return index==4?_DigitsB.x:index==5?_DigitsB.y:index==6?_DigitsB.z:_DigitsB.w;
+    return index==8?_DigitsC.x:_DigitsC.y;
+   }
    half4 frag(Varyings i):SV_Target
    {
     // Normalized artwork: clipped glass, machined double bevel and a quiet reflection.
@@ -42,7 +50,7 @@ Shader "StarTournament/ShotgunDisplay"
     float2 textUV=(i.uv-float2(.17,.24))/float2(.66,.60);
     float cell=textUV.x*_DigitCount;
     int index=clamp((int)floor(cell),0,9);
-    float digit=index<4?_DigitsA[index]:index<8?_DigitsB[index-4]:_DigitsC[index-8];
+    float digit=ammoDigit(index);
     float ink=SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,float2((digit+frac(cell))*.1,textUV.y)).r;
     ink*=step(0,textUV.x)*step(textUV.x,1)*step(0,textUV.y)*step(textUV.y,1);
     float underline=(1-smoothstep(.008,.008+fwidth(i.uv.y),abs(i.uv.y-.205)))*step(.19,i.uv.x)*step(i.uv.x,.81);
