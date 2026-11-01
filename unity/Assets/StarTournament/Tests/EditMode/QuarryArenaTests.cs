@@ -17,6 +17,8 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.Cutter).Anchor.y,Is.EqualTo(8));Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.Pulse).Anchor.y,Is.EqualTo(8));Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.FullHeal).Anchor.y,Is.Zero);
             Assert.That(d.Transitions.Length,Is.EqualTo(4));Assert.That(d.Transitions.Count(t=>t.LowerSupport==QuarryArenaCatalog.Ground),Is.EqualTo(2));Assert.That(d.Transitions.Count(t=>t.UpperSupport==QuarryArenaCatalog.Upper),Is.EqualTo(2));
             var legacy=AuthoredArenaCatalog.Resolve(d.MapId,"1");Assert.That(legacy.Identity,Is.EqualTo("quarry-prototype-v1@1"));Assert.That(legacy.Spawns.All(p=>p.y==0),Is.True);Assert.That(legacy.Transitions.Length,Is.EqualTo(2));
+            var prior=AuthoredArenaCatalog.Resolve(d.MapId,"2");Assert.That(prior.Identity,Is.EqualTo("quarry-prototype-v1@2"));Assert.That(prior.Transitions.Length,Is.EqualTo(4));Assert.That(prior.Solids.Any(s=>s.Id=="center-east-bridge"),Is.False);
+            Assert.That(d.Solids.Single(s=>s.Id=="center-east-bridge").Support,Is.EqualTo(QuarryArenaCatalog.Terrace));
             var frozen=AuthoredArenaCatalog.Freeze(d.MapId,movement);Assert.That(JsonUtility.ToJson(frozen.Definition),Is.EqualTo(JsonUtility.ToJson(d)));
             d.Spawns[0]=Vector3.one;Assert.That(frozen.Definition.Spawns[0],Is.Not.EqualTo(d.Spawns[0]),"Frozen definition owns its data");
         }

@@ -54,9 +54,9 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var active=arena.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled).ToArray();
                 File.WriteAllText(Path.Combine(DirectoryPath,"asset-optimization.json"),JsonUtility.ToJson(new Optimization{solids=arena.Definition.Solids.Length,sourceRenderers=source.Length,activeRenderers=active.Length,staticBatched=active.Count(r=>r.isPartOfStaticBatch),materials=active.SelectMany(r=>r.sharedMaterials).Distinct().Count(),sourceTriangles=triangles,unreferencedMeshes=ArenaMeshResidency.ReadUnreferencedOwnedMeshes(arena.transform).Length},true));
                 camera.fieldOfView=70;
-                var eyes=new[]{new Vector3(38,1.7f,-32),new Vector3(38,5.7f,-5),new Vector3(-6,1.7f,-23),new Vector3(19,1.7f,-7),new Vector3(-6,1.7f,-7),new Vector3(10,9.7f,22),new Vector3(-13,1.7f,-32)};
-                var targets=new[]{new Vector3(38,7,21),new Vector3(38,9,24),new Vector3(-6,2,-10),new Vector3(14,2,4),new Vector3(-6,1.7f,4),new Vector3(0,2,-22),new Vector3(-24,6,14)};
-                var names=new[]{"climb-from-bottom","climb-from-middle","tunnel-front","tunnel-east","tunnel-inside","upper-view","three-levels-from-court"};
+                var eyes=new[]{new Vector3(38,1.7f,-32),new Vector3(38,5.7f,-5),new Vector3(-6,1.7f,-23),new Vector3(19,1.7f,-7),new Vector3(-6,1.7f,-7),new Vector3(10,9.7f,22),new Vector3(-13,1.7f,-32),new Vector3(0,5.7f,-1),new Vector3(16,9.7f,23),new Vector3(-19,1.7f,-32)};
+                var targets=new[]{new Vector3(38,7,21),new Vector3(38,9,24),new Vector3(-6,2,-10),new Vector3(14,2,4),new Vector3(-6,1.7f,4),new Vector3(0,2,-22),new Vector3(-24,6,14),new Vector3(0,6,20),new Vector3(24,10.5f,36),new Vector3(-11,2,-23)};
+                var names=new[]{"climb-from-bottom","climb-from-middle","tunnel-front","tunnel-east","tunnel-inside","upper-view","three-levels-from-court","center-roof","workshop","loader"};
                 for(int i=0;i<eyes.Length;i++){cameraGo.transform.position=eyes[i];cameraGo.transform.LookAt(targets[i]);Capture(camera,names[i]);}
                 Object.Destroy(cameraGo);
                 ground.SendMessage("Repeat");yield return NativeLoadingTestScene.Wait(ground);

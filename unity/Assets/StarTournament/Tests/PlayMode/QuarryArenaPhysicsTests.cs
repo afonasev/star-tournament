@@ -81,6 +81,32 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(next,Is.EqualTo(points.Length),"Tunnel traversal reverse="+reverse+" at "+motor.State.Position);Object.DestroyImmediate(motor.gameObject);
             }
         }
+        [UnityTest] public IEnumerator WalkableCenterHasTwoPhysicalRoutesAboveSeparateTunnel()
+        {
+            yield return null;var routes=new NativeNavigationProvider(arena,movement,ProvingProfile.CreateNavigationDefault());
+            var center=new Vector3(0,4,0);
+            foreach(var spawn in arena.Spawns)Assert.That(routes.TryRoute(spawn,center,out _,out var failure),Is.True,failure);
+            foreach(var route in new[]{new[]{new Vector3(0,4,17),center},new[]{new Vector3(24,4,10.5f),new Vector3(0,4,10.5f),center}})
+                foreach(bool reverse in new[]{false,true})
+                {
+                    var points=reverse?route.Reverse().ToArray():route;
+                    foreach(var foot in points)
+                    {
+                        var overlaps=Physics.OverlapCapsule(foot+Vector3.up*.58f,foot+Vector3.up*1.25f,.55f,1<<ProvingArena.WorldLayer);
+                        Assert.That(overlaps,Is.Empty,"Center waypoint occupied: "+foot+" by "+string.Join(",",overlaps.Select(c=>c.name)));
+                    }
+                    var motor=Motor(points[0]);int next=1;
+                    for(int tick=0;tick<900&&next<points.Length;tick++)
+                    {
+                        var delta=points[next]-motor.State.Position;delta.y=0;if(delta.magnitude<.2f){next++;continue;}
+                        var local=Quaternion.Euler(0,-motor.State.Yaw,0)*delta.normalized;motor.Tick(new LocalAction{Move=new Vector2(local.x,local.z)},1/60f);Physics.SyncTransforms();
+                    }
+                    Assert.That(next,Is.EqualTo(points.Length),"Center path reverse="+reverse+" stuck at "+motor.State.Position);
+                    Assert.That(motor.State.Position.y,Is.EqualTo(4).Within(.15f));Object.DestroyImmediate(motor.gameObject);
+                }
+            Assert.That(routes.TryLocate(center,out var located),Is.True);Assert.That(located.Support,Is.EqualTo(QuarryArenaCatalog.Terrace));
+            Assert.That(Physics.Linecast(new Vector3(0,1.7f,4),new Vector3(0,5.7f,4),1<<ProvingArena.WorldLayer),Is.True,"Roof separates the two usable levels");
+        }
         [UnityTest] public IEnumerator RealSessionCollectsEveryPickupAtItsSupport()
         {
             yield return null;

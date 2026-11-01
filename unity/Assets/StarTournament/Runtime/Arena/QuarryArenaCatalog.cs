@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     // Approved concept A: three open quarry benches. Dimensions are exported to authoring metadata.
     public static class QuarryArenaCatalog
     {
-        public const string Id="quarry-prototype-v1", Revision="2", Identity=Id+"@"+Revision;
+        public const string Id="quarry-prototype-v1", Revision="3", Identity=Id+"@"+Revision;
         public const string Ground="support:quarry-ground", Terrace="support:quarry-terrace", Upper="support:quarry-upper";
         public const float TerraceHeight=4, UpperHeight=8;
         public static readonly Vector3 FrontPortal=new Vector3(-6,0,-13), EastPortal=new Vector3(15,0,4);
@@ -65,7 +65,7 @@ namespace StarTournament.ProvingGround
                 float px=-14+x*2+1,pz=-12+z*2+1;
                 if((Mathf.Abs(px)>11&&pz< -8)||(px< -11&&pz>8))continue;
                 bool passage=(Mathf.Abs(px+6)<=3.5f&&pz<=7.5f)||(Mathf.Abs(pz-4)<=3.5f&&px>=-9.5f);
-                int top=(Mathf.Abs(px)<9&&pz> -6&&pz<8)?8:6;
+                int top=4;
                 mask[x,z]=top*10+(passage?2:1);
             }
             int index=0;
@@ -76,7 +76,7 @@ namespace StarTournament.ProvingGround
                 while(z+depth<nz){bool same=true;for(int dx=0;dx<width;dx++)same&=mask[x+dx,z+depth]==type;if(!same)break;depth++;}
                 for(int dx=0;dx<width;dx++)for(int dz=0;dz<depth;dz++)mask[x+dx,z+dz]=0;
                 float bottom=type%10==2?3.5f:0,top=type/10;
-                Box((bottom>0?"tunnel-roof-":"outcrop-")+index++,new Vector3(-14+(x+width*.5f)*2,(bottom+top)*.5f,-12+(z+depth*.5f)*2),new Vector3(width*2,top-bottom,depth*2));
+                Box((bottom>0?"tunnel-roof-":"outcrop-")+index++,new Vector3(-14+(x+width*.5f)*2,(bottom+top)*.5f,-12+(z+depth*.5f)*2),new Vector3(width*2,top-bottom,depth*2),"quarry-rock",Terrace);
             }
             // Framed openings are visible from the lower court and the eastern approach.
             foreach(float x in new[]{-9.5f,-2.5f})Box("front-portal-pillar-"+x,new Vector3(x,1.8f,-12.4f),new Vector3(1,3.6f,1),"quarry-portal");
@@ -86,18 +86,10 @@ namespace StarTournament.ProvingGround
             Box("front-tunnel-lamp",new Vector3(-6,3.3f,-9),new Vector3(.4f,.2f,.4f),"quarry-portal");
             Box("east-tunnel-lamp",new Vector3(11,3.3f,4),new Vector3(.4f,.2f,.4f),"quarry-portal");
             var spawns=new[]{new Vector3(-23,0,-31),new Vector3(23,0,-31),new Vector3(-26,4,-2),new Vector3(-26,4,14),new Vector3(27,4,7),new Vector3(-28,8,31),new Vector3(0,8,31),new Vector3(28,8,31)};
-            // Roofed recess + offset screen: protect starts from the other elevation levels too.
-            for(int i=0;i<spawns.Length;i++)
-            {
-                float yaw=i<2?0:i<4?90:i==4?180:180;var q=Quaternion.Euler(0,yaw,0);var p=spawns[i];
-                void Part(string id,Vector3 offset,Vector3 size)=>Box("spawn-"+i+"-"+id,p+q*offset,size,"quarry-cover",null,q);
-                Part("back",new Vector3(0,1.7f,-2.5f),new Vector3(5.4f,3.4f,.4f));
-                foreach(float side in new[]{-1f,1f})Part("side-"+side,new Vector3(side*2.5f,1.7f,0),new Vector3(.4f,3.4f,5));
-                Part("roof",new Vector3(0,3.6f,0),new Vector3(5.4f,.4f,5.4f));
-                Part("screen",new Vector3(0,1.7f,5),new Vector3(5.4f,3.4f,.5f));
-            }
-            var cover=new[]{new Vector3(-10,0,-26),new Vector3(12,0,-20),new Vector3(-18,4,10),new Vector3(29,4,17),new Vector3(17,8,23),new Vector3(-10,8,23)};
-            for(int i=0;i<cover.Length;i++)Box("low-crate-"+i,cover[i]+Vector3.up*.6f,new Vector3(3,1.2f,2),"quarry-crate");
+            QuarryIndustrialDetails.Add(solids,spawns);
+            // Both roof access paths are coplanar with the existing middle support.
+            Box("center-east-bridge",new Vector3(18,3.8f,9.5f),new Vector3(8,.4f,4),"quarry-metal",Terrace);
+            Box("center-east-bridge-rail",new Vector3(18,4.55f,11.7f),new Vector3(8,1.1f,.18f),"quarry-portal");
             string Support(Vector3 p)=>p.y==8?Upper:p.y==4?Terrace:Ground;
             ArenaPickupDefinition Item(string id,ArenaPickupKind kind,Vector3 p)=>new ArenaPickupDefinition{Id=id,Kind=kind,Anchor=p,Support=Support(p)};
             var pickups=new[]{

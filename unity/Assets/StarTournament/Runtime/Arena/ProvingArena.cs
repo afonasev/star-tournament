@@ -73,6 +73,7 @@ namespace StarTournament.ProvingGround
         public void ClearProjection()
         {
             Lifts=null;WellProfile=null;
+            var quarryShape=GetComponent<QuarryRockProjection>();if(quarryShape)DestroyImmediate(quarryShape);
             var renderChunks=GetComponent<ArenaRenderChunks>();if(renderChunks)DestroyImmediate(renderChunks);
             if (Surface) { if(Surface.navMeshData)NavMeshBuilder.Cancel(Surface.navMeshData); Surface.RemoveData(); if (Surface.navMeshData) DestroyImmediate(Surface.navMeshData); DestroyImmediate(Surface); Surface=null; }
             for(int i=transform.childCount-1;i>=0;i--) DestroyImmediate(transform.GetChild(i).gameObject);
@@ -95,7 +96,8 @@ namespace StarTournament.ProvingGround
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
             var slice=new LoadingWorkSlice();
-            foreach(var solid in Definition.Solids){if(asynchronous&&slice.Expired){yield return null;slice.Restart();}var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
+            var quarryShape=Definition.MapId==QuarryArenaCatalog.Id&&Definition.Revision=="3"?gameObject.AddComponent<QuarryRockProjection>():null;
+            foreach(var solid in Definition.Solids){if(asynchronous&&slice.Expired){yield return null;slice.Restart();}var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;if(quarryShape)quarryShape.Apply(go,solid);var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
             navigationTransitions=Definition.Transitions;Spawns=(Vector3[])Definition.Spawns.Clone();LowerRoutePoint=Definition.RouteAnchors[0];UpperRoutePoint=Definition.RouteAnchors[1];
             Physics.SyncTransforms();trace.Mark("solids");
             Surface = gameObject.AddComponent<NavMeshSurface>();
