@@ -751,6 +751,7 @@ namespace StarTournament.ProvingGround
             bool lunar=SelectedMapId==LunarLaboratoryCatalog.Id;
             if(lunar)studioLight.intensity=LunarPresentation.Get("lunar.sun");
             if(SelectedMapId==WellArenaCatalog.Id)WellArenaPresentation.ConfigureDaylight(studioLight,WellProfile);
+            if(SelectedMapId==QuarryArenaCatalog.Id)QuarryArenaPresentation.ConfigureDaylight(studioLight);
             var art=SelectedMapId==WellArenaCatalog.Id?WellProfile:lunar?LunarPresentation:tunnels?TunnelsPresentation:OrbitalLeagueProfile;
             var definitionKey=JsonUtility.ToJson(frozen.Definition);
             var movementKey=JsonUtility.ToJson(Profile);var artKey=JsonUtility.ToJson(art);

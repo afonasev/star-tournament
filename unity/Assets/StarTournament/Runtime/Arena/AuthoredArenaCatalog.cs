@@ -3,12 +3,13 @@ namespace StarTournament.ProvingGround
 {
     public static class AuthoredArenaCatalog
     {
-        public static string Next(string id)=>id==CombatBowlCatalog.Id?IndustrialTunnelsCatalog.Id:id==IndustrialTunnelsCatalog.Id?LunarLaboratoryCatalog.Id:id==LunarLaboratoryCatalog.Id?WellArenaCatalog.Id:id==WellArenaCatalog.Id?FiringRangeCatalog.Id:CombatBowlCatalog.Id;
-        public static string Name(string id)=>id==FiringRangeCatalog.Id?"Полигон":id==WellArenaCatalog.Id?"Станция Вега":id==LunarLaboratoryCatalog.Id?"Луна-9":id==CombatBowlCatalog.Id?"Орбита":id==IndustrialTunnelsCatalog.Id?"Тоннели":throw new ArgumentException("Unknown map "+id);
-        public static int Maximum(string id)=>id==FiringRangeCatalog.Id?4:id==WellArenaCatalog.Id?8:id==LunarLaboratoryCatalog.Id?8:id==CombatBowlCatalog.Id?8:id==IndustrialTunnelsCatalog.Id?4:throw new ArgumentException("Unknown map "+id);
+        public static string Next(string id)=>id==CombatBowlCatalog.Id?IndustrialTunnelsCatalog.Id:id==IndustrialTunnelsCatalog.Id?LunarLaboratoryCatalog.Id:id==LunarLaboratoryCatalog.Id?WellArenaCatalog.Id:id==WellArenaCatalog.Id?QuarryArenaCatalog.Id:id==QuarryArenaCatalog.Id?FiringRangeCatalog.Id:CombatBowlCatalog.Id;
+        public static string Name(string id)=>id==QuarryArenaCatalog.Id?"Карьер — прототип":id==FiringRangeCatalog.Id?"Полигон":id==WellArenaCatalog.Id?"Станция Вега":id==LunarLaboratoryCatalog.Id?"Луна-9":id==CombatBowlCatalog.Id?"Орбита":id==IndustrialTunnelsCatalog.Id?"Тоннели":throw new ArgumentException("Unknown map "+id);
+        public static int Maximum(string id)=>id==QuarryArenaCatalog.Id?8:id==FiringRangeCatalog.Id?4:id==WellArenaCatalog.Id?8:id==LunarLaboratoryCatalog.Id?8:id==CombatBowlCatalog.Id?8:id==IndustrialTunnelsCatalog.Id?4:throw new ArgumentException("Unknown map "+id);
         public static bool Supports(string id,int count)=>count>=(id==FiringRangeCatalog.Id?1:2)&&count<=Maximum(id);
         public static ArenaDefinition Resolve(string id,string revision=null)
         {
+            if(id==QuarryArenaCatalog.Id&&(revision==null||revision==QuarryArenaCatalog.Revision))return QuarryArenaCatalog.Build();
             if(id==FiringRangeCatalog.Id&&(revision==null||revision==FiringRangeCatalog.Revision))return FiringRangeCatalog.Build();
             if(id==CombatBowlCatalog.Id&&revision=="19")return Previous(CombatBowlCatalog.Build(true),revision);
             if(id==LunarLaboratoryCatalog.Id&&revision=="8")return Previous(LunarLaboratoryCatalog.Draft(previousForgePlacement:true),revision);

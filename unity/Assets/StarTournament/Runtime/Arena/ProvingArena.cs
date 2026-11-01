@@ -113,6 +113,11 @@ namespace StarTournament.ProvingGround
                 // Eight voxels per physical capsule radius prevent stair/window quantization from inventing shortcuts.
                 settings.overrideVoxelSize=true;settings.voxelSize=profile.Get("player.capsule.radius")/8;
             }
+            if(Definition.MapId==QuarryArenaCatalog.Id)
+            {
+                settings.agentRadius+=QuarryArenaCatalog.AuthoringProfile().Get("quarry.navigationClearance");
+                settings.overrideVoxelSize=true;settings.voxelSize=profile.Get("player.capsule.radius")/8;
+            }
             settings.agentClimb=profile.Get("player.movement.stepOffset"); settings.agentSlope=profile.Get("player.movement.slopeLimitDegrees");
             var sources=new List<NavMeshBuildSource>();
             NavMeshBuilder.CollectSources(transform,(1<<WorldLayer)|(1<<MovementOnlyLayer),NavMeshCollectGeometry.PhysicsColliders,0,new List<NavMeshBuildMarkup>(),sources);
@@ -149,6 +154,8 @@ namespace StarTournament.ProvingGround
                 var steps=decoration.AddComponent<IndustrialTunnelsPresentation>().BuildSteps(Definition,artProfile??ProvingProfile.CreateIndustrialTunnelsPresentation());
                 while(steps.MoveNext()){if(asynchronous)yield return steps.Current;}
             }
+            if(Definition.MapId==QuarryArenaCatalog.Id)
+            {var decoration=new GameObject("Quarry prototype presentation");decoration.transform.SetParent(transform,false);decoration.AddComponent<QuarryArenaPresentation>().Build(Definition);}
             if(Definition.MapId==FiringRangeCatalog.Id)
             {var decoration=new GameObject("Firing range presentation");decoration.transform.SetParent(transform,false);decoration.AddComponent<FiringRangePresentation>().Build(Definition);}
             trace.Mark("presentation");
