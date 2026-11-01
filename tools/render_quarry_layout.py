@@ -104,8 +104,12 @@ def render(source, target):
         return y
     item_rows(weapons,'W',213,'#a34232');text(1160,568,'БОНУСЫ',23);item_rows(bonus,'B',610,'#197a61')
     text(1160,973,'СПАВНЫ И МАРШРУТЫ',21)
-    text(1160,1010,'S1–S2: 0 м   S3–S5: +4 м',18,'#a4c6ff');text(1160,1038,'S6–S8: +8 м',18,'#a4c6ff')
-    text(65,1050,'Пунктир в центре — тоннель под площадкой; B3 находится внизу, на отметке 0 м.',19)
+    for row,height in enumerate(sorted({p['y'] for p in arena['Spawns']})):
+        starts=', '.join('S'+str(i) for i,p in enumerate(arena['Spawns'],1) if p['y']==height)
+        text(1160,1010+row*28,f"{height:+g} м: {starts}",18,'#a4c6ff')
+    tunnel_starts=[i for i,p in enumerate(arena['Spawns'],1) if p['y']==0 and -10<p['x']<14 and -12<p['z']<8]
+    suffix=('S'+', S'.join(map(str,tunnel_starts))+' и B3 — в тоннеле, 0 м. B5 — на крыше, +4 м.') if tunnel_starts else 'B3 находится внизу, на отметке 0 м.'
+    text(65,1050,'Пунктир в центре — тоннель. '+suffix,19)
     text(65,1085,'Жёлтые стрелки — подъёмы. Бирюзовые — выходы на крышу тоннеля.',19,'#9aafbf')
     text(65,1120,'Контуры препятствий — проекция геометрии. Навес показан пунктиром, чтобы видеть точки под ним.',17,'#9aafbf')
     # Ten-metre scale taken from the same projection as the map.

@@ -96,7 +96,7 @@ namespace StarTournament.ProvingGround
             wall = Material(new Color32(202, 214, 218, 255));
             accent = Material(new Color32(31, 188, 196, 255));
             var slice=new LoadingWorkSlice();
-            var quarryShape=Definition.MapId==QuarryArenaCatalog.Id&&(Definition.Revision=="3"||Definition.Revision=="4")?gameObject.AddComponent<QuarryRockProjection>():null;
+            var quarryShape=Definition.MapId==QuarryArenaCatalog.Id&&(Definition.Revision=="3"||Definition.Revision=="4"||Definition.Revision=="5")?gameObject.AddComponent<QuarryRockProjection>():null;
             foreach(var solid in Definition.Solids){if(asynchronous&&slice.Expired){yield return null;slice.Restart();}var go=Box(solid.Id,solid.Position,solid.Size,solid.Material=="floor"?floor:solid.Material=="wall"?wall:accent,solid.Layer);go.transform.rotation=solid.Rotation;if(quarryShape)quarryShape.Apply(go,solid);var collider=go.GetComponent<Collider>();if(solid.Surface=="lunar-glass")go.AddComponent<NativeSightTransparent>();if(!string.IsNullOrEmpty(solid.Support))supports[collider]=solid.Support;if(solid.Surface=="grating")rocketGrating.Add(collider);}
             navigationTransitions=Definition.Transitions;Spawns=(Vector3[])Definition.Spawns.Clone();LowerRoutePoint=Definition.RouteAnchors[0];UpperRoutePoint=Definition.RouteAnchors[1];
             Physics.SyncTransforms();trace.Mark("solids");

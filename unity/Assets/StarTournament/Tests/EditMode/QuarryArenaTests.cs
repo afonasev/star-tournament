@@ -21,7 +21,24 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(d.Solids.Single(s=>s.Id=="center-east-bridge").Support,Is.EqualTo(QuarryArenaCatalog.Terrace));
             var industrial=AuthoredArenaCatalog.Resolve(d.MapId,"3");Assert.That(industrial.Identity,Is.EqualTo("quarry-prototype-v1@3"));Assert.That(industrial.Solids.Any(s=>s.Id=="spawn-0-roof"),Is.True);
             Assert.That(d.Solids.Any(s=>s.Id.StartsWith("spawn-")),Is.False,"No repeated spawn room geometry remains");
-            Assert.That(d.Spawns,Is.EqualTo(industrial.Spawns));Assert.That(d.Pickups.Select(p=>p.Anchor),Is.EqualTo(industrial.Pickups.Select(p=>p.Anchor)));
+            var open=AuthoredArenaCatalog.Resolve(d.MapId,"4");Assert.That(open.Identity,Is.EqualTo("quarry-prototype-v1@4"));
+            Assert.That(open.Spawns,Is.EqualTo(industrial.Spawns));Assert.That(open.Pickups.Select(p=>p.Anchor),Is.EqualTo(industrial.Pickups.Select(p=>p.Anchor)));
+            // The only removed solids are buried toe fill cells; walking ramp geometry stays exact.
+            var previousSolids=open.Solids.Where(s=>!s.Id.Contains("-lower-fill-")||s.Size.y>.02f).ToArray();
+            Assert.That(open.Solids.Length-previousSolids.Length,Is.EqualTo(8));
+            Assert.That(d.Solids.Length,Is.EqualTo(previousSolids.Length));
+            for(int i=0;i<d.Solids.Length;i++)
+            {
+                var previous=JsonUtility.FromJson<ArenaSolid>(JsonUtility.ToJson(previousSolids[i]));
+                if(previous.Support==QuarryArenaCatalog.Terrace&&(previous.Id.StartsWith("outcrop-")||previous.Id.StartsWith("tunnel-roof-")))
+                {Assert.That(d.Solids[i].Material,Is.EqualTo("floor"));Assert.That(previous.Material,Is.EqualTo("quarry-rock"));previous.Material="floor";}
+                Assert.That(JsonUtility.ToJson(d.Solids[i]),Is.EqualTo(JsonUtility.ToJson(previous)),"Unchanged geometry except explicit roof floor classification: "+previous.Id);
+            }
+            for(int i=0;i<8;i++)if(i!=2)Assert.That(d.Spawns[i],Is.EqualTo(open.Spawns[i]));
+            Assert.That(d.Spawns[2],Is.EqualTo(new Vector3(-6,0,4)));Assert.That(d.SpawnRegions[2].Support,Is.EqualTo(QuarryArenaCatalog.Ground));
+            var damage=d.Pickups.Single(p=>p.Kind==ArenaPickupKind.Damage);Assert.That(damage.Anchor,Is.EqualTo(new Vector3(0,4,0)));Assert.That(damage.Support,Is.EqualTo(QuarryArenaCatalog.Terrace));
+            var armor=d.Pickups.Where(p=>p.Kind==ArenaPickupKind.Armor).ToArray();Assert.That(armor[0].Anchor.x,Is.LessThan(0));Assert.That(armor[0].Anchor.z,Is.LessThan(0));Assert.That(armor[0].Anchor.y,Is.Zero);Assert.That(armor[1].Anchor.x,Is.GreaterThan(0));Assert.That(armor[1].Anchor.z,Is.GreaterThan(0));Assert.That(armor[1].Anchor.y,Is.EqualTo(8));
+            Assert.That(d.Pickups.Select(p=>p.Kind),Is.EqualTo(open.Pickups.Select(p=>p.Kind)));
             var frozen=AuthoredArenaCatalog.Freeze(d.MapId,movement);Assert.That(JsonUtility.ToJson(frozen.Definition),Is.EqualTo(JsonUtility.ToJson(d)));
             d.Spawns[0]=Vector3.one;Assert.That(frozen.Definition.Spawns[0],Is.Not.EqualTo(d.Spawns[0]),"Frozen definition owns its data");
         }

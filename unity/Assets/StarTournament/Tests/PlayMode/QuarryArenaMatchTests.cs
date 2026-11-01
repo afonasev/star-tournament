@@ -41,6 +41,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 while(ground.Session.Time<12){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline),"Short bot match must progress");yield return null;}
                 var played=ground.Session.Capture();int moved=Enumerable.Range(0,8).Count(i=>Vector3.Distance(before.Poses[i].Position,played.Poses[i].Position)>3);
                 Assert.That(moved,Is.GreaterThanOrEqualTo(2),"Bots leave spawn pockets");File.WriteAllText(Path.Combine(DirectoryPath,"bot-match.json"),JsonUtility.ToJson(played,true));
+                // Preserve the original 12s match witness, then let the configured first damage bonus appear naturally for the layout frames.
+                double appearance=before.Time+before.DamagePickup.Remaining+.1;
+                while(ground.Session.Time<appearance){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline),"First pickup appearance must remain within the original deadline");yield return null;}
+                File.WriteAllText(Path.Combine(DirectoryPath,"pickup-view-state.json"),JsonUtility.ToJson(ground.Session.Capture(),true));
                 yield return EditorUiCapture.Capture(ground,Path.Combine(DirectoryPath,"match-hud.png"),1920,1080);
                 ground.OpenPauseReviewSeat(0);yield return null;
                 var arena=ground.CameraReviewArena;File.WriteAllText(Path.Combine(DirectoryPath,"arena-definition.json"),JsonUtility.ToJson(arena.Definition,true));var nav=arena.Surface.navMeshData;var geometry=JsonUtility.ToJson(arena.Definition);
@@ -62,6 +66,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 cameraGo.transform.position=new Vector3(-30,1.7f,-35);cameraGo.transform.LookAt(new Vector3(-20,1.8f,-25));Capture(camera,"open-lower-cover");
                 cameraGo.transform.position=new Vector3(-31,5.7f,9);cameraGo.transform.LookAt(new Vector3(-21,5.5f,1));Capture(camera,"open-middle-cover");
                 cameraGo.transform.position=new Vector3(-7,9.7f,23);cameraGo.transform.LookAt(new Vector3(-22,9.6f,29));Capture(camera,"open-upper-cover");
+                cameraGo.transform.position=new Vector3(-6,1.7f,4);cameraGo.transform.LookAt(new Vector3(13,1.7f,4));Capture(camera,"s3-tunnel-exit");
+                cameraGo.transform.position=new Vector3(6,5.7f,-7);cameraGo.transform.LookAt(new Vector3(0,4.2f,0));Capture(camera,"center-damage-point");
+                cameraGo.transform.position=new Vector3(-35,1.7f,-33);cameraGo.transform.LookAt(new Vector3(-41,1,-35));Capture(camera,"armor-south-west");
+                cameraGo.transform.position=new Vector3(34,9.7f,30);cameraGo.transform.LookAt(new Vector3(41,9,35));Capture(camera,"armor-north-east");
                 camera.orthographic=true;camera.orthographicSize=49;cameraGo.transform.position=new Vector3(0,95,1);cameraGo.transform.rotation=Quaternion.Euler(90,0,0);Capture(camera,"top-down");
                 Object.Destroy(cameraGo);
                 ground.SendMessage("Repeat");yield return NativeLoadingTestScene.Wait(ground);

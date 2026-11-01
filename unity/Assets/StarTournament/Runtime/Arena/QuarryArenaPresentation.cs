@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
             var profile=ProvingProfile.CreateQuarryAuthoring(definition);oldAmbient=RenderSettings.ambientLight;oldMode=RenderSettings.ambientMode;ownsAmbient=true;
             RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=Color.white*profile.Get("quarry.art.ambient");
             var palette=new Material[13];for(int i=0;i<palette.Length;i++)palette[i]=Make(profile,i);
-            bool industrial=(definition.Revision=="3"||definition.Revision=="4");
+            bool industrial=(definition.Revision=="3"||definition.Revision=="4"||definition.Revision=="5");
             palette[12].EnableKeyword("_EMISSION");palette[12].SetColor("_EmissionColor",palette[12].color*profile.Get("quarry.art.workshopLightIntensity"));
             if(industrial)
             {
@@ -35,7 +35,8 @@ namespace StarTournament.ProvingGround
             foreach(var solid in definition.Solids)
             {
                 var renderer=lookup.Find(solid.Id).GetComponent<MeshRenderer>();
-                int index=solid.Material=="quarry-metal"?7:solid.Material=="quarry-machine"?8:solid.Material=="quarry-rubber"?9:solid.Material=="quarry-glass"?10:solid.Material=="quarry-portal"?6:solid.Material=="quarry-crate"?3:solid.Material=="floor"?(solid.Support==QuarryArenaCatalog.Ground?0:solid.Support==QuarryArenaCatalog.Upper?5:2):1;
+                bool rockFloor=solid.Material=="floor"&&(solid.Id.StartsWith("outcrop-")||solid.Id.StartsWith("tunnel-roof-"));
+                int index=rockFloor?1:solid.Material=="quarry-metal"?7:solid.Material=="quarry-machine"?8:solid.Material=="quarry-rubber"?9:solid.Material=="quarry-glass"?10:solid.Material=="quarry-portal"?6:solid.Material=="quarry-crate"?3:solid.Material=="floor"?(solid.Support==QuarryArenaCatalog.Ground?0:solid.Support==QuarryArenaCatalog.Upper?5:2):1;
                 renderer.sharedMaterial=palette[index];
             }
             markings=ArenaPickupMarkings.Build(transform,definition,palette[4],profile.Get("quarry.art.pickupRingRadius"),profile.Get("quarry.art.pickupRingWidth"),_=>profile.Get("quarry.art.pickupRingHeight"));

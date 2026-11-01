@@ -7,10 +7,23 @@ namespace StarTournament.ProvingGround.Tests
 {
     public sealed class QuarryArenaPhysicsTests
     {
+        [System.Serializable] sealed class RouteMetrics {public float armorRouteMeters,previousArmorRouteMeters,spawnToHealDistance;public Vector3 tunnelSpawn;}
         GameObject root;ProvingArena arena;ProvingProfile movement;
         [SetUp] public void Setup(){root=new GameObject("Quarry physics");movement=ProvingProfile.CreateDefault();arena=root.AddComponent<ProvingArena>();arena.Build(AuthoredArenaCatalog.Freeze(QuarryArenaCatalog.Id,movement),movement);}
         [UnityTearDown] public IEnumerator Cleanup(){Object.Destroy(root);yield return null;}
         CharacterMotor Motor(Vector3 p){var go=new GameObject("quarry-capsule");go.transform.SetParent(root.transform);go.layer=ProvingArena.ParticipantLayer;go.AddComponent<CharacterController>();var m=go.AddComponent<CharacterMotor>();m.Initialize(movement,p,arena);return m;}
+        [UnityTest] public IEnumerator LowerRampToesHaveContinuousNamedPhysicalSupport()
+        {
+            yield return null;var routes=new NativeNavigationProvider(arena,movement,ProvingProfile.CreateNavigationDefault());
+            // Cover the shallow first centimetres where foundation used to protrude through the ramp skin.
+            foreach(float side in new[]{-1f,1f})foreach(float xOffset in new[]{-2f,0f,2f})
+                for(int sample=1;sample<=6;sample++)
+                {
+                    float advance=sample*.02f;var feet=new Vector3(side*38+xOffset,advance*.2f,-28+advance);
+                    Assert.That(routes.TryPhysicalSupport(feet,out var support),Is.True,"Unsupported ramp toe "+feet);
+                    Assert.That(support.Support,Is.EqualTo(side<0?"transition:quarry-west-lower":"transition:quarry-east-lower"));
+                }
+        }
         [UnityTest] public IEnumerator SpawnAllocationClearanceAndAllSupplyRoutes()
         {
             yield return null;Physics.SyncTransforms();
@@ -34,6 +47,18 @@ namespace StarTournament.ProvingGround.Tests
             foreach(var spawn in arena.Spawns)foreach(var item in arena.Definition.Pickups)
                 if(!routes.TryRoute(spawn,item.Anchor,out _,out var failure))failures.Add(spawn+" -> "+item.Id+": "+failure);
             Assert.That(failures,Is.Empty,string.Join("\n",failures));
+            float ArmorRoute(ArenaDefinition definition)
+            {
+                var armor=definition.Pickups.Where(p=>p.Kind==ArenaPickupKind.Armor).ToArray();
+                Assert.That(routes.TryRoute(armor[0].Anchor,armor[1].Anchor,out var route,out var failure),Is.True,failure);
+                float length=0;var previous=armor[0].Anchor;foreach(var point in route){length+=Vector3.Distance(previous,point.Position);previous=point.Position;}return length;
+            }
+            float current=ArmorRoute(arena.Definition),prior=ArmorRoute(AuthoredArenaCatalog.Resolve(QuarryArenaCatalog.Id,"4"));
+            Assert.That(current,Is.GreaterThan(prior),"Opposite corners require a longer actual walking route");
+            TestContext.WriteLine("Armor route current="+current+"m, revision4="+prior+"m");
+            var output=System.Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QUARRY_QA_DIR");
+            if(!string.IsNullOrEmpty(output)){System.IO.Directory.CreateDirectory(output);System.IO.File.WriteAllText(System.IO.Path.Combine(output,"route-metrics.json"),JsonUtility.ToJson(new RouteMetrics{armorRouteMeters=current,previousArmorRouteMeters=prior,tunnelSpawn=arena.Spawns[2],spawnToHealDistance=Vector3.Distance(arena.Spawns[2],arena.Definition.Pickups.Single(p=>p.Kind==ArenaPickupKind.FullHeal).Anchor)},true));}
+
             foreach(var pos in arena.Spawns.Concat(arena.Definition.Pickups.Select(p=>p.Anchor)))
             {
                 var motor=Motor(pos);for(int tick=0;tick<10;tick++)motor.Tick(default,1/60f);
@@ -73,9 +98,10 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(next,Is.EqualTo(points.Length),"Unbroken full climb side="+side+" reverse="+reverse+" at "+motor.State.Position);Assert.That(middle,Is.True);Object.DestroyImmediate(motor.gameObject);
             }
             var tunnel=new[]{new Vector3(-6,0,-17),new Vector3(-6,0,4),new Vector3(18,0,4)};
+            foreach(var route in new[]{tunnel,new[]{arena.Spawns[2],tunnel[0]},new[]{arena.Spawns[2],tunnel[2]}})
             foreach(bool reverse in new[]{false,true})
             {
-                var points=reverse?tunnel.Reverse().ToArray():tunnel;var motor=Motor(points[0]);int next=1;
+                var points=reverse?route.Reverse().ToArray():route;var motor=Motor(points[0]);int next=1;
                 for(int tick=0;tick<1200&&next<points.Length;tick++)
                 {
                     var delta=points[next]-motor.State.Position;delta.y=0;if(delta.magnitude<.2f){next++;continue;}
@@ -124,6 +150,14 @@ namespace StarTournament.ProvingGround.Tests
                 {
                     var below=motor.State;below.Position=new Vector3(pickup.Anchor.x,0,pickup.Anchor.z);below.Velocity=Vector3.zero;motor.RestoreState(below);
                     session.Tick(new LocalAction[1],1/60f);Assert.That(session.WeaponPickups.Single(p=>p.InstanceId==pickup.Id).Available,Is.True,"No collection through terrace slab");
+                }
+                if(pickup.Kind==ArenaPickupKind.Damage)
+                {
+                    // A clear foot position just inside the tunnel, within the pickup's horizontal radius.
+                    var below=motor.State;below.Position=new Vector3(pickup.Anchor.x,0,pickup.Anchor.z+1);below.Velocity=Vector3.zero;motor.RestoreState(below);
+                    session.Tick(new LocalAction[1],1/60f);Assert.That(motor.State.Position.y,Is.EqualTo(0).Within(.15f));
+                    Assert.That(session.DamagePickup.Available,Is.True,"No collection through tunnel roof");
+                    Assert.That(session.Capture().DamageRemaining[0],Is.Zero);
                 }
                 var pose=motor.State;pose.Position=pickup.Anchor;pose.Velocity=Vector3.zero;motor.RestoreState(pose);
                 if(pickup.Kind==ArenaPickupKind.FullHeal)session.ApplyDamage(0,session.Life(0).Life,25);
