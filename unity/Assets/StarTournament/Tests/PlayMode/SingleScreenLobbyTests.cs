@@ -55,6 +55,87 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             while(stack.Count>0){var b=stack.Pop();if(b==null||!seen.Add(b))continue;var n=b.navigation;foreach(var next in new[]{n.selectOnUp,n.selectOnDown,n.selectOnLeft,n.selectOnRight})if(next!=null)stack.Push(next);}
             return new HashSet<string>(seen.Select(b=>b.name));
         }
+        [UnityTest] public IEnumerator MapCapacityTrimsLastBotsAndPreservesHumansAndRemainingIdentities()
+        {
+            Call("BeginLobbyJoin",second);yield return null;yield return Click("lobby-profile-none");
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(2));
+            for(int i=0;i<6;i++)ground.AddBot();
+            var setup=Field<NativeBotSetup>("botSetup");var survivors=Enumerable.Range(0,2).Select(setup.At).ToArray();
+            var bindings=Enumerable.Range(0,2).Select(i=>Field<SeatInputCoordinator>("input").DeviceAt(i)).ToArray();
+            yield return Click("lobby-map");
+            foreach(var id in new[]{CombatBowlCatalog.Id,IndustrialTunnelsCatalog.Id,LunarLaboratoryCatalog.Id,WellArenaCatalog.Id,FiringRangeCatalog.Id})
+            {
+                var badge=B("lobby-map-"+id).transform.Find("map-capacity");
+                Assert.That(badge.Find("capacity").GetComponent<Text>().text,Is.EqualTo(AuthoredArenaCatalog.Maximum(id).ToString()));
+                Assert.That(badge.Find("players-icon").GetComponent<Image>().sprite,Is.Not.Null);
+                Assert.That(badge.GetComponentsInChildren<Graphic>().All(g=>!g.raycastTarget),Is.True);
+            }
+            yield return Capture("capacity-map-picker");
+            EventSystem.current.SetSelectedGameObject(B("lobby-map-"+IndustrialTunnelsCatalog.Id).gameObject);yield return null;
+            yield return Press(GamepadButton.East);Assert.That(setup.Count,Is.EqualTo(6),"Cancel preserves every bot");
+            yield return Click("lobby-map");yield return Click("lobby-map-"+IndustrialTunnelsCatalog.Id);
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(2));Assert.That(setup.Count,Is.EqualTo(2));
+            for(int i=0;i<2;i++){Assert.That(setup.At(i),Is.EqualTo(survivors[i]));Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(i),Is.SameAs(bindings[i]));}
+            Assert.That(ground.GetComponentsInChildren<Button>().Count(b=>b.name.StartsWith("roster-empty-")),Is.Zero);
+            Assert.That(B("lobby-map").transform.Find("map-capacity/capacity").GetComponent<Text>().text,Is.EqualTo("4"));
+            yield return Capture("capacity-four-full");
+            ground.RemoveBot(1);yield return null;yield return Capture("capacity-four-free");
+            ground.SelectAuthoredMap(CombatBowlCatalog.Id);yield return null;
+            Assert.That(setup.Count,Is.EqualTo(1),"Returning to eight places does not restore removed bots");
+            Assert.That(ground.GetComponentsInChildren<Button>().Count(b=>b.name.StartsWith("roster-empty-")),Is.EqualTo(5));
+        }
+        [UnityTest] public IEnumerator FullSmallMapRejectsAddAndJoinIncludingStaleConfirmation()
+        {
+            ground.SelectAuthoredMap(IndustrialTunnelsCatalog.Id);
+            for(int i=0;i<3;i++)ground.AddBot();yield return null;
+            Assert.That(B("roster-add-bot").interactable,Is.False);Assert.That(B("roster-add-human").interactable,Is.False);
+            Assert.That(Reachable(),Does.Not.Contain("roster-add-bot"));Assert.That(Reachable(),Does.Not.Contain("roster-add-human"));
+            ground.AddBot();Call("BeginLobbyBot");Call("BeginLobbyDevices");Call("BeginLobbyJoin",second);
+            Assert.That(Field<GameObject>("lobbyDialog")==null||!Field<GameObject>("lobbyDialog").activeSelf,Is.True);
+            typeof(ProvingGround).GetField("lobbyJoinDevice",Private).SetValue(ground,second);
+            Call("CommitLobbyHuman",NativeTeam.TeamA);Call("CommitLobbyBot",NativeTeam.TeamA);
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(1));Assert.That(ground.SetupBotCount,Is.EqualTo(3));
+            ground.RemoveBot(2);yield return null;
+            Assert.That(B("roster-add-bot").interactable,Is.True);Assert.That(B("roster-add-human").interactable,Is.True);
+            yield return Click("roster-add-bot");ground.AddBot();yield return null;
+            yield return Click("lobby-add-difficulty-1");Assert.That(ground.SetupBotCount,Is.EqualTo(3),"Confirmation rechecks the last free place");
+            ground.SelectAuthoredMap(FiringRangeCatalog.Id);ground.RemoveBot(2);ground.AddBot();yield return null;
+            Assert.That(ground.SetupBotCount,Is.EqualTo(2),"Training still forbids adding bots");
+            Assert.That(B("roster-add-bot").interactable,Is.False);
+        }
+        [UnityTest] public IEnumerator FourHumanSeatsSurviveSmallerMapSelection()
+        {
+            Call("SetSeatCount",4);for(int i=0;i<4;i++)ground.AddBot();
+            ground.SelectAuthoredMap(IndustrialTunnelsCatalog.Id);yield return null;
+            Assert.That(ground.LocalSeatCount,Is.EqualTo(4));Assert.That(ground.SetupBotCount,Is.Zero);
+            Assert.That(Enumerable.Range(0,4).Any(Field<NativeBotSetup>("botSetup").IsAi),Is.False);
+        }
+        [UnityTest] public IEnumerator TeamModeKeepsEveryCardAndPortraitInPlace()
+        {
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                foreach(var map in new[]{IndustrialTunnelsCatalog.Id,CombatBowlCatalog.Id})
+                {
+                    ground.SelectAuthoredMap(map);ground.AddBot();yield return null;
+                    Canvas.ForceUpdateCanvases();
+                    var cards=ground.GetComponentsInChildren<Button>().Where(b=>b.name.StartsWith("roster-card-")||b.name.StartsWith("roster-empty-")).ToArray();
+                    var corners=cards.Select(b=>{var v=new Vector3[4];((RectTransform)b.transform).GetWorldCorners(v);return v;}).ToArray();
+                    var parents=cards.Select(b=>b.transform.parent).ToArray();
+                    for(int step=0;step<2;step++)
+                    {
+                        ground.SetMatchMode(step==0?NativeMatchMode.Teams:NativeMatchMode.Ffa);yield return null;Canvas.ForceUpdateCanvases();
+                        for(int i=0;i<cards.Length;i++)
+                        {
+                            var after=new Vector3[4];((RectTransform)cards[i].transform).GetWorldCorners(after);
+                            Assert.That(cards[i].transform.parent,Is.SameAs(parents[i]));Assert.That(after,Is.EqualTo(corners[i]));
+                            var portrait=cards[i].transform.Find("portrait");if(portrait)Assert.That(portrait.GetComponent<Image>().preserveAspect,Is.True);
+                        }
+                        Assert.That(ground.GetComponentsInChildren<LobbyTeamMaterial>().Any(),Is.EqualTo(step==0));
+                        yield return Capture("capacity-"+AuthoredArenaCatalog.Maximum(map)+"-"+(step==0?"teams":"ffa"));
+                    }
+                }
+            }
+        }
         [UnityTest] public IEnumerator F05DisconnectedDeviceRemainsExplicit()
         {
             using(EditorUiCapture.FixedViewport(ground,1920,1080))

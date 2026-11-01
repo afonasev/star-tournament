@@ -103,7 +103,7 @@ namespace StarTournament.ProvingGround
         bool TrainingSelected=>SelectedMapId==FiringRangeCatalog.Id;
         bool TrainingHumansOnly=>botSetup.Count==0&&!Enumerable.Range(0,LocalSeatCount).Any(botSetup.IsAi);
         public NativeMatchComposition SetupComposition()=>TrainingSelected?FiringRangeCatalog.Composition(LocalSeatCount):botSetup.Build(LocalSeatCount,SetupMode,teamAssignments,swappedTeamColors);
-        public void AddBot(){if(phase!=Phase.Setup||!botSetup.CanAdd(LocalSeatCount))return;var team=SmallerRosterTeam(LocalSeatCount);botSetup.Add(LocalSeatCount);if(SetupMode==NativeMatchMode.Teams)botSetup.SetTeam(botSetup.Count-1,team);botSetup.SetDifficulty(botSetup.Count-1,lastBotDifficulty);setupError=null;RefreshInterface();}
+        public void AddBot(){if(phase!=Phase.Setup||!LobbyCanAddBot)return;var team=SmallerRosterTeam(LocalSeatCount);botSetup.Add(LocalSeatCount);if(SetupMode==NativeMatchMode.Teams)botSetup.SetTeam(botSetup.Count-1,team);botSetup.SetDifficulty(botSetup.Count-1,lastBotDifficulty);setupError=null;RefreshInterface();}
         public void RemoveBot(int index){if(phase!=Phase.Setup)return;botSetup.Remove(index);setupError=null;RefreshInterface();if(setupStep==2)FocusRosterCard(LocalSeatCount+Math.Min(index,botSetup.Count-1));else Select(setupNext);}
         public void SetBotDifficulty(int index,int value){if(phase!=Phase.Setup)return;botSetup.SetDifficulty(index,value);RefreshInterface();}
         public void SetBotTeam(int index,NativeTeam value){if(phase!=Phase.Setup)return;botSetup.SetTeam(index,value);setupError=null;RefreshInterface();}
@@ -170,7 +170,12 @@ namespace StarTournament.ProvingGround
         public void SelectAuthoredMap(string id)
         {
             if(phase!=Phase.Setup)throw new InvalidOperationException("Map selection is setup-only");
-            AuthoredArenaCatalog.Name(id);SelectedMapId=id;setupError=null;RefreshInterface();
+            AuthoredArenaCatalog.Name(id);
+            // Extra bots follow the (at most four) view seats. Trim only the tail;
+            // human devices/profiles and all remaining participant identities survive.
+            int capacity=AuthoredArenaCatalog.Maximum(id);
+            while(LocalSeatCount+botSetup.Count>capacity)botSetup.Remove(botSetup.Count-1);
+            SelectedMapId=id;setupError=null;RefreshInterface();
         }
         Button arenaButton;
 
@@ -219,7 +224,7 @@ namespace StarTournament.ProvingGround
             playerProfiles = new PlayerProfileCatalog(profilesPath,legacyProfilesPath);
             input.Joined += OnDeviceJoined;
             input.JoinRejected += device => {
-                if(phase==Phase.Setup && setupStep==2 && LocalSeatCount<4 && RosterTotal<8)
+                if(phase==Phase.Setup && setupStep==2 && LocalSeatCount<4 && RosterTotal<LobbyCapacity)
                 {
                     int seat=LocalSeatCount;botSetup.SetAi(seat,false);SetSeatCount(seat+1);
                     if(input.Assign(seat,device)){OnDeviceJoined(seat,device);return;}
@@ -913,7 +918,7 @@ namespace StarTournament.ProvingGround
         void SetSeatCount(int count)
         {
             // Structural product limits; never silently discard configured bots.
-            if(phase!=Phase.Setup || count<1 || count>SeatInputCoordinator.SeatCount || count+botSetup.Count>NativeMatchRoster.MaximumParticipants) return;
+            if(phase!=Phase.Setup || count<1 || count>SeatInputCoordinator.SeatCount || count+botSetup.Count>LobbyCapacity) return;
             int previous=LocalSeatCount;
             // Extra-bot indices follow the view seats; preserve the participant being edited on Y join.
             if(rosterEditing>=previous)rosterEditing+=count-previous;
@@ -1477,7 +1482,7 @@ namespace StarTournament.ProvingGround
             }
             if(botPanel)
             {
-                botPanel.SetActive(phase==Phase.Setup);addBot.interactable=botSetup.CanAdd(LocalSeatCount);
+                botPanel.SetActive(phase==Phase.Setup);addBot.interactable=LobbyCanAddBot;
                 for(int i=0;i<botRows.Length;i++)
                 {
                     botRows[i].SetActive(i<botSetup.Count);if(i>=botSetup.Count)continue;

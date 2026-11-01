@@ -248,7 +248,7 @@ namespace StarTournament.ProvingGround
         Button[] LayoutRosterGrid(Transform content,int[] participants,int slots,int columns,float height)
         {
             var cards=participants.Select(i=>rosterCards[i]).ToList();
-            while(cards.Count<slots){var empty=rosterEmpty[rosterEmptyUsed++];empty.gameObject.SetActive(true);cards.Add(empty);}
+            while(cards.Count<slots){var empty=rosterEmpty[rosterEmptyUsed++];empty.gameObject.SetActive(true);empty.interactable=LobbyCanAddBot;cards.Add(empty);}
             var rect=(RectTransform)content;int rows=Math.Max(1,Mathf.CeilToInt(cards.Count/(float)columns));
             float available=((RectTransform)content.parent).rect.height;
             float rowHeight=Mathf.Min(height,available/2f),gridHeight=rows*rowHeight;
@@ -266,8 +266,7 @@ namespace StarTournament.ProvingGround
         void RefreshRosterUi()
         {
             if(rosterEditor==null)return;
-            bool teams=SetupMode==NativeMatchMode.Teams;
-            rosterFfaScroll.gameObject.SetActive(!teams);rosterBluePanel.SetActive(teams);rosterRedPanel.SetActive(teams);
+            rosterFfaScroll.gameObject.SetActive(true);rosterBluePanel.SetActive(false);rosterRedPanel.SetActive(false);
             for(int i=0;i<rosterCards.Length;i++)
             {
                 bool active=i<RosterTotal;rosterCards[i].gameObject.SetActive(active);if(!active)continue;
@@ -290,20 +289,15 @@ namespace StarTournament.ProvingGround
             foreach(var empty in rosterEmpty)empty.gameObject.SetActive(false);rosterEmptyUsed=0;
             Canvas.ForceUpdateCanvases();
             var all=Enumerable.Range(0,RosterTotal).ToArray();
-            if(teams)
-            {
-                var blue=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamA).ToArray();var red=all.Where(i=>RosterTeamAt(i)==NativeTeam.TeamB).ToArray();
-                int blueSlots=Mathf.Clamp(4,blue.Length,8-red.Length);
-                lobbyRosterGroups=new[]{LayoutRosterGrid(rosterBlue,blue,blueSlots,2,250),LayoutRosterGrid(rosterRed,red,8-blueSlots,2,250)};
-            }
-            else lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,8,4,250)};
+            // One grid owns both modes: team changes affect tint/background only.
+            lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,LobbyCapacity,4,250)};
             // Reparenting between FFA/team grids can disable a card without a new
             // EventSystem selection event. Restore the shared visual focus explicitly.
             foreach(var card in rosterCards.Concat(rosterEmpty))card.GetComponent<MenuPresentation>().SetFocused(EventSystem.current&&EventSystem.current.currentSelectedGameObject==card.gameObject);
-            rosterAddHuman.interactable=RosterTotal<8 && LocalSeatCount<4;rosterAddBot.interactable=RosterTotal<8;
+            rosterAddHuman.interactable=RosterTotal<LobbyCapacity && LocalSeatCount<4;rosterAddBot.interactable=LobbyCanAddBot;
             rosterAddHuman.GetComponentInChildren<Text>().color=rosterAddHuman.interactable?Color.white:(Color)new Color32(127,153,165,255);
             rosterAddBot.GetComponentInChildren<Text>().color=rosterAddBot.interactable?Color.white:(Color)new Color32(127,153,165,255);
-            rosterFull.text=RosterTotal==8?"Состав заполнен":LocalSeatCount==4?"Все 4 экрана назначены":"";
+            rosterFull.text=RosterTotal>=LobbyCapacity?"Состав заполнен":LocalSeatCount==4?"Все 4 экрана назначены":"";
             rosterEditor.SetActive(phase==Phase.Setup&&setupStep==2&&rosterEditing>=0);
             if(rosterEditing>=0 && rosterEditing<RosterTotal)RefreshRosterEditor();
             RefreshInlineCards();
