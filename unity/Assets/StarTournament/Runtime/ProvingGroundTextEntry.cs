@@ -14,6 +14,7 @@ namespace StarTournament.ProvingGround
         InputField textEntryTarget;
         NativeTextDraft textDraft;
         InputField.EndEditEvent textEndEdit;
+        Action<bool,string> textCompleted;
         Gamepad textPad;
         Keyboard textKeyboard;
         Text textEntryValue,textEntryCount,textEntryStatus;
@@ -31,9 +32,10 @@ namespace StarTournament.ProvingGround
             binding.Open=()=>{if(menuDevice is Gamepad pad)OpenTextEntry(field,pad,numeric);};
             field.onEndEdit.AddListener(_=>textFieldEndedFrame=Time.frameCount);
         }
-        void OpenTextEntry(InputField field,Gamepad pad,bool numeric)
+        void OpenTextEntry(InputField field,Gamepad pad,bool numeric,Action<bool,string> completed=null)
         {
             if(textEntryPanel||textClosing||!field.IsInteractable())return;
+            textCompleted=completed;
             textPad=pad;textEntryTarget=field;textOriginalCaret=field.caretPosition;
             textDraft=new NativeTextDraft(field.text,field.characterLimit,numeric,
                 field.onValidateInput==null?null:new Func<string,int,char,char>(field.onValidateInput));
@@ -133,7 +135,7 @@ namespace StarTournament.ProvingGround
                     if(apply)textEndEdit?.Invoke(target.text);
                 }
             }
-            textClosing=true;
+            textClosing=true;var completed=textCompleted;textCompleted=null;completed?.Invoke(apply,value);
         }
         bool UpdateTextEntry()
         {

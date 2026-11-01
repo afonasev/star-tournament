@@ -69,7 +69,7 @@ namespace StarTournament.ProvingGround
             public SettingsView(ProvingGround owner,bool inMatch,int seat,UnityEngine.Events.UnityAction close)
             {this.owner=owner;InMatch=inMatch;Seat=seat;this.close=close;}
             public void Open(int seat=-1,string profileId=null)
-            {Seat=seat;ProfileId=profileId;settingsSection=SettingsSection.Image;settingsHelpOpen=false;settingsDevicesOpen=false;resolutionPickerOpen=false;resetOpen=false;settingsOpenedFrame=Time.frameCount;RefreshSettingsUi();ConfigureSettingsNavigation();Select(settingsSectionButtons[0]);}
+            {Seat=seat;ProfileId=profileId;settingsSection=profileId==null?SettingsSection.Image:SettingsSection.Control;settingsHelpOpen=false;settingsDevicesOpen=false;resolutionPickerOpen=false;resetOpen=false;settingsOpenedFrame=Time.frameCount;RefreshSettingsUi();ConfigureSettingsNavigation();Select(settingsSectionButtons[(int)settingsSection]);}
             public void Close()
             {if(displayConfirmationActive)owner.RollbackDisplay();resolutionPickerOpen=false;settingsHelpOpen=false;settingsDevicesOpen=false;close();}
             void CloseSettings()=>Close();
@@ -367,7 +367,7 @@ namespace StarTournament.ProvingGround
                     selectOnLeft=left,selectOnRight=right };
             }
             Selectable FirstSettingsAction() => settingsSection==SettingsSection.Image?settingsModeButton:
-                settingsSection==SettingsSection.Graphics?settingsQualityButton:settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?settingsScaleSlider:settingsMasterSlider;
+                settingsSection==SettingsSection.Graphics?settingsQualityButton:settingsSection==SettingsSection.Control?settingsMouseSlider:settingsSection==SettingsSection.Interface?(ProfileId!=null?(Selectable)settingsFpsToggle:settingsScaleSlider):settingsMasterSlider;
             void ConfigureSettingsNavigation()
             {
                 if(resetOpen){Link(resetCancel,resetConfirm,resetConfirm,null,resetConfirm);Link(resetConfirm,resetCancel,resetCancel,resetCancel);return;}
@@ -419,6 +419,7 @@ namespace StarTournament.ProvingGround
             }
             void PreviewSettingsSection(SettingsSection section)
             {
+                if(ProfileId!=null&&section!=SettingsSection.Control&&section!=SettingsSection.Interface)return;
                 if(displayConfirmationActive||resolutionPickerOpen)return;
                 if(settingsSection==section&&!settingsHelpOpen&&!settingsDevicesOpen)return;
                 settingsHelpOpen=false;settingsDevicesOpen=false;settingsSection=section;
@@ -456,7 +457,7 @@ namespace StarTournament.ProvingGround
                 if(settingsDevicesOpen)settingsHeading.text="УПРАВЛЕНИЕ · УСТРОЙСТВА";
                 settingsDescription.text=settingsSection==SettingsSection.Image?"Экран общий для всех игроков; VSync ограничивает FPS частотой экрана":settingsSection==SettingsSection.Graphics?"Графика общая; тонкие коэффициенты доступны в лаборатории":
                     settingsSection==SettingsSection.Control?"Управление сохраняется лично; общие значения используются без профиля":
-                    settingsSection==SettingsSection.Interface?"Масштаб и контраст общие; FPS включается лично":
+                    settingsSection==SettingsSection.Interface?(ProfileId!=null?"Показ FPS сохраняется в этом профиле":"Масштаб и контраст общие; FPS включается лично"):
                     "Громкость общая для всех игроков";
                 if(settingsSection==SettingsSection.Image&&owner.displayConfirmationActive&&!displayConfirmationActive)settingsDescription.text="Другой игрок подтверждает общий режим экрана";
                 settingsDisplayMode.text="РЕЖИМ ЭКРАНА\n"+(EffectiveDisplayMode()==FullScreenMode.Windowed?"Окно":"Полный экран");

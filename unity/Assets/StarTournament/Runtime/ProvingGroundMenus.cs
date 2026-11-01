@@ -136,7 +136,8 @@ namespace StarTournament.ProvingGround
             var detailCard=Panel(profilesScreen.transform,"profile-detail-card",new Vector2(.59f,.12f),new Vector2(.94f,.89f),MenuCard);
             Label(listCard.transform,"profiles-title","ПРОФИЛИ ИГРОКОВ",35,new Vector2(.06f,.86f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,Color.white);
             var list=Panel(listCard.transform,"profile-list",new Vector2(.06f,.20f),new Vector2(.94f,.84f),new Color32(20,33,48,245));profileList=list.transform;
-            MenuButton(listCard.transform,"profile-create","+ СОЗДАТЬ ПРОФИЛЬ",new Vector2(.06f,.08f),new Vector2(.55f,.17f),CreateNamedProfile);
+            var createProfile=MenuButton(listCard.transform,"profile-create","+ СОЗДАТЬ ПРОФИЛЬ",new Vector2(.06f,.08f),new Vector2(.55f,.17f),CreateNamedProfile);
+            BindMenuShortcut(createProfile,MenuPadButton.West,()=>phase==Phase.Profiles);
             profilesBackButton=MenuButton(profilesScreen.transform,"profiles-back","‹ НАЗАД",new Vector2(.05f,.91f),new Vector2(.15f,.96f),ToMainMenu);
             BindMenuShortcut(profilesBackButton,MenuPadButton.East,()=>phase==Phase.Profiles);
             profileDetail=Label(detailCard.transform,"profile-detail","Выберите профиль",27,new Vector2(.08f,.77f),new Vector2(.95f,.97f),TextAnchor.MiddleLeft,MenuGold);
@@ -421,10 +422,13 @@ namespace StarTournament.ProvingGround
         }
         void CreateNamedProfile()
         {
-            var name=(profileNameInput.text??"").Trim();
-            if(name.Length==0||playerProfiles.Find(selectedProfileId)!=null&&name==playerProfiles.Find(selectedProfileId).Name)name="Игрок "+(playerProfiles.Profiles.Count+1);
-            var selected=CreateProfileWithGeneralSettings(name);
-            selectedProfileId=selected.Id;RefreshProfilesUi();
+            if(textEntryPanel||textClosing)return;
+            profileNameInput.SetTextWithoutNotify("");
+            OpenTextEntry(profileNameInput,menuDevice as Gamepad,false,(apply,name)=>
+            {
+                if(apply&&!string.IsNullOrWhiteSpace(name))selectedProfileId=CreateProfileWithGeneralSettings(name).Id;
+                RefreshProfilesUi();Select(profilesScreen.GetComponentsInChildren<Button>().First(b=>b.name=="profile-create"));
+            });
         }
         void RenameSelectedProfile()
         {

@@ -110,7 +110,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(ground.LocalSeatCount,Is.EqualTo(4));Assert.That(ground.SetupBotCount,Is.Zero);
             Assert.That(Enumerable.Range(0,4).Any(Field<NativeBotSetup>("botSetup").IsAi),Is.False);
         }
-        [UnityTest] public IEnumerator TeamModeKeepsEveryCardAndPortraitInPlace()
+        [UnityTest] public IEnumerator TeamGroupingKeepsCardParentsSizesAndPortraits()
         {
             using(EditorUiCapture.FixedViewport(ground,1920,1080))
             {
@@ -127,7 +127,8 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         for(int i=0;i<cards.Length;i++)
                         {
                             var after=new Vector3[4];((RectTransform)cards[i].transform).GetWorldCorners(after);
-                            Assert.That(cards[i].transform.parent,Is.SameAs(parents[i]));Assert.That(after,Is.EqualTo(corners[i]));
+                            Assert.That(cards[i].transform.parent,Is.SameAs(parents[i]));if(step==1)Assert.That(after,Is.EqualTo(corners[i]),"FFA positions return unchanged");
+                            Assert.That(after[2]-after[0],Is.EqualTo(corners[i][2]-corners[i][0]),"Team grouping preserves card dimensions");
                             var portrait=cards[i].transform.Find("portrait");if(portrait)Assert.That(portrait.GetComponent<Image>().preserveAspect,Is.True);
                         }
                         Assert.That(ground.GetComponentsInChildren<LobbyTeamMaterial>().Any(),Is.EqualTo(step==0));

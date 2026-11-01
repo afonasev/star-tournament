@@ -99,6 +99,7 @@ namespace StarTournament.ProvingGround
             b.GetComponent<MenuPresentation>().Compact=false;((RectTransform)b.transform).offsetMin=((RectTransform)b.transform).offsetMax=Vector2.zero;
             var t=b.GetComponentInChildren<Text>();t.rectTransform.offsetMin=new Vector2(3,1);t.rectTransform.offsetMax=new Vector2(-3,-1);t.fontSize=19;t.fontStyle=FontStyle.Normal;t.resizeTextForBestFit=true;t.resizeTextMinSize=15;t.resizeTextMaxSize=19;
             var hint=b.GetComponent<MenuActionHint>();hint.HideFocusedConfirm=true;hint.Shortcut=null;
+            hint.ColoredLobbyGlyph=false;
             hint.Initialize(b,()=>e.Device,()=>false,()=>e.Focus==b);
             b.navigation=new Navigation{mode=Navigation.Mode.None};e.Choices.Add(b);
             return b;

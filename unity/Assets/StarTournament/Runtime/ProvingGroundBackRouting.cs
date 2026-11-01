@@ -20,7 +20,11 @@ namespace StarTournament.ProvingGround
         void UpdateShellBackInput()
         {
             if(phase==Phase.Profiles)
-            {if(TryTakeMenuBack()&&profilesBackButton.IsInteractable())profilesBackButton.onClick.Invoke();}
+            {
+                if(textEntryPanel||textClosing)return;
+                if(TryTakeMenuBack()&&profilesBackButton.IsInteractable())profilesBackButton.onClick.Invoke();
+                else if(MenuUiDevice is Gamepad pad&&pad.buttonWest.wasPressedThisFrame)CreateNamedProfile();
+            }
             else if(phase==Phase.Paused&&!UseSeatPauseMenus)
             {if(TryTakeMenuBack()&&FocusAllowsResume&&resume.IsInteractable())resume.onClick.Invoke();}
         }

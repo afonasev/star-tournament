@@ -245,11 +245,11 @@ namespace StarTournament.ProvingGround
         int RosterDifficultyAt(int p)=>p<LocalSeatCount?botSetup.SeatDifficulty(p):botSetup.At(p-LocalSeatCount).Difficulty;
         string RosterTeamName(NativeTeam team)=>(team==NativeTeam.TeamA)^swappedTeamColors?"Синяя":"Красная";
         Color RosterTeamColor(NativeTeam team)=>NativeParticipantColors.TeamColor(team,swappedTeamColors,ParticipantPaletteProfile);
-        Button[] LayoutRosterGrid(Transform content,int[] participants,int slots,int columns,float height)
+        Button[] LayoutRosterGrid(Transform content,int[] participants,int slots,int columns,float height,int[] cells=null)
         {
             var cards=participants.Select(i=>rosterCards[i]).ToList();
             while(cards.Count<slots){var empty=rosterEmpty[rosterEmptyUsed++];empty.gameObject.SetActive(true);empty.interactable=LobbyCanAddBot;cards.Add(empty);}
-            var rect=(RectTransform)content;int rows=Math.Max(1,Mathf.CeilToInt(cards.Count/(float)columns));
+            var rect=(RectTransform)content;int rows=cells==null?Math.Max(1,Mathf.CeilToInt(cards.Count/(float)columns)):2;
             float available=((RectTransform)content.parent).rect.height;
             float rowHeight=Mathf.Min(height,available/2f),gridHeight=rows*rowHeight;
             float inset=Mathf.Max(0,(available-gridHeight)*.5f);
@@ -257,9 +257,10 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<cards.Count;i++)
             {
                 var card=cards[i];card.transform.SetParent(content,false);
-                float rowInset=(columns-Math.Min(columns,cards.Count-(i/columns)*columns))*.5f;
-                var r=(RectTransform)card.transform;r.anchorMin=new Vector2((rowInset+i%columns)/columns,1);r.anchorMax=new Vector2((rowInset+i%columns+1)/columns,1);r.pivot=new Vector2(.5f,1);
-                r.offsetMin=new Vector2(8,-inset-(i/columns+1)*rowHeight+8);r.offsetMax=new Vector2(-8,-inset-(i/columns)*rowHeight-8);
+                int cell=cells==null?i:cells[i];
+                float rowInset=cells==null?(columns-Math.Min(columns,cards.Count-(i/columns)*columns))*.5f:0;
+                var r=(RectTransform)card.transform;r.anchorMin=new Vector2((rowInset+cell%columns)/columns,1);r.anchorMax=new Vector2((rowInset+cell%columns+1)/columns,1);r.pivot=new Vector2(.5f,1);
+                r.offsetMin=new Vector2(8,-inset-(cell/columns+1)*rowHeight+8);r.offsetMax=new Vector2(-8,-inset-(cell/columns)*rowHeight-8);
             }
             return cards.ToArray();
         }
@@ -289,8 +290,22 @@ namespace StarTournament.ProvingGround
             foreach(var empty in rosterEmpty)empty.gameObject.SetActive(false);rosterEmptyUsed=0;
             Canvas.ForceUpdateCanvases();
             var all=Enumerable.Range(0,RosterTotal).ToArray();
-            // One grid owns both modes: team changes affect tint/background only.
-            lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,LobbyCapacity,4,250)};
+            // Keep one parent and stable participant identity, but reserve both halves
+            // for the displayed team colors until a team exceeds four participants.
+            if(SetupMode==NativeMatchMode.Teams)
+            {
+                var blue=all.Where(p=>(RosterTeamAt(p)==NativeTeam.TeamA)^swappedTeamColors).ToArray();
+                var red=all.Except(blue).ToArray();
+                int[] blueOrder={0,1,4,5,2,6,3,7},redOrder={2,3,6,7,1,5,0,4};
+                var occupied=new HashSet<int>();var cells=new List<int>();
+                foreach(int cell in blueOrder.Take(blue.Length)){occupied.Add(cell);cells.Add(cell);}
+                foreach(int cell in redOrder.Where(c=>!occupied.Contains(c)).Take(red.Length)){occupied.Add(cell);cells.Add(cell);}
+                cells.AddRange(Enumerable.Range(0,8).Where(c=>!occupied.Contains(c)).Take(LobbyCapacity-all.Length));
+                var cards=LayoutRosterGrid(rosterFfa,blue.Concat(red).ToArray(),LobbyCapacity,4,250,cells.ToArray());
+                // Navigation reads the same visual row-major order as the grid.
+                lobbyRosterGroups=new[]{cards.OrderByDescending(b=>((RectTransform)b.transform).offsetMax.y).ThenBy(b=>((RectTransform)b.transform).anchorMin.x).ToArray()};
+            }
+            else lobbyRosterGroups=new[]{LayoutRosterGrid(rosterFfa,all,LobbyCapacity,4,250)};
             // Reparenting between FFA/team grids can disable a card without a new
             // EventSystem selection event. Restore the shared visual focus explicitly.
             foreach(var card in rosterCards.Concat(rosterEmpty))card.GetComponent<MenuPresentation>().SetFocused(EventSystem.current&&EventSystem.current.currentSelectedGameObject==card.gameObject);

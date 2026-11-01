@@ -80,8 +80,8 @@ namespace StarTournament.ProvingGround
             rosterAddBot.onClick.RemoveAllListeners();rosterAddBot.onClick.AddListener(BeginLobbyBot);
             BindMenuShortcut(rosterAddBot,MenuPadButton.West,()=>phase==Phase.Setup&&!LobbyModal);
             BindMenuShortcut(rosterAddHuman,MenuPadButton.North,()=>phase==Phase.Setup&&!LobbyModal);
-            setupPrevious.onClick.RemoveAllListeners();setupPrevious.onClick.AddListener(ToMainMenu);
-            BindMenuShortcut(setupPrevious,MenuPadButton.East,()=>phase==Phase.Setup&&!LobbyModal);
+            setupPrevious.onClick.RemoveAllListeners();setupPrevious.onClick.AddListener(PreviousSetupStep);
+            BindMenuShortcut(setupPrevious,MenuPadButton.East,()=>phase==Phase.Setup&&rosterEditing<0&&pendingSeat<0&&!(lobbyDialog&&lobbyDialog.activeSelf)&&!textEntryPanel&&(!InlineAny||inlineEditors.Values.Any(e=>e.Device==MenuUiDevice&&e.Page!=InlinePage.Closed)));
             setupMessage.transform.SetParent(setupScreen.transform,false);
             Layout(setupMessage.rectTransform,new Vector2(.05f,.14f),new Vector2(.95f,.19f));
             Layout((RectTransform)setupPlayersPage.transform.parent,new Vector2(.05f,.20f),new Vector2(.95f,.65f));
@@ -135,7 +135,7 @@ namespace StarTournament.ProvingGround
                 lobbyTeamMaterial=material.GetComponent<LobbyTeamMaterial>();lobbyTeamMaterial.raycastTarget=false;
             }
             lobbyTeamMaterial.gameObject.SetActive(SetupMode==NativeMatchMode.Teams);
-            lobbyTeamMaterial.Left=RosterTeamColor(NativeTeam.TeamA);lobbyTeamMaterial.Right=RosterTeamColor(NativeTeam.TeamB);lobbyTeamMaterial.SetVerticesDirty();
+            lobbyTeamMaterial.Left=RosterTeamColor(swappedTeamColors?NativeTeam.TeamB:NativeTeam.TeamA);lobbyTeamMaterial.Right=RosterTeamColor(swappedTeamColors?NativeTeam.TeamA:NativeTeam.TeamB);lobbyTeamMaterial.SetVerticesDirty();
             foreach(var button in new[]{lobbyMap,lobbyMode,lobbyTime,lobbyTarget,setupPrevious,rosterAddBot,rosterAddHuman})StyleLobbySurface(button);
             start.GetComponent<MenuActionHint>().ColoredLobbyGlyph=true;start.GetComponent<MenuActionHint>().HideFocusedConfirm=true;
             foreach(var button in rosterCards.Concat(rosterEmpty))StyleLobbySurface(button);
@@ -180,6 +180,8 @@ namespace StarTournament.ProvingGround
             lobbyTime.GetComponentInChildren<Text>().text=TrainingSelected?"Без таймера":Configuration.DurationMinutes+" мин";
             lobbyTarget.GetComponentInChildren<Text>().text=TrainingSelected?"Без счёта":(Configuration.TargetEnabled?Configuration.TargetPoints.ToString():"Без цели");
             RefreshRosterUi();StyleLobbySurfaces();
+            foreach(var button in new[]{setupPrevious,rosterAddBot,rosterAddHuman,start})
+                button.GetComponent<MenuActionHint>().Device=()=>MenuUiDevice;
             var footer=new[]{setupPrevious,rosterAddBot,rosterAddHuman,start};var labels=new[]{"Назад","Добавить бота","Присоединиться","Начать матч"};
             var footerMin=new[]{new Vector2(.025f,.055f),new Vector2(.18f,.055f),new Vector2(.38f,.055f),new Vector2(.695f,.055f)};
             var footerMax=new[]{new Vector2(.16f,.13f),new Vector2(.37f,.13f),new Vector2(.60f,.13f),new Vector2(.975f,.13f)};
@@ -206,6 +208,23 @@ namespace StarTournament.ProvingGround
                 SetupNavigation(card,i>=cols?group[i-cols]:top[Math.Min(3,i%cols+(groups.Length==2&&group==groups[1]?2:0))],i+cols<group.Length?group[i+cols]:foot[Math.Min(i%cols,foot.Length-1)],all[Math.Max(0,flat-1)],all[Math.Min(all.Length-1,flat+1)]);
             }
             for(int i=0;i<foot.Length;i++)SetupNavigation(foot[i],all.Length>0?all[Math.Max(0,all.Length-foot.Length+i)]:top[i],foot[i],foot[Math.Max(0,i-1)],foot[Math.Min(foot.Length-1,i+1)]);
+            if(SetupMode==NativeMatchMode.Teams)
+            {
+                foreach(var card in all)
+                {
+                    int column=Mathf.RoundToInt(((RectTransform)card.transform).anchorMin.x*4);
+                    SetupNavigation(card,LobbyNeighbor(card,all,Vector2.up,top[Mathf.Clamp(column,0,3)]),LobbyNeighbor(card,all,Vector2.down,foot[Mathf.Min(column,foot.Length-1)]),LobbyNeighbor(card,all,Vector2.left,card),LobbyNeighbor(card,all,Vector2.right,card));
+                }
+            }
+        }
+        Selectable LobbyNeighbor(Button from,Button[] cards,Vector2 direction,Selectable fallback)
+        {
+            Vector2 Center(Button b){var r=(RectTransform)b.transform;return r.TransformPoint(r.rect.center);}
+            var origin=Center(from);var perpendicular=new Vector2(-direction.y,direction.x);
+            var next=cards.Where(b=>b!=from).Select(b=>new{Button=b,Delta=Center(b)-origin})
+                .Where(x=>Vector2.Dot(x.Delta,direction)>1)
+                .OrderBy(x=>Mathf.Abs(Vector2.Dot(x.Delta,perpendicular))).ThenBy(x=>x.Delta.sqrMagnitude).FirstOrDefault();
+            return next!=null?next.Button:fallback;
         }
         void BeginLobbyDialog(string title,Action back,Button opener=null)
         {
@@ -256,7 +275,7 @@ namespace StarTournament.ProvingGround
             for(int i=0;i<SetupMapIds.Length;i++)
             {
                 string id=SetupMapIds[i];int col=i%2,row=i/2;
-                var button=RosterButton(panel,"lobby-map-"+id,"",new Vector2(.045f+col*.47f,.60f-row*.25f),new Vector2(.485f+col*.47f,.82f-row*.25f),()=>{if(Time.frameCount<=lobbyDialogFrame)return;SelectAuthoredMap(id);CloseLobbyDialog();});
+                var button=RosterButton(panel,"lobby-map-"+id,"",new Vector2(.045f+col*.47f,.64f-row*.24f),new Vector2(.485f+col*.47f,.86f-row*.24f),()=>{if(Time.frameCount<=lobbyDialogFrame)return;SelectAuthoredMap(id);CloseLobbyDialog();});
                 button.GetComponent<MenuPresentation>().Compact=false;((RectTransform)button.transform).offsetMin=((RectTransform)button.transform).offsetMax=Vector2.zero;button.GetComponent<MenuActionHint>().HideFocusedConfirm=true;
                 var image=new GameObject("map-art",typeof(RectTransform),typeof(ArenaPreviewGraphic));image.transform.SetParent(button.transform,false);Layout((RectTransform)image.transform,new Vector2(.012f,.02f),new Vector2(.988f,.98f));image.GetComponent<ArenaPreviewGraphic>().Show(id);image.GetComponent<ArenaPreviewGraphic>().raycastTarget=false;
                 var shade=Panel(button.transform,"map-caption-backing",new Vector2(.012f,.02f),new Vector2(.988f,.22f),new Color32(6,15,24,230));shade.GetComponent<Image>().raycastTarget=false;

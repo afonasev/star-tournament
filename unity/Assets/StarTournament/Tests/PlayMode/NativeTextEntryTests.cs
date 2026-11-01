@@ -94,7 +94,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(pad,GamepadButton.Start);
             Assert.That(Open,Is.False);Assert.That(changes,Is.EqualTo(1));Assert.That(ends,Is.EqualTo(1));Assert.That(field.text,Is.EqualTo("Новый пилот"));
             B("profile-create").onClick.Invoke();yield return null;
-            Assert.That(new PlayerProfileCatalog(profiles).Profiles.Single().Name,Is.EqualTo("Новый пилот"));
+            Assert.That(Open,Is.True,"Create now asks for a new name before saving");Assert.That(Draft,Is.Empty);
+            Assert.That(new PlayerProfileCatalog(profiles).Profiles,Is.Empty);
+            yield return Type("Новый пилот");yield return Press(pad,GamepadButton.Start);
+            Assert.That(Open,Is.False);Assert.That(new PlayerProfileCatalog(profiles).Profiles.Single().Name,Is.EqualTo("Новый пилот"));
         }
         [UnityTest] public IEnumerator ReconnectPreservesDraftAndConsumesClaimPress()
         {

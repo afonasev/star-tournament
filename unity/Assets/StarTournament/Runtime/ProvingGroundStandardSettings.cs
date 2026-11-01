@@ -199,6 +199,14 @@ namespace StarTournament.ProvingGround
             }
             void ConfigureStandardNavigation()
             {
+                if(ProfileId!=null)
+                {
+                    Link(settingsSectionButtons[1],settingsBackButton,settingsSectionButtons[2],null,settingsMouseSlider);
+                    Link(settingsSectionButtons[2],settingsSectionButtons[1],settingsBackButton,null,settingsFpsToggle);
+                    Link(settingsBackButton,settingsSectionButtons[2],settingsSectionButtons[1],null,FirstSettingsAction());
+                    Chain(new Selectable[]{settingsMouseSlider,settingsHorizontalSlider,settingsVerticalSlider,settingsDeadzoneSlider,settingsInvertX,settingsInvertY,settingsReturnDelaySlider,settingsAutoLevelToggle,settingsHelpButton},settingsSectionButtons[1]);
+                    Link(settingsFpsToggle,settingsSectionButtons[2],settingsBackButton,settingsSectionButtons[2]);return;
+                }
                 for(int i=0;i<StandardSectionOrder.Length;i++)
                 {int n=StandardSectionOrder[i];var action=n==0?settingsModeButton:n==4?(Selectable)settingsQualityButton:n==3?settingsMasterSlider:n==1?settingsMouseSlider:settingsScaleSlider;Link(settingsSectionButtons[n],i==0?settingsBackButton:settingsSectionButtons[StandardSectionOrder[i-1]],i==4?resetAllButton:settingsSectionButtons[StandardSectionOrder[i+1]],null,action);}
                 Link(settingsBackButton,resetAllButton,settingsSectionButtons[0]);
@@ -210,7 +218,7 @@ namespace StarTournament.ProvingGround
                 Chain(new Selectable[]{settingsScaleSlider,settingsContrast,settingsAmmoHud,settingsFpsToggle,settingsBotTextToggle},settingsSectionButtons[2]);
             }
             void Chain(Selectable[] controls,Button section)
-            {for(int i=0;i<controls.Length;i++)Link(controls[i],i==0?section:controls[i-1],i==controls.Length-1?resetAllButton:controls[i+1],section);}
+            {for(int i=0;i<controls.Length;i++)Link(controls[i],i==0?section:controls[i-1],i==controls.Length-1?(ProfileId!=null?settingsBackButton:resetAllButton):controls[i+1],section);}
             void RefreshStandardSettings()
             {
                 if(!settingsGraphicsPage)return;
@@ -220,7 +228,13 @@ namespace StarTournament.ProvingGround
                 RefreshToggle(settingsInvertX,look.InvertX);RefreshToggle(settingsInvertY,look.InvertY);RefreshToggle(settingsContrast,NativeUserPreferences.HighContrast);RefreshToggle(settingsAmmoHud,NativeUserPreferences.ShowAmmoHud);
                 settingsFrameCap.GetComponentInChildren<Text>().text=NativeUserPreferences.FrameCap<0?"Без ограничения":NativeUserPreferences.FrameCap+" FPS";
                 settingsQualityButton.GetComponentInChildren<Text>().text=NativeVisualPreferences.QualityNames[NativeVisualPreferences.Quality];
-                resetDialog.SetActive(resetOpen);resetAllButton.gameObject.SetActive(!settingsHelpOpen&&!settingsDevicesOpen);
+                resetDialog.SetActive(resetOpen);resetAllButton.gameObject.SetActive(ProfileId==null&&!settingsHelpOpen&&!settingsDevicesOpen);
+                bool personal=ProfileId!=null;
+                foreach(int i in new[]{0,3,4})settingsSectionButtons[i].gameObject.SetActive(!personal);
+                for(int i=0;i<StandardSectionOrder.Length;i++)
+                {int n=StandardSectionOrder[i];float top=personal?.89f-(n-1)*.08f:.89f-i*.08f;Layout((RectTransform)settingsSectionButtons[n].transform,new Vector2(.06f,top-.07f),new Vector2(.94f,top));}
+                settingsScaleSlider.transform.parent.gameObject.SetActive(!personal);settingsContrast.gameObject.SetActive(!personal);settingsAmmoHud.gameObject.SetActive(!personal);settingsBotTextToggle.gameObject.SetActive(!personal);settingsDevicesButton.gameObject.SetActive(!personal);
+                Layout((RectTransform)settingsFpsToggle.transform,new Vector2(.02f,personal?.81f:.21f),new Vector2(.98f,personal?.99f:.39f));
                 for(int i=0;i<settingsSectionButtons.Length;i++)settingsSectionButtons[i].interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 resetAllButton.interactable=!resetOpen&&!owner.displayConfirmationActive&&!resolutionPickerOpen;
                 resetAllButton.GetComponentInChildren<Text>().text="Сбросить все настройки";
@@ -232,11 +246,11 @@ namespace StarTournament.ProvingGround
             bool CanResetShortcut()
             {
                 var editing=EventSystem.current?.currentSelectedGameObject?.GetComponent<InputField>();
-                return Time.frameCount>settingsOpenedFrame&&!resetOpen&&!displayConfirmationActive&&!owner.displayConfirmationActive&&!resolutionPickerOpen&&!settingsHelpOpen&&!settingsDevicesOpen&&!(editing&&editing.isFocused);
+                return ProfileId==null&&Time.frameCount>settingsOpenedFrame&&!resetOpen&&!displayConfirmationActive&&!owner.displayConfirmationActive&&!resolutionPickerOpen&&!settingsHelpOpen&&!settingsDevicesOpen&&!(editing&&editing.isFocused);
             }
             public void ResetShortcut(){if(CanResetShortcut())OpenReset();}
             void OpenReset()
-            {if(owner.displayConfirmationActive||resetOpen||resolutionPickerOpen)return;resetReturn=InMatch?Selected:EventSystem.current?.currentSelectedGameObject?.GetComponent<Selectable>();resetOpen=true;RefreshSettingsUi();ConfigureSettingsNavigation();Select(resetCancel);}
+            {if(ProfileId!=null||owner.displayConfirmationActive||resetOpen||resolutionPickerOpen)return;resetReturn=InMatch?Selected:EventSystem.current?.currentSelectedGameObject?.GetComponent<Selectable>();resetOpen=true;RefreshSettingsUi();ConfigureSettingsNavigation();Select(resetCancel);}
             void CloseReset()
             {resetOpen=false;RefreshSettingsUi();ConfigureSettingsNavigation();Select(resetReturn&&resetReturn.IsActive()?resetReturn:resetAllButton);}
             void ConfirmReset()
