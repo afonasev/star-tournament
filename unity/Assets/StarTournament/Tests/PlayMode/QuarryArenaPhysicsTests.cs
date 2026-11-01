@@ -17,6 +17,9 @@ namespace StarTournament.ProvingGround.Tests
             var selector=new SafeSpawnSelector(Physics.defaultPhysicsScene,arena,movement,ProvingProfile.CreateNativeCombatDefault());
             string details=string.Join(";",arena.Spawns.Select((p,i)=>i+":"+selector.Valid(p,out _)))+" visible=";
             for(int a=0;a<8;a++)for(int b=a+1;b<8;b++)if(selector.BodyVisible(arena.Spawns[a],arena.Spawns[b])||selector.BodyVisible(arena.Spawns[b],arena.Spawns[a]))details+=a+"/"+b+" ";
+            var grounded=arena.Spawns.Select(p=>{selector.Valid(p,out var feet);return feet;}).ToArray();
+            details+=" grounded="+string.Join(";",grounded.Select((p,i)=>i+":"+p))+" groundedVisible=";
+            for(int a=0;a<8;a++)for(int b=a+1;b<8;b++)if(selector.BodyVisible(grounded[a],grounded[b])||selector.BodyVisible(grounded[b],grounded[a]))details+=a+"/"+b+" ";
             Assert.That(selector.TryInitial(NativeMatchRoster.Ffa(8),ProvingProfile.CreateTeamDefault().Get("spawn.initialOpponentSeparation"),out var selected),Is.True,selector.InitialFailure+" "+details);
             Assert.That(selected.Length,Is.EqualTo(8));
             var routes=new NativeNavigationProvider(arena,movement,ProvingProfile.CreateNavigationDefault());

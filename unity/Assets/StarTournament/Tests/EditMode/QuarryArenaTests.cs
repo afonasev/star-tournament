@@ -19,6 +19,9 @@ namespace StarTournament.ProvingGround.Tests
             var legacy=AuthoredArenaCatalog.Resolve(d.MapId,"1");Assert.That(legacy.Identity,Is.EqualTo("quarry-prototype-v1@1"));Assert.That(legacy.Spawns.All(p=>p.y==0),Is.True);Assert.That(legacy.Transitions.Length,Is.EqualTo(2));
             var prior=AuthoredArenaCatalog.Resolve(d.MapId,"2");Assert.That(prior.Identity,Is.EqualTo("quarry-prototype-v1@2"));Assert.That(prior.Transitions.Length,Is.EqualTo(4));Assert.That(prior.Solids.Any(s=>s.Id=="center-east-bridge"),Is.False);
             Assert.That(d.Solids.Single(s=>s.Id=="center-east-bridge").Support,Is.EqualTo(QuarryArenaCatalog.Terrace));
+            var industrial=AuthoredArenaCatalog.Resolve(d.MapId,"3");Assert.That(industrial.Identity,Is.EqualTo("quarry-prototype-v1@3"));Assert.That(industrial.Solids.Any(s=>s.Id=="spawn-0-roof"),Is.True);
+            Assert.That(d.Solids.Any(s=>s.Id.StartsWith("spawn-")),Is.False,"No repeated spawn room geometry remains");
+            Assert.That(d.Spawns,Is.EqualTo(industrial.Spawns));Assert.That(d.Pickups.Select(p=>p.Anchor),Is.EqualTo(industrial.Pickups.Select(p=>p.Anchor)));
             var frozen=AuthoredArenaCatalog.Freeze(d.MapId,movement);Assert.That(JsonUtility.ToJson(frozen.Definition),Is.EqualTo(JsonUtility.ToJson(d)));
             d.Spawns[0]=Vector3.one;Assert.That(frozen.Definition.Spawns[0],Is.Not.EqualTo(d.Spawns[0]),"Frozen definition owns its data");
         }

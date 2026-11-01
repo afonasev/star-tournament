@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     // Approved concept A: three open quarry benches. Dimensions are exported to authoring metadata.
     public static class QuarryArenaCatalog
     {
-        public const string Id="quarry-prototype-v1", Revision="3", Identity=Id+"@"+Revision;
+        public const string Id="quarry-prototype-v1", Revision="4", Identity=Id+"@"+Revision;
         public const string Ground="support:quarry-ground", Terrace="support:quarry-terrace", Upper="support:quarry-upper";
         public const float TerraceHeight=4, UpperHeight=8;
         public static readonly Vector3 FrontPortal=new Vector3(-6,0,-13), EastPortal=new Vector3(15,0,4);

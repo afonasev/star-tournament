@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(moved,Is.GreaterThanOrEqualTo(2),"Bots leave spawn pockets");File.WriteAllText(Path.Combine(DirectoryPath,"bot-match.json"),JsonUtility.ToJson(played,true));
                 yield return EditorUiCapture.Capture(ground,Path.Combine(DirectoryPath,"match-hud.png"),1920,1080);
                 ground.OpenPauseReviewSeat(0);yield return null;
-                var arena=ground.CameraReviewArena;var nav=arena.Surface.navMeshData;var geometry=JsonUtility.ToJson(arena.Definition);
+                var arena=ground.CameraReviewArena;File.WriteAllText(Path.Combine(DirectoryPath,"arena-definition.json"),JsonUtility.ToJson(arena.Definition,true));var nav=arena.Surface.navMeshData;var geometry=JsonUtility.ToJson(arena.Definition);
                 var cameraGo=new GameObject("Quarry evidence camera");SceneManager.MoveGameObjectToScene(cameraGo,scene);var camera=cameraGo.AddComponent<Camera>();
                 camera.fieldOfView=70;camera.nearClipPlane=.05f;camera.farClipPlane=250;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.48f,.67f,.8f);camera.cullingMask=(1<<0)|(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer)|(1<<ProvingArena.ParticipantLayer);
                 var chunks=arena.GetComponent<ArenaRenderChunks>();
@@ -58,6 +58,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var targets=new[]{new Vector3(38,7,21),new Vector3(38,9,24),new Vector3(-6,2,-10),new Vector3(14,2,4),new Vector3(-6,1.7f,4),new Vector3(0,2,-22),new Vector3(-24,6,14),new Vector3(0,6,20),new Vector3(24,10.5f,36),new Vector3(-11,2,-23)};
                 var names=new[]{"climb-from-bottom","climb-from-middle","tunnel-front","tunnel-east","tunnel-inside","upper-view","three-levels-from-court","center-roof","workshop","loader"};
                 for(int i=0;i<eyes.Length;i++){cameraGo.transform.position=eyes[i];cameraGo.transform.LookAt(targets[i]);Capture(camera,names[i]);}
+                camera.fieldOfView=65;
+                cameraGo.transform.position=new Vector3(-30,1.7f,-35);cameraGo.transform.LookAt(new Vector3(-20,1.8f,-25));Capture(camera,"open-lower-cover");
+                cameraGo.transform.position=new Vector3(-31,5.7f,9);cameraGo.transform.LookAt(new Vector3(-21,5.5f,1));Capture(camera,"open-middle-cover");
+                cameraGo.transform.position=new Vector3(-7,9.7f,23);cameraGo.transform.LookAt(new Vector3(-22,9.6f,29));Capture(camera,"open-upper-cover");
+                camera.orthographic=true;camera.orthographicSize=49;cameraGo.transform.position=new Vector3(0,95,1);cameraGo.transform.rotation=Quaternion.Euler(90,0,0);Capture(camera,"top-down");
                 Object.Destroy(cameraGo);
                 ground.SendMessage("Repeat");yield return NativeLoadingTestScene.Wait(ground);
                 Assert.That(ground.Session.ArenaIdentity,Is.EqualTo(QuarryArenaCatalog.Identity));Assert.That(JsonUtility.ToJson(ground.CameraReviewArena.Definition),Is.EqualTo(geometry));Assert.That(ground.CameraReviewArena.Surface.navMeshData,Is.SameAs(nav));Assert.That(ground.Session.Time,Is.LessThan(1));

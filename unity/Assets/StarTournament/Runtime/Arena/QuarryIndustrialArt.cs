@@ -20,6 +20,31 @@ namespace StarTournament.ProvingGround
             // One material-group mesh per local dressing family; no per-rivet renderers.
             foreach(var solid in definition.Solids)
             {
+                if(solid.Material=="quarry-crate")
+                {
+                    var q=solid.Rotation;var size=solid.Size;
+                    void Trim(Vector3 off,Vector3 s,Quaternion? angle=null)=>Box(solid.Position+q*off,s,palette[9],q*(angle??Quaternion.identity));
+                    // Straps, framing and shallow plank seams share the merged trim mesh; no colliders.
+                    foreach(float side in new[]{-1f,1f})
+                    {
+                        float z=side*(size.z*.5f+.025f);
+                        foreach(float y in new[]{-.39f,.39f})Trim(new Vector3(0,y*size.y,z),new Vector3(size.x,.12f,.05f));
+                        foreach(float x in new[]{-.41f,.41f})Trim(new Vector3(x*size.x,0,z),new Vector3(.12f,size.y,.05f));
+                        for(int j=1;j<5;j++)Box(solid.Position+q*new Vector3(0,(-.5f+j/5f)*size.y,z),new Vector3(size.x,.025f,.018f),palette[7],q);
+                        float length=Mathf.Sqrt(size.x*size.x*.64f+size.y*size.y*.49f),angle=Mathf.Atan2(size.y*.7f,size.x*.8f)*Mathf.Rad2Deg;
+                        Trim(new Vector3(0,0,z+.015f*side),new Vector3(length,.11f,.055f),Quaternion.Euler(0,0,angle));
+                    }
+                    foreach(float side in new[]{-1f,1f})
+                    {
+                        float x=side*(size.x*.5f+.025f);
+                        foreach(float y in new[]{-.39f,.39f})Trim(new Vector3(x,y*size.y,0),new Vector3(.05f,.12f,size.z));
+                        foreach(float z in new[]{-.41f,.41f})Trim(new Vector3(x,0,z*size.z),new Vector3(.05f,size.y,.12f));
+                        for(int j=1;j<5;j++)Box(solid.Position+q*new Vector3(x,(-.5f+j/5f)*size.y,0),new Vector3(.018f,.025f,size.z),palette[7],q);
+                        float length=Mathf.Sqrt(size.z*size.z*.64f+size.y*size.y*.49f),angle=-Mathf.Atan2(size.y*.7f,size.z*.8f)*Mathf.Rad2Deg;
+                        Trim(new Vector3(x+.015f*side,0,0),new Vector3(.055f,.11f,length),Quaternion.Euler(angle,0,0));
+                    }
+                    foreach(float x in new[]{-.36f,.36f})Trim(new Vector3(x*size.x,size.y*.5f+.025f,0),new Vector3(.12f,.05f,size.z));
+                }
                 if(solid.Material=="quarry-machine")
                 {
                     foreach(float side in new[]{-1f,1f})

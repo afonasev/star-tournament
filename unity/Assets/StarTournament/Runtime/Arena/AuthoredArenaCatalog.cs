@@ -9,6 +9,7 @@ namespace StarTournament.ProvingGround
         public static bool Supports(string id,int count)=>count>=(id==FiringRangeCatalog.Id?1:2)&&count<=Maximum(id);
         public static ArenaDefinition Resolve(string id,string revision=null)
         {
+            if(id==QuarryArenaCatalog.Id&&revision=="3")return QuarryArenaRevision3.Build();
             if(id==QuarryArenaCatalog.Id&&revision=="2")return QuarryArenaRevision2.Build();
             if(id==QuarryArenaCatalog.Id&&revision=="1")return QuarryArenaRevision1.Build();
             if(id==QuarryArenaCatalog.Id&&(revision==null||revision==QuarryArenaCatalog.Revision))return QuarryArenaCatalog.Build();

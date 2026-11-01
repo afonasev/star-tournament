@@ -10,23 +10,32 @@ namespace StarTournament.ProvingGround
             void Box(string id,Vector3 p,Vector3 s,string mat="quarry-rock",float yaw=0,string shape=null,Quaternion? rotation=null)
                 =>solids.Add(new ArenaSolid{Id=id,Position=p,Size=s,Material=mat,Surface=shape,Rotation=rotation??Quaternion.Euler(0,yaw,0),Layer=ProvingArena.WorldLayer});
             void Rock(string id,Vector3 foot,Vector3 size,float yaw=0)=>Box(id,foot+Vector3.up*size.y*.5f,size,"quarry-rock",yaw,"quarry-faceted");
-            // The protected volume is kept; natural rock shoulders replace lower/middle huts.
-            // Upper starts belong to one connected rear workshop rather than isolated boxes.
-            for(int i=0;i<spawns.Length;i++)
-            {
-                bool metal=i>=5;float yaw=i<2?0:i<4?90:180;var q=Quaternion.Euler(0,yaw,0);var p=spawns[i];
-                void Part(string id,Vector3 off,Vector3 size,string mat=null,bool facet=false)=>Box("spawn-"+i+"-"+id,p+q*off,size,mat??(metal?"quarry-metal":"quarry-rock"),yaw,facet?"quarry-faceted":null);
-                Part("back",new Vector3(0,1.7f,i==4?-2.5f:-2.9f),new Vector3(6.6f,3.4f,i==4?.4f:1.2f));
-                foreach(float side in new[]{-1f,1f})Part("side-"+side,new Vector3(side*2.95f,1.7f,0),new Vector3(1.3f,3.4f,5.4f));
-                Part("roof",new Vector3(0,3.8f,0),new Vector3(7.5f,.8f,6.8f),metal?"quarry-metal":"quarry-rock",!metal);
-                Part("screen",new Vector3(0,1.7f,6.4f),new Vector3(5.4f,3.4f,1.4f),metal?"quarry-machine":"quarry-rock",!metal);
-                if(!metal)
-                {
-                    Part("shoulder",new Vector3(-4.5f,1.2f,-1),new Vector3(3.6f,2.4f,6.8f),null,true);
-                    Part("shoulder-cap",new Vector3(3.8f,2,-1.3f),new Vector3(2.4f,4,i==4?2.8f:4.4f),null,true);
-                    if(i<2)Part("rim-link",new Vector3(0,1.8f,-5.4f),new Vector3(10,3.6f,4.6f),null,true);
-                }
-            }
+            // Freestanding cargo and rock fragments replace the entire repeated spawn-room template.
+            // Each footprint is a canonical solid/profile entry: no invisible spawn shields.
+            void Boulder(string id,Vector3 foot,Vector3 size,float yaw=0,bool slab=false)=>Box(id,foot+Vector3.up*size.y*.5f,size,"quarry-rock",yaw,slab?"quarry-slab":"quarry-boulder");
+            void Crate(string id,Vector3 foot,Vector3 size,float yaw=0)=>Box(id,foot+Vector3.up*size.y*.5f,size,"quarry-crate",yaw);
+            // Lower loading area: detached cut rock, a cargo stack and small loose debris.
+            Boulder("loading-west-boulder",new Vector3(-23,0,-26.5f),new Vector3(7.2f,4.1f,4.3f),-12);
+            Boulder("loading-west-chip",new Vector3(-28.5f,0,-28),new Vector3(2.5f,1.1f,2),18,true);
+            Crate("loading-cargo-base",new Vector3(21,0,-27),new Vector3(5.5f,2.4f,2.8f),8);
+            Crate("loading-cargo-top",new Vector3(21.6f,2.4f,-27),new Vector3(3.1f,1.2f,2.2f),-5);
+            Boulder("loading-cross-cover",new Vector3(-3,0,-31),new Vector3(5.5f,3.3f,4),22,true);
+            Crate("loading-loose-crate",new Vector3(28,0,-24),new Vector3(2,1.3f,1.8f),-19);
+            // Middle shelf: separate angled outcrops, with no roofs or room-shaped rings.
+            Boulder("middle-west-front",new Vector3(-21.5f,4,-.8f),new Vector3(3.4f,4,7),-14);
+            Boulder("middle-west-broken-toe",new Vector3(-23.1f,4,-4.6f),new Vector3(3.5f,2.6f,3.1f),20,true);
+            Boulder("middle-west-divider",new Vector3(-26,4,4),new Vector3(5.5f,3.2f,2.6f),-8,true);
+            Boulder("middle-north-front",new Vector3(-21.6f,4,14),new Vector3(3.4f,3.6f,5.3f),16);
+            Boulder("middle-east-front",new Vector3(26.3f,4,3.1f),new Vector3(6.3f,3.5f,2.8f),9,true);
+            Boulder("middle-east-chip",new Vector3(30.5f,4,9),new Vector3(2.7f,1.5f,2.2f),-21);
+            // Open workshop storage: individual wooden shipping cases, sheet bundles and a generator.
+            Crate("workshop-west-cargo",new Vector3(-28,8,27.5f),new Vector3(6,2.7f,2.4f),-5);
+            Crate("workshop-west-top",new Vector3(-29,10.7f,27.5f),new Vector3(2.2f,1,1.8f),8);
+            Crate("workshop-center-cargo",new Vector3(0,8,27.4f),new Vector3(5.5f,2.8f,2.5f),4);
+            Box("workshop-east-generator",new Vector3(28,9.6f,27.5f),new Vector3(5.4f,3.2f,2.7f),"quarry-machine",-7);
+            Crate("workshop-divider-west",new Vector3(-14,8,31),new Vector3(3.4f,2.9f,4),9);
+            Crate("workshop-divider-east",new Vector3(14,8,31),new Vector3(3.2f,2.7f,4.2f),-12);
+            Crate("workshop-loose-case",new Vector3(-8,8,34),new Vector3(2,1.1f,1.5f),-17);
             // Exposed geological shoulders break the large plane silhouettes; keep the ramp envelope clear.
             for(int row=0;row<3;row++)
             {
