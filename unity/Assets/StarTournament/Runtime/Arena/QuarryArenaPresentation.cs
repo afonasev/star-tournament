@@ -56,7 +56,7 @@ namespace StarTournament.ProvingGround
             }
             var middle=definition.Solids.Single(s=>s.Id=="middle-west");var upper=definition.Solids.Single(s=>s.Id=="upper-excavation");
             Label("middle-level-sign",industrial?"УСТУПЫ  +4 м":"МАСТЕРСКАЯ  +4 м",middle.Position-Vector3.up*2+Vector3.back*(middle.Size.z*.5f+.03f),0,sign);
-            Label("upper-level-sign",industrial?"МАСТЕРСКАЯ  +8 м":"ВЫРАБОТКА  +8 м",new Vector3(0,6,upper.Position.z-upper.Size.z*.5f-.03f),0,sign);
+            Label("upper-level-sign",industrial?"МАСТЕРСКАЯ  +8 м":"ВЫРАБОТКА  +8 м",new Vector3(0,6,upper.Position.z-upper.Size.z*.5f-(industrial?1.1f:.03f)),0,sign);
             Label("lower-level-sign","ПОГРУЗКА  0 м",new Vector3(19,2,-38),180,sign);
             foreach(var solid in definition.Solids.Where(s=>s.Id.EndsWith("tunnel-lamp")))
             {

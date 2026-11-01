@@ -62,7 +62,7 @@ namespace StarTournament.ProvingGround
             foreach(var portal in definition.Solids.Where(s=>s.Id.EndsWith("portal-lintel")))
             {
                 bool east=portal.Id.StartsWith("east");var q=Quaternion.Euler(0,east?-90:0,0);var outward=east?Vector3.right:Vector3.back;
-                for(float x=-3;x<=3;x+=1.2f)Box(portal.Position+outward*.53f+q*Vector3.right*x,new Vector3(.4f,.58f,.03f),palette[9],q*Quaternion.Euler(0,0,-25));
+                foreach(float x in new[]{-3.3f,3.3f})Box(portal.Position+outward*.53f+q*Vector3.right*x,new Vector3(.4f,.58f,.03f),palette[9],q*Quaternion.Euler(0,0,-25));
             }
             foreach(var pair in parts)
             {
