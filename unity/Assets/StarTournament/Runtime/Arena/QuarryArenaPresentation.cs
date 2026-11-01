@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     public sealed class QuarryArenaPresentation : MonoBehaviour
     {
         readonly List<Material> materials=new List<Material>();Mesh markings,arrows;
-        Color oldAmbient;AmbientMode oldMode;bool ownsAmbient;
+        Color oldAmbient;AmbientMode oldMode;bool ownsAmbient;Font signFont;Material fontMaterial;
         Material Make(ProvingProfile p,int i)
         {
             var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Quarry shared "+i,color=new Color(p.Get("quarry.art.color-"+i+".0"),p.Get("quarry.art.color-"+i+".1"),p.Get("quarry.art.color-"+i+".2"))};
@@ -31,7 +31,8 @@ namespace StarTournament.ProvingGround
             {
                 var go=new GameObject(name);go.transform.SetParent(transform,false);go.transform.localPosition=position;go.transform.localRotation=Quaternion.Euler(0,yaw,0);
                 var mesh=go.AddComponent<TextMesh>();mesh.text=text;mesh.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");mesh.fontSize=80;mesh.characterSize=size/8;mesh.anchor=TextAnchor.MiddleCenter;mesh.alignment=TextAlignment.Center;mesh.color=Color.white;
-                go.GetComponent<MeshRenderer>().sharedMaterial=mesh.font.material;
+                if(!fontMaterial){signFont=mesh.font;fontMaterial=new Material(Shader.Find("StarTournament/LunarSign")){name="Quarry depth-tested lettering"};materials.Add(fontMaterial);RefreshFont(signFont);Font.textureRebuilt+=RefreshFont;}
+                var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=fontMaterial;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
             }
             float sign=profile.Get("quarry.art.signHeight");
             foreach(var solid in definition.Solids.Where(s=>s.Id.EndsWith("portal-lintel")))
@@ -61,6 +62,7 @@ namespace StarTournament.ProvingGround
             var markingsGo=new GameObject("Ramp direction markings");markingsGo.transform.SetParent(transform,false);markingsGo.AddComponent<MeshFilter>().sharedMesh=arrows;var arrowsRenderer=markingsGo.AddComponent<MeshRenderer>();arrowsRenderer.sharedMaterial=palette[6];arrowsRenderer.shadowCastingMode=ShadowCastingMode.Off;arrowsRenderer.receiveShadows=true;
         }
         public static void ConfigureDaylight(Light sun)=>sun.intensity=QuarryArenaCatalog.AuthoringProfile().Get("quarry.art.sun");
-        void OnDestroy(){if(ownsAmbient){RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;}if(markings)DestroyImmediate(markings);if(arrows)DestroyImmediate(arrows);foreach(var material in materials)if(material)DestroyImmediate(material);}
+        void RefreshFont(Font font){if(font==signFont&&fontMaterial)fontMaterial.mainTexture=font.material.mainTexture;}
+        void OnDestroy(){Font.textureRebuilt-=RefreshFont;if(ownsAmbient){RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;}if(markings)DestroyImmediate(markings);if(arrows)DestroyImmediate(arrows);foreach(var material in materials)if(material)DestroyImmediate(material);}
     }
 }
