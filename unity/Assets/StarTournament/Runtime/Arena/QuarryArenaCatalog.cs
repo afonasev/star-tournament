@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround
     // Approved concept A: three open quarry benches. Dimensions are exported to authoring metadata.
     public static class QuarryArenaCatalog
     {
-        public const string Id="quarry-prototype-v1", Revision="5", Identity=Id+"@"+Revision;
+        public const string Id="quarry-prototype-v1", Revision="6", Identity=Id+"@"+Revision;
         public const string Ground="support:quarry-ground", Terrace="support:quarry-terrace", Upper="support:quarry-upper";
         public const float TerraceHeight=4, UpperHeight=8;
         public static readonly Vector3 FrontPortal=new Vector3(-6,0,-13), EastPortal=new Vector3(15,0,4);
@@ -97,8 +97,8 @@ namespace StarTournament.ProvingGround
             ArenaPickupDefinition Item(string id,ArenaPickupKind kind,Vector3 p)=>new ArenaPickupDefinition{Id=id,Kind=kind,Anchor=p,Support=Support(p)};
             // Supply IDs stay stable for diagnostics; coordinates and support belong to this revision.
             var pickups=new[]{
-                Item("quarry-shotgun-west",ArenaPickupKind.Shotgun,new Vector3(-40,4,-4)),Item("quarry-shotgun-east",ArenaPickupKind.Shotgun,new Vector3(40,0,-34)),
-                Item("quarry-rocket-north",ArenaPickupKind.Pulse,new Vector3(-40,8,32)),Item("quarry-laser-terrace",ArenaPickupKind.Cutter,new Vector3(40,8,24)),Item("quarry-plasma-west",ArenaPickupKind.Plasma,new Vector3(40,4,-4)),
+                Item("quarry-shotgun-west",ArenaPickupKind.Shotgun,new Vector3(-17,4,-5)),Item("quarry-shotgun-east",ArenaPickupKind.Shotgun,new Vector3(40,0,-34)),
+                Item("quarry-rocket-north",ArenaPickupKind.Pulse,new Vector3(-40,8,32)),Item("quarry-laser-terrace",ArenaPickupKind.Cutter,new Vector3(40,8,24)),Item("quarry-plasma-west",ArenaPickupKind.Plasma,new Vector3(25,4,-5)),
                 Item("quarry-armor-west",ArenaPickupKind.Armor,new Vector3(-41,0,-35)),Item("quarry-armor-east",ArenaPickupKind.Armor,new Vector3(41,8,35)),
                 Item("quarry-heal-tunnel",ArenaPickupKind.FullHeal,new Vector3(0,0,4)),Item("quarry-speed-west",ArenaPickupKind.Speed,new Vector3(-30,4,18)),Item("quarry-damage-south",ArenaPickupKind.Damage,new Vector3(0,4,0))};
             return new ArenaDefinition{MapId=Id,Revision=Revision,Identity=Identity,ProfileFingerprint="authored:"+Identity,Solids=solids.ToArray(),Spawns=spawns,

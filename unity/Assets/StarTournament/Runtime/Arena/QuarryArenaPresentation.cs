@@ -18,7 +18,7 @@ namespace StarTournament.ProvingGround
             var profile=ProvingProfile.CreateQuarryAuthoring(definition);oldAmbient=RenderSettings.ambientLight;oldMode=RenderSettings.ambientMode;ownsAmbient=true;
             RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=Color.white*profile.Get("quarry.art.ambient");
             var palette=new Material[13];for(int i=0;i<palette.Length;i++)palette[i]=Make(profile,i);
-            bool industrial=(definition.Revision=="3"||definition.Revision=="4"||definition.Revision=="5");
+            bool industrial=(definition.Revision=="3"||definition.Revision=="4"||definition.Revision=="5"||definition.Revision=="6");
             palette[12].EnableKeyword("_EMISSION");palette[12].SetColor("_EmissionColor",palette[12].color*profile.Get("quarry.art.workshopLightIntensity"));
             if(industrial)
             {

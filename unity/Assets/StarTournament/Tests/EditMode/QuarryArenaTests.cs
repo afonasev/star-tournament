@@ -21,6 +21,15 @@ namespace StarTournament.ProvingGround.Tests
             Assert.That(d.Solids.Single(s=>s.Id=="center-east-bridge").Support,Is.EqualTo(QuarryArenaCatalog.Terrace));
             var industrial=AuthoredArenaCatalog.Resolve(d.MapId,"3");Assert.That(industrial.Identity,Is.EqualTo("quarry-prototype-v1@3"));Assert.That(industrial.Solids.Any(s=>s.Id=="spawn-0-roof"),Is.True);
             Assert.That(d.Solids.Any(s=>s.Id.StartsWith("spawn-")),Is.False,"No repeated spawn room geometry remains");
+            var revision5=AuthoredArenaCatalog.Resolve(d.MapId,"5");Assert.That(revision5.Identity,Is.EqualTo("quarry-prototype-v1@5"));
+            Assert.That(JsonUtility.ToJson(new ArenaDefinition{Solids=d.Solids,Spawns=d.Spawns,Transitions=d.Transitions}),Is.EqualTo(JsonUtility.ToJson(new ArenaDefinition{Solids=revision5.Solids,Spawns=revision5.Spawns,Transitions=revision5.Transitions})),"Geometry, starts and routes unchanged from revision5");
+            for(int i=0;i<d.Pickups.Length;i++)
+            {
+                var expected=JsonUtility.FromJson<ArenaPickupDefinition>(JsonUtility.ToJson(revision5.Pickups[i]));
+                if(i==0)expected.Anchor=new Vector3(-17,4,-5);
+                if(i==4)expected.Anchor=new Vector3(25,4,-5);
+                Assert.That(JsonUtility.ToJson(d.Pickups[i]),Is.EqualTo(JsonUtility.ToJson(expected)),"Only W1/W5 anchors move");
+            }
             var open=AuthoredArenaCatalog.Resolve(d.MapId,"4");Assert.That(open.Identity,Is.EqualTo("quarry-prototype-v1@4"));
             Assert.That(open.Spawns,Is.EqualTo(industrial.Spawns));Assert.That(open.Pickups.Select(p=>p.Anchor),Is.EqualTo(industrial.Pickups.Select(p=>p.Anchor)));
             // The only removed solids are buried toe fill cells; walking ramp geometry stays exact.
