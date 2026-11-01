@@ -51,8 +51,35 @@ namespace StarTournament.ProvingGround.Tests
                 }
                 Assert.That(next,Is.EqualTo(points.Length),t.Id+" reverse="+reverse+" at "+motor.State.Position);Assert.That(motor.State.Position.y,Is.EqualTo(points.Last().y).Within(.3f));Object.DestroyImmediate(motor.gameObject);
             }
-            Assert.That(Physics.Linecast(new Vector3(-24,1.7f,-5),new Vector3(21,1.7f,-5),1<<ProvingArena.WorldLayer),Is.True,"Dog-leg rock blocks shots between entrances");
-            Assert.That(Physics.Raycast(new Vector3(-2,1,3),Vector3.up,3,1<<ProvingArena.WorldLayer),Is.True,"Tunnel has a real roof");
+            Assert.That(Physics.Linecast(new Vector3(-6,1.7f,-10),new Vector3(12,1.7f,4),1<<ProvingArena.WorldLayer),Is.True,"Dog-leg rock blocks shots between entrances");
+            Assert.That(Physics.Raycast(new Vector3(0,1,4),Vector3.up,3,1<<ProvingArena.WorldLayer),Is.True,"Tunnel has a real roof");
+        }
+        [UnityTest] public IEnumerator FullClimbFromLowerCourtToUpperCourtAndBothTunnelPortals()
+        {
+            yield return null;
+            foreach(float side in new[]{-1f,1f})foreach(bool reverse in new[]{false,true})
+            {
+                var points=new[]{new Vector3(side*38,0,-31),new Vector3(side*38,4,-5),new Vector3(side*38,8,23)};
+                if(reverse)System.Array.Reverse(points);var motor=Motor(points[0]);bool middle=false;int next=1;
+                for(int tick=0;tick<1200&&next<points.Length;tick++)
+                {
+                    var delta=points[next]-motor.State.Position;delta.y=0;
+                    if(delta.magnitude<.2f){Assert.That(motor.State.Position.y,Is.EqualTo(points[next].y).Within(.3f));middle|=points[next].y==4;next++;continue;}
+                    var local=Quaternion.Euler(0,-motor.State.Yaw,0)*delta.normalized;motor.Tick(new LocalAction{Move=new Vector2(local.x,local.z)},1/60f);Physics.SyncTransforms();
+                }
+                Assert.That(next,Is.EqualTo(points.Length),"Unbroken full climb side="+side+" reverse="+reverse+" at "+motor.State.Position);Assert.That(middle,Is.True);Object.DestroyImmediate(motor.gameObject);
+            }
+            var tunnel=new[]{new Vector3(-6,0,-17),new Vector3(-6,0,4),new Vector3(18,0,4)};
+            foreach(bool reverse in new[]{false,true})
+            {
+                var points=reverse?tunnel.Reverse().ToArray():tunnel;var motor=Motor(points[0]);int next=1;
+                for(int tick=0;tick<1200&&next<points.Length;tick++)
+                {
+                    var delta=points[next]-motor.State.Position;delta.y=0;if(delta.magnitude<.2f){next++;continue;}
+                    var local=Quaternion.Euler(0,-motor.State.Yaw,0)*delta.normalized;motor.Tick(new LocalAction{Move=new Vector2(local.x,local.z)},1/60f);Physics.SyncTransforms();
+                }
+                Assert.That(next,Is.EqualTo(points.Length),"Tunnel traversal reverse="+reverse+" at "+motor.State.Position);Object.DestroyImmediate(motor.gameObject);
+            }
         }
         [UnityTest] public IEnumerator RealSessionCollectsEveryPickupAtItsSupport()
         {

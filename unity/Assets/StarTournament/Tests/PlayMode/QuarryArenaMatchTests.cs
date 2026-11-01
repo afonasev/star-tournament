@@ -47,16 +47,16 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var cameraGo=new GameObject("Quarry evidence camera");SceneManager.MoveGameObjectToScene(cameraGo,scene);var camera=cameraGo.AddComponent<Camera>();
                 camera.fieldOfView=70;camera.nearClipPlane=.05f;camera.farClipPlane=250;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.48f,.67f,.8f);camera.cullingMask=(1<<0)|(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer)|(1<<ProvingArena.ParticipantLayer);
                 var chunks=arena.GetComponent<ArenaRenderChunks>();
-                camera.fieldOfView=50;cameraGo.transform.position=new Vector3(0,75,-75);cameraGo.transform.LookAt(new Vector3(0,0,2));
+                camera.fieldOfView=48;cameraGo.transform.position=new Vector3(58,67,-90);cameraGo.transform.LookAt(new Vector3(0,0,2));
                 chunks.UseChunks(false);Capture(camera,"overview-before");
-                var source=arena.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled).ToArray();long triangles=source.Sum(r=>(long)r.GetComponent<MeshFilter>().sharedMesh.triangles.Length/3);
+                var source=arena.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled).ToArray();long triangles=source.Where(r=>r.GetComponent<MeshFilter>()&&r.GetComponent<MeshFilter>().sharedMesh).Sum(r=>(long)r.GetComponent<MeshFilter>().sharedMesh.triangles.Length/3);
                 chunks.UseChunks(true);Capture(camera,"overview");
                 var active=arena.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled).ToArray();
                 File.WriteAllText(Path.Combine(DirectoryPath,"asset-optimization.json"),JsonUtility.ToJson(new Optimization{solids=arena.Definition.Solids.Length,sourceRenderers=source.Length,activeRenderers=active.Length,staticBatched=active.Count(r=>r.isPartOfStaticBatch),materials=active.SelectMany(r=>r.sharedMaterials).Distinct().Count(),sourceTriangles=triangles,unreferencedMeshes=ArenaMeshResidency.ReadUnreferencedOwnedMeshes(arena.transform).Length},true));
                 camera.fieldOfView=70;
-                var eyes=new[]{new Vector3(-15,1.7f,27),new Vector3(27,5.7f,9),new Vector3(-27,1.7f,-8),new Vector3(0,1.7f,-30)};
-                var targets=new[]{new Vector3(24,2,22),new Vector3(28,0,-12),new Vector3(-13,1.7f,0),new Vector3(-22,1.7f,-27)};
-                var names=new[]{"excavation","terrace","tunnel","south"};
+                var eyes=new[]{new Vector3(38,1.7f,-32),new Vector3(38,5.7f,-5),new Vector3(-6,1.7f,-23),new Vector3(19,1.7f,-7),new Vector3(-6,1.7f,-7),new Vector3(10,9.7f,22),new Vector3(-13,1.7f,-32)};
+                var targets=new[]{new Vector3(38,7,21),new Vector3(38,9,24),new Vector3(-6,2,-10),new Vector3(14,2,4),new Vector3(-6,1.7f,4),new Vector3(0,2,-22),new Vector3(-24,6,14)};
+                var names=new[]{"climb-from-bottom","climb-from-middle","tunnel-front","tunnel-east","tunnel-inside","upper-view","three-levels-from-court"};
                 for(int i=0;i<eyes.Length;i++){cameraGo.transform.position=eyes[i];cameraGo.transform.LookAt(targets[i]);Capture(camera,names[i]);}
                 Object.Destroy(cameraGo);
                 ground.SendMessage("Repeat");yield return NativeLoadingTestScene.Wait(ground);

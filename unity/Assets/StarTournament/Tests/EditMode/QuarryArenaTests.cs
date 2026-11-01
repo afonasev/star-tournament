@@ -5,16 +5,18 @@ namespace StarTournament.ProvingGround.Tests
 {
     public sealed class QuarryArenaTests
     {
-        [Test] public void CatalogFreezesTenSuppliesAndEightGroundSpawns()
+        [Test] public void CatalogFreezesTenSuppliesAndEightSpawnsAcrossThreeLevels()
         {
             var d=AuthoredArenaCatalog.Resolve(QuarryArenaCatalog.Id);var movement=ProvingProfile.CreateDefault();
             Assert.That(ArenaDefinitionValidator.Validate(d,movement).IsValid,Is.True,ArenaDefinitionValidator.Validate(d,movement).ToString());
             Assert.That(AuthoredArenaCatalog.Name(d.MapId),Is.EqualTo("Карьер — прототип"));
             Assert.That(AuthoredArenaCatalog.Supports(d.MapId,8),Is.True);Assert.That(AuthoredArenaCatalog.Supports(d.MapId,9),Is.False);
-            Assert.That(d.Spawns.Length,Is.EqualTo(8));Assert.That(d.Spawns.All(p=>p.y==0),Is.True);Assert.That(d.SpawnRegions.Length,Is.EqualTo(8));
+            Assert.That(d.Spawns.Length,Is.EqualTo(8));Assert.That(d.Spawns.Select(p=>p.y).Distinct(),Is.EquivalentTo(new[]{0f,4f,8f}));Assert.That(d.SpawnRegions.Length,Is.EqualTo(8));
             Assert.That(d.Pickups.Length,Is.EqualTo(10));Assert.That(d.Pickups.Count(p=>p.Kind==ArenaPickupKind.Shotgun),Is.EqualTo(2));Assert.That(d.Pickups.Count(p=>p.Kind==ArenaPickupKind.Armor),Is.EqualTo(2));
             foreach(var kind in new[]{ArenaPickupKind.Pulse,ArenaPickupKind.Cutter,ArenaPickupKind.Plasma,ArenaPickupKind.Speed,ArenaPickupKind.Damage,ArenaPickupKind.FullHeal})Assert.That(d.Pickups.Count(p=>p.Kind==kind),Is.EqualTo(1));
-            Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.Cutter).Anchor.y,Is.EqualTo(4));Assert.That(d.Pickups.Where(p=>p.Kind!=ArenaPickupKind.Cutter).All(p=>p.Anchor.y==0),Is.True);
+            Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.Cutter).Anchor.y,Is.EqualTo(8));Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.Pulse).Anchor.y,Is.EqualTo(8));Assert.That(d.Pickups.Single(p=>p.Kind==ArenaPickupKind.FullHeal).Anchor.y,Is.Zero);
+            Assert.That(d.Transitions.Length,Is.EqualTo(4));Assert.That(d.Transitions.Count(t=>t.LowerSupport==QuarryArenaCatalog.Ground),Is.EqualTo(2));Assert.That(d.Transitions.Count(t=>t.UpperSupport==QuarryArenaCatalog.Upper),Is.EqualTo(2));
+            var legacy=AuthoredArenaCatalog.Resolve(d.MapId,"1");Assert.That(legacy.Identity,Is.EqualTo("quarry-prototype-v1@1"));Assert.That(legacy.Spawns.All(p=>p.y==0),Is.True);Assert.That(legacy.Transitions.Length,Is.EqualTo(2));
             var frozen=AuthoredArenaCatalog.Freeze(d.MapId,movement);Assert.That(JsonUtility.ToJson(frozen.Definition),Is.EqualTo(JsonUtility.ToJson(d)));
             d.Spawns[0]=Vector3.one;Assert.That(frozen.Definition.Spawns[0],Is.Not.EqualTo(d.Spawns[0]),"Frozen definition owns its data");
         }
