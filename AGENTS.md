@@ -4,6 +4,8 @@
 
 ## Working boundaries
 
+- При многоэтапном игровом срезе читай `.agents/references/initiative-execution.md`: один ответственный за цельный результат, автономный причинный ремонт и проверки по diff/зависимостям; явные человеческие ограничения сохраняются.
+
 - Preserve scope, product contracts and others' files/processes. Questions/reviews are read-only; create an owned code worktree only before authorized edits when isolation is needed.
 - Select minimal affected checks from recorded baseline/diff/dependencies. In game projects, full tests need separate human approval for this run, even at merge/release. In non-game applications and tooling, full tests are allowed within the authorized task under project rules without separate approval. Preserve test contracts and FAIL/NotRun; never infer human/device acceptance from QA.
 - Explicit model/effort wins. Authorized new chats: Sol 6.1/medium; bounded work/subagents: Luna/medium or higher. Astra needs a specific complex decision or explicit choice. No implied delegation/message permission.
