@@ -31,6 +31,7 @@ namespace StarTournament.ProvingGround
                 palette[5].SetColor("_BaseColor",palette[7].color);
                 palette[1].SetColor("_BaseColor",palette[11].color);
             }
+            if(QuarryWarmArt.Applies(definition))QuarryWarmArt.ConfigureMaterials(palette,profile);
             var lookup=new ArenaPresentationLookup(transform.parent);
             foreach(var solid in definition.Solids)
             {
@@ -41,6 +42,7 @@ namespace StarTournament.ProvingGround
             }
             markings=ArenaPickupMarkings.Build(transform,definition,palette[4],profile.Get("quarry.art.pickupRingRadius"),profile.Get("quarry.art.pickupRingWidth"),_=>profile.Get("quarry.art.pickupRingHeight"));
             if(industrial)gameObject.AddComponent<QuarryIndustrialArt>().Build(definition,palette);
+            if(QuarryWarmArt.Applies(definition))gameObject.AddComponent<QuarryWarmDetails>().Build(definition,palette);
             if(definition.Revision=="1")return;
             void Label(string name,string text,Vector3 position,float yaw,float size)
             {
@@ -76,7 +78,12 @@ namespace StarTournament.ProvingGround
             arrows=new Mesh{name="Quarry ramp direction markings"};arrows.SetVertices(vertices);arrows.SetTriangles(triangles,0);arrows.RecalculateNormals();arrows.RecalculateBounds();
             var markingsGo=new GameObject("Ramp direction markings");markingsGo.transform.SetParent(transform,false);markingsGo.AddComponent<MeshFilter>().sharedMesh=arrows;var arrowsRenderer=markingsGo.AddComponent<MeshRenderer>();arrowsRenderer.sharedMaterial=palette[6];arrowsRenderer.shadowCastingMode=ShadowCastingMode.Off;arrowsRenderer.receiveShadows=true;
         }
-        public static void ConfigureDaylight(Light sun)=>sun.intensity=QuarryArenaCatalog.AuthoringProfile().Get("quarry.art.sun");
+        public static void ConfigureDaylight(Light sun)
+        {
+            var definition=QuarryArenaCatalog.Build();var p=ProvingProfile.CreateQuarryAuthoring(definition);
+            sun.intensity=p.Get("quarry.art.sun");
+            if(QuarryWarmArt.Applies(definition))QuarryWarmArt.ConfigureDaylight(sun,p);
+        }
         void RefreshFont(Font font){if(font==signFont&&fontMaterial)fontMaterial.mainTexture=font.material.mainTexture;}
         void OnDestroy(){Font.textureRebuilt-=RefreshFont;if(ownsAmbient){RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;}if(markings)DestroyImmediate(markings);if(arrows)DestroyImmediate(arrows);foreach(var material in materials)if(material)DestroyImmediate(material);}
     }

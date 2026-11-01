@@ -25,6 +25,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         }
         [UnityTest] public IEnumerator MenuEightBotsRepeatAndActualEditorViews()
         {
+            QuarryWarmDetails.CaptureUngroupedReference=true;
             bool had=PlayerPrefs.HasKey(ProvingGround.LastPlayedMapPreferenceKey);string prior=PlayerPrefs.GetString(ProvingGround.LastPlayedMapPreferenceKey);Directory.CreateDirectory(DirectoryPath);
             try
             {
@@ -52,16 +53,31 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 camera.fieldOfView=70;camera.nearClipPlane=.05f;camera.farClipPlane=250;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.48f,.67f,.8f);camera.cullingMask=(1<<0)|(1<<ProvingArena.WorldLayer)|(1<<ProvingArena.MovementOnlyLayer)|(1<<ProvingArena.ParticipantLayer);
                 var chunks=arena.GetComponent<ArenaRenderChunks>();
                 camera.fieldOfView=48;cameraGo.transform.position=new Vector3(58,67,-90);cameraGo.transform.LookAt(new Vector3(0,0,2));
-                chunks.UseChunks(false);Capture(camera,"overview-before");
+                var warm=arena.GetComponentInChildren<QuarryWarmDetails>();Assert.That(warm,Is.Not.Null);
+                chunks.UseChunks(false);warm.UseGrouped(false);Capture(camera,"overview-ungrouped-fittings");
+                warm.UseGrouped(true);Capture(camera,"overview-before");
                 var source=arena.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled).ToArray();long triangles=source.Where(r=>r.GetComponent<MeshFilter>()&&r.GetComponent<MeshFilter>().sharedMesh).Sum(r=>(long)r.GetComponent<MeshFilter>().sharedMesh.triangles.Length/3);
                 chunks.UseChunks(true);Capture(camera,"overview");
                 var active=arena.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled).ToArray();
                 File.WriteAllText(Path.Combine(DirectoryPath,"asset-optimization.json"),JsonUtility.ToJson(new Optimization{solids=arena.Definition.Solids.Length,sourceRenderers=source.Length,activeRenderers=active.Length,staticBatched=active.Count(r=>r.isPartOfStaticBatch),materials=active.SelectMany(r=>r.sharedMaterials).Distinct().Count(),sourceTriangles=triangles,unreferencedMeshes=ArenaMeshResidency.ReadUnreferencedOwnedMeshes(arena.transform).Length},true));
+                Assert.That(warm.GetComponentsInChildren<Collider>().Length,Is.Zero,"Art cannot add collision");
+                var textures=active.SelectMany(r=>r.sharedMaterials).Distinct().Select(m=>m.HasProperty("_BaseMap")?m.GetTexture("_BaseMap"):null).Where(t=>t&&t.name!="Font Texture").Distinct().ToArray();
+                Assert.That(active.SelectMany(r=>r.sharedMaterials).Where(m=>m.name.StartsWith("Quarry warm A")).All(m=>m.shader.isSupported),Is.True);
+                File.WriteAllText(Path.Combine(DirectoryPath,"warm-art-costs.json"),JsonUtility.ToJson(new WarmCosts{identity=QuarryWarmArt.Identity,textureCount=textures.Length,textureBytes=textures.Sum(t=>UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(t)),uncombinedFittingParts=warm.UncombinedPartCount,fittingRenderers=warm.GroupedRendererCount,colliders=arena.GetComponentsInChildren<Collider>().Length,localLights=arena.GetComponentsInChildren<Light>().Length,localShadowLights=arena.GetComponentsInChildren<Light>().Count(l=>l.shadows!=LightShadows.None)},true));
                 camera.fieldOfView=70;
                 var eyes=new[]{new Vector3(38,1.7f,-32),new Vector3(38,5.7f,-5),new Vector3(-6,1.7f,-23),new Vector3(19,1.7f,-7),new Vector3(-6,1.7f,-7),new Vector3(10,9.7f,22),new Vector3(-13,1.7f,-32),new Vector3(0,5.7f,-1),new Vector3(16,9.7f,23),new Vector3(-19,1.7f,-32)};
                 var targets=new[]{new Vector3(38,7,21),new Vector3(38,9,24),new Vector3(-6,2,-10),new Vector3(14,2,4),new Vector3(-6,1.7f,4),new Vector3(0,2,-22),new Vector3(-24,6,14),new Vector3(0,6,20),new Vector3(24,10.5f,36),new Vector3(-11,2,-23)};
                 var names=new[]{"climb-from-bottom","climb-from-middle","tunnel-front","tunnel-east","tunnel-inside","upper-view","three-levels-from-court","center-roof","workshop","loader"};
-                for(int i=0;i<eyes.Length;i++){cameraGo.transform.position=eyes[i];cameraGo.transform.LookAt(targets[i]);Capture(camera,names[i]);}
+                for(int i=0;i<eyes.Length;i++)
+                {
+                    cameraGo.transform.position=eyes[i];cameraGo.transform.LookAt(targets[i]);
+                    if(names[i]=="loader"||names[i]=="workshop")
+                    {
+                        chunks.UseChunks(false);warm.UseGrouped(false);Capture(camera,names[i]+"-ungrouped");
+                        warm.UseGrouped(true);chunks.UseChunks(true);
+                    }
+                    Capture(camera,names[i]);
+                }
                 camera.fieldOfView=65;
                 cameraGo.transform.position=new Vector3(-30,1.7f,-35);cameraGo.transform.LookAt(new Vector3(-20,1.8f,-25));Capture(camera,"open-lower-cover");
                 cameraGo.transform.position=new Vector3(-31,5.7f,9);cameraGo.transform.LookAt(new Vector3(-21,5.5f,1));Capture(camera,"open-middle-cover");
@@ -76,7 +92,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(ground.Session.ArenaIdentity,Is.EqualTo(QuarryArenaCatalog.Identity));Assert.That(JsonUtility.ToJson(ground.CameraReviewArena.Definition),Is.EqualTo(geometry));Assert.That(ground.CameraReviewArena.Surface.navMeshData,Is.SameAs(nav));Assert.That(ground.Session.Time,Is.LessThan(1));
                 ground.OpenPauseReviewSeat(0);
             }
-            finally{if(had)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,prior);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);}
+            finally{QuarryWarmDetails.CaptureUngroupedReference=false;if(had)PlayerPrefs.SetString(ProvingGround.LastPlayedMapPreferenceKey,prior);else PlayerPrefs.DeleteKey(ProvingGround.LastPlayedMapPreferenceKey);}
         }
         [UnityTest] public IEnumerator MapPreviewShowsFinalArtwork()
         {
@@ -87,6 +103,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var preview=option.GetComponentInChildren<ArenaPreviewGraphic>();Assert.That(preview.texture,Is.SameAs(Resources.Load<Texture2D>("MapMenuArt/"+QuarryArenaCatalog.Id)));
             yield return EditorUiCapture.Capture(ground,Path.Combine(DirectoryPath,"map-picker-final.png"),1920,1080);
         }
+        [Serializable] sealed class WarmCosts {public string identity;public int textureCount,uncombinedFittingParts,fittingRenderers,colliders,localLights,localShadowLights;public long textureBytes;}
         [Serializable] sealed class Optimization {public int solids,sourceRenderers,activeRenderers,staticBatched,materials,unreferencedMeshes;public long sourceTriangles;}
     }
 }
