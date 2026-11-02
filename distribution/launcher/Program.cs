@@ -9,8 +9,16 @@ using StarTournament.Distribution;
 try
 {
     if (args.FirstOrDefault() == "--recovery-supervisor") return await MacRecoverySupervisor.Run(args);
-    VelopackApp.Build().SetAutoApplyOnStartup(false).Run();
-    return await Launcher.Run(args);
+    var payload = BootstrapHost.Payload(ref args);
+    var app = VelopackApp.Build().SetAutoApplyOnStartup(false);
+    if (payload != null) app.SetLocator(VelopackLocator.CreateDefaultForPlatform(new BootstrapHost.PayloadProcess(payload)));
+    app.Run();
+    if (payload == null && OperatingSystem.IsMacOS())
+    {
+        using var host = BootstrapHost.RouteMac(AppContext.BaseDirectory, args);
+        if (host != null) return 0;
+    }
+    return await Launcher.Run(args, payload);
 }
 catch (Exception ex)
 {
@@ -27,7 +35,7 @@ static class Launcher
         File.WriteAllText(path + ".tmp", value); File.Move(path + ".tmp", path, true);
     }
 
-    public static async Task<int> Run(string[] args)
+    public static async Task<int> Run(string[] args, string? payload = null)
     {
         var restartArguments = args;
         var qaIndex = Array.IndexOf(args, "--qa-unity-runner");
@@ -54,13 +62,13 @@ static class Launcher
                 restartArguments = restartArguments.Concat(new[] { "--qa-unity-runner", qaEnvironmentRunner }).ToArray();
         }
         // Preserve the selected launch mode when staged updates relaunch this Player.
-        var baseDir = AppContext.BaseDirectory;
+        var baseDir = payload ?? AppContext.BaseDirectory;
         var logRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StarTournament", "launcher");
         Directory.CreateDirectory(logRoot);
         void Log(Exception ex) => UpdateFeedback.Log("launcher", ex);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(baseDir, "release.json")), Json)!;
         PlatformRequirements.RequireSupported(config.Platform);
-        if (config.Compatibility != null) ReleaseCompatibility.Require(config.Compatibility, config.Platform);
+        if (payload == null && config.Compatibility != null) ReleaseCompatibility.Require(config.Compatibility, config.Platform);
         if (config.UpdateChannel is not ("test" or "production"))
             throw new InvalidOperationException("GitHub update channel required");
         FileStream ownership;
@@ -82,13 +90,13 @@ static class Launcher
             catch (JsonException ex) { throw new IOException("Invalid recorded Player identity", ex); }
             File.Delete(playerRecord);
         }
-        var key = File.ReadAllText(Path.Combine(baseDir, "update-public.pem"));
+        var key = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "update-public.pem"));
         var locator = VelopackLocator.Current;
         var markedRoot=WindowsInstallation.MarkedRoot(locator);
         if(markedRoot!=null)await WindowsBrokerUpgradeStartup.EnsureWindows(markedRoot,config);
         var machineRoot = WindowsInstallation.MachineRoot(locator);
         var readerProtocol = machineRoot == null ? ReleaseCompatibility.ReaderProtocol : WindowsInstallation.MetadataReader(machineRoot);
-        using var source = new AuthenticatedSource(config, key, discoveryCachePath: Path.Combine(logRoot, "release-discovery-v1"), readerProtocol: readerProtocol);
+        using var source = new AuthenticatedSource(config, key, discoveryCachePath: Path.Combine(logRoot, "release-discovery-v1"), readerProtocol: readerProtocol, bootstrap: payload != null);
         bool Installing() => machineRoot != null && File.Exists(Path.Combine(machineRoot, "maintenance", "installing.flag"));
         if (Installing()) { UpdateFeedback.Show("Установщик изменяет файлы игры. Дождитесь его завершения и запустите игру снова."); return 1; }
         using var installationLease = machineRoot == null ? null : WindowsInstallLease.TryAcquire(machineRoot);
@@ -125,7 +133,6 @@ static class Launcher
         }
         if (machineRoot != null) WindowsInstallation.WatchStartup(machineRoot, config.Version, restartArguments);
         var knownHealthy = recovery.Read().HealthyVersion == config.Version;
-        string? startupError = null;
         void Apply(VelopackAsset asset, bool restartGame, bool explicitRetry = false)
         {
             journal.Begin(asset.Version.ToString());
@@ -142,7 +149,7 @@ static class Launcher
         {
             if (!File.Exists(stagedManifest)) return null;
             if (new FileInfo(stagedManifest).Length > 65536) throw new System.Security.Cryptography.CryptographicException("Staged metadata exceeds limit");
-            using var verifier = new AuthenticatedSource(config, key, readerProtocol: readerProtocol);
+            using var verifier = new AuthenticatedSource(config, key, readerProtocol: readerProtocol, bootstrap: payload != null);
             verifier.Admit(await File.ReadAllTextAsync(stagedManifest));
             verifier.RequireCompatibleTarget();
             var asset = verifier.Asset!;
@@ -153,17 +160,7 @@ static class Launcher
 
         VelopackAsset? stagedAtStartup = null;
         try { stagedAtStartup = await Staged(); }
-        catch (Exception ex) { Log(ex); File.Delete(stagedManifest); startupError = "Обновление не установлено. " + UpdateFeedback.Explain(ex); } // Invalid staged bytes are never activated.
-        if (knownHealthy && recovery.Read().Attempt == null && stagedAtStartup != null && !recovery.IsBlocked(stagedAtStartup.Version.ToString()) && !journal.AlreadyAttempted(stagedAtStartup.Version.ToString()) &&
-            (machineRoot == null || !WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString()) && !WindowsInstallation.IsBlocked(machineRoot, stagedAtStartup.Version.ToString())))
-        {
-            try
-            {
-                Apply(stagedAtStartup, true);
-                return 0; // No Unity process has started yet.
-            }
-            catch (Exception ex) { Log(ex); startupError = "Обновление не установлено. " + UpdateFeedback.Explain(ex); journal.Fail(stagedAtStartup.Version.ToString(), startupError); } // A failed handoff retains the authenticated staged package and starts the installed game.
-        }
+        catch (Exception ex) { Log(ex); File.Delete(stagedManifest);  } // Invalid staged bytes are never activated.
 
         var session = Path.Combine(logRoot, "sessions", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(session);
@@ -180,25 +177,42 @@ static class Launcher
             UpdateFeedback.Log("check-complete target=" + available?.TargetFullRelease.Version);
             return available?.TargetFullRelease.Version.ToString();
         }
-        UpdateSnapshot? initial = null;
-        if (stagedAtStartup != null)
+        UpdateSnapshot? initial;
+        // Pending first-start/rollback supervision must settle before another replacement.
+        // A downloaded package from an earlier launch does not carry consent for this launch.
+        if (knownHealthy && recovery.Read().Attempt == null)
         {
-            var previousAttempt = journal.Read();
-            var failure = startupError ?? (journal.AlreadyAttempted(stagedAtStartup.Version.ToString()) ? previousAttempt?.Message : null);
-            if (failure == null && machineRoot != null && WindowsInstallation.IsBlocked(machineRoot, stagedAtStartup.Version.ToString()))
-                failure = "Предыдущая попытка завершилась неудачно. Можно продолжить играть или повторить установку вручную.";
-            if (failure == null && machineRoot != null && WindowsInstallation.Declined(packages, stagedAtStartup.Version.ToString()))
-                failure = "Предыдущая установка отменена или завершилась с ошибкой. Повторите установку и подтвердите запрос Windows.";
-            initial = new(failure == null ? "staged" : "apply-error", 100, failure ?? "", Version: stagedAtStartup.Version.ToString());
+            var bootstrap = await BootstrapStartup.Run(config.Version, Check, BootstrapPrompt.Confirm,
+                token => Download(_ => { }, token), async target =>
+                {
+                    AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target"));
+                    var ready = await Staged() ?? throw new IOException("Authenticated staged target missing");
+                    if (ready.Version.ToString() != target) throw new IOException("Selected update changed before activation");
+                    if (recovery.IsBlocked(target)) recovery.PermitRetry(target);
+                    try { Apply(ready, true, explicitRetry: true); }
+                    catch (Exception error) { journal.Fail(target, "Обновление не установлено. " + UpdateFeedback.Explain(error)); throw; }
+                }, Log);
+            if (bootstrap.HandedOff) return 0;
+            initial = bootstrap.Snapshot;
         }
-        else if (startupError != null) initial = new("error", Error: startupError);
+        else
+        {
+            // First installation has no verified working fallback yet. Discover now;
+            // replacement must wait for its first genuine startup-ready confirmation.
+            try
+            {
+                var target = await Check(CancellationToken.None);
+                initial = new(target == null ? "current" : "available", Version: target ?? "");
+            }
+            catch (Exception error) { Log(error); initial = new("unavailable", Error: UpdateFeedback.Explain(error)); }
+        }
         using var history = new ReleaseHistory(config, Path.Combine(UpdateFeedback.LogRoot, Path.GetFileName(config.AppId) + ".history.json"));
         await using var updates = new UpdateSession(Check, Download,
             () => AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target")),
             next => AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)), initial, history.Fetch, history.FetchMedia);
         updates.Start();
         var executable = Path.GetFullPath(Path.Combine(baseDir, config.GameExecutable));
-        if (!executable.StartsWith(Path.GetFullPath(baseDir), StringComparison.Ordinal))
+        if (!executable.StartsWith(Path.TrimEndingDirectorySeparator(Path.GetFullPath(baseDir)) + Path.DirectorySeparatorChar, OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
             throw new InvalidOperationException("Player must be inside release payload");
         var start = new ProcessStartInfo(executable) { UseShellExecute = false, WorkingDirectory = Path.GetDirectoryName(executable)! };
         foreach (var arg in args) start.ArgumentList.Add(arg);
@@ -288,6 +302,7 @@ static class Launcher
             var ready = await Staged(); // Reauthenticate after the actual Player has finished.
             if (ready != null && recovery.Read().Attempt == null)
             {
+                if (!restart) return 0; // Only explicit in-game restart consent permits post-Player activation.
                 if (restart && recovery.IsBlocked(ready.Version.ToString())) recovery.PermitRetry(ready.Version.ToString());
                 if (recovery.IsBlocked(ready.Version.ToString())) return 0;
                 if (machineRoot != null && !restart && WindowsInstallation.IsBlocked(machineRoot, ready.Version.ToString())) return 0;

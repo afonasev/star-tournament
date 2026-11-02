@@ -40,6 +40,27 @@ class ReleaseCompatibility(unittest.TestCase):
             archive.writestr('lib/osx/release.json', json.dumps(config or self.config))
             if duplicate: archive.writestr('other/release.json', json.dumps(self.config))
 
+    def test_bootstrap_descriptor_separates_stable_transport_from_target(self):
+        config = dict(self.config, bootstrapProtocol=1)
+        descriptor = compatibility.manifest(config, self.asset, '2026-11-03T00:00:00Z')
+        self.assertEqual(descriptor['bootstrapCompatibility'], self.requirements)
+        config['compatibility'] = dict(self.requirements, minimumUpdaterProtocol=3, payloadFormat='launcher-generation3')
+        descriptor = compatibility.manifest(config, self.asset, '2026-11-03T00:00:00Z')
+        self.assertEqual(descriptor['compatibility']['minimumUpdaterProtocol'], 3)
+        self.assertEqual(descriptor['bootstrapCompatibility']['minimumUpdaterProtocol'], 2)
+        self.write_package(config)
+        compatibility.verify_payload(self.package, descriptor)
+        for field, value in [('minimumOsVersion', '13.0'), ('userDataPolicy', 'unknown-data'), ('minimumUpdaterProtocol', 99), ('payloadFormat', 'unknown-outer')]:
+            with self.subTest(field=field):
+                bad = copy.deepcopy(descriptor)
+                bad['bootstrapCompatibility'][field] = value
+                with self.assertRaises(ValueError): compatibility.verify_payload(self.package, bad)
+        for marker in (0, True, 2):
+            config['bootstrapProtocol'] = marker
+            self.write_package(config)
+            with self.assertRaises(ValueError): compatibility.verify_payload(self.package, descriptor)
+            with self.assertRaises(ValueError): compatibility.manifest(config, self.asset, '2026-11-03T00:00:00Z')
+
     def test_producer_uses_actual_mac_floor_and_emits_schema2(self):
         self.plist('14.2.1')
         self.assertEqual(compatibility.current('osx-arm64', self.player)['minimumOsVersion'], '14.2.1')
@@ -99,6 +120,15 @@ class ReleaseCompatibility(unittest.TestCase):
             sign(self.descriptor)
             data, asset = publisher.verify_manifest(envelope, '1.1.0', 'osx-arm64', 'production')
             self.assertEqual(data['compatibility'], self.requirements)
+            bootstrap = copy.deepcopy(self.descriptor)
+            bootstrap['bootstrapCompatibility'] = dict(self.requirements)
+            bootstrap['compatibility'] = dict(self.requirements, minimumUpdaterProtocol=3, payloadFormat='launcher-generation3')
+            sign(bootstrap)
+            admitted, _ = publisher.verify_manifest(envelope, '1.1.0', 'osx-arm64', 'production')
+            self.assertEqual(admitted['bootstrapCompatibility'], self.requirements)
+            malformed = copy.deepcopy(bootstrap); malformed['bootstrapCompatibility']['userDataPolicy'] = 'unknown-data'
+            sign(malformed)
+            with self.assertRaises(ValueError): publisher.verify_manifest(envelope, '1.1.0', 'osx-arm64', 'production')
             for field, value in (('schema', 1), ('compatibility', None), ('compatibility', dict(self.requirements, minimumUpdaterProtocol=3))):
                 with self.subTest(field=field):
                     sign(dict(self.descriptor, **{field: value}))

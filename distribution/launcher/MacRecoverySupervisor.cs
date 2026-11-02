@@ -11,7 +11,7 @@ public sealed record RecoverySupervisorProcess(int Pid, long StartedTicks);
 public sealed record MacRecoveryHandoff(int Schema, string Id, LauncherConfig Config, string InstallRoot,
     string Packages, string Envelope, string Target, bool Restart, string[] Arguments);
 
-/// <summary>Normal-user macOS supervisor, executed from the retained old payload, never from the replacement.</summary>
+/// <summary>Normal-user macOS supervisor, executed from the independent bootstrap or retained old payload, never from the replacement.</summary>
 public sealed class MacRecoverySupervisor
 {
     static readonly JsonSerializerOptions Json = new() { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };
@@ -23,7 +23,7 @@ public sealed class MacRecoverySupervisor
     {
         if (config.Platform != "osx" || config.UpdateChannel is not ("test" or "production") || !Path.IsPathFullyQualified(logs))
             throw new ArgumentException("macOS release identity and absolute state directory required");
-        this.config = config; this.logs = logs;
+        this.config = config; this.logs = logs; InstalledRoot = installedRoot;
         store = Path.Combine(logs, config.AppId + ".recovery-" + StartupRecovery.InstallationId(installedRoot));
         appLock = Path.Combine(logs, config.AppId + ".lock");
         supervisorLock = Path.Combine(logs, config.AppId + ".recovery.lock");
@@ -32,7 +32,12 @@ public sealed class MacRecoverySupervisor
         journal = new(journalPath, identity); snapshots = new(store, identity);
     }
     string HandoffPath(string id) => Path.Combine(store, id + ".handoff.json");
-    string Host(string id) => Path.Combine(store, id, "payload", "Contents", "MacOS", "StarTournamentLauncher");
+    string Host(string id)
+    {
+        var stable = Path.Combine(BootstrapHost.MacDirectory(config, logs, InstalledRoot), "StarTournamentLauncher");
+        return File.Exists(stable) ? stable : Path.Combine(store, id, "payload", "Contents", "MacOS", "StarTournamentLauncher");
+    }
+    readonly string InstalledRoot;
     string RecoveryCommand(string id) => Path.Combine(store, "Restore-" + id + ".command");
     static string[] Arguments(string encoded)
     {
@@ -121,6 +126,14 @@ public sealed class MacRecoverySupervisor
         var entry = JsonSerializer.Deserialize<MacRecoveryHandoff>(File.ReadAllText(entryPath), Json) ?? throw new IOException("Recovery handoff missing");
         var supervisor = new MacRecoverySupervisor(config, logs, entry.InstallRoot);
         var handoff = supervisor.ReadHandoff(args[1]);
+        bool independent = Path.GetFullPath(hostDirectory).TrimEnd(Path.DirectorySeparatorChar) == BootstrapHost.MacDirectory(config, logs, entry.InstallRoot);
+        if (independent)
+        {
+            // The retained host has its initial identity; the journal/signed handoff binds
+            // the working payload being replaced. Never execute that payload's launcher.
+            config = handoff.Config;
+            supervisor = new MacRecoverySupervisor(config, logs, entry.InstallRoot);
+        }
         if (!Path.GetFullPath(hostDirectory).TrimEnd(Path.DirectorySeparatorChar).Equals(Path.GetDirectoryName(supervisor.Host(args[1])), StringComparison.Ordinal))
             throw new IOException("Supervisor must run from the retained payload");
         using var own = TryLease(supervisor.supervisorLock) ?? throw new IOException("Recovery supervision is already active");
@@ -135,7 +148,7 @@ public sealed class MacRecoverySupervisor
         {
             using var caller = Process.GetProcessById(pid);
             if (caller.StartTime.ToUniversalTime().Ticks != ticks ||
-                !Path.GetFullPath(caller.MainModule!.FileName!).Equals(Path.Combine(handoff.InstallRoot, "Contents", "MacOS", "StarTournamentLauncher"), StringComparison.Ordinal))
+                !Path.GetFullPath(caller.MainModule!.FileName!).Equals(independent ? supervisor.Host(handoff.Id) : Path.Combine(handoff.InstallRoot, "Contents", "MacOS", "StarTournamentLauncher"), StringComparison.Ordinal))
                 throw new IOException("Recovery caller is not this installation's exact launcher");
         }
         else if (args[2] != "recover" || ticks != 0) throw new ArgumentException("Only manual recovery can omit a caller");
@@ -214,7 +227,11 @@ public sealed class MacRecoverySupervisor
     }
     Process Launch(MacRecoveryHandoff handoff, string[] args)
     {
-        var start = DetachedOutput(Path.Combine(handoff.InstallRoot, "Contents", "MacOS", "StarTournamentLauncher"), args, logs);
+        var stable = BootstrapHost.MacDirectory(config, logs, handoff.InstallRoot);
+        var independent = File.Exists(Path.Combine(stable, "StarTournamentLauncher"));
+        var executable = independent ? Path.Combine(stable, "StarTournamentLauncher") : Path.Combine(handoff.InstallRoot, "Contents", "MacOS", "StarTournamentLauncher");
+        var arguments = independent ? new[] { "--bootstrap-payload", Path.Combine(handoff.InstallRoot, "Contents", "MacOS") }.Concat(args) : args;
+        var start = DetachedOutput(executable, arguments, logs);
         return Process.Start(start) ?? throw new IOException("Installed launcher did not start");
     }
     static ProcessStartInfo DetachedOutput(string executable, IEnumerable<string> args, string workingDirectory)
@@ -277,7 +294,7 @@ public sealed class MacRecoverySupervisor
     }
     AuthenticatedSource Verifier(MacRecoveryHandoff handoff)
     {
-        var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(Path.GetDirectoryName(Host(handoff.Id))!, "update-public.pem")));
+        var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(Path.GetDirectoryName(Host(handoff.Id))!, "update-public.pem")), bootstrap: Directory.Exists(BootstrapHost.MacDirectory(config, logs, handoff.InstallRoot)));
         try { verifier.Admit(handoff.Envelope); return verifier; } catch { verifier.Dispose(); throw; }
     }
     VelopackAsset ValidateTarget(MacRecoveryHandoff handoff)
@@ -286,7 +303,7 @@ public sealed class MacRecoverySupervisor
         var keyPath = File.Exists(Path.Combine(Path.GetDirectoryName(Host(handoff.Id))!, "update-public.pem"))
             ? Path.Combine(Path.GetDirectoryName(Host(handoff.Id))!, "update-public.pem")
             : Path.Combine(handoff.InstallRoot, "Contents", "MacOS", "update-public.pem");
-        using var verifier = new AuthenticatedSource(config, File.ReadAllText(keyPath)); verifier.Admit(handoff.Envelope);
+        using var verifier = new AuthenticatedSource(config, File.ReadAllText(keyPath), bootstrap: Directory.Exists(BootstrapHost.MacDirectory(config, logs, handoff.InstallRoot))); verifier.Admit(handoff.Envelope);
         verifier.RequireCompatibleTarget();
         var asset = verifier.Asset ?? throw new IOException("Authenticated target missing");
         if (asset.Version.ToString() != handoff.Target) throw new IOException("Frozen recovery target changed");

@@ -17,7 +17,7 @@ import tempfile
 import unicodedata
 import zipfile
 
-from release_compatibility import validate as validate_compatibility
+from release_compatibility import payload_requirements
 
 APP_NAME = 'Star Tournament.app'
 WINDOW = (1088, 528)
@@ -26,9 +26,9 @@ ICON_LOCATIONS = {APP_NAME: (314, 230), 'Applications': (762, 230)}
 
 def outer_plist(config):
     """Pinned Velopack 1.2.158 defaults, plus the actual Player OS floor."""
-    minimum = validate_compatibility(config['compatibility'], 'osx')['minimumOsVersion']
+    minimum = payload_requirements(config)['minimumOsVersion']
     app_id, version = config['appId'], config['version']
-    return dict(CFBundleName='Star Tournament', CFBundleExecutable='StarTournamentLauncher',
+    return dict(CFBundleName='Star Tournament', CFBundleExecutable=('StarTournamentBootstrap' if config.get('bootstrapProtocol') == 1 else 'StarTournamentLauncher'),
                 CFBundleIdentifier='com.'+app_id+'.'+app_id, CFBundlePackageType='APPL',
                 CFBundleShortVersionString=version.split('-')[0], CFBundleVersion=version,
                 CFBundleSignature='????', NSPrincipalClass='NSApplication',
@@ -112,7 +112,7 @@ def prepare_bundle(stage, output, config, icon):
     shutil.copyfile(icon, resources/'app-icon.icns')
     for path in Path(stage).iterdir():
         # .NET native libraries/apphost already have embedded ad-hoc signatures.
-        if path.name == 'game' or (path.is_file() and (path.name == 'StarTournamentLauncher' or path.suffix == '.dylib')):
+        if path.name == 'game' or (path.is_file() and (path.name in ('StarTournamentLauncher', 'StarTournamentBootstrap') or path.suffix == '.dylib')):
             path.rename(macos/path.name)
         else:
             path.rename(payload/path.name)
@@ -195,11 +195,12 @@ def inspect_app(app, runtime, version):
     if (config.get('platform'), config.get('architecture'), config.get('version'), config.get('appId')) != (
             'osx', runtime.split('-')[1], version, 'tech.afonasev.star-tournament.'+runtime):
         raise ValueError('Application release identity mismatch')
-    requirements = validate_compatibility(config.get('compatibility'), 'osx')
+    requirements = payload_requirements(config)
     minimum = requirements['minimumOsVersion']
     if info.get('LSMinimumSystemVersion') != minimum:
         raise ValueError('Finder minimum OS must match authenticated payload requirements')
-    if info.get('CFBundleExecutable') != 'StarTournamentLauncher':
+    entry = 'StarTournamentBootstrap' if config.get('bootstrapProtocol') == 1 else 'StarTournamentLauncher'
+    if info.get('CFBundleExecutable') != entry:
         raise ValueError('Finder must start the launcher, not the nested Player')
     if info.get('CFBundleVersion') != version or info.get('CFBundleShortVersionString') != version.split('-')[0]:
         raise ValueError('Finder release version mismatch')
@@ -208,7 +209,7 @@ def inspect_app(app, runtime, version):
     if (not player.startswith('game/Player.app/Contents/MacOS/') or '..' in player_path.parts or
             player_path.as_posix() != player or not (base/player).resolve().is_relative_to(root)):
         raise ValueError('Nested Player executable required')
-    for executable in [base/'StarTournamentLauncher', base/'UpdateMac', base/player]:
+    for executable in [base/entry, base/'StarTournamentLauncher', base/'UpdateMac', base/player]:
         if not executable.is_file() or not os.access(executable, os.X_OK):
             raise ValueError('Runnable launcher, updater and Player required')
     if not (base/'update-public.pem').is_file() or not (contents/'Resources/sq.version').is_file():

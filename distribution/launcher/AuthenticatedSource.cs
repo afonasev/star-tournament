@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.IO.Compression;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Velopack;
 using Velopack.Logging;
@@ -9,7 +10,7 @@ using Velopack.Sources;
 namespace StarTournament.Distribution;
 
 public sealed record LauncherConfig(string AppId, string Platform, string Architecture, string Version,
-    string PublicationDate, string FeedBase, string GameExecutable, string? UpdateChannel = null, ReleaseRequirements? Compatibility = null);
+    string PublicationDate, string FeedBase, string GameExecutable, string? UpdateChannel = null, ReleaseRequirements? Compatibility = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int BootstrapProtocol = 0);
 
 public sealed class AuthenticatedSource : IUpdateSource, IDisposable
 {
@@ -20,6 +21,9 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     readonly GitHubDiscovery discovery;
     readonly int readerProtocol;
     readonly Func<string, Version, bool>? hostProbe;
+    readonly bool bootstrap;
+    ReleaseRequirements? payloadRequirements;
+    bool independentTarget;
     ReleaseRequirements? requirements;
     Uri? packageUri;
     public string? Envelope { get; private set; }
@@ -27,10 +31,10 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
     public string? PublicationDate { get; private set; }
     public CancellationToken CheckCancellationToken { get; set; }
 
-    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null, int readerProtocol = ReleaseCompatibility.ReaderProtocol, Func<string, Version, bool>? hostProbe = null)
+    public AuthenticatedSource(LauncherConfig config, string key, HttpMessageHandler? transport = null, TimeSpan? stallTimeout = null, string? discoveryCachePath = null, Func<DateTimeOffset>? discoveryClock = null, int readerProtocol = ReleaseCompatibility.ReaderProtocol, Func<string, Version, bool>? hostProbe = null, bool bootstrap = false)
     {
         this.config = config; this.key = key;
-        this.readerProtocol = readerProtocol; this.hostProbe = hostProbe;
+        this.readerProtocol = readerProtocol; this.hostProbe = hostProbe; this.bootstrap = bootstrap;
         this.stallTimeout = stallTimeout ?? TimeSpan.FromSeconds(30);
         if (config.UpdateChannel != null && (config.UpdateChannel is not ("test" or "production") ||
             config.FeedBase != (config.UpdateChannel == "test" ? TestLocator : ProductionBase)))
@@ -88,7 +92,22 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
             (config.UpdateChannel == "test") != asset.Version.IsPrerelease))
             throw new CryptographicException("Missing GitHub identity or invalid channel version");
         var parsedRequirements = ReleaseCompatibility.Parse(release, config.Platform);
-        packageUri = authenticatedUrl; requirements = parsedRequirements;
+        var transportRequirements = parsedRequirements;
+        var hasBootstrap = release.TryGetProperty("bootstrapCompatibility", out var bootstrapData);
+        if (hasBootstrap)
+        {
+            if (release.GetProperty("schema").GetInt32() != 2) throw new CryptographicException("Independent bootstrap requires schema2");
+            using var transport = JsonDocument.Parse(JsonSerializer.Serialize(new { schema = 2, compatibility = bootstrapData }));
+            transportRequirements = ReleaseCompatibility.Parse(transport.RootElement, config.Platform);
+            if (transportRequirements.MinimumOsVersion != parsedRequirements.MinimumOsVersion ||
+                transportRequirements.UserDataPolicy != parsedRequirements.UserDataPolicy || transportRequirements.UserDataPolicy != ReleaseCompatibility.DataPolicy)
+                throw new CryptographicException("Bootstrap cannot lower target OS or alter preserved user-data requirements");
+            if (transportRequirements.MinimumUpdaterProtocol != ReleaseCompatibility.ReaderProtocol || transportRequirements.PayloadFormat != ReleaseCompatibility.PayloadFormat)
+                throw new CryptographicException("Unsupported independent full transport declaration");
+        }
+        payloadRequirements = parsedRequirements;
+        independentTarget = hasBootstrap;
+        packageUri = authenticatedUrl; requirements = bootstrap && hasBootstrap ? transportRequirements : parsedRequirements;
         Envelope = envelope; Asset = asset; PublicationDate = date;
     }
 
@@ -248,7 +267,7 @@ public sealed class AuthenticatedSource : IUpdateSource, IDisposable
                 }
                 var target = JsonSerializer.Deserialize<LauncherConfig>(content.ToArray(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (target == null || target.AppId != config.AppId || target.Version != asset.Version.ToString() || target.Platform != config.Platform ||
-                    target.Architecture != config.Architecture || target.UpdateChannel != config.UpdateChannel || target.PublicationDate != PublicationDate || target.Compatibility != requirements)
+                    target.Architecture != config.Architecture || target.UpdateChannel != config.UpdateChannel || target.PublicationDate != PublicationDate || target.Compatibility != payloadRequirements || independentTarget && target.BootstrapProtocol != 1)
                     throw new CryptographicException("Payload config differs from signed target requirements");
             }
             catch (Exception error) when (error is InvalidDataException or JsonException)

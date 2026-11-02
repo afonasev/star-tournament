@@ -324,7 +324,7 @@ static partial class Maintenance
         var restartArgs = JsonSerializer.Deserialize<string[]>(Convert.FromBase64String(a[5])) ?? [];
         ValidateCaller(root, caller);
         var config = JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root, "current", "release.json")), Json)!;
-        using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root));
+        using var source = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root), bootstrap: File.Exists(Path.Combine(root, "maintenance", "bootstrap", "StarTournamentLauncher.exe")));
         source.Admit(ReadBoundedText(Path.Combine(cache, "star-authenticated.json"), 65536));
         source.RequireCompatibleTarget();
         var expected = source.Asset!.Version.ToString();
@@ -441,8 +441,13 @@ static partial class Maintenance
         try { return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
         catch (IOException error) when ((error.HResult & 0xffff) is 32 or 33) { return null; }
     }
-    static WindowsDetachedProcess LaunchCurrent(string root, string[] args) =>
-        WindowsDetachedProcess.Start(Path.Combine(root, "current", "StarTournamentLauncher.exe"), args, root);
+    static WindowsDetachedProcess LaunchCurrent(string root, string[] args)
+    {
+        var host = WindowsInstallation.LauncherImage(root);
+        if (Path.GetDirectoryName(host) == Path.Combine(root, "maintenance", "bootstrap"))
+            return WindowsDetachedProcess.Start(host, new[] { "--bootstrap-payload", Path.Combine(root, "current") }.Concat(args).ToArray(), root);
+        return WindowsDetachedProcess.Start(Path.Combine(root, "current", "StarTournamentLauncher.exe"), args, root);
+    }
 
     static async Task<int> WatchStartup(string[] args)
     {
@@ -559,7 +564,7 @@ static partial class Maintenance
         if (protectedConfig.GetProperty("protocol").GetInt32() != 2 || protectedConfig.GetProperty("appId").GetString() != config.AppId ||
             protectedConfig.GetProperty("platform").GetString() != config.Platform || protectedConfig.GetProperty("architecture").GetString() != config.Architecture)
             throw new CryptographicException("Protected installation identity mismatch");
-        using var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root));
+        using var verifier = new AuthenticatedSource(config, File.ReadAllText(Path.Combine(root, "maintenance", "update-public.pem")), readerProtocol: WindowsInstallation.MetadataReader(root), bootstrap: File.Exists(Path.Combine(root, "maintenance", "bootstrap", "StarTournamentLauncher.exe")));
         verifier.Admit(envelope); var asset = verifier.Asset!;
         verifier.RequireCompatibleTarget();
         var sourcePackage = Path.Combine(cache, Path.GetFileName(asset.FileName));

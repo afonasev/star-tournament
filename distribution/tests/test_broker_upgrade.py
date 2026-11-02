@@ -119,6 +119,18 @@ class BrokerProducer(unittest.TestCase):
         with self.assertRaises(ValueError): self.seal()
         self.assertEqual((self.directory/broker.ENVELOPE).read_bytes(),envelope)
 
+    def test_bootstrap_contract_is_signed_and_keeps_strict_field_set(self):
+        self.config['bootstrapProtocol'] = 1
+        self.seal()
+        contract = json.loads((self.directory/'maintenance.json').read_text())
+        self.assertEqual(contract['bootstrapProtocol'], 1)
+        self.assertEqual(set(contract), set(self.config) | {'protocol', 'metadataReader'})
+
+    def test_real_csharp_bootstrap_consumer(self):
+        self.config['bootstrapProtocol'] = 1
+        self.config['compatibility'] = dict(self.config['compatibility'], minimumUpdaterProtocol=3, payloadFormat='launcher-generation3')
+        self.test_real_csharp_consumer_accepts_producer_and_rejects_tampering()
+
     def test_real_csharp_consumer_accepts_producer_and_rejects_tampering(self):
         # Required explicit integration invocation; never executes the fixture exe.
         if not os.environ.get('BROKER_CONTRACT_DLL'):
@@ -147,6 +159,9 @@ class PackagingRoute(unittest.TestCase):
                     target=Path(command[command.index('-o')+1]); target.mkdir(parents=True,exist_ok=True)
                     maintenance=any(x.endswith('/Maintenance.csproj') for x in command)
                     (target/('StarTournamentMaintenance.exe' if maintenance else 'StarTournamentLauncher.exe')).write_bytes(b'published once')
+                    if not maintenance:
+                        for name in ('StarTournamentLauncher.dll', 'StarTournamentLauncher.deps.json', 'StarTournamentLauncher.runtimeconfig.json'):
+                            (target/name).write_bytes(b'published runtime')
                     if maintenance: (target/'update-public.pem').write_bytes(public)
                     events.append('maintenance' if maintenance else 'launcher'); builds.append(command)
                 elif command[0]=='openssl' and 'pkey' in command:
@@ -161,6 +176,8 @@ class PackagingRoute(unittest.TestCase):
                     with zipfile.ZipFile(out/'Portable.zip','w') as archive:
                         archive.writestr('.portable',''); archive.writestr('Update.exe','native')
                         archive.writestr('Star Tournament.exe','stub')
+                        for path in stage.iterdir():
+                            if path.is_file(): archive.write(path, 'current/'+path.name)
                 elif command[0]=='python3':
                     events.append('installer'); Path(command[command.index('--output')+1]).write_bytes(b'installer')
                 return subprocess.CompletedProcess(command,0,stdout=b'fixture signature')
@@ -187,6 +204,8 @@ class PackagingRoute(unittest.TestCase):
                 self.assertEqual(events[-1],'installer')
                 candidate=output/'payload-1.6.0/broker-upgrade'; installed=output/'windows-layout-1.6.0/maintenance'
                 for name in broker.FILES: self.assertEqual((candidate/name).read_bytes(),(installed/name).read_bytes())
+                self.assertEqual((installed/'bootstrap/StarTournamentLauncher.exe').read_bytes(),
+                                 (output/'payload-1.6.0/StarTournamentLauncher.exe').read_bytes())
 
     def test_update_only_embeds_before_pack_without_installer(self): self.route(True)
     def test_first_install_reuses_same_component_once(self): self.route(False)

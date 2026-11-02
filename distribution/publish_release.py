@@ -14,7 +14,7 @@ import tempfile
 import urllib.error
 import urllib.request
 
-from release_compatibility import validate as validate_compatibility, verify_payload
+from release_compatibility import validate as validate_compatibility, validate_bootstrap, verify_payload
 from upload_github_assets import REPO, upload, tls_context
 from legacy_release_relay import ReleaseRedirects
 from release_media import prepare as prepare_media
@@ -78,7 +78,8 @@ def verify_envelope(raw, version, runtime, channel, *, schema=2):
     if not isinstance(date, str) or datetime.date.fromisoformat(date).isoformat() != date:
         raise ValueError('Canonical publication date required')
     if schema == 2:
-        validate_compatibility(data.get('compatibility'), platform)
+        if 'bootstrapCompatibility' in data: validate_bootstrap(data, platform)
+        else: validate_compatibility(data.get('compatibility'), platform)
     elif schema != 1 or 'compatibility' in data:
         raise ValueError('Legacy metadata cannot override historical requirements')
     if len(data['feed']['Assets']) != 1: raise ValueError('Full package required')
