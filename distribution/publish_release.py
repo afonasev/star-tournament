@@ -18,7 +18,7 @@ from release_compatibility import validate as validate_compatibility, verify_pay
 from upload_github_assets import REPO, upload, tls_context
 from legacy_release_relay import ReleaseRedirects
 from release_media import prepare as prepare_media
-from release_changelog import previous_release, resolve, render, validate_body, git, version_key
+from release_changelog import previous_release, resolve, render, validate_body, git, version_key, with_installer_downloads
 
 RUNTIMES = ('win-x64', 'osx-arm64')
 ROOT = Path(__file__).resolve().parent
@@ -331,6 +331,8 @@ def prepare_changelog(review_path, repo, source_ref, version, channel, token, ou
     review_bytes=review_path.read_bytes()
     review=json.loads(review_bytes.decode('utf-8'))
     body=render(review,repo,source_ref,channel,previous,version=version)
+    body=with_installer_downloads(body,version,'afonasev/star-tournament',f'Star-Tournament-{version}-Windows-x64-Setup.exe',f'Star-Tournament-{version}-macOS-arm64.dmg')
+    validate_body(body)
     identity=dict(schema=1,version=version,source_ref=source_ref,channel=channel,previous_release=previous,
                   body_sha256=hashlib.sha256(body.encode()).hexdigest(),
                   review_sha256=hashlib.sha256(review_bytes).hexdigest())
