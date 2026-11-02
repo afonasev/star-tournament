@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(ProvingProfile.CreateQuarryAuthoring(old).Descriptors.Any(x=>x.Path.StartsWith("quarry.warm.")),Is.False);
             }
             var p=ProvingProfile.CreateQuarryAuthoring(d);Assert.That(p.Validate(),Is.Empty);
-            Assert.That(p.Descriptors.Count(x=>x.Path.StartsWith("quarry.warm.")),Is.EqualTo(14));
+            Assert.That(p.Descriptors.Count(x=>x.Path.StartsWith("quarry.warm.")),Is.EqualTo(24));
             foreach(string name in new[]{"limestone","gravel"})
             {
                 var texture=Resources.Load<Texture2D>("QuarryWarmArt/"+name);Assert.That(texture,Is.Not.Null);
@@ -23,6 +23,9 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(texture.mipmapCount,Is.GreaterThan(1));Assert.That(texture.isReadable,Is.False);
                 Assert.That(texture.wrapMode,Is.EqualTo(TextureWrapMode.Repeat));
             }
+            var variants=AssetDatabase.LoadAssetAtPath<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>("Assets/StarTournament/Settings/QuarryShadowBuildVariants.asset");
+            Assert.That(variants,Is.Not.Null);Assert.That(variants.shadowCascadeCount,Is.EqualTo(4));
+            Assert.That(AssetDatabase.GetLabels(variants),Does.Contain("StarTournament.RuntimePipeline"),"Retain the runtime cascade shader variant for builds");
             var shader=Shader.Find("StarTournament/QuarryWarmSurface");Assert.That(shader,Is.Not.Null);
             Assert.That(ShaderUtil.ShaderHasError(shader),Is.False);
         }

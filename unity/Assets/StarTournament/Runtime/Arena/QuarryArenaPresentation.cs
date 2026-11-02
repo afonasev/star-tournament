@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 namespace StarTournament.ProvingGround
 {
     public sealed class QuarryArenaPresentation : MonoBehaviour
     {
         readonly List<Material> materials=new List<Material>();Mesh markings,arrows;
+        RenderPipelineAsset priorPipeline;UniversalRenderPipelineAsset warmPipeline;
         Color oldAmbient;AmbientMode oldMode;bool ownsAmbient;Font signFont;Material fontMaterial;
         Material Make(ProvingProfile p,int i)
         {
@@ -31,7 +33,20 @@ namespace StarTournament.ProvingGround
                 palette[5].SetColor("_BaseColor",palette[7].color);
                 palette[1].SetColor("_BaseColor",palette[11].color);
             }
-            if(QuarryWarmArt.Applies(definition))QuarryWarmArt.ConfigureMaterials(palette,profile);
+            if(QuarryWarmArt.Applies(definition))
+            {
+                QuarryWarmArt.ConfigureMaterials(palette,profile,definition);
+                RenderSettings.ambientLight=new Color(profile.Get("quarry.warm.fillRed"),profile.Get("quarry.warm.fillGreen"),profile.Get("quarry.warm.fillBlue"))*profile.Get("quarry.art.ambient");
+                // Own a transient map-local pipeline, following the Well presentation ownership pattern.
+                // Preserve quality and shadow atlas resolution and never serialize into project settings.
+                if(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset pipeline)
+                {
+                    priorPipeline=QualitySettings.renderPipeline;warmPipeline=Instantiate(pipeline);warmPipeline.name="Quarry A2 lighting (owned)";
+                    warmPipeline.shadowDistance=profile.Get("quarry.warm.shadowDistance");
+                    // The labelled QuarryShadowBuildVariants asset retains the cascade shader keyword in Player builds.
+                    warmPipeline.shadowCascadeCount=Mathf.RoundToInt(profile.Get("quarry.warm.shadowCascades"));QualitySettings.renderPipeline=warmPipeline;
+                }
+            }
             var lookup=new ArenaPresentationLookup(transform.parent);
             foreach(var solid in definition.Solids)
             {
@@ -85,6 +100,6 @@ namespace StarTournament.ProvingGround
             if(QuarryWarmArt.Applies(definition))QuarryWarmArt.ConfigureDaylight(sun,p);
         }
         void RefreshFont(Font font){if(font==signFont&&fontMaterial)fontMaterial.mainTexture=font.material.mainTexture;}
-        void OnDestroy(){Font.textureRebuilt-=RefreshFont;if(ownsAmbient){RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;}if(markings)DestroyImmediate(markings);if(arrows)DestroyImmediate(arrows);foreach(var material in materials)if(material)DestroyImmediate(material);}
+        void OnDestroy(){if(warmPipeline){if(QualitySettings.renderPipeline==warmPipeline)QualitySettings.renderPipeline=priorPipeline;DestroyImmediate(warmPipeline);}Font.textureRebuilt-=RefreshFont;if(ownsAmbient){RenderSettings.ambientMode=oldMode;RenderSettings.ambientLight=oldAmbient;}if(markings)DestroyImmediate(markings);if(arrows)DestroyImmediate(arrows);foreach(var material in materials)if(material)DestroyImmediate(material);}
     }
 }

@@ -3,6 +3,8 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using Object=UnityEngine.Object;
 namespace StarTournament.ProvingGround.Tests.PlayMode
 {
@@ -11,10 +13,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator WarmFittingsPreserveSolidsAndReleaseMeshes()
         {
             var root=new GameObject("Quarry art lifecycle");var arena=root.AddComponent<ProvingArena>();var movement=ProvingProfile.CreateDefault();
+            var priorPipeline=QualitySettings.renderPipeline;var priorActive=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            float priorDistance=priorActive?priorActive.shadowDistance:0;
+            var priorAmbient=RenderSettings.ambientLight;var priorMode=RenderSettings.ambientMode;
             try
             {
                 var frozen=AuthoredArenaCatalog.Freeze(QuarryArenaCatalog.Id,movement);arena.Build(frozen,movement);yield return null;
                 frozen.RequireDefinition(arena.Definition);
+                var ownedPipeline=QualitySettings.renderPipeline as UniversalRenderPipelineAsset;
+                if(priorActive)
+                {
+                    Assert.That(ownedPipeline,Is.Not.SameAs(priorActive));
+                    Assert.That(ownedPipeline.shadowDistance,Is.EqualTo(ProvingProfile.CreateQuarryAuthoring(frozen.Definition).Get("quarry.warm.shadowDistance")));
+                    Assert.That(ownedPipeline.shadowCascadeCount,Is.EqualTo(4));
+                    Assert.That(priorActive.shadowDistance,Is.EqualTo(priorDistance),"Do not mutate shared quality asset");
+                }
                 var warm=root.GetComponentInChildren<QuarryWarmDetails>();Assert.That(warm,Is.Not.Null);
                 Assert.That(warm.GetComponentsInChildren<Collider>(),Is.Empty);
                 Assert.That(ArenaMeshResidency.ReadUnreferencedOwnedMeshes(root.transform),Is.Empty);
@@ -31,6 +44,10 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 var materials=root.GetComponentsInChildren<MeshRenderer>().SelectMany(r=>r.sharedMaterials).Where(m=>m&&m.name.StartsWith("Quarry warm A")).Distinct().ToArray();
                 Assert.That(materials.Length,Is.GreaterThan(0));
                 arena.ClearProjection();yield return null;
+                Assert.That(QualitySettings.renderPipeline,Is.SameAs(priorPipeline),"Restore prior quality on map teardown");
+                if(priorActive)Assert.That(!ownedPipeline,Is.True,"Release transient lighting pipeline");
+                Assert.That(RenderSettings.ambientMode,Is.EqualTo(priorMode));
+                Assert.That(RenderSettings.ambientLight,Is.EqualTo(priorAmbient));
                 Assert.That(meshes.All(m=>!m),Is.True,"Generated fitting meshes released on clear");
                 Assert.That(materials.All(m=>!m),Is.True,"Warm materials released on clear");
                 // Historical authoring profile retains its pre-A palette and parameter set.

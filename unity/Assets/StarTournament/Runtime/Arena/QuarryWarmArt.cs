@@ -1,12 +1,13 @@
 using UnityEngine;
+using System.Linq;
 namespace StarTournament.ProvingGround
 {
     // Presentation-only revision. Map solids and historical authoring snapshots are not rewritten.
     public static class QuarryWarmArt
     {
-        public const string Identity="quarry-warm-limestone-a@1";
+        public const string Identity="quarry-warm-limestone-a2@2";
         public static bool Applies(ArenaDefinition d)=>d.MapId==QuarryArenaCatalog.Id&&d.Revision=="6";
-        public static void ConfigureMaterials(Material[] palette,ProvingProfile p)
+        public static void ConfigureMaterials(Material[] palette,ProvingProfile p,ArenaDefinition definition)
         {
             var shader=Shader.Find("StarTournament/QuarryWarmSurface");
             var stone=Resources.Load<Texture2D>("QuarryWarmArt/limestone");
@@ -18,6 +19,14 @@ namespace StarTournament.ProvingGround
                 m.SetFloat("_Scale",p.Get(mode==1?"quarry.warm.gravelTile":"quarry.warm.stoneTile"));
                 m.SetFloat("_Relief",p.Get("quarry.warm.relief"));m.SetFloat("_Smoothness",smooth);m.SetFloat("_Metallic",metal);
                 if(texture)m.SetTexture("_BaseMap",texture);
+                m.SetTexture("_StoneMap",stone);m.SetTexture("_GravelMap",gravel);
+                m.SetFloat("_StoneScale",p.Get("quarry.warm.stoneTile"));m.SetFloat("_GravelScale",p.Get("quarry.warm.gravelTile"));
+                m.SetFloat("_PatchScale",p.Get("quarry.warm.patchScale"));m.SetFloat("_BlendWidth",p.Get("quarry.warm.blendWidth"));
+                m.SetFloat("_DustReach",p.Get("quarry.warm.dustReach"));
+                // Only the existing upper floor receives the terrain-to-steel fringe; machine panels do not.
+                m.SetFloat("_Deck",i==5?1:0);
+                var upper=definition.Solids.Single(s=>s.Id=="upper-excavation");
+                m.SetFloat("_DeckEdge",upper.Position.z-upper.Size.z*.5f);
             }
             float matte=p.Get("quarry.art.smoothness"),metalSmooth=p.Get("quarry.warm.metalSmoothness");
             float metal=p.Get("quarry.warm.metallic");
@@ -31,6 +40,7 @@ namespace StarTournament.ProvingGround
         {
             sun.intensity=p.Get("quarry.warm.sun");sun.color=new Color(p.Get("quarry.warm.sunRed"),p.Get("quarry.warm.sunGreen"),p.Get("quarry.warm.sunBlue"));
             sun.transform.rotation=Quaternion.Euler(p.Get("quarry.warm.sunElevation"),p.Get("quarry.warm.sunAzimuth"),0);
+            sun.shadowBias=p.Get("quarry.warm.shadowBias");sun.shadowNormalBias=p.Get("quarry.warm.shadowNormalBias");
             sun.shadowStrength=p.Get("quarry.warm.shadowStrength");sun.shadows=LightShadows.Soft;
         }
     }

@@ -63,7 +63,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 Assert.That(warm.GetComponentsInChildren<Collider>().Length,Is.Zero,"Art cannot add collision");
                 var textures=active.SelectMany(r=>r.sharedMaterials).Distinct().Select(m=>m.HasProperty("_BaseMap")?m.GetTexture("_BaseMap"):null).Where(t=>t&&t.name!="Font Texture").Distinct().ToArray();
                 Assert.That(active.SelectMany(r=>r.sharedMaterials).Where(m=>m.name.StartsWith("Quarry warm A")).All(m=>m.shader.isSupported),Is.True);
-                File.WriteAllText(Path.Combine(DirectoryPath,"warm-art-costs.json"),JsonUtility.ToJson(new WarmCosts{identity=QuarryWarmArt.Identity,textureCount=textures.Length,textureBytes=textures.Sum(t=>UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(t)),uncombinedFittingParts=warm.UncombinedPartCount,fittingRenderers=warm.GroupedRendererCount,colliders=arena.GetComponentsInChildren<Collider>().Length,localLights=arena.GetComponentsInChildren<Light>().Length,localShadowLights=arena.GetComponentsInChildren<Light>().Count(l=>l.shadows!=LightShadows.None)},true));
+                File.WriteAllText(Path.Combine(DirectoryPath,"warm-art-costs.json"),JsonUtility.ToJson(new WarmCosts{identity=QuarryWarmArt.Identity,shadowDistance=((UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline).shadowDistance,shadowCascades=((UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline).shadowCascadeCount,ambient=RenderSettings.ambientLight,textureCount=textures.Length,textureBytes=textures.Sum(t=>UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(t)),uncombinedFittingParts=warm.UncombinedPartCount,fittingRenderers=warm.GroupedRendererCount,colliders=arena.GetComponentsInChildren<Collider>().Length,localLights=arena.GetComponentsInChildren<Light>().Length,localShadowLights=arena.GetComponentsInChildren<Light>().Count(l=>l.shadows!=LightShadows.None)},true));
                 camera.fieldOfView=70;
                 var eyes=new[]{new Vector3(38,1.7f,-32),new Vector3(38,5.7f,-5),new Vector3(-6,1.7f,-23),new Vector3(19,1.7f,-7),new Vector3(-6,1.7f,-7),new Vector3(10,9.7f,22),new Vector3(-13,1.7f,-32),new Vector3(0,5.7f,-1),new Vector3(16,9.7f,23),new Vector3(-19,1.7f,-32)};
                 var targets=new[]{new Vector3(38,7,21),new Vector3(38,9,24),new Vector3(-6,2,-10),new Vector3(14,2,4),new Vector3(-6,1.7f,4),new Vector3(0,2,-22),new Vector3(-24,6,14),new Vector3(0,6,20),new Vector3(24,10.5f,36),new Vector3(-11,2,-23)};
@@ -77,6 +77,17 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                         warm.UseGrouped(true);chunks.UseChunks(true);
                     }
                     Capture(camera,names[i]);
+                    if(names[i]=="tunnel-inside")
+                    {
+                        var pipeline=(UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
+                        float distance=pipeline.shadowDistance;int cascades=pipeline.shadowCascadeCount;
+                        try
+                        {
+                            pipeline.shadowDistance=50;Capture(camera,"tunnel-shadow-distance-50");
+                            pipeline.shadowDistance=distance;pipeline.shadowCascadeCount=4;Capture(camera,"tunnel-shadow-cascades-4");
+                        }
+                        finally{pipeline.shadowDistance=distance;pipeline.shadowCascadeCount=cascades;}
+                    }
                 }
                 camera.fieldOfView=65;
                 cameraGo.transform.position=new Vector3(-30,1.7f,-35);cameraGo.transform.LookAt(new Vector3(-20,1.8f,-25));Capture(camera,"open-lower-cover");
@@ -103,7 +114,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             var preview=option.GetComponentInChildren<ArenaPreviewGraphic>();Assert.That(preview.texture,Is.SameAs(Resources.Load<Texture2D>("MapMenuArt/"+QuarryArenaCatalog.Id)));
             yield return EditorUiCapture.Capture(ground,Path.Combine(DirectoryPath,"map-picker-final.png"),1920,1080);
         }
-        [Serializable] sealed class WarmCosts {public string identity;public int textureCount,uncombinedFittingParts,fittingRenderers,colliders,localLights,localShadowLights;public long textureBytes;}
+        [Serializable] sealed class WarmCosts {public string identity;public float shadowDistance;public int shadowCascades;public Color ambient;public int textureCount,uncombinedFittingParts,fittingRenderers,colliders,localLights,localShadowLights;public long textureBytes;}
         [Serializable] sealed class Optimization {public int solids,sourceRenderers,activeRenderers,staticBatched,materials,unreferencedMeshes;public long sourceTriangles;}
     }
 }

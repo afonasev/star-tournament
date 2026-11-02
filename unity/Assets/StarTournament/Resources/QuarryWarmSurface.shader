@@ -4,6 +4,15 @@ Shader "StarTournament/QuarryWarmSurface"
     {
         [MainColor] _BaseColor("Tint",Color)=(1,1,1,1)
         [MainTexture] _BaseMap("Surface",2D)="white"{}
+        _StoneMap("Shared limestone",2D)="white"{}
+        _GravelMap("Shared gravel",2D)="white"{}
+        _StoneScale("Stone meters",Float)=8
+        _GravelScale("Gravel meters",Float)=5
+        _PatchScale("Geology patch meters",Float)=9
+        _BlendWidth("Geology transition",Float)=0.24
+        _DustReach("Deck dust meters",Float)=5
+        _Deck("Is terrain deck",Float)=0
+        _DeckEdge("Authored deck front",Float)=0
         _Mode("Stone / Ground / Steel / Wood / Paint",Float)=0
         _Scale("World tile meters",Float)=6
         _Relief("Surface relief",Float)=0.08
@@ -32,9 +41,12 @@ Shader "StarTournament/QuarryWarmSurface"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
+            TEXTURE2D(_StoneMap); SAMPLER(sampler_StoneMap);
+            TEXTURE2D(_GravelMap); SAMPLER(sampler_GravelMap);
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseColor; float4 _BaseMap_ST;
             float _Mode, _Scale, _Relief, _Smoothness, _Metallic, _Cutoff, _Cull;
+            float _StoneScale, _GravelScale, _PatchScale, _BlendWidth, _DustReach, _Deck, _DeckEdge;
             CBUFFER_END
             struct A { float4 p:POSITION; float3 n:NORMAL; };
             struct V { float4 p:SV_POSITION; float3 w:TEXCOORD0; float3 n:TEXCOORD1; };
@@ -56,14 +68,25 @@ Shader "StarTournament/QuarryWarmSurface"
                 float3 color=_BaseColor.rgb; float smoothness=_Smoothness,metallic=_Metallic,height=0;
                 if(_Mode<1.5)
                 {
-                    float2 tile=uv/_Scale;
-                    float3 tex=SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,tile).rgb;
-                    // A second offset sample breaks long repeats without a separate high-resolution map.
-                    float3 second=SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,tile*0.43+float2(.37,.19)).rgb;
-                    color*=lerp(tex,second,.22)*(0.92+0.16*Noise(uv*.19));
-                    // Filter height more broadly than albedo so tiny gravel does not sparkle in motion.
-                    float3 relief=SAMPLE_TEXTURE2D_GRAD(_BaseMap,sampler_BaseMap,tile,ddx(tile)*4,ddy(tile)*4).rgb;
-                    height=dot(relief,float3(.3,.59,.11))*_Relief;
+                    // The same world-space geological field crosses the original material boundaries.
+                    // Shared textures replace the old offset repeat sample; no per-object material instances.
+                    float2 macro=uv/_PatchScale;
+                    float patch=Noise(macro+float2(Noise(macro*.47),Noise(macro*.47+13)));
+                    float fine=Noise(uv*.65);
+                    float soil=smoothstep(.5-_BlendWidth,.5+_BlendWidth,patch+(.5-fine)*.18);
+                    float horizontal=smoothstep(.45,.8,an.y);
+                    soil*=horizontal;
+                    // Ground favours dust; rock favours exposed stone, with overlapping palettes.
+                    soil=saturate(soil*.78+(_Mode>.5?.2:0));
+                    // Dust gathers on both sides of the existing upper terrace boundary.
+                    float terraceDust=1-smoothstep(0,_DustReach,abs(v.w.z-_DeckEdge));
+                    soil=saturate(soil+terraceDust*horizontal*.35);
+                    float2 tile=uv/_StoneScale;
+                    float3 stone=SAMPLE_TEXTURE2D(_StoneMap,sampler_StoneMap,tile).rgb;
+                    float3 gravel=SAMPLE_TEXTURE2D(_GravelMap,sampler_GravelMap,uv/_GravelScale).rgb;
+                    color*=lerp(stone*1.12,gravel*.92,soil)*(1.08-.12*patch);
+                    float3 relief=SAMPLE_TEXTURE2D_GRAD(_StoneMap,sampler_StoneMap,tile,ddx(tile)*4,ddy(tile)*4).rgb;
+                    height=dot(relief,float3(.3,.59,.11))*_Relief*(1-soil*.6);
                     if(_Mode>.5 && an.y>.6)
                     {
                         // Faint tyre tread decals are shader-only; no extra geometry/collisions/renderers.
@@ -86,6 +109,17 @@ Shader "StarTournament/QuarryWarmSurface"
                     float bolt=1-smoothstep(.012,.023,length(edge-float2(.045,.035)));
                     color=lerp(color,float3(.24,.26,.27),bolt);
                     height=(1-seam)*_Relief*.2; smoothness*=1-rust*.8;
+                    if(_Deck>.5)
+                    {
+                        // A ragged, feathered deposit ties steel to limestone without altering the deck edge.
+                        float drift=Noise(v.w.xz/_PatchScale),speckle=Noise(v.w.xz*1.3);
+                        float edgeDistance=max(0,v.w.z-_DeckEdge);
+                        float dust=(1-smoothstep(_DustReach*.12,_DustReach*(.55+drift),edgeDistance))*smoothstep(.18,.65,drift+speckle*.3);
+                        dust=saturate(dust*1.4)*smoothstep(.45,.8,an.y);
+                        float3 gravel=SAMPLE_TEXTURE2D(_GravelMap,sampler_GravelMap,v.w.xz/_GravelScale).rgb;
+                        color=lerp(color,gravel*float3(.76,.73,.65),dust);
+                        metallic*=1-dust;smoothness=lerp(smoothness,.15,dust);
+                    }
                 }
                 else if(_Mode<3.5)
                 {
