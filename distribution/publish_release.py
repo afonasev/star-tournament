@@ -24,7 +24,7 @@ RUNTIMES = ('win-x64', 'osx-arm64')
 ROOT = Path(__file__).resolve().parent
 
 
-def api(method, path, token, data=None, missing=False):
+def api(method, path, token, data=None, missing=False, empty=False):
     conn = http.client.HTTPSConnection('api.github.com', timeout=60, context=tls_context())
     body = None if data is None else json.dumps(data).encode()
     try:
@@ -34,10 +34,11 @@ def api(method, path, token, data=None, missing=False):
             'X-GitHub-Api-Version': '2022-11-28'})
         response = conn.getresponse(); raw = response.read()
         if missing and response.status == 404: return None
-        if response.status not in (200, 201):
-            details=json.loads(raw)
+        if response.status not in ((204,) if empty else (200, 201)):
+            try: details=json.loads(raw)
+            except ValueError: details={'message':'Unexpected response status'}
             raise RuntimeError('GitHub API status '+str(response.status)+': '+json.dumps(details.get('errors',details.get('message'))))
-        return json.loads(raw)
+        return None if empty else json.loads(raw)
     finally: conn.close()
 
 
@@ -434,6 +435,8 @@ def main():
     (a.output/'asset-manifest.json').write_text(json.dumps(assets,indent=2)+'\n')
     release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref,a.draft_only,body=body)
     (a.output/'publication.json').write_text(json.dumps(dict(release=release,readback=checks),indent=2)+'\n')
+    if not release['draft'] and not release['prerelease']:
+        api('POST','/actions/workflows/installer-downloads.yml/dispatches',token,{'ref':'main','inputs':{'apply':True}},empty=True)
     print('DRAFT' if release['draft'] else 'PUBLISHED',release['html_url'])
 
 
