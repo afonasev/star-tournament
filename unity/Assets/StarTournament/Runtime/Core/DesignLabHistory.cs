@@ -223,10 +223,10 @@ namespace StarTournament.ProvingGround
         }
         // Critical startup needs only the selected Default. Validate the entire catalogue first;
         // the background history still merges and migrates every published/local revision.
-        public static DesignLabHistory ResolveStartupDefault(LabBundle shipped,LabReleaseCatalog releases)
+        public static DesignLabHistory ResolveStartupDefault(LabBundle shipped,LabReleaseCatalog releases,CancellationToken cancellationToken=default)
         {
             if(releases==null)throw new ArgumentNullException(nameof(releases));
-            return new DesignLabHistory(null,shipped,null,releases,true,false,default,null,false,true);
+            return new DesignLabHistory(null,shipped,null,releases,true,false,cancellationToken,null,false,true);
         }
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default,string legacyPath=null,bool authoring=false)
             :this(path,shipped,atomicPublish,releases,resetToLatestDefault,persistMigration,cancellationToken,legacyPath,authoring,false){}

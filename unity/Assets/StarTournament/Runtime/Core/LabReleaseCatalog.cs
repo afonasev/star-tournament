@@ -45,9 +45,14 @@ namespace StarTournament.ProvingGround
         {
             var asset=Resources.Load<TextAsset>("LabReleaseCatalog");
             if(asset==null)throw new InvalidOperationException("Встроенный каталог релизных профилей отсутствует");
-            var catalog=JsonUtility.FromJson<LabReleaseCatalog>(asset.text);
+            return ParsePackaged(asset.text);
+        }
+        // Capture TextAsset on the Unity thread; parse immutable text on a worker.
+        internal static LabReleaseCatalog ParsePackaged(string json)
+        {
+            var catalog=JsonUtility.FromJson<LabReleaseCatalog>(json);
             catalog.packagedEntries=catalog.Entries.ToDictionary(e=>e.Sequence,e=>e.Clone());
-            using(var sha=SHA256.Create())catalog.packagedIdentity=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(asset.text)));
+            using(var sha=SHA256.Create())catalog.packagedIdentity=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(json)));
             return catalog;
         }
     }

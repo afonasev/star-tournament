@@ -57,7 +57,8 @@ namespace StarTournament.ProvingGround
         }
         public LabBundle CaptureLabAuthoringBaseline(){PrepareLabRegistry();return CurrentLabBundle().Clone();}
         static string LabRevisionLabel(DesignLabHistory history,LabRevision revision,string profileId=null)=>history.SavedIdentity(profileId??history.SelectedProfileId,revision.Number).Label;
-        CancellationTokenSource historyCancellation;
+        CancellationTokenSource startupCancellation,historyCancellation;
+        Task startupLoading;
         Task<DesignLabHistory> historyLoading;
         LabBundle activeLabSnapshot,historyStartupBaseline;
         LabReleaseCatalog historyStartupCatalogue;
@@ -67,13 +68,30 @@ namespace StarTournament.ProvingGround
         GameObject authorHistoryFailure;Text authorHistoryFailureReason,authorHistoryFailureSession;Button authorHistoryBack,authorHistoryDefault;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         internal static Func<string,LabBundle,LabReleaseCatalog,CancellationToken,DesignLabHistory> LabHistoryLoaderForTests;
+        internal static Action<CancellationToken> StartupCatalogueGateForTests;
 #endif
         public bool IsLabHistoryReady=>labHistory!=null&&historyLoadError==null;
         public bool IsLabHistoryLoading=>historyLoading!=null;
         public string LabHistoryLoadError=>historyLoadError;
         public LabRevisionReference ActiveLabReference=>activeLabReference?.Clone();
         public LabHistoryStartupDiagnostics LabHistoryDiagnostics=>labHistory?.StartupDiagnostics;
-        void OnApplicationQuit()=>CancelHistoryLoading(true);
+        void OnApplicationQuit(){CancelStartupLoading(true);CancelHistoryLoading(true);}
+        void CancelStartupLoading(bool waitForCompletion=false)
+        {
+            var cancellation=startupCancellation;if(cancellation==null)return;
+            startupCancellation=null;cancellation.Cancel();
+            var pending=startupLoading;startupLoading=null;
+            if(pending==null){cancellation.Dispose();return;}
+            if(waitForCompletion)
+            {
+                // Keep Unity's JsonUtility alive until the read-only worker stops.
+                try{pending.GetAwaiter().GetResult();}
+                catch(OperationCanceledException){}
+                catch(Exception error){Debug.LogWarning("Lab startup shutdown: "+error.Message);}
+                finally{cancellation.Dispose();}
+            }
+            else pending.ContinueWith(done=>{var observed=done.Exception;cancellation.Dispose();},TaskScheduler.Default);
+        }
         void CancelHistoryLoading(bool waitForCompletion=false)
         {
             var cancellation=historyCancellation;if(cancellation==null)return;
@@ -120,8 +138,36 @@ namespace StarTournament.ProvingGround
                 ?Path.Combine(Application.persistentDataPath,VersionedUserData.LegacyLabHistory):null;
             // Capture trusted baseline before published values change live profile owners.
             historyStartupBaseline=CurrentLabBundle().Clone();
-            historyStartupCatalogue=LabReleaseCatalog.Load();
-            var published=DesignLabHistory.ResolveStartupDefault(historyStartupBaseline,historyStartupCatalogue);
+            var request=Resources.LoadAsync<TextAsset>("LabReleaseCatalog");
+            yield return request;
+            var asset=request.asset as TextAsset;
+            if(asset==null)throw new InvalidOperationException("Встроенный каталог релизных профилей отсутствует");
+            var json=asset.text;var baseline=historyStartupBaseline;
+            var cancellation=new CancellationTokenSource();startupCancellation=cancellation;
+            var token=cancellation.Token;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            var gate=StartupCatalogueGateForTests;
+#endif
+            var pending=Task.Run(()=>
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                gate?.Invoke(token);
+#endif
+                token.ThrowIfCancellationRequested();
+                var catalogue=LabReleaseCatalog.ParsePackaged(json);
+                token.ThrowIfCancellationRequested();
+                return (catalogue,published:DesignLabHistory.ResolveStartupDefault(baseline,catalogue,token));
+            },token);
+            startupLoading=pending;
+            while(!pending.IsCompleted)yield return null;
+            if(startupLoading!=pending||token.IsCancellationRequested)yield break;
+            DesignLabHistory published;
+            try
+            {
+                var result=pending.GetAwaiter().GetResult();
+                historyStartupCatalogue=result.catalogue;published=result.published;
+            }
+            finally{startupLoading=null;startupCancellation=null;cancellation.Dispose();}
             CacheLabIdentity(published);labBaseline=activeLabSnapshot.Clone();labDraft=labBaseline.Clone();
             ApplySavedLabRevision();
             if(labProjectRoot!=null)yield return LoadDesignLabHistory(true);

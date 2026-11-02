@@ -17,14 +17,15 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
     public sealed class NativeStartupHealthTests
     {
         static readonly FieldInfo Loader=typeof(ProvingGround).GetField("LabHistoryLoaderForTests",BindingFlags.Static|BindingFlags.NonPublic);
-        Scene scene;ProvingGround ground;string directory;string[] prior;object priorLoader;
+        static readonly FieldInfo StartupGate=typeof(ProvingGround).GetField("StartupCatalogueGateForTests",BindingFlags.Static|BindingFlags.NonPublic);
+        Scene scene;ProvingGround ground;string directory;string[] prior;object priorLoader,priorStartupGate;
         ManualResetEventSlim historyGate;
         readonly string[] names={NativeStartupHealth.ReadyEnvironment,NativeStartupHealth.VersionEnvironment,NativeStartupHealth.TokenEnvironment,"STAR_TOURNAMENT_QA_LAB_HISTORY"};
         string Marker=>Path.Combine(directory,"ready.json");
         [SetUp]public void Setup()
         {
             directory=Path.Combine(Path.GetTempPath(),"st-startup-health-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
-            prior=names.Select(Environment.GetEnvironmentVariable).ToArray();priorLoader=Loader.GetValue(null);
+            prior=names.Select(Environment.GetEnvironmentVariable).ToArray();priorLoader=Loader.GetValue(null);priorStartupGate=StartupGate.GetValue(null);
             Environment.SetEnvironmentVariable(names[0],Marker);Environment.SetEnvironmentVariable(names[1],"1.2.3-test.4");Environment.SetEnvironmentVariable(names[2],new string('a',32));
             Environment.SetEnvironmentVariable(names[3],Path.Combine(directory,"history.json"));
         }
@@ -39,6 +40,51 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             float deadline=Time.realtimeSinceStartup+120;
             while(!File.Exists(Marker))
             {Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline),"No startup marker after successful menu");yield return null;}
+        }
+        [UnityTest]public IEnumerator PackagedCatalogueWorkerKeepsLoadingAnimatedAndHealthPending()
+        {
+            historyGate=new ManualResetEventSlim();
+            var entered=new ManualResetEventSlim();
+            StartupGate.SetValue(null,(Action<CancellationToken>)(token=>{entered.Set();historyGate.Wait(token);}));
+            try
+            {
+                yield return Load();float deadline=Time.realtimeSinceStartup+120;
+                while(!entered.IsSet){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+                Assert.That(ground.IsReady,Is.False);Assert.That(ground.LoadingScreen.Visible,Is.True);
+                yield return NativeLoadingScreenTests.Capture("startup-catalogue-before");
+                float before=ground.LoadingScreen.AnimationPosition;
+                for(int frame=0;frame<12;frame++)
+                {
+                    Assert.That(ground.IsReady,Is.False);Assert.That(File.Exists(Marker),Is.False);yield return null;
+                }
+                Assert.That(ground.LoadingScreen.AnimationPosition,Is.Not.EqualTo(before));
+                yield return NativeLoadingScreenTests.Capture("startup-catalogue-after");
+                historyGate.Set();yield return WaitReady();
+                Assert.That(ground.IsReady,Is.True);Assert.That(ground.LoadingScreen.Visible,Is.False);
+            }
+            finally{entered.Dispose();}
+        }
+        [UnityTest]public IEnumerator PackagedCatalogueWorkerFailureShowsErrorWithoutHealth()
+        {
+            StartupGate.SetValue(null,(Action<CancellationToken>)(token=>throw new InvalidDataException("startup catalogue test failure")));
+            LogAssert.Expect(LogType.Exception,new System.Text.RegularExpressions.Regex("InvalidDataException: startup catalogue test failure"));
+            yield return Load();float deadline=Time.realtimeSinceStartup+120;
+            while(!ground.LoadingScreen.GetComponentsInChildren<Text>().Any(t=>t.text=="Не удалось загрузить игру"))
+            {Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            Assert.That(ground.IsReady,Is.False);Assert.That(File.Exists(Marker),Is.False);
+        }
+        [UnityTest]public IEnumerator UnloadCancelsPackagedCatalogueWorkerWithoutPublishingHealth()
+        {
+            historyGate=new ManualResetEventSlim();
+            StartupGate.SetValue(null,(Action<CancellationToken>)(token=>historyGate.Wait(token)));
+            yield return Load();float deadline=Time.realtimeSinceStartup+120;
+            Task pending;
+            var worker=typeof(ProvingGround).GetField("startupLoading",BindingFlags.Instance|BindingFlags.NonPublic);
+            while((pending=worker.GetValue(ground) as Task)==null)
+            {Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            yield return SceneManager.UnloadSceneAsync(scene);
+            while(!pending.IsCompleted){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
+            Assert.That(pending.IsCanceled,Is.True);Assert.That(File.Exists(Marker),Is.False);
         }
         [UnityTest]public IEnumerator MenuConfirmsChallengeWhileBackgroundHistoryIsBlocked()
         {
@@ -88,7 +134,7 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         {
             var worker=ground==null?null:typeof(ProvingGround).GetField("historyLoading",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground) as Task;
             if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);
-            historyGate?.Set();Loader.SetValue(null,priorLoader);
+            historyGate?.Set();Loader.SetValue(null,priorLoader);StartupGate.SetValue(null,priorStartupGate);
             float deadline=Time.realtimeSinceStartup+120;
             while(worker!=null&&!worker.IsCompleted){Assert.That(Time.realtimeSinceStartup,Is.LessThan(deadline));yield return null;}
             historyGate?.Dispose();historyGate=null;
