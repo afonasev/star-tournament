@@ -30,6 +30,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 }
                 var warm=root.GetComponentInChildren<QuarryWarmDetails>();Assert.That(warm,Is.Not.Null);
                 Assert.That(warm.GetComponentsInChildren<Collider>(),Is.Empty);
+                Assert.That(warm.ChipPositions.Count,Is.GreaterThan(0));Assert.That(warm.ChipRendererCount,Is.InRange(1,4));
+                float clearance=ProvingProfile.CreateQuarryAuthoring(frozen.Definition).Get("quarry.warm.detailClearance");
+                foreach(var chip in warm.ChipPositions)
+                    foreach(var anchor in frozen.Definition.Spawns.Concat(frozen.Definition.Pickups.Select(x=>x.Anchor)))
+                        if(Mathf.Abs(chip.y-anchor.y)<2)Assert.That(Vector2.Distance(new Vector2(chip.x,chip.z),new Vector2(anchor.x,anchor.z)),Is.GreaterThanOrEqualTo(clearance),"Keep gameplay points clear");
                 Assert.That(ArenaMeshResidency.ReadUnreferencedOwnedMeshes(root.transform),Is.Empty);
                 foreach(var solid in frozen.Definition.Solids)
                 {

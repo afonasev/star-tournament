@@ -15,7 +15,7 @@ namespace StarTournament.ProvingGround.Tests
                 Assert.That(ProvingProfile.CreateQuarryAuthoring(old).Descriptors.Any(x=>x.Path.StartsWith("quarry.warm.")),Is.False);
             }
             var p=ProvingProfile.CreateQuarryAuthoring(d);Assert.That(p.Validate(),Is.Empty);
-            Assert.That(p.Descriptors.Count(x=>x.Path.StartsWith("quarry.warm.")),Is.EqualTo(24));
+            Assert.That(p.Descriptors.Count(x=>x.Path.StartsWith("quarry.warm.")),Is.EqualTo(33));
             foreach(string name in new[]{"limestone","gravel"})
             {
                 var texture=Resources.Load<Texture2D>("QuarryWarmArt/"+name);Assert.That(texture,Is.Not.Null);

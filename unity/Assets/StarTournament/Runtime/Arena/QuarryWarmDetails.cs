@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 namespace StarTournament.ProvingGround
 {
     // Editable asset source. Shallow fittings stay attached to existing solids; never add colliders or route obstructions.
-    public sealed class QuarryWarmDetails : MonoBehaviour,IArenaMeshOwner
+    public sealed partial class QuarryWarmDetails : MonoBehaviour,IArenaMeshOwner
     {
         // Opt-in matched-render evidence only. Production never creates per-fitting renderers.
         public static bool CaptureUngroupedReference { get; set; }
@@ -90,6 +90,7 @@ namespace StarTournament.ProvingGround
                 Box(3,7,s.Position+q*new Vector3(-s.Size.x*.3f,0,z),new Vector3(.07f,s.Size.y*.8f,.035f),q);
                 foreach(float y in new[]{-.3f,.3f})Box(3,7,s.Position+q*new Vector3(0,y*s.Size.y,z),new Vector3(s.Size.x*.8f,.07f,.035f),q);
             }
+            BuildGroundChips(d,ProvingProfile.CreateQuarryAuthoring(d));
             foreach(var pair in groups)
             {
                 UncombinedPartCount+=pair.Value.Count;
@@ -99,12 +100,12 @@ namespace StarTournament.ProvingGround
                     raw.transform.localPosition=part.transform.GetColumn(3);raw.transform.localRotation=part.transform.rotation;raw.transform.localScale=part.transform.lossyScale;
                     raw.AddComponent<MeshFilter>().sharedMesh=part.mesh;
                     var reference=raw.AddComponent<MeshRenderer>();reference.sharedMaterial=palette[pair.Key.Item2];
-                    reference.shadowCastingMode=ShadowCastingMode.Off;reference.receiveShadows=true;reference.enabled=false;referenceRenderers.Add(reference);
+                    reference.shadowCastingMode=pair.Key.Item1>=100?ShadowCastingMode.On:ShadowCastingMode.Off;reference.receiveShadows=true;reference.enabled=false;referenceRenderers.Add(reference);
                 }
                 var mesh=new Mesh{name="Quarry warm fittings / "+pair.Key.Item1+" / "+pair.Key.Item2};
                 mesh.CombineMeshes(pair.Value.ToArray(),true,true);owned.Add(mesh);
                 var go=new GameObject(mesh.name);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;
-                var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=palette[pair.Key.Item2];r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=true;groupedRenderers.Add(r);
+                var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=palette[pair.Key.Item2];r.shadowCastingMode=pair.Key.Item1>=100?ShadowCastingMode.On:ShadowCastingMode.Off;r.receiveShadows=true;groupedRenderers.Add(r);
             }
             groups.Clear(); // CombineInstance references must not retain source meshes after construction.
         }

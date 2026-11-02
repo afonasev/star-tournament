@@ -5,7 +5,7 @@ namespace StarTournament.ProvingGround
     // Presentation-only revision. Map solids and historical authoring snapshots are not rewritten.
     public static class QuarryWarmArt
     {
-        public const string Identity="quarry-warm-limestone-a2@2";
+        public const string Identity="quarry-warm-limestone-a2-detail@3";
         public static bool Applies(ArenaDefinition d)=>d.MapId==QuarryArenaCatalog.Id&&d.Revision=="6";
         public static void ConfigureMaterials(Material[] palette,ProvingProfile p,ArenaDefinition definition)
         {
@@ -23,6 +23,9 @@ namespace StarTournament.ProvingGround
                 m.SetFloat("_StoneScale",p.Get("quarry.warm.stoneTile"));m.SetFloat("_GravelScale",p.Get("quarry.warm.gravelTile"));
                 m.SetFloat("_PatchScale",p.Get("quarry.warm.patchScale"));m.SetFloat("_BlendWidth",p.Get("quarry.warm.blendWidth"));
                 m.SetFloat("_DustReach",p.Get("quarry.warm.dustReach"));
+                m.SetFloat("_GravelRelief",p.Get("quarry.warm.gravelRelief"));
+                m.SetFloat("_TrackContrast",p.Get("quarry.warm.trackContrast"));m.SetFloat("_TrackWidth",p.Get("quarry.warm.trackWidth"));
+                m.SetFloat("_TrackLength",p.Get("quarry.warm.trackLength"));m.SetFloat("_TrackCurve",p.Get("quarry.warm.trackCurve"));
                 // Only the existing upper floor receives the terrain-to-steel fringe; machine panels do not.
                 m.SetFloat("_Deck",i==5?1:0);
                 var upper=definition.Solids.Single(s=>s.Id=="upper-excavation");

@@ -13,6 +13,11 @@ Shader "StarTournament/QuarryWarmSurface"
         _DustReach("Deck dust meters",Float)=5
         _Deck("Is terrain deck",Float)=0
         _DeckEdge("Authored deck front",Float)=0
+        _GravelRelief("Fine gravel relief",Float)=0.009
+        _TrackContrast("Worn tread contrast",Float)=0.34
+        _TrackWidth("Single tyre width",Float)=0.65
+        _TrackLength("Track extent",Float)=18
+        _TrackCurve("Steering curve",Float)=0.018
         _Mode("Stone / Ground / Steel / Wood / Paint",Float)=0
         _Scale("World tile meters",Float)=6
         _Relief("Surface relief",Float)=0.08
@@ -47,6 +52,7 @@ Shader "StarTournament/QuarryWarmSurface"
             float4 _BaseColor; float4 _BaseMap_ST;
             float _Mode, _Scale, _Relief, _Smoothness, _Metallic, _Cutoff, _Cull;
             float _StoneScale, _GravelScale, _PatchScale, _BlendWidth, _DustReach, _Deck, _DeckEdge;
+            float _GravelRelief, _TrackContrast, _TrackWidth, _TrackLength, _TrackCurve;
             CBUFFER_END
             struct A { float4 p:POSITION; float3 n:NORMAL; };
             struct V { float4 p:SV_POSITION; float3 w:TEXCOORD0; float3 n:TEXCOORD1; };
@@ -85,16 +91,29 @@ Shader "StarTournament/QuarryWarmSurface"
                     float3 stone=SAMPLE_TEXTURE2D(_StoneMap,sampler_StoneMap,tile).rgb;
                     float3 gravel=SAMPLE_TEXTURE2D(_GravelMap,sampler_GravelMap,uv/_GravelScale).rgb;
                     color*=lerp(stone*1.12,gravel*.92,soil)*(1.08-.12*patch);
-                    float3 relief=SAMPLE_TEXTURE2D_GRAD(_StoneMap,sampler_StoneMap,tile,ddx(tile)*4,ddy(tile)*4).rgb;
-                    height=dot(relief,float3(.3,.59,.11))*_Relief*(1-soil*.6);
+                    if(_Mode>.5)
+                    {
+                        float2 grainUV=uv/_GravelScale;
+                        float3 relief=SAMPLE_TEXTURE2D_GRAD(_GravelMap,sampler_GravelMap,grainUV,ddx(grainUV)*3,ddy(grainUV)*3).rgb;
+                        height=dot(relief,float3(.3,.59,.11))*_GravelRelief;
+                    }
+                    else
+                    {
+                        float3 relief=SAMPLE_TEXTURE2D_GRAD(_StoneMap,sampler_StoneMap,tile,ddx(tile)*4,ddy(tile)*4).rgb;
+                        height=dot(relief,float3(.3,.59,.11))*_Relief*(1-soil*.6);
+                    }
                     if(_Mode>.5 && an.y>.6)
                     {
-                        // Faint tyre tread decals are shader-only; no extra geometry/collisions/renderers.
+                        // Authored loader pose and axle gauge; paired, worn tyre impressions are surface-only.
                         float2 d=v.w.xz-float2(-11,-23);
                         float2 t=float2(.883*d.x+.469*d.y,-.469*d.x+.883*d.y);
-                        float track=(1-smoothstep(.32,.55,abs(abs(t.x)-1.65)))*(1-smoothstep(6,12,abs(t.y)));
-                        float tread=1-smoothstep(.16,.25,abs(frac(t.y*1.7+abs(t.x)*.7)-.5));
-                        color*=1-track*(.09+.09*tread);
+                        float curve=_TrackCurve*t.y*t.y*smoothstep(3,8,abs(t.y));
+                        float lane=abs(t.x-curve)-1.65;
+                        float track=(1-smoothstep(_TrackWidth*.4,_TrackWidth*.6,abs(lane)))*(1-smoothstep(_TrackLength*.7,_TrackLength,abs(t.y)));
+                        float tread=1-smoothstep(.12,.24,abs(frac(t.y*2.4+abs(lane)*1.4)-.5));
+                        float wear=smoothstep(.15,.6,Noise(t*float2(.8,.55)))*(.4+.6*Noise(t*7));
+                        float impression=track*wear*(.2+.8*tread);
+                        color*=1-impression*_TrackContrast;
                     }
                 }
                 else if(_Mode<2.5)
