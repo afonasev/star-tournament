@@ -1018,12 +1018,12 @@ namespace StarTournament.ProvingGround
             RouteInlineInput();
             if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);return;}
             if(phase==Phase.Running || phase==Phase.Loading)return;
-            var owner=MenuUiDevice;
-            if(owner!=null&&Enumerable.Range(0,LocalSeatCount).Any(i=>input.DeviceAt(i)!=null))
-            {menuDevice=owner;menuGamepadCursor=owner is Gamepad;Cursor.visible=!menuGamepadCursor;return;}
+            if(phase==Phase.Setup&&MenuUiDevice is Keyboard keyboardOwner)
+            {menuDevice=keyboardOwner;menuGamepadCursor=false;}
+            else if(phase==Phase.Setup&&menuGamepadCursor&&MenuUiDevice is Gamepad owner)menuDevice=owner;
             foreach(var pad in Gamepad.all)
             {
-                if(!pad.enabled)continue;
+                if(!pad.enabled||(phase==Phase.Setup&&!IsMenuInputDevice(pad)))continue;
                 bool activity=pad.leftStick.ReadValue().sqrMagnitude>=.25f||pad.dpad.ReadValue()!=Vector2.zero||Mathf.Abs(pad.rightStick.ReadValue().y)>MenuHistoryScrollDeadzone;
                 foreach(var control in pad.allControls)
                     if(control is UnityEngine.InputSystem.Controls.ButtonControl button&&button.wasPressedThisFrame)activity=true;

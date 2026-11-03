@@ -49,7 +49,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeBotReactiveCombat()
         {
             if(id!="unity-bot-behavior-v1"||version!=5)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=4;
+            var p=DetachedCopy();p.version=4;
             p.descriptors.RemoveAll(d=>d.Path.EndsWith(".jumpAttemptSeconds")||d.Path.StartsWith("bots.spacing.")||d.Path.StartsWith("bots.damage."));
             p.values.RemoveAll(v=>v.Path.EndsWith(".jumpAttemptSeconds")||v.Path.StartsWith("bots.spacing.")||v.Path.StartsWith("bots.damage."));
             foreach(var d in p.descriptors)if(d.Path.EndsWith(".jumpChance"))d.Description="Вероятность прыжка при смене боевого манёвра и свободном приземлении.";
@@ -60,7 +60,7 @@ namespace StarTournament.ProvingGround
         {
             if(id=="unity-bot-behavior-v1"&&version==5)return BeforeBotReactiveCombat().BeforeBotCombatMovement();
             if(id!="unity-bot-behavior-v1"||version!=4)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=3;
+            var p=DetachedCopy();p.version=3;
             p.descriptors.RemoveAll(d=>d.Path.EndsWith(".surpriseJumpChance")||d.Path=="bots.tactics.surpriseWindowSeconds");
             p.values.RemoveAll(v=>v.Path.EndsWith(".surpriseJumpChance")||v.Path=="bots.tactics.surpriseWindowSeconds");
             p.RebalanceDefault("bots.easy.jumpChance",.12f);p.RebalanceDefault("bots.normal.jumpChance",.18f);p.RebalanceDefault("bots.hard.jumpChance",.22f);
@@ -70,14 +70,14 @@ namespace StarTournament.ProvingGround
         {
             if(id=="unity-bot-behavior-v1"&&version>=4)return BeforeBotCombatMovement().BeforeBotWeaponEvaluation();
             if(id!="unity-bot-behavior-v1"||version!=3)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=2;
+            var p=DetachedCopy();p.version=2;
             p.descriptors.RemoveAll(d=>d.Path=="bots.strategy.weaponTimeSamples"||d.Path=="bots.strategy.weaponSpreadSamples");
             p.values.RemoveAll(v=>v.Path=="bots.strategy.weaponTimeSamples"||v.Path=="bots.strategy.weaponSpreadSamples");
             p.RebalanceDefault("bots.strategy.weaponHorizonSeconds",.25f);return p;
         }
         internal ProvingProfile BeforeBotTactics()
         {
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforeBotWeaponEvaluation()));
+            var p=BeforeBotWeaponEvaluation().DetachedCopy();
             if(p.id=="unity-bot-behavior-v1"){p.version=1;p.descriptors.RemoveAll(d=>d.Path.StartsWith("bots.strategy.")||d.Path.EndsWith(".leadQuality"));p.values.RemoveAll(v=>v.Path.StartsWith("bots.strategy.")||v.Path.EndsWith(".leadQuality"));}
             if(p.id=="unity-bot-perception-v1"){p.version=1;p.descriptors.RemoveAll(d=>d.Path.EndsWith(".pickupDelaySeconds"));p.values.RemoveAll(v=>v.Path.EndsWith(".pickupDelaySeconds"));}
             return p;

@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeBloodIntensityIncrease()
         {
             if(id!=BloodPresentationId||version<2)return this;
-            var copy=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.version=1;
             // Exact prior default registry is required to validate immutable Lab history hashes.
             copy.Descriptor("blood.drops").DefaultValue=10f;copy.Set("blood.drops",10f);

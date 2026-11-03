@@ -6,20 +6,20 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforePulseMk2()
         {
             if(id!=RocketEffectsId||version<4)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=DetachedCopy();
             bool Added(string path)=>path.StartsWith("pulseFx.ignition")||path=="pulseFx.surfaceFadeMeters"||path=="pulseFx.fireRadiance";
             p.descriptors.RemoveAll(d=>Added(d.Path));p.values.RemoveAll(v=>Added(v.Path));p.version=3;return p;
         }
         public ProvingProfile BeforePulseVisibility()
         {
             if(id!=RocketEffectsId||version<3)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforePulseMk2()));
+            var p=BeforePulseMk2().DetachedCopy();
             p.descriptors.RemoveAll(d=>d.Path=="pulseFx.blastRadiusScale");p.values.RemoveAll(v=>v.Path=="pulseFx.blastRadiusScale");p.version=2;return p;
         }
         public ProvingProfile BeforePulseRefinement()
         {
             if(id!=RocketEffectsId||version<2)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforePulseMk2()));
+            var p=BeforePulseMk2().DetachedCopy();
             var added=new System.Collections.Generic.HashSet<string>{"pulseFx.blastRadiusScale","pulseFx.fireFramesPerSecond","pulseFx.lightIntensity","pulseFx.lightSeconds","pulseFx.lightRangeScale","pulseFx.lightWarmth","pulseFx.lightOffsetScale","pulseFx.maxLights"};
             p.descriptors.RemoveAll(d=>added.Contains(d.Path));p.values.RemoveAll(v=>added.Contains(v.Path));p.version=1;return p;
         }

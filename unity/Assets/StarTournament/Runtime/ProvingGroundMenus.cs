@@ -28,13 +28,14 @@ namespace StarTournament.ProvingGround
         {
             get
             {
+                if(phase!=Phase.Setup)return menuDevice;
                 int first=Enumerable.Range(0,LocalSeatCount).Where(input.IsHumanSeat).DefaultIfEmpty(-1).First();
                 return first>=0&&input.DeviceAt(first)!=null?input.DeviceAt(first):menuDevice;
             }
         }
         InputDevice MenuUiDevice=>phase==Phase.Setup&&lobbyDialog&&lobbyDialog.activeSelf&&lobbyJoinDevice!=null&&!lobbyJoinFromButton?lobbyJoinDevice:PrimaryMenuDevice;
         bool IsPrimaryMenuDevice(InputDevice device)=>device!=null&&device==PrimaryMenuDevice;
-        bool IsMenuInputDevice(InputDevice device)=>device!=null&&(device==MenuUiDevice||device is Mouse&&MenuUiDevice is Keyboard);
+        bool IsMenuInputDevice(InputDevice device)=>device!=null&&(device is Mouse||device is Keyboard||phase!=Phase.Setup||device==MenuUiDevice);
 
         int menuActivationFrame=-1;
         Button identitySettingsButton,operatorSettingsButton;
@@ -267,7 +268,6 @@ namespace StarTournament.ProvingGround
             if(context.action==menuMoveAction && context.ReadValue<Vector2>()==Vector2.zero)return;
             if(context.action==menuClickAction && !context.ReadValueAsButton())return;
             var device=context.control?.device;
-            if(PrimaryMenuDevice!=null&&Enumerable.Range(0,LocalSeatCount).Any(i=>input.DeviceAt(i)!=null)&&!IsMenuInputDevice(device))return;
             if(device is Mouse)device=Keyboard.current;
             if(device is Keyboard || device is Gamepad)
             {

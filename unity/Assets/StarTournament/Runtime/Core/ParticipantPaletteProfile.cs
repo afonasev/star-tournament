@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeDiscreteIdentityPanels()
         {
             if(Id!=ParticipantPaletteId)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=2;
+            var p=DetachedCopy();p.version=2;
             string[] added={"participant.surface.shellStart","participant.surface.shellWidth","participant.surface.neutralPlateGain","participant.surface.helmetStripeWidth"};
             p.descriptors.RemoveAll(d=>System.Array.IndexOf(added,d.Path)>=0);
             p.values.RemoveAll(v=>System.Array.IndexOf(added,v.Path)>=0);return p;
@@ -51,7 +51,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeIdentitySurface()
         {
             if(Id!=ParticipantPaletteId)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));p.version=1;
+            var p=DetachedCopy();p.version=1;
             p.descriptors.RemoveAll(d=>d.Path.StartsWith("participant.surface."));
             p.values.RemoveAll(v=>v.Path.StartsWith("participant.surface."));return p;
         }

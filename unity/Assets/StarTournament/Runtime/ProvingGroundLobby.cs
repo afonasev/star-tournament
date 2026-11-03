@@ -336,7 +336,7 @@ namespace StarTournament.ProvingGround
             int lost=Enumerable.Range(0,LocalSeatCount).Where(s=>input.IsHumanSeat(s)&&input.DeviceAt(s)!=null&&!input.IsConnected(s)).DefaultIfEmpty(-1).First();
             if(lost>=0){if(input.Replace(lost,device)){identities.RememberBinding(lost,device.deviceId);setupError=null;RefreshInterface();FocusRosterCard(lost);}return;}
             if(LocalSeatCount>=4||RosterTotal>=LobbyCapacity){setupError="Нет свободного экрана";RefreshInterface();return;}
-            lobbyJoinFromButton=false;lobbyJoinDevice=device;ShowLobbyJoinProfiles();
+            lobbyJoinFromButton=false;lobbyJoinDevice=device;menuDevice=device;menuGamepadCursor=device is Gamepad;ShowLobbyJoinProfiles();
         }
         void ShowLobbyJoinProfiles()
         {

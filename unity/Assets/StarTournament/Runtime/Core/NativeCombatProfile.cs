@@ -45,7 +45,7 @@ namespace StarTournament.ProvingGround
             if(id!="unity-native-combat-v1"||FindDescriptor("rifle.damage")==null)return this;
             var legacy=CreateLegacyNativeCombatDefault();
             // Reconstruct trusted historical metadata; saved snapshots supply their own unchanged values.
-            var copy=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path=="rifle.damage"||d.Path=="shot.damage"||d.Path.StartsWith("damage.",System.StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path=="rifle.damage"||v.Path=="shot.damage"||v.Path.StartsWith("damage.",System.StringComparison.Ordinal));
             foreach(var d in legacy.descriptors)

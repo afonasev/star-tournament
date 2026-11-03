@@ -40,7 +40,7 @@ namespace StarTournament.ProvingGround
         {
             // Only the proving profile changed; other immutable registries can be shared.
             if(id!=DefaultId||FindDescriptor("presentation.rocketMuzzleBlendDistance")==null)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=DetachedCopy();
             p.descriptors.RemoveAll(d=>d.Path=="presentation.rocketMuzzleBlendDistance");
             p.values.RemoveAll(v=>v.Path=="presentation.rocketMuzzleBlendDistance");
             if(p.id==DefaultId&&p.version>=7)p.version=6;

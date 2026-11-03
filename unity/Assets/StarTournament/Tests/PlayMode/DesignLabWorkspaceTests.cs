@@ -21,6 +21,43 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         Button Button(string name)=>ground.GetComponentsInChildren<Button>().Single(b=>b.name==name);
         InputField Input(string name)=>ground.GetComponentsInChildren<InputField>().Single(b=>b.name==name);
         void Click(string name)=>Button(name).onClick.Invoke();
+        [UnityTest] public IEnumerator ExistingHistoryOpensWithoutRewritingSource()
+        {
+            var source=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LAB_HISTORY_FIXTURE");
+            if(string.IsNullOrEmpty(source))Assert.Ignore("Requires an owned external Lab history fixture");
+            System.Func<string,string> hash=path=>{using(var stream=File.OpenRead(path))using(var sha=System.Security.Cryptography.SHA256.Create())return Convert.ToBase64String(sha.ComputeHash(stream));};
+            string originalHash=hash(source);
+            directory=Path.Combine(Path.GetTempPath(),"st-lab-existing-"+Guid.NewGuid());Directory.CreateDirectory(directory);
+            var owned=Path.Combine(directory,"history.json");File.Copy(source,owned);
+            oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",owned);
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
+            ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            Click("main-action-2");yield return null;
+            Assert.That(Input("input-rifle.damage").gameObject.activeInHierarchy,Is.True);
+            Assert.That(hash(source),Is.EqualTo(originalHash),"The user's source history is read-only");
+            Assert.That(hash(owned),Is.EqualTo(originalHash),"Opening Lab must not rewrite or truncate its history");
+            Assert.That(Directory.GetFiles(directory,"*.tmp"),Is.Empty);
+            Debug.Log("LAB_EXISTING_HISTORY_PASS bytes="+new FileInfo(source).Length+" sha256="+originalHash);
+        }
+        [UnityTest] public IEnumerator LabWorkspaceRefreshDiagnostic()
+        {
+            directory=Path.Combine(Path.GetTempPath(),"st-lab-latency-"+Guid.NewGuid());Directory.CreateDirectory(directory);
+            oldEnvironment=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY");
+            var source=Environment.GetEnvironmentVariable("STAR_TOURNAMENT_LAB_LATENCY_HISTORY");
+            var path=Path.Combine(directory,"history.json");if(!string.IsNullOrEmpty(source))File.Copy(source,path);
+            Environment.SetEnvironmentVariable("STAR_TOURNAMENT_QA_LAB_HISTORY",path);
+            yield return NativeLoadingTestScene.Load();scene=SceneManager.GetSceneByName("ProvingGround");
+            ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+            yield return NativeLoadingTestScene.WaitLabHistory(ground);
+            var timer=System.Diagnostics.Stopwatch.StartNew();Click("main-action-2");timer.Stop();double open=timer.Elapsed.TotalMilliseconds;
+            var refresh=typeof(ProvingGround).GetMethod("RefreshLabValues",BindingFlags.Instance|BindingFlags.NonPublic);
+            var samples=new double[5];for(int i=0;i<samples.Length;i++){timer.Restart();refresh.Invoke(ground,new object[]{true});timer.Stop();samples[i]=timer.Elapsed.TotalMilliseconds;}
+            var history=(DesignLabHistory)typeof(ProvingGround).GetField("labHistory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(ground);
+            timer.Restart();var legacyName=history.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Name;timer.Stop();double legacyNameMs=timer.Elapsed.TotalMilliseconds;
+            timer.Restart();var name=history.ProfileName(DesignLabHistory.ReleaseId);timer.Stop();double nameMs=timer.Elapsed.TotalMilliseconds;
+            Assert.That(name,Is.EqualTo(legacyName));Assert.That(Input("input-rifle.damage").text,Is.EqualTo(history.Selected.Snapshot.Get("rifle.damage").ToString("0.#####",System.Globalization.CultureInfo.InvariantCulture)));
+            Debug.Log("LAB_LATENCY open_ms="+open+" refresh_ms="+string.Join(",",samples)+" legacy_name_ms="+legacyNameMs+" name_ms="+nameMs+" history="+(string.IsNullOrEmpty(source)?"packaged":"owned-copy"));
+        }
         [UnityTest] public IEnumerator IndividualEffectFieldsSaveForNextMatchAndRenderInAudioGroup()
         {
             directory=Path.Combine(Path.GetTempPath(),"st-effect-mix-"+Guid.NewGuid());Directory.CreateDirectory(directory);

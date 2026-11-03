@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround
         {
             const string path="audio.music.balanceGain";
             if(id!=DefaultId||Descriptor(path)==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path==path);
             copy.values.RemoveAll(v=>v.Path==path);copy.valueIndex=null;
             return copy;
@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeRoundMusic()
         {
             if(id!=DefaultId||Descriptor("audio.music.gain")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path.StartsWith("audio.music.",StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path.StartsWith("audio.music.",StringComparison.Ordinal));copy.valueIndex=null;
             copy.FindDescriptor("audio.musicDefaultPercent").Description="Начальная громкость музыкального канала до пользовательского изменения; трек пока отсутствует.";
@@ -52,7 +52,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeMenuMusic()
         {
             if(id!=DefaultId||Descriptor("audio.music.menuTransitionSeconds")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path=="audio.music.menuTransitionSeconds");
             copy.values.RemoveAll(v=>v.Path=="audio.music.menuTransitionSeconds");copy.valueIndex=null;
             return copy;

@@ -95,7 +95,7 @@ namespace StarTournament.ProvingGround
         // Exact first-release registry for immutable Lab history compatibility.
         internal ProvingProfile BeforeCutterThickness()
         {
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=DetachedCopy();
             if(p.id=="cutter-beam-v1")
             {
                 p.version=1;
@@ -111,7 +111,7 @@ namespace StarTournament.ProvingGround
         {
             // Only the changed registry needs an isolated predecessor; all other entries are read-only.
             if(id!="cutter-beam-v1"||version!=3)return this;
-            var p=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));
+            var p=DetachedCopy();
             p.version=2;
             p.Set("cutter.referenceDamage",100f);
             p.descriptors.Find(d=>d.Path=="cutter.referenceDamage").DefaultValue=100f;

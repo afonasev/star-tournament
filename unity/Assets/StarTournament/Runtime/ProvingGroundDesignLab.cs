@@ -45,7 +45,8 @@ namespace StarTournament.ProvingGround
             if(DateTime.TryParseExact(saved.Date,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out var knownDate))date=knownDate.ToString("dd.MM.yyyy",CultureInfo.InvariantCulture);
             labSavedPresentation="Баланс матча: "+selection.SelectedProfileName+"\nВерсия "+saved.Number+" · "+date;
         }
-        bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Hash()!=labBaseline.Hash());
+        // Drafts share the baseline registry; only values are editable. No serialization/hash on UI edits.
+        bool LabDirty=>labDraft!=null&&(labRaw.Count>0||labDraft.Descriptors.Any(d=>labDraft.Get(d.Path)!=labBaseline.Get(d.Path)));
         LabBundle CurrentLabBundle()=>new LabBundle{Profiles=new List<ProvingProfile>{Profile,LifeProfile,CombatProfile,TrooperProfile,MatchProfile,TeamProfile,RosterProfile,BotPerceptionProfile,BotNavigationProfile,BotBehaviorProfile,OrbitalLeagueProfile,CombatBowlAuthoring,CutterProfile,PlasmaProfile,ParticipantPaletteProfile,ProvingProfile.CreateBotEvaluationDefault(),DeathProfile,BloodProfile,RocketEffectsProfile,TunnelsPresentation,TunnelsAuthoring,LunarPresentation,LunarAuthoring,WellProfile,WellAuthoring,FiringRangeAuthoring,HitFeedbackProfile,LobbyProfile}};
         public LabBundle CaptureLabBundle()=>CurrentLabBundle().Clone();
         void PrepareLabRegistry()
@@ -515,23 +516,27 @@ namespace StarTournament.ProvingGround
                 view.Diff.text=!labDraft.IsEditable(path)?"ТОЛЬКО ЧТЕНИЕ · "+CombatBowlCatalog.Identity+" · для изменения требуется новая map revision":changed?"ИЗМЕНЕНО · "+LabNumber(old)+" → "+(labRaw.TryGetValue(path,out var text)?text:LabNumber(now))+" · Δ "+(now-old>=0?"+":"")+LabNumber(now-old):"Без изменений";
                 view.Error.text=string.Join("; ",issues.Where(e=>e.Path==path).Select(e=>e.Message));view.Background.color=changed?new Color32(42,63,61,255):MenuCard;
             }
+            var changedDescriptors=LabDescriptors().Where(Changed).ToArray();
+            var groupCounts=changedDescriptors.GroupBy(LabGroup).ToDictionary(g=>g.Key,g=>g.Count());
+            var parentCounts=changedDescriptors.GroupBy(d=>GroupLabel(LabGroup(d)).Split('→')[0].Trim()).ToDictionary(g=>g.Key,g=>g.Count());
             foreach(Transform row in labTree)
             {
-                if(row.name.StartsWith("group-")){string group=row.name.Substring(6);int count=LabDescriptors().Count(d=>LabGroup(d)==group&&Changed(d));row.GetComponentInChildren<Text>().text="   "+GroupLabel(group).Split('→').Last().Trim()+(count>0?" · "+count:"");}
-                else {string parent=row.name.Substring(7);row.GetComponent<Text>().text=parent+" · "+LabDescriptors().Count(d=>GroupLabel(LabGroup(d)).StartsWith(parent+" →",StringComparison.Ordinal)&&Changed(d));}
+                if(row.name.StartsWith("group-")){string group=row.name.Substring(6);int count=groupCounts.TryGetValue(group,out var groupCount)?groupCount:0;row.GetComponentInChildren<Text>().text="   "+GroupLabel(group).Split('→').Last().Trim()+(count>0?" · "+count:"");}
+                else {string parent=row.name.Substring(7);row.GetComponent<Text>().text=parent+" · "+(parentCounts.TryGetValue(parent,out var parentCount)?parentCount:0);}
             }
+            bool dirty=LabDirty;
             bool readOnly=labHistory.SelectedProfileReadOnly;labRename.interactable=!readOnly&&labHistory.Writable;labCreate.GetComponentInChildren<Text>().text="Создать копию";
-            labSave.interactable=!readOnly&&(LabDirty||labHistory.CanMaterializeSelected)&&issues.Count==0&&labHistory.Writable;labDelete.interactable=!labHistory.SelectedProfileProtected&&labHistory.Writable;
+            labSave.interactable=!readOnly&&(dirty||labHistory.CanMaterializeSelected)&&issues.Count==0&&labHistory.Writable;labDelete.interactable=!labHistory.SelectedProfileProtected&&labHistory.Writable;
             var selected=labHistory.Selected;bool shipped=!labHistory.IsAuthoring&&labHistory.IsShipped(selected);
-            labRelease.interactable=!readOnly&&!LabDirty&&!shipped&&labHistory.Compatible(selected)&&labHistory.Writable;
+            labRelease.interactable=!readOnly&&!dirty&&!shipped&&labHistory.Compatible(selected)&&labHistory.Writable;
             LabCheckState(labRelease,labHistory.SelectedReleaseMarked,"В релиз");
-            labReleaseReason.text=shipped?"Профиль пакета · только чтение":readOnly?"Только чтение":LabDirty?"Сначала сохраните правки":!labHistory.Writable?"Запись недоступна":!labHistory.Compatible(selected)?"Версия несовместима":labHistory.IsAuthoring?"Отметка для следующего выпуска":"Локальная отметка · без выпуска";
+            labReleaseReason.text=shipped?"Профиль пакета · только чтение":readOnly?"Только чтение":dirty?"Сначала сохраните правки":!labHistory.Writable?"Запись недоступна":!labHistory.Compatible(selected)?"Версия несовместима":labHistory.IsAuthoring?"Отметка для следующего выпуска":"Локальная отметка · без выпуска";
             string name=labHistory.SelectedProfileName;labProfileSelector.GetComponentInChildren<Text>().text=(name.Length>24?name.Substring(0,21)+"…":name)+" ▾";labRevisionSelector.GetComponentInChildren<Text>().text=LabRevisionLabel(labHistory,selected)+" ▾";
-            labDefaultSource.text=labHistory.ReleaseError!=null?"Default недоступен · проверьте отметки":labHistory.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Name+" · последняя релизная версия";
+            labDefaultSource.text=labHistory.ReleaseError!=null?"Default недоступен · проверьте отметки":labHistory.ProfileName(DesignLabHistory.ReleaseId)+" · последняя релизная версия";
             labIdentity.fontSize=16;
             labIdentity.text=(labHistory.IsAuthoring?"Файл проекта: DesignLab/authoring-history-v1.json":"Данные игрока · "+(labHistory.SelectedProfileProtected?"профиль пакета защищён":"свой профиль"))+"\n"+
                 (labProjectRoot!=null&&!authorStartupResolved?"Стартовая версия проекта не выбрана":"Для следующей игры: "+labActiveLabel);
-            labStatus.text=labError??labHistory.StorageError??labHistory.ReleaseError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":LabDirty?"Черновик · правок "+LabDescriptors().Count(Changed):labWriteMessage??(labHistory.CanMaterializeSelected?"Можно сохранить полную новую версию":"Сохранённая ревизия · нет изменений"));
+            labStatus.text=labError??labHistory.StorageError??labHistory.ReleaseError??(readOnly?"Только чтение · для правок создайте копию":issues.Count>0?"Ошибок: "+issues.Count+" · сохранение заблокировано":dirty?"Черновик · правок "+changedDescriptors.Length:labWriteMessage??(labHistory.CanMaterializeSelected?"Можно сохранить полную новую версию":"Сохранённая ревизия · нет изменений"));
         }
         IEnumerator SelectLabRevision(string profile,int revision)
         {

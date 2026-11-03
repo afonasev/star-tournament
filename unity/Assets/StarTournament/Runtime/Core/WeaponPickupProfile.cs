@@ -6,7 +6,7 @@ namespace StarTournament.ProvingGround
     {
         internal ProvingProfile BeforeWeaponPickups()
         {
-            var p=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var p=DetachedCopy();
             if(p.Id=="unity-combat-state-v1"&&p.Version>=6)
             {p.version=5;p.descriptors.RemoveAll(d=>d.Path.StartsWith("weaponPickup."));p.values.RemoveAll(v=>v.Path.StartsWith("weaponPickup."));}
             if(p.Id=="combat-bowl-ring-r7-authoring-v1"&&p.Version>=10)

@@ -103,6 +103,21 @@ namespace StarTournament.ProvingGround.Tests.EditMode
             Assert.That(rejected.StorageError,Is.Not.Null);
             CollectionAssert.AreEqual(corrupt,File.ReadAllBytes(path));
         }
+        [TestCase(false)][TestCase(true)]
+        public void StartupValidationDoesNotTrustAnotherSnapshotWithTheSameClaimedHash(bool consistentHash)
+        {
+            var shipped=new LabBundle{Profiles={ProvingProfile.CreateDefault(),ProvingProfile.CreateNativeCombatDefault()}};
+            var seed=new DesignLabHistory(null,shipped,persistMigration:false);
+            var profile=seed.SelectedProfile;var corrupt=profile.Revisions[0].Clone();corrupt.Number=2;
+            corrupt.Snapshot.Set("rifle.damage",1000000);
+            if(consistentHash)corrupt.Hash=corrupt.Snapshot.Hash();
+            profile.Revisions.Add(corrupt);
+            var file=new LabHistoryFile{SelectedId=profile.Id,SelectedRevision=1,Profiles={profile}};
+            File.WriteAllText(path,JsonUtility.ToJson(file));var bytes=File.ReadAllBytes(path);
+            var loaded=new DesignLabHistory(path,shipped,releases:LabReleaseCatalog.Factory(shipped),persistMigration:false);
+            Assert.That(loaded.StorageError,Is.Not.Null);Assert.That(loaded.Writable,Is.False);
+            CollectionAssert.AreEqual(bytes,File.ReadAllBytes(path));
+        }
         [Test]public void StartupMigrationKeepsDiskHistoryUntilExplicitLabMutation()
         {
             var shipped=Shipped();shipped.Profiles.Insert(14,ProvingProfile.CreateBotEvaluationDefault());
