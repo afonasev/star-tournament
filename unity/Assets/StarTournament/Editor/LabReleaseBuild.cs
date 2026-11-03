@@ -75,7 +75,10 @@ namespace StarTournament.ProvingGround.Editor
         public static void Validate()
         {
             if(!File.Exists(CatalogPath))throw new BuildFailedException("Missing LabReleaseCatalog; explicitly bootstrap before first release");
-            var catalog=JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(CatalogPath));
+            // The packaged resource uses the balance registry schema (v4), not the
+            // legacy schema-1 serialization shape. Parse through its integrity-aware
+            // reader so release validation sees the trusted current entries.
+            var catalog=LabReleaseCatalog.ParsePackaged(File.ReadAllText(CatalogPath));
             var history=new DesignLabHistory(Path.Combine(Path.GetTempPath(),"st-release-check-"+Guid.NewGuid()+".json"),Baseline(),releases:catalog,resetToLatestDefault:true);
             foreach(var entry in catalog.Entries)
                 if(!history.Profiles.Single(p=>p.Id==entry.ProfileId).Revisions.Any(r=>r.ReleaseSequence==entry.Sequence&&history.Compatible(r)))
