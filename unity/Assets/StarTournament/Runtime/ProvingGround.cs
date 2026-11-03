@@ -815,7 +815,7 @@ namespace StarTournament.ProvingGround
                 frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenPlasma=Copy(PlasmaProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);frozenHitFeedback=Copy(HitFeedbackProfile);
                 FrozenLabIdentity=LabSavedIdentity;
                 FrozenLabPresentation=labSavedPresentation;
-                frozenLabReference=activeLabReference==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":activeLabReference.ProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:activeLabReference.Revision,Hash=CurrentLabBundle().Hash()};
+                frozenLabReference=activeLabReference==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":activeLabReference.ProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:activeLabReference.Revision,Hash=CaptureLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             yield return null;

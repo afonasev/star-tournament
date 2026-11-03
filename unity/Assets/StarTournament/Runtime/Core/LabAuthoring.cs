@@ -112,14 +112,14 @@ namespace StarTournament.ProvingGround
                     // Current-schema counterparts are execution views of immutable saved
                     // package versions. Export their original identity/content, not a reused
                     // public number with different interpreted bytes.
-                    var original=revision.ReleaseSequence>0?profile.Revisions.FirstOrDefault(r=>r.Hash==revision.ReleaseHash):null;
+                    var original=revision.ReleaseSequence>0?profile.Revisions.FirstOrDefault(r=>r.Hash==revision.ReleaseHash&&r.ReleaseSequence==revision.ReleaseSequence):null;
                     if(revision.ReleaseSequence>0&&original==null)throw new InvalidOperationException("Исходный снимок релизной версии не найден");
                     int number=original==null?revision.Number:revision.ReleaseNumber;
                     if(result.Entries.Any(e=>e.ProfileId==profile.Id&&e.Revision==number))
                         throw new InvalidOperationException("Повтор идентичности релизной версии: "+profile.Name+" v"+number);
                     result.Entries.Add(new LabReleaseEntry{Sequence=++sequence,ProfileId=profile.Id,ProfileName=profile.Name,
                         Revision=number,Date=original==null?revision.Date:revision.ReleaseDate,
-                        Hash=original?.Hash??revision.Hash,Snapshot=(original?.Snapshot??revision.Snapshot).Clone()});
+                        SourceHash=original?.SourceHash??revision.SourceHash,Hash=original?.Hash??revision.Hash,Snapshot=(original?.Snapshot??revision.Snapshot).Clone()});
                     expected.Add(sequence,execution.Hash);
                 }
             var packaged=ResolvePublishedDefault(shipped,result);
@@ -167,6 +167,7 @@ namespace StarTournament.ProvingGround
         public static DesignLabHistory Open(string unityProjectRoot,LabBundle baseline,LabReleaseCatalog seed)
         {
             if(seed==null)throw new ArgumentNullException(nameof(seed));
+            if(BalanceLab.IsProjection(baseline))return DesignLabHistory.OpenBalance(ResolvePath(unityProjectRoot),BalanceLab.RuntimeDefaults(),seed,authoring:true);
             return new DesignLabHistory(ResolvePath(unityProjectRoot),baseline,releases:seed,resetToLatestDefault:true,
                 persistMigration:false,authoring:true);
         }

@@ -13,10 +13,10 @@ namespace StarTournament.ProvingGround
         public int Sequence;
         public string ProfileId,ProfileName;
         public int Revision;
-        public string Date,Hash;
+        public string Date,Hash,SourceHash;
         public LabBundle Snapshot;
         public LabReleaseEntry Clone()=>new LabReleaseEntry{Sequence=Sequence,ProfileId=ProfileId,ProfileName=ProfileName,
-            Revision=Revision,Date=Date,Hash=Hash,Snapshot=Snapshot?.Clone()};
+            Revision=Revision,Date=Date,Hash=Hash,SourceHash=SourceHash,Snapshot=Snapshot?.Clone()};
     }
     [Serializable] public sealed class LabReleaseCatalog
     {
@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround
         {
             if(packagedEntries==null)return;
             if(!packagedEntries.TryGetValue(entry.Sequence,out var original)||entry.ProfileId!=original.ProfileId||
-                entry.ProfileName!=original.ProfileName||entry.Revision!=original.Revision||entry.Date!=original.Date||entry.Hash!=original.Hash)
+                entry.SourceHash!=original.SourceHash||entry.ProfileName!=original.ProfileName||entry.Revision!=original.Revision||entry.Date!=original.Date||entry.Hash!=original.Hash)
                 throw new InvalidDataException("Встроенная релизная идентичность изменена");
         }
         public static LabReleaseCatalog Factory(LabBundle bundle)=>new LabReleaseCatalog{Entries=new List<LabReleaseEntry>{
@@ -48,9 +48,9 @@ namespace StarTournament.ProvingGround
             return ParsePackaged(asset.text);
         }
         // Capture TextAsset on the Unity thread; parse immutable text on a worker.
-        internal static LabReleaseCatalog ParsePackaged(string json)
+        public static LabReleaseCatalog ParsePackaged(string json,LabBundle runtime=null)
         {
-            var catalog=JsonUtility.FromJson<LabReleaseCatalog>(json);
+            var catalog=JsonUtility.FromJson<LabStorageHeader>(json)?.Schema==4?BalanceLab.ReadReleases(json,runtime??BalanceLab.Defaults()):JsonUtility.FromJson<LabReleaseCatalog>(json);
             catalog.packagedEntries=catalog.Entries.ToDictionary(e=>e.Sequence,e=>e.Clone());
             using(var sha=SHA256.Create())catalog.packagedIdentity=Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(json)));
             return catalog;

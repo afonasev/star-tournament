@@ -1,0 +1,95 @@
+{
+    "Schema": 1,
+    "SourceHash": "19202eab7d851f6562c696a595d0cdf542a7dd9c5852bb05c9aa2db9dc0df130",
+    "Integrity": "f825da5ae1b6b0042b45fc5ea2575fa7f18de935dc42edad1879f6e6b6d87a61",
+    "Overrides": [
+        {
+            "Path": "input.gamepadReturnDelay",
+            "Value": 0.550000011920929
+        },
+        {
+            "Path": "presentation.shotTracerRed",
+            "Value": 0.3199999928474426
+        },
+        {
+            "Path": "presentation.shotTracerGreen",
+            "Value": 0.3199999928474426
+        },
+        {
+            "Path": "presentation.shotTracerBlue",
+            "Value": 0.3199999928474426
+        },
+        {
+            "Path": "death.corpseSeconds",
+            "Value": 15.0
+        },
+        {
+            "Path": "animation.stepSeconds",
+            "Value": 0.2800000011920929
+        },
+        {
+            "Path": "animation.stepLengthMeters",
+            "Value": 0.6499999761581421
+        },
+        {
+            "Path": "animation.stepHeightMeters",
+            "Value": 0.09000000357627869
+        },
+        {
+            "Path": "grip.Cutter.supportRoll",
+            "Value": -55.0
+        },
+        {
+            "Path": "grip.Cutter.supportYaw",
+            "Value": 80.0
+        },
+        {
+            "Path": "grip.Cutter.supportCurl",
+            "Value": 15.0
+        },
+        {
+            "Path": "grip.Cutter.thumbOpposition",
+            "Value": 90.0
+        },
+        {
+            "Path": "grip.Cutter.supportX",
+            "Value": 0.07999999821186066
+        },
+        {
+            "Path": "grip.Cutter.supportY",
+            "Value": -0.20000000298023225
+        },
+        {
+            "Path": "grip.Cutter.supportZ",
+            "Value": 0.4000000059604645
+        },
+        {
+            "Path": "cutter.width",
+            "Value": 0.05000000074505806
+        },
+        {
+            "Path": "cutter.jitter",
+            "Value": 0.10000000149011612
+        },
+        {
+            "Path": "cutter.frequency",
+            "Value": 25.0
+        },
+        {
+            "Path": "cutter.arcWidth",
+            "Value": 0.009999999776482582
+        },
+        {
+            "Path": "corpse.rifleSpeed",
+            "Value": 5.75
+        },
+        {
+            "Path": "corpse.cutterSpeed",
+            "Value": 2.375
+        },
+        {
+            "Path": "blood.markSize",
+            "Value": 0.20000000298023225
+        }
+    ]
+}

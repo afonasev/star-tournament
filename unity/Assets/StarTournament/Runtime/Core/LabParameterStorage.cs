@@ -113,6 +113,7 @@ namespace StarTournament.ProvingGround
         {
             if(Current(snapshot))return shipped;
             if(storageResolvedSchemas.TryGetValue(ShapeKey(snapshot),out var known))return known;
+            var archived=importRegistries.FirstOrDefault(b=>RegistryMatches(b,snapshot));if(archived!=null)return archived;
             return HistoricalPredecessors(snapshot).FirstOrDefault(b=>RegistryMatches(b,snapshot))??throw new InvalidDataException("Неподдерживаемая схема Lab: "+SchemaIdentity(snapshot)+"; недоступные поля: "+string.Join(", ",snapshot.Descriptors.Select(d=>d.Path).Except(shipped.Descriptors.Select(d=>d.Path)).Take(3)));
         }
         static string StorageIntegrity(LabParameterFile file)
@@ -123,6 +124,7 @@ namespace StarTournament.ProvingGround
         }
         string WriteStorage(LabHistoryFile file)
         {
+            if(BalanceLab.IsProjection(shipped))return WriteBalanceStorage(file);
             var compact=new LabParameterFile{SelectedId=file.SelectedId,SelectedRevision=file.SelectedRevision};
             var schemas=new Dictionary<string,int>(StringComparer.Ordinal);
             var registries=new Dictionary<string,LabBundle>(StringComparer.Ordinal);
@@ -159,6 +161,7 @@ namespace StarTournament.ProvingGround
         LabHistoryFile ReadStorage(string json)
         {
             var header=JsonUtility.FromJson<LabStorageHeader>(json);
+            if(header?.Schema==4)return ReadBalanceStorage(json);
             if(header?.Schema==3)return ReadCompatibilityEnvelope(json);
             if(header?.Schema==1)return JsonUtility.FromJson<LabHistoryFile>(json);
             if(header?.Schema!=2)throw new InvalidDataException("Unsupported history schema");
@@ -183,8 +186,14 @@ namespace StarTournament.ProvingGround
                 if(sought.Profiles.Select(p=>p.Id).Distinct().Count()!=sought.Profiles.Count||sought.Descriptors.Select(d=>d.Path).Distinct().Count()!=sought.Descriptors.Count())throw new InvalidDataException("Duplicate schema keys");
                 LabBundle registry;
                 lock(storageRegistryLock)storageRegistryCache.TryGetValue(StorageRegistryKey(sought,schema.BaselineHash),out registry);
+                if(registry==null)registry=importRegistries.FirstOrDefault(b=>RegistryMatches(b,sought)&&b.Hash()==schema.BaselineHash);
+                // During the one-time author import, a checksum-authenticated shipped full
+                // snapshot also supplies exact historical metadata. Its configured values
+                // are a reconstruction base, not authority for the old baseline hash. Every
+                // restored revision still must match its original full hash in ValidateFile.
+                if(registry==null)registry=importRegistries.FirstOrDefault(b=>RegistryMatches(b,sought));
                 if(registry==null)registry=Current(sought)?shipped:HistoricalPredecessors(sought,true).FirstOrDefault(b=>RegistryMatches(b,sought)&&b.Hash()==schema.BaselineHash);
-                if(registry==null||registry.Hash()!=schema.BaselineHash)throw new InvalidDataException("Недоступна или изменена доверенная схема Lab: "+SchemaIdentity(sought));
+                if(registry==null||(registry.Hash()!=schema.BaselineHash&&!importRegistries.Contains(registry)))throw new InvalidDataException("Недоступна или изменена доверенная схема Lab: "+SchemaIdentity(sought));
                 RememberStorageRegistry(registry);registries.Add(registry);
                 string shapeKey=ShapeKey(registry);
                 if(!storageResolvedSchemas.ContainsKey(shapeKey)&&storageResolvedSchemas.Count>=8)storageResolvedSchemas.Remove(storageResolvedSchemas.Keys.First());
@@ -206,7 +215,7 @@ namespace StarTournament.ProvingGround
                     var paths=new HashSet<string>(registry.Descriptors.Select(d=>d.Path),StringComparer.Ordinal);var legacy=new HashSet<string>(StringComparer.Ordinal);
                     foreach(var v in r.LegacyOverrides)
                     {
-                        if(v==null||!paths.Contains(v.Path)||!legacy.Add(v.Path)||registry.IsEditable(v.Path)||registry.IsAuthoring(v.Path)||registry.IsDiagnostic(v.Path)||v.Value==registry.Get(v.Path))throw new InvalidDataException("Invalid legacy parameter override");
+                        if(v==null||!paths.Contains(v.Path)||!legacy.Add(v.Path)||registry.IsEditable(v.Path)||registry.IsAuthoring(v.Path)||registry.IsDiagnostic(v.Path)||(v.Value==registry.Get(v.Path)&&!importRegistries.Contains(registry)))throw new InvalidDataException("Invalid legacy parameter override");
                         bundle.Set(v.Path,v.Value);
                     }
                     profile.Revisions.Add(new LabRevision{Number=r.Number,Date=r.Date,Hash=r.Hash,Snapshot=bundle,ReleaseCandidate=r.ReleaseCandidate,

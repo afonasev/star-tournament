@@ -1,0 +1,4594 @@
+{
+    "Schema": 4,
+    "RegistryHash": "bb350bd90c218b03986172362dcf390050244797a1e158755273606071c1f6b5",
+    "Integrity": "e249db200f6ce11b3443c47028013cf8eaaa3ad7d77a9bf592c85f4456e1fe31",
+    "SelectedId": "unity-shipped-release",
+    "SelectedRevision": 11,
+    "Profiles": [
+        {
+            "Id": "unity-shipped-release",
+            "Name": "Default",
+            "Protected": true,
+            "Revisions": [
+                {
+                    "Number": 1,
+                    "ReleaseSequence": 0,
+                    "ReleaseNumber": 0,
+                    "SourceNumber": 1,
+                    "Date": "",
+                    "Hash": "f6e59c362a64b4095a8c5639f5320fd38084bda99ef51532a1b73829539d9d02",
+                    "ReleaseHash": "",
+                    "ReleaseDate": "",
+                    "SourceDate": "",
+                    "SourceHash": "eb9cfd93ba993ecc1643b05e4f5a9a977bd67707199378ecd3ed8211c77c4ac3",
+                    "ReleaseCandidate": true,
+                    "Values": [
+                        {
+                            "Path": "player.movement.maximumGroundSpeed",
+                            "Value": 9.0
+                        },
+                        {
+                            "Path": "player.movement.groundAcceleration",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "player.movement.groundDeceleration",
+                            "Value": 32.0
+                        },
+                        {
+                            "Path": "player.movement.airAcceleration",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "player.movement.gravity",
+                            "Value": 24.0
+                        },
+                        {
+                            "Path": "player.movement.jumpSpeed",
+                            "Value": 8.5
+                        },
+                        {
+                            "Path": "player.movement.stepOffset",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "player.movement.slopeLimitDegrees",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "combat.maximumHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.maximum",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.pickupAmount",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "armor.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "armor.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "weaponPickup.respawnSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "weaponPickup.radius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "pickup.maximumHeightDifference",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damageBoost.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "damageBoost.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "damageBoost.initialDelaySeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "damageBoost.respawnSeconds",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "damageBoost.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "heal.targetHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "heal.initialDelaySeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "heal.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "heal.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "speed.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "speed.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.initialDelaySeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.respawnSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "speed.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "combat.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rifle.startingAmmo",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rifle.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "weapon.switchSeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "combat.cooldownSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "combat.killcamSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "rocket.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rocket.cooldownSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "shot.pellets",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "shot.spread",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "shot.range",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "rifle.spread",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "rifle.speed",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "rocket.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "rocket.radius",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "rocket.maximumDamage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "rocket.range",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rocket.botMinimumDistance",
+                            "Value": 7.0
+                        },
+                        {
+                            "Path": "rocket.botSafetyMargin",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "rifle.damage",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "shot.damage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "damage.friendlyMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damage.selfMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "match.durationMinutes",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "match.targetPoints",
+                            "Value": 3000.0
+                        },
+                        {
+                            "Path": "match.ffaTargetDefault",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.teamTargetDefault",
+                            "Value": 3500.0
+                        },
+                        {
+                            "Path": "score.assistWindow",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "score.assistPoints",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "score.chainTotal1",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.chainWindowSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "score.chainAwardStep",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.friendlyOrSelfKillPenalty",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "achievement.minimumShots",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "achievement.minimumBeamSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "spawn.initialOpponentSeparation",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.easy.fieldOfViewDegrees",
+                            "Value": 110.0
+                        },
+                        {
+                            "Path": "bots.easy.pickupDelaySeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.memorySeconds",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.normal.fieldOfViewDegrees",
+                            "Value": 130.0
+                        },
+                        {
+                            "Path": "bots.normal.pickupDelaySeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.normal.memorySeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.fieldOfViewDegrees",
+                            "Value": 150.0
+                        },
+                        {
+                            "Path": "bots.hard.pickupDelaySeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "bots.hard.memorySeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.cooperation.communicationSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.waypointRadius",
+                            "Value": 0.25
+                        },
+                        {
+                            "Path": "bots.navigation.stuckSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.navigation.progressMeters",
+                            "Value": 0.4000000059604645
+                        },
+                        {
+                            "Path": "bots.navigation.recoverySeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.navigation.maximumRecoveries",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.navigation.repathSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.slowDistance",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.reactionSeconds",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.easy.decisionSeconds",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.aimDegreesPerSecond",
+                            "Value": 90.0
+                        },
+                        {
+                            "Path": "bots.easy.aimErrorDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.easy.aimPeriodSeconds",
+                            "Value": 1.399999976158142
+                        },
+                        {
+                            "Path": "bots.easy.fireToleranceDegrees",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.easy.preferredDistanceMeters",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.strafeSeconds",
+                            "Value": 1.7999999523162842
+                        },
+                        {
+                            "Path": "bots.easy.strafeWeight",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.jumpCooldownSeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.jumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.retreatSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.easy.retreatHealthRatio",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.easy.supportChance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.reactionSeconds",
+                            "Value": 0.2800000011920929
+                        },
+                        {
+                            "Path": "bots.normal.decisionSeconds",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.aimDegreesPerSecond",
+                            "Value": 160.0
+                        },
+                        {
+                            "Path": "bots.normal.aimErrorDegrees",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.aimPeriodSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.fireToleranceDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.normal.preferredDistanceMeters",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.strafeSeconds",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "bots.normal.strafeWeight",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.normal.jumpCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.normal.jumpChance",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatHealthRatio",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.supportChance",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "bots.hard.reactionSeconds",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.hard.decisionSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "bots.hard.aimDegreesPerSecond",
+                            "Value": 230.0
+                        },
+                        {
+                            "Path": "bots.hard.aimErrorDegrees",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.hard.aimPeriodSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.fireToleranceDegrees",
+                            "Value": 8.0
+                        },
+                        {
+                            "Path": "bots.hard.preferredDistanceMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.strafeSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.strafeWeight",
+                            "Value": 0.8500000238418579
+                        },
+                        {
+                            "Path": "bots.hard.jumpCooldownSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.hard.jumpAttemptSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.hard.jumpChance",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.hard.surpriseJumpChance",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "bots.hard.retreatSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.hard.retreatHealthRatio",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.hard.supportChance",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.cooperation.separationMeters",
+                            "Value": 2.5
+                        },
+                        {
+                            "Path": "bots.cooperation.supportSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.cooperation.supportDistanceMeters",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.cooperation.personalitySpread",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.tactics.retreatCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.tactics.supportCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.tactics.surpriseWindowSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.tactics.coverDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.memorySeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.acquireDegrees",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "bots.spacing.deadBandMeters",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.spacing.rifleMeters",
+                            "Value": 16.0
+                        },
+                        {
+                            "Path": "bots.spacing.shotgunMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.spacing.rocketMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.spacing.cutterMeters",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.spacing.plasmaMeters",
+                            "Value": 14.0
+                        },
+                        {
+                            "Path": "bots.strategy.healUrgency",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.strategy.intentHoldSeconds",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.pickupRetrySeconds",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.pickupTimeoutSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "bots.strategy.routeCostPerMeter",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.strategy.pickupBaseUtility",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "bots.strategy.combatUtility",
+                            "Value": 75.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskRadiusMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskWeight",
+                            "Value": 70.0
+                        },
+                        {
+                            "Path": "bots.strategy.vulnerableWeight",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "bots.strategy.strongerRatio",
+                            "Value": 1.600000023841858
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHoldSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHysteresis",
+                            "Value": 1.149999976158142
+                        },
+                        {
+                            "Path": "bots.strategy.rocketCloseMeters",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "bots.strategy.rocketLeadSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.strategy.bodySafetyMargin",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.strategy.lowAmmoRatio",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.allyNeedWeight",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHorizonSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.leadQuality",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.normal.leadQuality",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.leadQuality",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.energyCapacity",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "cutter.energyPerSecond",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.maxRangeMeters",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "cutter.extensionSeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "cutter.referenceDamage",
+                            "Value": 300.0
+                        },
+                        {
+                            "Path": "cutter.referenceContactSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.damageRadius",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "cutter.botMinimumDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.botRangeFraction",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "plasma.damage",
+                            "Value": 24.0
+                        },
+                        {
+                            "Path": "plasma.cooldownSeconds",
+                            "Value": 0.1666666567325592
+                        },
+                        {
+                            "Path": "plasma.speed",
+                            "Value": 14.399999618530274
+                        },
+                        {
+                            "Path": "plasma.pickupAmmo",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "well.liftSpeed",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "well.idleDepartureSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "well.boardingTolerance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "well.botDockRange",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "well.botExitLead",
+                            "Value": 0.5
+                        }
+                    ]
+                },
+                {
+                    "Number": 2,
+                    "ReleaseSequence": 0,
+                    "ReleaseNumber": 0,
+                    "SourceNumber": 2,
+                    "Date": "",
+                    "Hash": "fa54621da940b85f187ea0f5d2275f2966bc0e4be157f6448dcb3e81493f3f68",
+                    "ReleaseHash": "",
+                    "ReleaseDate": "",
+                    "SourceDate": "",
+                    "SourceHash": "c1c6487e1915ed13a021756f6ca3f35f728aeb9c89fa97fe63a4472701938fd4",
+                    "ReleaseCandidate": false,
+                    "Values": [
+                        {
+                            "Path": "player.movement.maximumGroundSpeed",
+                            "Value": 9.0
+                        },
+                        {
+                            "Path": "player.movement.groundAcceleration",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "player.movement.groundDeceleration",
+                            "Value": 32.0
+                        },
+                        {
+                            "Path": "player.movement.airAcceleration",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "player.movement.gravity",
+                            "Value": 24.0
+                        },
+                        {
+                            "Path": "player.movement.jumpSpeed",
+                            "Value": 8.5
+                        },
+                        {
+                            "Path": "player.movement.stepOffset",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "player.movement.slopeLimitDegrees",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "combat.maximumHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.maximum",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.pickupAmount",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "armor.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "armor.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "weaponPickup.respawnSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "weaponPickup.radius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "pickup.maximumHeightDifference",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damageBoost.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "damageBoost.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "damageBoost.initialDelaySeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "damageBoost.respawnSeconds",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "damageBoost.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "heal.targetHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "heal.initialDelaySeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "heal.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "heal.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "speed.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "speed.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.initialDelaySeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.respawnSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "speed.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "combat.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rifle.startingAmmo",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rifle.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "weapon.switchSeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "combat.cooldownSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "combat.killcamSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "rocket.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rocket.cooldownSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "shot.pellets",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "shot.spread",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "shot.range",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "rifle.spread",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "rifle.speed",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "rocket.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "rocket.radius",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "rocket.maximumDamage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "rocket.range",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rocket.botMinimumDistance",
+                            "Value": 7.0
+                        },
+                        {
+                            "Path": "rocket.botSafetyMargin",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "rifle.damage",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "shot.damage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "damage.friendlyMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damage.selfMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "match.durationMinutes",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "match.targetPoints",
+                            "Value": 3000.0
+                        },
+                        {
+                            "Path": "match.ffaTargetDefault",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.teamTargetDefault",
+                            "Value": 3500.0
+                        },
+                        {
+                            "Path": "score.assistWindow",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "score.assistPoints",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "score.chainTotal1",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.chainWindowSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "score.chainAwardStep",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.friendlyOrSelfKillPenalty",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "achievement.minimumShots",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "achievement.minimumBeamSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "spawn.initialOpponentSeparation",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.easy.fieldOfViewDegrees",
+                            "Value": 110.0
+                        },
+                        {
+                            "Path": "bots.easy.pickupDelaySeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.memorySeconds",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.normal.fieldOfViewDegrees",
+                            "Value": 130.0
+                        },
+                        {
+                            "Path": "bots.normal.pickupDelaySeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.normal.memorySeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.fieldOfViewDegrees",
+                            "Value": 150.0
+                        },
+                        {
+                            "Path": "bots.hard.pickupDelaySeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "bots.hard.memorySeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.cooperation.communicationSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.waypointRadius",
+                            "Value": 0.25
+                        },
+                        {
+                            "Path": "bots.navigation.stuckSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.navigation.progressMeters",
+                            "Value": 0.4000000059604645
+                        },
+                        {
+                            "Path": "bots.navigation.recoverySeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.navigation.maximumRecoveries",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.navigation.repathSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.slowDistance",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.reactionSeconds",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.easy.decisionSeconds",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.aimDegreesPerSecond",
+                            "Value": 90.0
+                        },
+                        {
+                            "Path": "bots.easy.aimErrorDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.easy.aimPeriodSeconds",
+                            "Value": 1.399999976158142
+                        },
+                        {
+                            "Path": "bots.easy.fireToleranceDegrees",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.easy.preferredDistanceMeters",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.strafeSeconds",
+                            "Value": 1.7999999523162842
+                        },
+                        {
+                            "Path": "bots.easy.strafeWeight",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.jumpCooldownSeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.jumpChance",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.easy.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.retreatSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.easy.retreatHealthRatio",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.easy.supportChance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.reactionSeconds",
+                            "Value": 0.2800000011920929
+                        },
+                        {
+                            "Path": "bots.normal.decisionSeconds",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.aimDegreesPerSecond",
+                            "Value": 160.0
+                        },
+                        {
+                            "Path": "bots.normal.aimErrorDegrees",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.aimPeriodSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.fireToleranceDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.normal.preferredDistanceMeters",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.strafeSeconds",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "bots.normal.strafeWeight",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.normal.jumpCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.normal.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.normal.jumpChance",
+                            "Value": 0.18000000715255738
+                        },
+                        {
+                            "Path": "bots.normal.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatHealthRatio",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.supportChance",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "bots.hard.reactionSeconds",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.hard.decisionSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "bots.hard.aimDegreesPerSecond",
+                            "Value": 230.0
+                        },
+                        {
+                            "Path": "bots.hard.aimErrorDegrees",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.hard.aimPeriodSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.fireToleranceDegrees",
+                            "Value": 8.0
+                        },
+                        {
+                            "Path": "bots.hard.preferredDistanceMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.strafeSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.strafeWeight",
+                            "Value": 0.8500000238418579
+                        },
+                        {
+                            "Path": "bots.hard.jumpCooldownSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.hard.jumpAttemptSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.hard.jumpChance",
+                            "Value": 0.2199999988079071
+                        },
+                        {
+                            "Path": "bots.hard.surpriseJumpChance",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "bots.hard.retreatSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.hard.retreatHealthRatio",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.hard.supportChance",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.cooperation.separationMeters",
+                            "Value": 2.5
+                        },
+                        {
+                            "Path": "bots.cooperation.supportSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.cooperation.supportDistanceMeters",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.cooperation.personalitySpread",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.tactics.retreatCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.tactics.supportCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.tactics.surpriseWindowSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.tactics.coverDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.memorySeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.acquireDegrees",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "bots.spacing.deadBandMeters",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.spacing.rifleMeters",
+                            "Value": 16.0
+                        },
+                        {
+                            "Path": "bots.spacing.shotgunMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.spacing.rocketMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.spacing.cutterMeters",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.spacing.plasmaMeters",
+                            "Value": 14.0
+                        },
+                        {
+                            "Path": "bots.strategy.healUrgency",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.strategy.intentHoldSeconds",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.pickupRetrySeconds",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.pickupTimeoutSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "bots.strategy.routeCostPerMeter",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.strategy.pickupBaseUtility",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "bots.strategy.combatUtility",
+                            "Value": 75.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskRadiusMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskWeight",
+                            "Value": 70.0
+                        },
+                        {
+                            "Path": "bots.strategy.vulnerableWeight",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "bots.strategy.strongerRatio",
+                            "Value": 1.600000023841858
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHoldSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHysteresis",
+                            "Value": 1.149999976158142
+                        },
+                        {
+                            "Path": "bots.strategy.rocketCloseMeters",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "bots.strategy.rocketLeadSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.strategy.bodySafetyMargin",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.strategy.lowAmmoRatio",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.allyNeedWeight",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHorizonSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.leadQuality",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.normal.leadQuality",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.leadQuality",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.energyCapacity",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "cutter.energyPerSecond",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.maxRangeMeters",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "cutter.extensionSeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "cutter.referenceDamage",
+                            "Value": 300.0
+                        },
+                        {
+                            "Path": "cutter.referenceContactSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.damageRadius",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "cutter.botMinimumDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.botRangeFraction",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "plasma.damage",
+                            "Value": 24.0
+                        },
+                        {
+                            "Path": "plasma.cooldownSeconds",
+                            "Value": 0.1666666567325592
+                        },
+                        {
+                            "Path": "plasma.speed",
+                            "Value": 14.399999618530274
+                        },
+                        {
+                            "Path": "plasma.pickupAmmo",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "well.liftSpeed",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "well.idleDepartureSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "well.boardingTolerance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "well.botDockRange",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "well.botExitLead",
+                            "Value": 0.5
+                        }
+                    ]
+                },
+                {
+                    "Number": 3,
+                    "ReleaseSequence": 0,
+                    "ReleaseNumber": 0,
+                    "SourceNumber": 3,
+                    "Date": "20261008",
+                    "Hash": "d92896fa5604ad1701485ee51bd0d81ff668d5f372df898ab34e6cb18b559dca",
+                    "ReleaseHash": "",
+                    "ReleaseDate": "",
+                    "SourceDate": "20261008",
+                    "SourceHash": "0ad5f6be72052bfa6f9fa4d301547c1ba9655b00faaa852e33be6d0bfdfad17f",
+                    "ReleaseCandidate": false,
+                    "Values": [
+                        {
+                            "Path": "player.movement.maximumGroundSpeed",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "player.movement.groundAcceleration",
+                            "Value": 40.0
+                        },
+                        {
+                            "Path": "player.movement.groundDeceleration",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "player.movement.airAcceleration",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "player.movement.gravity",
+                            "Value": 22.0
+                        },
+                        {
+                            "Path": "player.movement.jumpSpeed",
+                            "Value": 7.0
+                        },
+                        {
+                            "Path": "player.movement.stepOffset",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "player.movement.slopeLimitDegrees",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "combat.maximumHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.maximum",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.pickupAmount",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "armor.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "armor.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "weaponPickup.respawnSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "weaponPickup.radius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "pickup.maximumHeightDifference",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damageBoost.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "damageBoost.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "damageBoost.initialDelaySeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "damageBoost.respawnSeconds",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "damageBoost.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "heal.targetHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "heal.initialDelaySeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "heal.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "heal.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "speed.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "speed.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.initialDelaySeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.respawnSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "speed.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "combat.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rifle.startingAmmo",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rifle.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "weapon.switchSeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "combat.cooldownSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "combat.killcamSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "rocket.startingAmmo",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "rocket.cooldownSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "shot.pellets",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "shot.spread",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "shot.range",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "rifle.spread",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "rifle.speed",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "rocket.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "rocket.radius",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "rocket.maximumDamage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "rocket.range",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rocket.botMinimumDistance",
+                            "Value": 6.5
+                        },
+                        {
+                            "Path": "rocket.botSafetyMargin",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "rifle.damage",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "shot.damage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "damage.friendlyMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damage.selfMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "match.durationMinutes",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "match.targetPoints",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.ffaTargetDefault",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.teamTargetDefault",
+                            "Value": 3500.0
+                        },
+                        {
+                            "Path": "score.assistWindow",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "score.assistPoints",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "score.chainTotal1",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.chainWindowSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "score.chainAwardStep",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.friendlyOrSelfKillPenalty",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "achievement.minimumShots",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "achievement.minimumBeamSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "spawn.initialOpponentSeparation",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.easy.fieldOfViewDegrees",
+                            "Value": 110.0
+                        },
+                        {
+                            "Path": "bots.easy.pickupDelaySeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.memorySeconds",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.normal.fieldOfViewDegrees",
+                            "Value": 130.0
+                        },
+                        {
+                            "Path": "bots.normal.pickupDelaySeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.normal.memorySeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.fieldOfViewDegrees",
+                            "Value": 150.0
+                        },
+                        {
+                            "Path": "bots.hard.pickupDelaySeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "bots.hard.memorySeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.cooperation.communicationSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.waypointRadius",
+                            "Value": 0.25
+                        },
+                        {
+                            "Path": "bots.navigation.stuckSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.navigation.progressMeters",
+                            "Value": 0.4000000059604645
+                        },
+                        {
+                            "Path": "bots.navigation.recoverySeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.navigation.maximumRecoveries",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.navigation.repathSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.slowDistance",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.reactionSeconds",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.easy.decisionSeconds",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.aimDegreesPerSecond",
+                            "Value": 90.0
+                        },
+                        {
+                            "Path": "bots.easy.aimErrorDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.easy.aimPeriodSeconds",
+                            "Value": 1.399999976158142
+                        },
+                        {
+                            "Path": "bots.easy.fireToleranceDegrees",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.easy.preferredDistanceMeters",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.strafeSeconds",
+                            "Value": 1.7999999523162842
+                        },
+                        {
+                            "Path": "bots.easy.strafeWeight",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.jumpCooldownSeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.jumpChance",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.easy.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.retreatSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.easy.retreatHealthRatio",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.easy.supportChance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.reactionSeconds",
+                            "Value": 0.2800000011920929
+                        },
+                        {
+                            "Path": "bots.normal.decisionSeconds",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.aimDegreesPerSecond",
+                            "Value": 160.0
+                        },
+                        {
+                            "Path": "bots.normal.aimErrorDegrees",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.aimPeriodSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.fireToleranceDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.normal.preferredDistanceMeters",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.strafeSeconds",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "bots.normal.strafeWeight",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.normal.jumpCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.normal.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.normal.jumpChance",
+                            "Value": 0.18000000715255738
+                        },
+                        {
+                            "Path": "bots.normal.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatHealthRatio",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.supportChance",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "bots.hard.reactionSeconds",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.hard.decisionSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "bots.hard.aimDegreesPerSecond",
+                            "Value": 230.0
+                        },
+                        {
+                            "Path": "bots.hard.aimErrorDegrees",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.hard.aimPeriodSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.fireToleranceDegrees",
+                            "Value": 8.0
+                        },
+                        {
+                            "Path": "bots.hard.preferredDistanceMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.strafeSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.strafeWeight",
+                            "Value": 0.8500000238418579
+                        },
+                        {
+                            "Path": "bots.hard.jumpCooldownSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.hard.jumpAttemptSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.hard.jumpChance",
+                            "Value": 0.2199999988079071
+                        },
+                        {
+                            "Path": "bots.hard.surpriseJumpChance",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "bots.hard.retreatSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.hard.retreatHealthRatio",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.hard.supportChance",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.cooperation.separationMeters",
+                            "Value": 2.5
+                        },
+                        {
+                            "Path": "bots.cooperation.supportSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.cooperation.supportDistanceMeters",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.cooperation.personalitySpread",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.tactics.retreatCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.tactics.supportCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.tactics.surpriseWindowSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.tactics.coverDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.memorySeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.acquireDegrees",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "bots.spacing.deadBandMeters",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.spacing.rifleMeters",
+                            "Value": 16.0
+                        },
+                        {
+                            "Path": "bots.spacing.shotgunMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.spacing.rocketMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.spacing.cutterMeters",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.spacing.plasmaMeters",
+                            "Value": 14.0
+                        },
+                        {
+                            "Path": "bots.strategy.healUrgency",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.strategy.intentHoldSeconds",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.pickupRetrySeconds",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.pickupTimeoutSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "bots.strategy.routeCostPerMeter",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.strategy.pickupBaseUtility",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "bots.strategy.combatUtility",
+                            "Value": 75.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskRadiusMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskWeight",
+                            "Value": 70.0
+                        },
+                        {
+                            "Path": "bots.strategy.vulnerableWeight",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "bots.strategy.strongerRatio",
+                            "Value": 1.600000023841858
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHoldSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHysteresis",
+                            "Value": 1.149999976158142
+                        },
+                        {
+                            "Path": "bots.strategy.rocketCloseMeters",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "bots.strategy.rocketLeadSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.strategy.bodySafetyMargin",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.strategy.lowAmmoRatio",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.allyNeedWeight",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHorizonSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.leadQuality",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.normal.leadQuality",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.leadQuality",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.energyCapacity",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "cutter.energyPerSecond",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.maxRangeMeters",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "cutter.extensionSeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "cutter.referenceDamage",
+                            "Value": 300.0
+                        },
+                        {
+                            "Path": "cutter.referenceContactSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.damageRadius",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "cutter.botMinimumDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.botRangeFraction",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "plasma.damage",
+                            "Value": 24.0
+                        },
+                        {
+                            "Path": "plasma.cooldownSeconds",
+                            "Value": 0.1666666567325592
+                        },
+                        {
+                            "Path": "plasma.speed",
+                            "Value": 14.399999618530274
+                        },
+                        {
+                            "Path": "plasma.pickupAmmo",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "well.liftSpeed",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "well.idleDepartureSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "well.boardingTolerance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "well.botDockRange",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "well.botExitLead",
+                            "Value": 0.5
+                        }
+                    ]
+                },
+                {
+                    "Number": 4,
+                    "ReleaseSequence": 0,
+                    "ReleaseNumber": 0,
+                    "SourceNumber": 4,
+                    "Date": "20261016",
+                    "Hash": "dcfa269a3f3008397573ce25ba1feaef53ae61dd1b6ed2472c0916750dde0e39",
+                    "ReleaseHash": "",
+                    "ReleaseDate": "",
+                    "SourceDate": "20261016",
+                    "SourceHash": "1bfe89dca8bfa0a8fe482acba37fea99c82ec1cd4feaf78e1c72c1ac923f4eb1",
+                    "ReleaseCandidate": true,
+                    "Values": [
+                        {
+                            "Path": "player.movement.maximumGroundSpeed",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "player.movement.groundAcceleration",
+                            "Value": 40.0
+                        },
+                        {
+                            "Path": "player.movement.groundDeceleration",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "player.movement.airAcceleration",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "player.movement.gravity",
+                            "Value": 22.0
+                        },
+                        {
+                            "Path": "player.movement.jumpSpeed",
+                            "Value": 7.0
+                        },
+                        {
+                            "Path": "player.movement.stepOffset",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "player.movement.slopeLimitDegrees",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "combat.maximumHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.maximum",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.pickupAmount",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "armor.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "armor.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "weaponPickup.respawnSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "weaponPickup.radius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "pickup.maximumHeightDifference",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damageBoost.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "damageBoost.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "damageBoost.initialDelaySeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "damageBoost.respawnSeconds",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "damageBoost.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "heal.targetHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "heal.initialDelaySeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "heal.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "heal.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "speed.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "speed.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.initialDelaySeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.respawnSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "speed.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "combat.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rifle.startingAmmo",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rifle.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "weapon.switchSeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "combat.cooldownSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "combat.killcamSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "rocket.startingAmmo",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "rocket.cooldownSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "shot.pellets",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "shot.spread",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "shot.range",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "rifle.spread",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "rifle.speed",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "rocket.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "rocket.radius",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "rocket.maximumDamage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "rocket.range",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rocket.botMinimumDistance",
+                            "Value": 6.5
+                        },
+                        {
+                            "Path": "rocket.botSafetyMargin",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "rifle.damage",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "shot.damage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "damage.friendlyMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damage.selfMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "match.durationMinutes",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "match.targetPoints",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.ffaTargetDefault",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.teamTargetDefault",
+                            "Value": 3500.0
+                        },
+                        {
+                            "Path": "score.assistWindow",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "score.assistPoints",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "score.chainTotal1",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.chainWindowSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "score.chainAwardStep",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.friendlyOrSelfKillPenalty",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "achievement.minimumShots",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "achievement.minimumBeamSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "spawn.initialOpponentSeparation",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.easy.fieldOfViewDegrees",
+                            "Value": 110.0
+                        },
+                        {
+                            "Path": "bots.easy.pickupDelaySeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.memorySeconds",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.normal.fieldOfViewDegrees",
+                            "Value": 130.0
+                        },
+                        {
+                            "Path": "bots.normal.pickupDelaySeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.normal.memorySeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.fieldOfViewDegrees",
+                            "Value": 150.0
+                        },
+                        {
+                            "Path": "bots.hard.pickupDelaySeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "bots.hard.memorySeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.cooperation.communicationSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.waypointRadius",
+                            "Value": 0.25
+                        },
+                        {
+                            "Path": "bots.navigation.stuckSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.navigation.progressMeters",
+                            "Value": 0.4000000059604645
+                        },
+                        {
+                            "Path": "bots.navigation.recoverySeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.navigation.maximumRecoveries",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.navigation.repathSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.slowDistance",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.reactionSeconds",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.easy.decisionSeconds",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.aimDegreesPerSecond",
+                            "Value": 90.0
+                        },
+                        {
+                            "Path": "bots.easy.aimErrorDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.easy.aimPeriodSeconds",
+                            "Value": 1.399999976158142
+                        },
+                        {
+                            "Path": "bots.easy.fireToleranceDegrees",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.easy.preferredDistanceMeters",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.strafeSeconds",
+                            "Value": 1.7999999523162842
+                        },
+                        {
+                            "Path": "bots.easy.strafeWeight",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.jumpCooldownSeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.jumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.retreatSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.easy.retreatHealthRatio",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.easy.supportChance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.reactionSeconds",
+                            "Value": 0.2800000011920929
+                        },
+                        {
+                            "Path": "bots.normal.decisionSeconds",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.aimDegreesPerSecond",
+                            "Value": 160.0
+                        },
+                        {
+                            "Path": "bots.normal.aimErrorDegrees",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.aimPeriodSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.fireToleranceDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.normal.preferredDistanceMeters",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.strafeSeconds",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "bots.normal.strafeWeight",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.normal.jumpCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.normal.jumpChance",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatHealthRatio",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.supportChance",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "bots.hard.reactionSeconds",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.hard.decisionSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "bots.hard.aimDegreesPerSecond",
+                            "Value": 230.0
+                        },
+                        {
+                            "Path": "bots.hard.aimErrorDegrees",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.hard.aimPeriodSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.fireToleranceDegrees",
+                            "Value": 8.0
+                        },
+                        {
+                            "Path": "bots.hard.preferredDistanceMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.strafeSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.strafeWeight",
+                            "Value": 0.8500000238418579
+                        },
+                        {
+                            "Path": "bots.hard.jumpCooldownSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.hard.jumpAttemptSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.hard.jumpChance",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.hard.surpriseJumpChance",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "bots.hard.retreatSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.hard.retreatHealthRatio",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.hard.supportChance",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.cooperation.separationMeters",
+                            "Value": 2.5
+                        },
+                        {
+                            "Path": "bots.cooperation.supportSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.cooperation.supportDistanceMeters",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.cooperation.personalitySpread",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.tactics.retreatCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.tactics.supportCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.tactics.surpriseWindowSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.tactics.coverDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.memorySeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.acquireDegrees",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "bots.spacing.deadBandMeters",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.spacing.rifleMeters",
+                            "Value": 16.0
+                        },
+                        {
+                            "Path": "bots.spacing.shotgunMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.spacing.rocketMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.spacing.cutterMeters",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.spacing.plasmaMeters",
+                            "Value": 14.0
+                        },
+                        {
+                            "Path": "bots.strategy.healUrgency",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.strategy.intentHoldSeconds",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.pickupRetrySeconds",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.pickupTimeoutSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "bots.strategy.routeCostPerMeter",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.strategy.pickupBaseUtility",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "bots.strategy.combatUtility",
+                            "Value": 75.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskRadiusMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskWeight",
+                            "Value": 70.0
+                        },
+                        {
+                            "Path": "bots.strategy.vulnerableWeight",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "bots.strategy.strongerRatio",
+                            "Value": 1.600000023841858
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHoldSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHysteresis",
+                            "Value": 1.149999976158142
+                        },
+                        {
+                            "Path": "bots.strategy.rocketCloseMeters",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "bots.strategy.rocketLeadSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.strategy.bodySafetyMargin",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.strategy.lowAmmoRatio",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.allyNeedWeight",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHorizonSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.leadQuality",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.normal.leadQuality",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.leadQuality",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.energyCapacity",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "cutter.energyPerSecond",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.maxRangeMeters",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "cutter.extensionSeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "cutter.referenceDamage",
+                            "Value": 300.0
+                        },
+                        {
+                            "Path": "cutter.referenceContactSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.damageRadius",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "cutter.botMinimumDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.botRangeFraction",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "plasma.damage",
+                            "Value": 24.0
+                        },
+                        {
+                            "Path": "plasma.cooldownSeconds",
+                            "Value": 0.1666666567325592
+                        },
+                        {
+                            "Path": "plasma.speed",
+                            "Value": 14.399999618530274
+                        },
+                        {
+                            "Path": "plasma.pickupAmmo",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "well.liftSpeed",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "well.idleDepartureSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "well.boardingTolerance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "well.botDockRange",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "well.botExitLead",
+                            "Value": 0.5
+                        }
+                    ]
+                },
+                {
+                    "Number": 9,
+                    "ReleaseSequence": 0,
+                    "ReleaseNumber": 0,
+                    "SourceNumber": 9,
+                    "Date": "20261025",
+                    "Hash": "2caa528b91db40ed3cecb6298874d4a74a0c682582854b6b6da91e7837a08e48",
+                    "ReleaseHash": "",
+                    "ReleaseDate": "",
+                    "SourceDate": "20261025",
+                    "SourceHash": "925c0cd30ae1c4f3fb797bd7acb936b0248133b2e33b22d450d244cad1facdf1",
+                    "ReleaseCandidate": true,
+                    "Values": [
+                        {
+                            "Path": "player.movement.maximumGroundSpeed",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "player.movement.groundAcceleration",
+                            "Value": 40.0
+                        },
+                        {
+                            "Path": "player.movement.groundDeceleration",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "player.movement.airAcceleration",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "player.movement.gravity",
+                            "Value": 22.0
+                        },
+                        {
+                            "Path": "player.movement.jumpSpeed",
+                            "Value": 7.0
+                        },
+                        {
+                            "Path": "player.movement.stepOffset",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "player.movement.slopeLimitDegrees",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "combat.maximumHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.maximum",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.pickupAmount",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "armor.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "armor.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "weaponPickup.respawnSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "weaponPickup.radius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "pickup.maximumHeightDifference",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damageBoost.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "damageBoost.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "damageBoost.initialDelaySeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "damageBoost.respawnSeconds",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "damageBoost.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "heal.targetHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "heal.initialDelaySeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "heal.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "heal.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "speed.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "speed.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.initialDelaySeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.respawnSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "speed.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "combat.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rifle.startingAmmo",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rifle.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "weapon.switchSeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "combat.cooldownSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "combat.killcamSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "rocket.startingAmmo",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "rocket.cooldownSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "shot.pellets",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "shot.spread",
+                            "Value": 4.800000190734863
+                        },
+                        {
+                            "Path": "shot.range",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "rifle.spread",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "rifle.speed",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "rocket.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "rocket.radius",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "rocket.maximumDamage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "rocket.range",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rocket.botMinimumDistance",
+                            "Value": 6.5
+                        },
+                        {
+                            "Path": "rocket.botSafetyMargin",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "rifle.damage",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "shot.damage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "damage.friendlyMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damage.selfMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "match.durationMinutes",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "match.targetPoints",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.ffaTargetDefault",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.teamTargetDefault",
+                            "Value": 3500.0
+                        },
+                        {
+                            "Path": "score.assistWindow",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "score.assistPoints",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "score.chainTotal1",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.chainWindowSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "score.chainAwardStep",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.friendlyOrSelfKillPenalty",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "achievement.minimumShots",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "achievement.minimumBeamSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "spawn.initialOpponentSeparation",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.easy.fieldOfViewDegrees",
+                            "Value": 110.0
+                        },
+                        {
+                            "Path": "bots.easy.pickupDelaySeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.memorySeconds",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.normal.fieldOfViewDegrees",
+                            "Value": 130.0
+                        },
+                        {
+                            "Path": "bots.normal.pickupDelaySeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.normal.memorySeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.fieldOfViewDegrees",
+                            "Value": 150.0
+                        },
+                        {
+                            "Path": "bots.hard.pickupDelaySeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "bots.hard.memorySeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.cooperation.communicationSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.waypointRadius",
+                            "Value": 0.25
+                        },
+                        {
+                            "Path": "bots.navigation.stuckSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.navigation.progressMeters",
+                            "Value": 0.4000000059604645
+                        },
+                        {
+                            "Path": "bots.navigation.recoverySeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.navigation.maximumRecoveries",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.navigation.repathSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.slowDistance",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.reactionSeconds",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.easy.decisionSeconds",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.aimDegreesPerSecond",
+                            "Value": 90.0
+                        },
+                        {
+                            "Path": "bots.easy.aimErrorDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.easy.aimPeriodSeconds",
+                            "Value": 1.399999976158142
+                        },
+                        {
+                            "Path": "bots.easy.fireToleranceDegrees",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.easy.preferredDistanceMeters",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.strafeSeconds",
+                            "Value": 1.7999999523162842
+                        },
+                        {
+                            "Path": "bots.easy.strafeWeight",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.jumpCooldownSeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.jumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.retreatSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.easy.retreatHealthRatio",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.easy.supportChance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.reactionSeconds",
+                            "Value": 0.2800000011920929
+                        },
+                        {
+                            "Path": "bots.normal.decisionSeconds",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.aimDegreesPerSecond",
+                            "Value": 160.0
+                        },
+                        {
+                            "Path": "bots.normal.aimErrorDegrees",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.aimPeriodSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.fireToleranceDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.normal.preferredDistanceMeters",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.strafeSeconds",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "bots.normal.strafeWeight",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.normal.jumpCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.normal.jumpChance",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatHealthRatio",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.supportChance",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "bots.hard.reactionSeconds",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.hard.decisionSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "bots.hard.aimDegreesPerSecond",
+                            "Value": 230.0
+                        },
+                        {
+                            "Path": "bots.hard.aimErrorDegrees",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.hard.aimPeriodSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.fireToleranceDegrees",
+                            "Value": 8.0
+                        },
+                        {
+                            "Path": "bots.hard.preferredDistanceMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.strafeSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.strafeWeight",
+                            "Value": 0.8500000238418579
+                        },
+                        {
+                            "Path": "bots.hard.jumpCooldownSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.hard.jumpAttemptSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.hard.jumpChance",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.hard.surpriseJumpChance",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "bots.hard.retreatSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.hard.retreatHealthRatio",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.hard.supportChance",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.cooperation.separationMeters",
+                            "Value": 2.5
+                        },
+                        {
+                            "Path": "bots.cooperation.supportSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.cooperation.supportDistanceMeters",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.cooperation.personalitySpread",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.tactics.retreatCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.tactics.supportCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.tactics.surpriseWindowSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.tactics.coverDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.memorySeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.acquireDegrees",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "bots.spacing.deadBandMeters",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.spacing.rifleMeters",
+                            "Value": 16.0
+                        },
+                        {
+                            "Path": "bots.spacing.shotgunMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.spacing.rocketMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.spacing.cutterMeters",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.spacing.plasmaMeters",
+                            "Value": 14.0
+                        },
+                        {
+                            "Path": "bots.strategy.healUrgency",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.strategy.intentHoldSeconds",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.pickupRetrySeconds",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.pickupTimeoutSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "bots.strategy.routeCostPerMeter",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.strategy.pickupBaseUtility",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "bots.strategy.combatUtility",
+                            "Value": 75.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskRadiusMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskWeight",
+                            "Value": 70.0
+                        },
+                        {
+                            "Path": "bots.strategy.vulnerableWeight",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "bots.strategy.strongerRatio",
+                            "Value": 1.600000023841858
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHoldSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHysteresis",
+                            "Value": 1.149999976158142
+                        },
+                        {
+                            "Path": "bots.strategy.rocketCloseMeters",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "bots.strategy.rocketLeadSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.strategy.bodySafetyMargin",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.strategy.lowAmmoRatio",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.allyNeedWeight",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHorizonSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.leadQuality",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.normal.leadQuality",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.leadQuality",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.energyCapacity",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "cutter.energyPerSecond",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.maxRangeMeters",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "cutter.extensionSeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "cutter.referenceDamage",
+                            "Value": 300.0
+                        },
+                        {
+                            "Path": "cutter.referenceContactSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.damageRadius",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "cutter.botMinimumDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.botRangeFraction",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "plasma.damage",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "plasma.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "plasma.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "plasma.pickupAmmo",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "well.liftSpeed",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "well.idleDepartureSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "well.boardingTolerance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "well.botDockRange",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "well.botExitLead",
+                            "Value": 0.5
+                        }
+                    ]
+                },
+                {
+                    "Number": 11,
+                    "ReleaseSequence": 0,
+                    "ReleaseNumber": 0,
+                    "SourceNumber": 11,
+                    "Date": "20261025",
+                    "Hash": "2caa528b91db40ed3cecb6298874d4a74a0c682582854b6b6da91e7837a08e48",
+                    "ReleaseHash": "",
+                    "ReleaseDate": "",
+                    "SourceDate": "20261025",
+                    "SourceHash": "f569c8a947dcbccff77e9bc3037a999461472b5e86e6f1390d2a3d652c8ed522",
+                    "ReleaseCandidate": true,
+                    "Values": [
+                        {
+                            "Path": "player.movement.maximumGroundSpeed",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "player.movement.groundAcceleration",
+                            "Value": 40.0
+                        },
+                        {
+                            "Path": "player.movement.groundDeceleration",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "player.movement.airAcceleration",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "player.movement.gravity",
+                            "Value": 22.0
+                        },
+                        {
+                            "Path": "player.movement.jumpSpeed",
+                            "Value": 7.0
+                        },
+                        {
+                            "Path": "player.movement.stepOffset",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "player.movement.slopeLimitDegrees",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "combat.maximumHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.maximum",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "armor.pickupAmount",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "armor.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "armor.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "weaponPickup.respawnSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "weaponPickup.radius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "pickup.maximumHeightDifference",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damageBoost.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "damageBoost.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "damageBoost.initialDelaySeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "damageBoost.respawnSeconds",
+                            "Value": 45.0
+                        },
+                        {
+                            "Path": "damageBoost.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "heal.targetHealth",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "heal.initialDelaySeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "heal.respawnSeconds",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "heal.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "speed.multiplier",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "speed.durationSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.initialDelaySeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "speed.respawnSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "speed.pickupRadius",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "combat.startingAmmo",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "rifle.startingAmmo",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rifle.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "weapon.switchSeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "combat.cooldownSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "combat.killcamSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "rocket.startingAmmo",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "rocket.cooldownSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "shot.pellets",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "shot.spread",
+                            "Value": 4.800000190734863
+                        },
+                        {
+                            "Path": "shot.range",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "rifle.spread",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "rifle.speed",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "rocket.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "rocket.radius",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "rocket.maximumDamage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "rocket.range",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "rocket.botMinimumDistance",
+                            "Value": 6.5
+                        },
+                        {
+                            "Path": "rocket.botSafetyMargin",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "rifle.damage",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "shot.damage",
+                            "Value": 85.0
+                        },
+                        {
+                            "Path": "damage.friendlyMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "damage.selfMultiplier",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "match.durationMinutes",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "match.targetPoints",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.ffaTargetDefault",
+                            "Value": 2000.0
+                        },
+                        {
+                            "Path": "match.teamTargetDefault",
+                            "Value": 3500.0
+                        },
+                        {
+                            "Path": "score.assistWindow",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "score.assistPoints",
+                            "Value": 50.0
+                        },
+                        {
+                            "Path": "score.chainTotal1",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.chainWindowSeconds",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "score.chainAwardStep",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "score.friendlyOrSelfKillPenalty",
+                            "Value": 200.0
+                        },
+                        {
+                            "Path": "achievement.minimumShots",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "achievement.minimumBeamSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "spawn.initialOpponentSeparation",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.easy.fieldOfViewDegrees",
+                            "Value": 110.0
+                        },
+                        {
+                            "Path": "bots.easy.pickupDelaySeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.memorySeconds",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.normal.fieldOfViewDegrees",
+                            "Value": 130.0
+                        },
+                        {
+                            "Path": "bots.normal.pickupDelaySeconds",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.normal.memorySeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.fieldOfViewDegrees",
+                            "Value": 150.0
+                        },
+                        {
+                            "Path": "bots.hard.pickupDelaySeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "bots.hard.memorySeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.cooperation.communicationSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.waypointRadius",
+                            "Value": 0.25
+                        },
+                        {
+                            "Path": "bots.navigation.stuckSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.navigation.progressMeters",
+                            "Value": 0.4000000059604645
+                        },
+                        {
+                            "Path": "bots.navigation.recoverySeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.navigation.maximumRecoveries",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.navigation.repathSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.navigation.slowDistance",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.reactionSeconds",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.easy.decisionSeconds",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.aimDegreesPerSecond",
+                            "Value": 90.0
+                        },
+                        {
+                            "Path": "bots.easy.aimErrorDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.easy.aimPeriodSeconds",
+                            "Value": 1.399999976158142
+                        },
+                        {
+                            "Path": "bots.easy.fireToleranceDegrees",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.easy.preferredDistanceMeters",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.strafeSeconds",
+                            "Value": 1.7999999523162842
+                        },
+                        {
+                            "Path": "bots.easy.strafeWeight",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.easy.jumpCooldownSeconds",
+                            "Value": 6.0
+                        },
+                        {
+                            "Path": "bots.easy.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.easy.jumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.easy.retreatSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.easy.retreatHealthRatio",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.easy.supportChance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.reactionSeconds",
+                            "Value": 0.2800000011920929
+                        },
+                        {
+                            "Path": "bots.normal.decisionSeconds",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.normal.aimDegreesPerSecond",
+                            "Value": 160.0
+                        },
+                        {
+                            "Path": "bots.normal.aimErrorDegrees",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.aimPeriodSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.fireToleranceDegrees",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.normal.preferredDistanceMeters",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.strafeSeconds",
+                            "Value": 1.100000023841858
+                        },
+                        {
+                            "Path": "bots.normal.strafeWeight",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.normal.jumpCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.normal.jumpAttemptSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.normal.jumpChance",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.surpriseJumpChance",
+                            "Value": 0.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.normal.retreatHealthRatio",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.normal.supportChance",
+                            "Value": 0.44999998807907107
+                        },
+                        {
+                            "Path": "bots.hard.reactionSeconds",
+                            "Value": 0.11999999731779099
+                        },
+                        {
+                            "Path": "bots.hard.decisionSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "bots.hard.aimDegreesPerSecond",
+                            "Value": 230.0
+                        },
+                        {
+                            "Path": "bots.hard.aimErrorDegrees",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.hard.aimPeriodSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.fireToleranceDegrees",
+                            "Value": 8.0
+                        },
+                        {
+                            "Path": "bots.hard.preferredDistanceMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.hard.strafeSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.strafeWeight",
+                            "Value": 0.8500000238418579
+                        },
+                        {
+                            "Path": "bots.hard.jumpCooldownSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.hard.jumpAttemptSeconds",
+                            "Value": 0.30000001192092898
+                        },
+                        {
+                            "Path": "bots.hard.jumpChance",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.hard.surpriseJumpChance",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "bots.hard.retreatSeconds",
+                            "Value": 1.2000000476837159
+                        },
+                        {
+                            "Path": "bots.hard.retreatHealthRatio",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.hard.supportChance",
+                            "Value": 0.6499999761581421
+                        },
+                        {
+                            "Path": "bots.cooperation.separationMeters",
+                            "Value": 2.5
+                        },
+                        {
+                            "Path": "bots.cooperation.supportSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.cooperation.supportDistanceMeters",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "bots.cooperation.personalitySpread",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "bots.tactics.retreatCooldownSeconds",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.tactics.supportCooldownSeconds",
+                            "Value": 5.0
+                        },
+                        {
+                            "Path": "bots.tactics.surpriseWindowSeconds",
+                            "Value": 1.5
+                        },
+                        {
+                            "Path": "bots.tactics.coverDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.memorySeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.damage.acquireDegrees",
+                            "Value": 35.0
+                        },
+                        {
+                            "Path": "bots.spacing.deadBandMeters",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.spacing.rifleMeters",
+                            "Value": 16.0
+                        },
+                        {
+                            "Path": "bots.spacing.shotgunMeters",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "bots.spacing.rocketMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.spacing.cutterMeters",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "bots.spacing.plasmaMeters",
+                            "Value": 14.0
+                        },
+                        {
+                            "Path": "bots.strategy.healUrgency",
+                            "Value": 2.0
+                        },
+                        {
+                            "Path": "bots.strategy.intentHoldSeconds",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.pickupRetrySeconds",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.pickupTimeoutSeconds",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "bots.strategy.routeCostPerMeter",
+                            "Value": 0.6000000238418579
+                        },
+                        {
+                            "Path": "bots.strategy.pickupBaseUtility",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "bots.strategy.combatUtility",
+                            "Value": 75.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskRadiusMeters",
+                            "Value": 12.0
+                        },
+                        {
+                            "Path": "bots.strategy.riskWeight",
+                            "Value": 70.0
+                        },
+                        {
+                            "Path": "bots.strategy.vulnerableWeight",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "bots.strategy.strongerRatio",
+                            "Value": 1.600000023841858
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHoldSeconds",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHysteresis",
+                            "Value": 1.149999976158142
+                        },
+                        {
+                            "Path": "bots.strategy.rocketCloseMeters",
+                            "Value": 10.0
+                        },
+                        {
+                            "Path": "bots.strategy.rocketLeadSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.strategy.bodySafetyMargin",
+                            "Value": 0.5
+                        },
+                        {
+                            "Path": "bots.strategy.lowAmmoRatio",
+                            "Value": 0.550000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.allyNeedWeight",
+                            "Value": 0.800000011920929
+                        },
+                        {
+                            "Path": "bots.strategy.weaponHorizonSeconds",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "bots.easy.leadQuality",
+                            "Value": 0.3499999940395355
+                        },
+                        {
+                            "Path": "bots.normal.leadQuality",
+                            "Value": 0.699999988079071
+                        },
+                        {
+                            "Path": "bots.hard.leadQuality",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.energyCapacity",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "cutter.energyPerSecond",
+                            "Value": 1.0
+                        },
+                        {
+                            "Path": "cutter.maxRangeMeters",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "cutter.extensionSeconds",
+                            "Value": 0.15000000596046449
+                        },
+                        {
+                            "Path": "cutter.referenceDamage",
+                            "Value": 300.0
+                        },
+                        {
+                            "Path": "cutter.referenceContactSeconds",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.damageRadius",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "cutter.botMinimumDistance",
+                            "Value": 3.0
+                        },
+                        {
+                            "Path": "cutter.botRangeFraction",
+                            "Value": 0.8999999761581421
+                        },
+                        {
+                            "Path": "plasma.damage",
+                            "Value": 20.0
+                        },
+                        {
+                            "Path": "plasma.cooldownSeconds",
+                            "Value": 0.10000000149011612
+                        },
+                        {
+                            "Path": "plasma.speed",
+                            "Value": 30.0
+                        },
+                        {
+                            "Path": "plasma.pickupAmmo",
+                            "Value": 100.0
+                        },
+                        {
+                            "Path": "well.liftSpeed",
+                            "Value": 4.0
+                        },
+                        {
+                            "Path": "well.idleDepartureSeconds",
+                            "Value": 15.0
+                        },
+                        {
+                            "Path": "well.boardingTolerance",
+                            "Value": 0.20000000298023225
+                        },
+                        {
+                            "Path": "well.botDockRange",
+                            "Value": 18.0
+                        },
+                        {
+                            "Path": "well.botExitLead",
+                            "Value": 0.5
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

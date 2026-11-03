@@ -10,19 +10,26 @@ namespace StarTournament.ProvingGround.Editor
     {
         public static bool Stage(string project,LabBundle baseline,Action<string,string> publish=null)
         {
-            string source=LabProjectStorage.ResolvePath(project);
+            string originalSource=LabProjectStorage.ResolvePath(project);
+            string source=BalanceLab.IsProjection(baseline)?originalSource+".balance-v1.json":originalSource;
+            if(!File.Exists(source))source=originalSource;
             string target=Path.Combine(Path.GetFullPath(project),"Assets","StarTournament","Resources","LabReleaseCatalog.json");
             if(!File.Exists(source))throw new IOException("Авторский файл отсутствует; выполните явный bootstrap проекта");
             if(!File.Exists(target))throw new IOException("Каталог поставки отсутствует; восстановите исходный каталог из Git");
             var sourceBytes=File.ReadAllBytes(source);var targetBytes=File.ReadAllBytes(target);
-            var previous=JsonUtility.FromJson<LabReleaseCatalog>(File.ReadAllText(target));
+            var previous=LabReleaseCatalog.ParsePackaged(File.ReadAllText(target),baseline);
             Validate(baseline,previous);
             var history=LabProjectStorage.Open(project,baseline,previous);
+            if(source!=history.StoragePath)
+            {
+                if(!File.ReadAllBytes(source).SequenceEqual(sourceBytes))throw new IOException("Авторский оригинал изменился во время переноса");
+                source=history.StoragePath;sourceBytes=File.ReadAllBytes(source);
+            }
             var proposed=history.BuildReleaseCatalog();Validate(baseline,proposed);
             foreach(var entry in proposed.Entries)
             {
                 var old=previous.Entries.SingleOrDefault(e=>e.ProfileId==entry.ProfileId&&e.Revision==entry.Revision);
-                if(old!=null&&(old.Hash!=entry.Hash||!string.IsNullOrEmpty(old.Date)&&old.Date!=entry.Date))
+                if(old!=null&&(old.Hash!=entry.Hash||SourceIdentity(old)!=SourceIdentity(entry)||!string.IsNullOrEmpty(old.Date)&&old.Date!=entry.Date))
                     throw new InvalidDataException("Изменена опубликованная версия: "+entry.ProfileId+" v"+entry.Revision);
             }
             if(DesignLabHistory.ResolvePublishedDefault(baseline,proposed).Selected.Hash!=history.Selected.Hash)
@@ -38,7 +45,7 @@ namespace StarTournament.ProvingGround.Editor
             try
             {
                 using(var output=new FileStream(temp,FileMode.CreateNew,FileAccess.Write,FileShare.None))
-                {var bytes=new UTF8Encoding(false).GetBytes(JsonUtility.ToJson(proposed,true));output.Write(bytes,0,bytes.Length);output.Flush(true);}
+                {var bytes=new UTF8Encoding(false).GetBytes((BalanceLab.IsProjection(baseline)?BalanceLab.WriteReleases(proposed,baseline):JsonUtility.ToJson(proposed,true)));output.Write(bytes,0,bytes.Length);output.Flush(true);}
                 CheckUnchanged();
                 if(publish!=null)publish(temp,target);else File.Replace(temp,target,null);
             }
@@ -53,12 +60,13 @@ namespace StarTournament.ProvingGround.Editor
                 if(!history.Profiles.Single(p=>p.Id==entry.ProfileId).Revisions.Any(r=>r.ReleaseSequence==entry.Sequence&&history.Compatible(r)))
                     throw new InvalidDataException("Неисполняемая версия каталога: "+entry.ProfileId+" v"+entry.Revision);
         }
+        static string SourceIdentity(LabReleaseEntry e)=>string.IsNullOrEmpty(e.SourceHash)?e.Hash:e.SourceHash;
         static bool Same(LabReleaseCatalog a,LabReleaseCatalog b)
         {
             string[] Keys(LabReleaseCatalog c)=>c.Entries.OrderBy(e=>e.ProfileId,StringComparer.Ordinal).ThenBy(e=>e.Revision)
-                .Select(e=>JsonUtility.ToJson(new Identity{Id=e.ProfileId,Name=e.ProfileName,Revision=e.Revision,Date=e.Date??"",Hash=e.Hash})).ToArray();
+                .Select(e=>JsonUtility.ToJson(new Identity{Id=e.ProfileId,Name=e.ProfileName,Revision=e.Revision,Date=e.Date??"",Hash=e.Hash,SourceHash=SourceIdentity(e)})).ToArray();
             return Keys(a).SequenceEqual(Keys(b));
         }
-        [Serializable] sealed class Identity{public string Id,Name,Date,Hash;public int Revision;}
+        [Serializable] sealed class Identity{public string Id,Name,Date,Hash,SourceHash;public int Revision;}
     }
 }

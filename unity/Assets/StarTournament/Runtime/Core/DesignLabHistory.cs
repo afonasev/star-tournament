@@ -122,6 +122,7 @@ namespace StarTournament.ProvingGround
     [Serializable] public sealed class LabRevision
     {
         public int Number; public string Date; public string Hash; public LabBundle Snapshot;
+        public int SourceNumber; public string SourceDate,SourceHash;
         public bool ReleaseCandidate;
         public int ReleaseSequence,ReleaseNumber;
         public int CompatibilitySourceNumber;public string CompatibilitySourceHash;
@@ -130,7 +131,7 @@ namespace StarTournament.ProvingGround
         public string Label => "v"+(ReleaseSequence>0?ReleaseNumber:Number)+"-"+(string.IsNullOrEmpty(ReleaseSequence>0?ReleaseDate:Date)?"без-даты":ReleaseSequence>0?ReleaseDate:Date);
         public LabRevision Clone()=>Snapshot==null?JsonUtility.FromJson<LabRevision>(JsonUtility.ToJson(this))
             :new LabRevision{Number=Number,Date=Date??"",Hash=Hash??"",Snapshot=Snapshot.Clone(),ReleaseCandidate=ReleaseCandidate,
-                ReleaseSequence=ReleaseSequence,ReleaseNumber=ReleaseNumber,ReleaseHash=ReleaseHash,ReleaseDate=ReleaseDate,
+                SourceNumber=SourceNumber,SourceDate=SourceDate,SourceHash=SourceHash,ReleaseSequence=ReleaseSequence,ReleaseNumber=ReleaseNumber,ReleaseHash=ReleaseHash,ReleaseDate=ReleaseDate,
                 CompatibilitySourceNumber=CompatibilitySourceNumber,CompatibilitySourceHash=CompatibilitySourceHash};
     }
     public sealed class LabSavedRevisionIdentity
@@ -190,6 +191,7 @@ namespace StarTournament.ProvingGround
             new Dictionary<(LabBundle,bool,bool),(LabBundle,string)>();
         static double Clock()=>System.Diagnostics.Stopwatch.GetTimestamp()/(double)System.Diagnostics.Stopwatch.Frequency;
         CancellationToken startupCancellation;
+        readonly LabBundle[] importRegistries;
         readonly bool authoring;
         public bool IsAuthoring=>authoring;
         public string StoragePath=>path;
@@ -234,6 +236,7 @@ namespace StarTournament.ProvingGround
             var revision=profile.Revisions.Single(r=>r.Number==revisionNumber);
             if(revision.CompatibilitySourceNumber>0)
                 revision=profile.Revisions.Single(r=>r.Number==revision.CompatibilitySourceNumber&&r.Hash==revision.CompatibilitySourceHash);
+            if(!string.IsNullOrEmpty(revision.SourceHash))return new LabSavedRevisionIdentity(revision.SourceNumber,revision.SourceDate,revision.SourceHash);
             return revision.ReleaseSequence>0
                 ?new LabSavedRevisionIdentity(revision.ReleaseNumber,revision.ReleaseDate,revision.ReleaseHash)
                 :new LabSavedRevisionIdentity(revision.Number,revision.Date,revision.Hash);
@@ -253,11 +256,11 @@ namespace StarTournament.ProvingGround
         }
         public DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish=null,LabReleaseCatalog releases=null,bool resetToLatestDefault=false,bool persistMigration=true,CancellationToken cancellationToken=default,string legacyPath=null,bool authoring=false)
             :this(path,shipped,atomicPublish,releases,resetToLatestDefault,persistMigration,cancellationToken,legacyPath,authoring,false){}
-        DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish,LabReleaseCatalog releases,bool resetToLatestDefault,bool persistMigration,CancellationToken cancellationToken,string legacyPath,bool authoring,bool startupDefaultOnly)
+        DesignLabHistory(string path,LabBundle shipped,Action<string,string> atomicPublish,LabReleaseCatalog releases,bool resetToLatestDefault,bool persistMigration,CancellationToken cancellationToken,string legacyPath,bool authoring,bool startupDefaultOnly,bool originalOnly=false,LabBundle[] importRegistries=null)
         {
             double start=Clock(),stage=start;long memory=GC.GetTotalMemory(false);int collections=GC.CollectionCount(0);
             startupCancellation=cancellationToken;startupCancellation.ThrowIfCancellationRequested();
-            this.authoring=authoring;
+            this.authoring=authoring;this.importRegistries=importRegistries??Array.Empty<LabBundle>();
             this.path=path;this.shipped=shipped.Clone();this.atomicPublish=atomicPublish??Publish;this.releases=releases?.Clone();
             data=NewFile();
             stage=Clock();if(this.releases!=null)ValidateReleases();startupDiagnostics.CatalogueSeconds=Clock()-stage;
@@ -278,7 +281,7 @@ namespace StarTournament.ProvingGround
                 stage=Clock();var loaded=ReadStorage(json);startupDiagnostics.ParseSeconds=Clock()-stage;
                 startupDiagnostics.Revisions=loaded?.Profiles?.Sum(p=>p.Revisions?.Count??0)??0;
                 stage=Clock();ValidateFile(loaded);startupDiagnostics.ExistingValidationSeconds=Clock()-stage;data=loaded;
-                if(loaded.Profiles.Any(p=>p.Revisions.Any(r=>r.CompatibilitySourceNumber>0||!Current(r.Snapshot))))
+                if(!originalOnly&&loaded.Profiles.Any(p=>p.Revisions.Any(r=>r.CompatibilitySourceNumber>0||!Current(r.Snapshot))))
                 {
                     stage=Clock();
                     if(persistMigration&&this.releases==null)Commit(MigrateCompatibility);
@@ -344,7 +347,7 @@ namespace StarTournament.ProvingGround
         }
         public bool IsShipped(LabRevision revision)=>releases!=null&&releases.Entries.Any(e=>e.Sequence==revision.ReleaseSequence&&e.Hash==revision.ReleaseHash);
         static void BindRelease(LabRevision revision,LabReleaseEntry entry)
-        {revision.ReleaseSequence=entry.Sequence;revision.ReleaseNumber=entry.Revision;revision.ReleaseHash=entry.Hash;revision.ReleaseDate=entry.Date;revision.ReleaseCandidate=false;}
+        {if(!string.IsNullOrEmpty(entry.SourceHash)){revision.SourceHash=entry.SourceHash;revision.SourceNumber=entry.Revision;revision.SourceDate=entry.Date;}revision.ReleaseSequence=entry.Sequence;revision.ReleaseNumber=entry.Revision;revision.ReleaseHash=entry.Hash;revision.ReleaseDate=entry.Date;revision.ReleaseCandidate=false;}
         void MergeReleases(LabHistoryFile file)
         {
             // Never trust locally stored claims of being shipped. Rebind only from the packaged catalogue.
@@ -354,7 +357,7 @@ namespace StarTournament.ProvingGround
                 var p=file.Profiles.FirstOrDefault(p=>p.Id==e.ProfileId);
                 if(p==null){p=new LabHistoryProfile{Id=e.ProfileId,Name=e.ProfileName,Protected=e.ProfileId==ReleaseId};file.Profiles.Add(p);}
                 p.Name=e.ProfileName;
-                var r=p.Revisions.FirstOrDefault(r=>r.Hash==e.Hash&&r.ReleaseSequence==0);
+                var r=p.Revisions.FirstOrDefault(r=>r.Hash==e.Hash&&r.ReleaseSequence==0&&(string.IsNullOrEmpty(r.SourceHash)||r.SourceHash==e.SourceHash));
                 if(r==null)
                 {
                     int number=p.Revisions.Any(r=>r.Number==e.Revision)?p.Revisions.Max(r=>r.Number)+1:e.Revision;
@@ -907,7 +910,10 @@ namespace StarTournament.ProvingGround
             }
             var release=file.Profiles.Single(p=>p.Id==ReleaseId).Revisions.Single(r=>r.Number==1);
             double releaseStart=Clock();
-            if(release.Hash!=TrustedRegistryHash(shipped)&&release.Hash!=TrustedRegistryHash(StorageRegistry(release.Snapshot))&&
+            // A balance projection's first local row is preserved provenance, not package
+            // authority. Production binds every shipped identity only in MergeReleases.
+            // Keep the original full-history baseline contract unchanged for legacy input.
+            if(!BalanceLab.IsProjection(shipped)&&release.Hash!=TrustedRegistryHash(shipped)&&release.Hash!=TrustedRegistryHash(StorageRegistry(release.Snapshot))&&
                 !HistoricalPredecessors(release.Snapshot).Any(b=>RegistryMatches(b,release.Snapshot)&&release.Hash==TrustedRegistryHash(b)))
                 throw new InvalidDataException("Shipped release несовместим");
             if(collectingStartupDiagnostics)startupDiagnostics.ReleaseBaselineSeconds+=Clock()-releaseStart;
