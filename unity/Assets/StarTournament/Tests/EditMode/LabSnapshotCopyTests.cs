@@ -19,6 +19,24 @@ namespace StarTournament.ProvingGround.Tests.EditMode
         static NumericDescriptor Descriptor(string path,string unit="ratio")=>new NumericDescriptor
         {Path=path,Group="test",Label="Test",Description="Test",Unit=unit,Minimum=0,Maximum=10,Step=.5f,DefaultValue=1};
 
+        [Test] public void CanonicalHashMatchesRoundTripTextForSignedZeroAndSpecialValues()
+        {
+            var profile=Profile(new List<NumericDescriptor>{Descriptor("number")},new List<ProvingProfileValue>{new ProvingProfileValue{Path="number",Value=0}});
+            var bundle=new LabBundle{Profiles={profile}};
+            var negativeZero=System.BitConverter.ToSingle(System.BitConverter.GetBytes(int.MinValue),0);
+            var otherNan=System.BitConverter.ToSingle(System.BitConverter.GetBytes(unchecked((int)0x7fc00001)),0);
+            var samples=new[]{0f,negativeZero,1f/3f,float.Epsilon,float.MaxValue,float.MinValue,float.NaN,otherNan,float.PositiveInfinity,float.NegativeInfinity,1e-30f};
+            for(int pass=0;pass<2;pass++)foreach(var value in samples)
+            {
+                bundle.Set("number",value);
+                string canonical=profile.Id+"@"+profile.Version+"\nnumber[Gameplay]="+value.ToString("R",System.Globalization.CultureInfo.InvariantCulture);
+                using(var sha=System.Security.Cryptography.SHA256.Create())
+                {
+                    var expected=System.BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(canonical))).Replace("-","").ToLowerInvariant();
+                    Assert.That(bundle.Hash(),Is.EqualTo(expected));
+                }
+            }
+        }
         [Test] public void ShippedBundleCopyMatchesJsonRoundTripAndOwnsItsMetadataAndValues()
         {
             var source=DesignLabHistoryTests.Shipped();source.Set("rifle.damage",31);

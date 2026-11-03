@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 sys.path.insert(0,str(Path(__file__).parents[1]))
 import publish_release as publisher
 import upload_github_assets as uploader
@@ -88,3 +88,16 @@ class GithubPublication(unittest.TestCase):
             self.assertEqual(remote.call_count,1)
 
 if __name__=='__main__':unittest.main()
+
+
+class InstallerWorkflowDispatch(unittest.TestCase):
+    def test_dispatch_uses_existing_stdin_token_and_requires_204_only_when_requested(self):
+        connection=MagicMock();response=connection.getresponse.return_value
+        response.status=204;response.read.return_value=b''
+        with patch.object(publisher.http.client,'HTTPSConnection',return_value=connection),patch.object(publisher,'tls_context',return_value=None):
+            result=publisher.api('POST','/actions/workflows/installer-downloads.yml/dispatches','fixture-token',{'ref':'main','inputs':{'apply':True}},empty=True)
+            self.assertIsNone(result)
+            self.assertEqual(connection.request.call_args.args[:2],('POST','/repos/afonasev/star-tournament/actions/workflows/installer-downloads.yml/dispatches'))
+            self.assertEqual(connection.request.call_args.kwargs['headers']['Authorization'],'Bearer fixture-token')
+            self.assertEqual(json.loads(connection.request.call_args.kwargs['body']),{'ref':'main','inputs':{'apply':True}})
+            with self.assertRaisesRegex(RuntimeError,'204'):publisher.api('GET','/releases','fixture-token')

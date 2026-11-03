@@ -32,7 +32,8 @@ public sealed class BrokerUpgradeCandidate
             payload.GameExecutable!="game/StarTournament.exe"||payload.UpdateChannel is not("test" or "production")||
             payload.FeedBase!=(payload.UpdateChannel=="test"?AuthenticatedSource.TestLocator:AuthenticatedSource.ProductionBase)||
             !SemanticVersion.TryParse(payload.Version,out var version)||version.ToString()!=payload.Version||version.IsPrerelease!=(payload.UpdateChannel=="test")||
-            !DateOnly.TryParseExact(payload.PublicationDate,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out _)||payload.Compatibility is not{MinimumUpdaterProtocol:2,PayloadFormat:ReleaseCompatibility.PayloadFormat,UserDataPolicy:ReleaseCompatibility.DataPolicy})
+            !DateOnly.TryParseExact(payload.PublicationDate,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out _)||payload.BootstrapProtocol is not(0 or 1)||payload.Compatibility is not{UserDataPolicy:ReleaseCompatibility.DataPolicy}||
+            payload.BootstrapProtocol==0&&payload.Compatibility is not{MinimumUpdaterProtocol:2,PayloadFormat:ReleaseCompatibility.PayloadFormat})
             throw new CryptographicException("Unsupported broker candidate payload identity");
         ReleaseCompatibility.Validate(payload.Compatibility,"win");
         var names=Directory.EnumerateFileSystemEntries(directory).Select(Path.GetFileName).ToHashSet(StringComparer.Ordinal);
@@ -59,7 +60,10 @@ public sealed class BrokerUpgradeCandidate
         if(files.Count!=3)throw new CryptographicException("Incomplete broker candidate");
         var result=new BrokerUpgradeCandidate(directory,trustedKey,Hash(raw),payload,files);result.VerifyFiles();
         var contract=ReadBounded(Path.Combine(directory,"maintenance.json"),65536);
-        using var config=JsonDocument.Parse(contract);Fields(config.RootElement,"protocol","metadataReader","appId","platform","architecture","version","publicationDate","feedBase","gameExecutable","updateChannel","compatibility");
+        using var config=JsonDocument.Parse(contract);
+        var contractFields=new[]{"protocol","metadataReader","appId","platform","architecture","version","publicationDate","feedBase","gameExecutable","updateChannel","compatibility"};
+        if(payload.BootstrapProtocol==1)contractFields=contractFields.Append("bootstrapProtocol").ToArray();
+        Fields(config.RootElement,contractFields);
         if(config.RootElement.GetProperty("protocol").GetInt32()!=2||config.RootElement.GetProperty("metadataReader").GetInt32()!=2||
             JsonSerializer.Deserialize<LauncherConfig>(contract,new JsonSerializerOptions{PropertyNameCaseInsensitive=true})!=payload)
             throw new CryptographicException("Broker contract differs from signed current identity");

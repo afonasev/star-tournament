@@ -8,7 +8,7 @@ import re
 import shutil
 import subprocess
 
-from release_compatibility import validate, READER_PROTOCOL
+from release_compatibility import payload_requirements, READER_PROTOCOL
 
 FILES = ('StarTournamentMaintenance.exe', 'maintenance.json', 'update-public.pem')
 ENVELOPE = 'broker-upgrade.json'
@@ -24,6 +24,7 @@ def seal(directory: Path, config: dict, key: Path, pinned_key: Path):
     """Seal an unpublished single-file publish output; no builds or execution here."""
     expected = {'appId', 'platform', 'architecture', 'version', 'publicationDate',
                 'feedBase', 'gameExecutable', 'updateChannel', 'compatibility'}
+    if config.get('bootstrapProtocol') == 1: expected.add('bootstrapProtocol')
     if set(config) != expected:
         raise ValueError('Exact payload config fields required')
     channel = config['updateChannel']
@@ -39,7 +40,7 @@ def seal(directory: Path, config: dict, key: Path, pinned_key: Path):
         raise ValueError('Canonical publication date required')
     if any(int(n) > 2147483647 for n in config['version'].split('-')[0].split('.')):
         raise ValueError('Version exceeds reader range')
-    validate(config['compatibility'], 'win')
+    payload_requirements(config)
     plain(directory); plain(pinned_key)
     if {p.name for p in directory.iterdir()} != {FILES[0], FILES[2]}:
         raise ValueError('Fresh self-contained single-file broker output required')

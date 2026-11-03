@@ -7,7 +7,7 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class WeaponRebalanceTests
     {
-        [TestCase(false,11)] [TestCase(true,9)]
+        [TestCase(false,11)] [TestCase(true,10)]
         public void PreparingCombatDescriptorsPreservesCurrentVersionMetadataAndCustomValues(bool native,int version)
         {
             var profile=native?ProvingProfile.CreateNativeCombatDefault():ProvingProfile.CreateCombatDefault();

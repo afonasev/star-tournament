@@ -66,15 +66,34 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(session.Life(2).Health,Is.LessThan(100));Assert.That(session.Rockets,Is.Empty);
             float hp=session.Life(1).Health;Ticks(20);Assert.That(session.Life(1).Health,Is.EqualTo(hp));Assert.That(explosions,Is.EqualTo(1));
         }
-        [UnityTest] public IEnumerator FriendlyDirectAndSelfSplashAreHalvedWithoutFriendlyKillAward()
+        [UnityTest] public IEnumerator FriendlyDirectAndFullSelfSplashKeepFriendlyKillPenalty()
         {
             Setup(true);yield return null;motors[1].Initialize(move,new Vector3(-8,0,2));
-            Assert.That(session.ApplyDamage(1,1,10,0,1).Applied,Is.EqualTo(5),"All weapons share friendly policy");
+            Assert.That(session.ApplyDamage(1,1,10,0,1).Applied,Is.EqualTo(7.5f),"All weapons share friendly policy");
             var snapshot=session.Capture();snapshot.Lives[1].Health=40;session.Restore(snapshot);
             Fire();Ticks(4);Assert.That(session.Life(1).Dead,Is.True);Assert.That(session.Life(0).Health,Is.LessThan(100));
             Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).Kills,Is.Zero);
             Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AllyKills,Is.EqualTo(1));
             Assert.That(session.Match.Read().Standings.Single(r=>r.Seat==0).AccumulatedPenalty,Is.EqualTo(200));
+        }
+        [UnityTest] public IEnumerator CloseRocketUsesFullSelfThreeQuarterAllyAndUnchangedEnemyDamage()
+        {
+            Setup(true);yield return null;
+            motors[1].Initialize(move,new Vector3(-8,0,2));motors[2].Initialize(move,new Vector3(-7,0,2));
+            var resolver=new RocketResolver(combat,move);
+            int explosions=0;float selfExpected=0,enemyExpected=0;
+            session.RocketExploded+=e=>
+            {
+                explosions++;
+                selfExpected=resolver.Damage(Vector3.Distance(e.Position,resolver.ClosestPoint(e.Position,motors[0].State.Position)),false,1);
+                enemyExpected=resolver.Damage(Vector3.Distance(e.Position,resolver.ClosestPoint(e.Position,motors[2].State.Position)),false,1);
+            };
+            Fire();Ticks(4);
+            Assert.That(explosions,Is.EqualTo(1));
+            Assert.That(100-session.Life(1).Health,Is.EqualTo(combat.Get("rocket.maximumDamage")*.75f).Within(.001));
+            Assert.That(selfExpected,Is.GreaterThan(0));Assert.That(enemyExpected,Is.GreaterThan(0));
+            Assert.That(100-session.Life(0).Health,Is.EqualTo(selfExpected).Within(.001));
+            Assert.That(100-session.Life(2).Health,Is.EqualTo(enemyExpected).Within(.001));
         }
         [UnityTest] public IEnumerator MultiVictimFriendlySplashAttributesAppliedDamageAndPenaltyOnceThroughRestoreAndRespawn()
         {

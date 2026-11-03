@@ -18,6 +18,7 @@ from windows_dpi import validate_windows_dpi
 from windows_stable_entry import install_stable_entry
 from broker_upgrade import seal as seal_broker_upgrade, install_component
 import macos_dmg
+import bootstrap_host
 
 
 def write_metadata(output, runtime, version, envelope):
@@ -81,9 +82,10 @@ def main():
         game_exe = 'game/StarTournament.exe'
     app_id = 'tech.afonasev.star-tournament.' + a.runtime
     config = dict(appId=app_id, platform=a.runtime.split('-')[0], architecture=a.runtime.split('-')[1],
-                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel, compatibility=compatibility)
+                  version=a.version, publicationDate=a.date, feedBase=a.feed, gameExecutable=game_exe, updateChannel=a.channel, compatibility=compatibility, bootstrapProtocol=1)
     (stage/'release.json').write_text(json.dumps(config, indent=2)+'\n')
     if a.runtime.startswith('osx'):
+        bootstrap_host.compile_macos(stage, a.runtime, app_id)
         outer_info = a.output/'macos-launcher.plist'
         with outer_info.open('wb') as stream: plistlib.dump(macos_dmg.outer_plist(config), stream)
     subprocess.run(['openssl', 'pkey', '-in', str(a.key.resolve()), '-pubout', '-out', str(stage/'update-public.pem')], check=True)
@@ -97,7 +99,7 @@ def main():
                         '-p:DebugType=None','-p:OutputType=WinExe','-o',str(candidate)],check=True,env=env)
         sealed_broker = seal_broker_upgrade(candidate, config, a.key.resolve(), root/'update-public.pem')
     output = a.output/'releases'; output.mkdir(exist_ok=True)
-    launcher = 'StarTournamentLauncher.exe' if a.runtime.startswith('win') else 'StarTournamentLauncher'
+    launcher = 'StarTournamentLauncher.exe' if a.runtime.startswith('win') else 'StarTournamentBootstrap'
     pack_stage = (macos_dmg.prepare_bundle(stage, a.output, config, root/'branding/app-icon.icns')
                   if a.runtime.startswith('osx') else stage)
     cmd = [str(a.vpk.resolve())] + (['[win]'] if a.runtime.startswith('win') else [])
@@ -126,6 +128,7 @@ def main():
             raise ValueError('Expected complete Velopack portable layout')
         shutil.copyfile(root/'branding/app-icon.ico',layout/'app-icon.ico')
         install_component(stage/'broker-upgrade', layout/'maintenance', sealed_broker)
+        bootstrap_host.install_windows(layout)
         install_stable_entry(layout)
         next(output.glob('*Setup.exe')).unlink()  # Unpublished one-click Setup.
         installer = output/f'Star-Tournament-{a.version}-Windows-x64-Setup.exe'

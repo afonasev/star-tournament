@@ -19,7 +19,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeLunarLighting()
         {
             if(Id!="lunar-laboratory-presentation-v1"||Version<4)return this;
-            var old=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforeArenaPickupMarkings()));
+            var old=BeforeArenaPickupMarkings().DetachedCopy();
             var added=new[]{"lunar.officeSpotRange","lunar.officeFillRange","lunar.officeInnerAngle","lunar.stairLamp","lunar.stairFill"};
             old.descriptors.RemoveAll(d=>added.Contains(d.Path));old.values.RemoveAll(v=>added.Contains(v.Path));
             old.version=3;old.Set("lunar.officeLamp",18);old.Set("lunar.officeFill",2.5f);
@@ -28,7 +28,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeLunarOffice()
         {
             if(Id!="lunar-laboratory-authoring-v1"&&Id!="lunar-laboratory-presentation-v1")return this;
-            var old=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforeLunarLighting()));
+            var old=BeforeLunarLighting().DetachedCopy();
             bool Added(string path)=>path.StartsWith("lunar.map.cargo-f2-",System.StringComparison.Ordinal)||path.StartsWith("lunar.map.f2-service-",System.StringComparison.Ordinal)||path=="lunar.officeLamp"||path=="lunar.officeFill";
             old.descriptors.RemoveAll(d=>Added(d.Path));old.values.RemoveAll(v=>Added(v.Path));
             if(Id=="lunar-laboratory-presentation-v1")old.version=2;
@@ -37,7 +37,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeLunarRework()
         {
             if(Id!="lunar-laboratory-authoring-v1"&&Id!="lunar-laboratory-presentation-v1")return this;
-            var old=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(BeforeLunarOffice()));
+            var old=BeforeLunarOffice().DetachedCopy();
             old.descriptors.RemoveAll(d=>d.Path.StartsWith("lunar.map.cargo-",System.StringComparison.Ordinal)||d.Path=="lunar.glassOpacity");
             old.values.RemoveAll(v=>v.Path.StartsWith("lunar.map.cargo-",System.StringComparison.Ordinal)||v.Path=="lunar.glassOpacity");
             if(Id=="lunar-laboratory-presentation-v1")

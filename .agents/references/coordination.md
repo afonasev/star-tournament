@@ -13,14 +13,19 @@
 ## Шаблоны ожидания
 
 - После получения process/session/cell ID используй явное ожидание 60 секунд (или допустимый максимум текущего API/блокирующего вызова, обычно 30–60 секунд). Это default для длительной работы после первичной диагностики; не наследуй короткий интервал первоначального запуска. Не возвращай модель к решению по пустому или неизменившемуся выводу.
-- Для уже запущенного shell-процесса в `functions.exec` используй шаблон ниже с фактическим `session_id`. Вызов завершается сразу при окончании процесса; прерываемый async yield сохраняет возможность общения:
+- Для уже запущенных независимых shell-процессов в `functions.exec` используй один вызов ниже с массивом фактически возвращённых session ID (для одного процесса — один элемент). Ожидания идут параллельно, а не последовательно по секунде. Вызов завершается при окончании процессов или timeout; прерываемый async yield сохраняет возможность общения:
 
 ```javascript
-// @exec: {"yield_time_ms": 10000, "max_output_tokens": 1500}
-text(await tools.write_stdin({
-  session_id: processSessionId, chars: "", yield_time_ms: 60000,
-  max_output_tokens: 1500
-}));
+// @exec: {"yield_time_ms": 30000, "max_output_tokens": 1500}
+const results = await Promise.allSettled(processSessionIds.map(session_id =>
+  tools.write_stdin({ session_id, chars: "", yield_time_ms: 60000,
+                     max_output_tokens: 1500 })
+));
+for (let i = 0; i < results.length; i++) {
+  const result = results[i];
+  text({ session_id: processSessionIds[i],
+         result: result.status === "fulfilled" ? result.value : String(result.reason) });
+}
 ```
 
 - Только если `functions.exec` вернул `Script running with cell ID ...`, продолжай через `functions.wait` с фактическим ID и `yield_time_ms: 60000` (либо максимумом текущего API). Этот же интервал применяй к pending вызовам `wait_threads`; не буди модель каждую секунду поверх длинного внутреннего ожидания:
@@ -29,6 +34,17 @@ text(await tools.write_stdin({
 {"cell_id":"<returned cell ID>","yield_time_ms":60000,"max_tokens":1500}
 ```
 
-- Для рабочих чатов используй параметры из начала этого файла: `wait_threads` с `timeoutMs: 120000`, сохранёнными cursors и async yield. В доступном прерываемом цикле сохраняй курсоры и продолжай после неизменившегося timeout внутри инструмента, без нового решения модели. Новый пользовательский ввод или требуемое действие обработай сразу. `timeoutMs: 0` — только разовый snapshot.
+- Для рабочих чатов используй фактические ID/hostId/cursor из предыдущего ответа; пример одного bounded ожидания (несколько независимых targets передавай одним вызовом):
+
+```javascript
+// @exec: {"yield_time_ms": 30000, "max_output_tokens": 1500}
+const result = await tools.mcp__codex_app__wait_threads({
+  targets: [{ threadId: workerThreadId, hostId: workerHostId, afterCursor: workerCursor }],
+  timeoutMs: 120000
+});
+text(result);
+```
+
+- В доступном прерываемом цикле сохраняй курсоры и продолжай неизменившееся ожидание внутри инструмента. Новый пользовательский ввод или требуемое действие обработай сразу. `timeoutMs: 0` — только разовый snapshot; завершённые process ID повторно не опрашивай.
 - Интервал 1–1000 мс допустим для конкретной диагностики или короткой интерактивной команды, с указанной причиной; это не default для компиляции, тестов, упаковки, импорта или admission. Для короткой команды не добавляй искусственное ожидание.
 - Разделяй очередь/admission, startup/import, выполнение тестов и упаковку. Не опрашивай соседние чаты ради занятости Unity; runner ждёт ресурс. Planning/integration leases перед длительным ожиданием освобождай.

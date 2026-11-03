@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -10,6 +11,48 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
 {
     public sealed partial class SingleScreenLobbyTests
     {
+        IEnumerator PointerClick(Button button)
+        {
+            Canvas.ForceUpdateCanvases();var rect=(RectTransform)button.transform;
+            var canvas=button.GetComponentInParent<Canvas>();
+            var center=RectTransformUtility.WorldToScreenPoint(canvas.renderMode==RenderMode.ScreenSpaceOverlay?null:canvas.worldCamera,rect.TransformPoint(rect.rect.center));
+            InputSystem.QueueStateEvent(qaMouse,new MouseState{position=center});yield return null;yield return null;
+            InputSystem.QueueStateEvent(qaMouse,new MouseState{position=center}.WithButton(MouseButton.Left));yield return null;yield return null;
+            InputSystem.QueueStateEvent(qaMouse,new MouseState{position=center});yield return null;yield return null;
+        }
+        [UnityTest] public IEnumerator MouseRemovesCardWithGamepadLobbyOwner()
+        {
+            qaKeyboard=InputSystem.AddDevice<Keyboard>();qaMouse=InputSystem.AddDevice<Mouse>();
+            ground.AddBot();yield return null;
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                yield return null;yield return PointerClick(B("inline-remove-1"));
+                Assert.That(ground.SetupBotCount,Is.Zero,"Actual mouse down/up must remove a bot in a gamepad-owned lobby");
+                Call("BeginLobbyJoin",second);yield return null;yield return Click("lobby-profile-none");
+                Assert.That(ground.LocalSeatCount,Is.EqualTo(2));
+                yield return PointerClick(B("inline-remove-1"));
+                Assert.That(ground.LocalSeatCount,Is.EqualTo(1));
+                Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.SameAs(pad));
+                yield return PointerClick(B("roster-card-0"));
+                Assert.That(ground.GetComponentsInChildren<Button>().Any(b=>b.name.StartsWith("inline-identity-")),Is.True,"Mouse can edit a gamepad participant");
+            }
+        }
+        [UnityTest] public IEnumerator LeavingLobbyReleasesMenuDevicesAndMouseStaysAvailable()
+        {
+            qaKeyboard=InputSystem.AddDevice<Keyboard>();qaMouse=InputSystem.AddDevice<Mouse>();yield return null;
+            Call("ToMainMenu");yield return null;
+            EventSystem.current.SetSelectedGameObject(B("main-action-4").gameObject);
+            yield return Press(GamepadButton.South,second);
+            Assert.That(B("settings-back"),Is.Not.Null,"A different gamepad can use the menu after leaving the lobby");
+            using(EditorUiCapture.FixedViewport(ground,1920,1080))
+            {
+                yield return PointerClick(B("settings-back"));
+                Assert.That(B("main-action-0"),Is.Not.Null);
+                yield return PointerClick(B("main-action-3"));
+                Assert.That(B("profiles-back"),Is.Not.Null,"Mouse remains available after gamepad navigation");
+            }
+            Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.SameAs(pad),"Lobby assignment is retained only for the lobby");
+        }
         [UnityTest] public IEnumerator UiCorrections_MapBackHasGap()
         {
             yield return Click("lobby-map");

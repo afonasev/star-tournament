@@ -45,7 +45,7 @@ public static class WindowsBrokerUpgradeStartup
             var key=System.Text.Encoding.UTF8.GetString(BrokerUpgradeCandidate.ReadBounded(Path.Combine(root,"maintenance","update-public.pem"),65536));
             var state=Status();var actor=SelectActor(root,key,payload,state);
             WindowsBrokerUpgradeAccess.Candidate(actor);
-            var image=Path.Combine(root,"current","StarTournamentLauncher.exe");WindowsBrokerUpgradeAccess.FilePath(image);
+            var image=WindowsInstallation.LauncherImage(root);WindowsBrokerUpgradeAccess.FilePath(image);
             if(!string.Equals(Path.GetFullPath(Environment.ProcessPath!),image,StringComparison.OrdinalIgnoreCase))throw new UnauthorizedAccessException("Exact current launcher required for migration");
             using var input=new FileStream(image,FileMode.Open,FileAccess.Read,FileShare.Read);
             var hash=Convert.ToHexString(SHA256.HashData(input)).ToLowerInvariant();using var self=Process.GetCurrentProcess();

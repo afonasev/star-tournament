@@ -36,6 +36,7 @@ namespace StarTournament.ProvingGround
         // Preserve exact v8 metadata/defaults and immutable Lab revision hashes.
         internal ProvingProfile BeforeGamepadWeaponTuning()
         {
+            if(id=="unity-native-combat-v1"&&version>=10)return BeforeDamageRiskTuning().BeforeGamepadWeaponTuning();
             if(id!="unity-native-combat-v1"||version<9)return this;
             var p=DetachedCopy();p.version=8;
             p.RebalanceDefault("rifle.spread",1.32f);p.FindDescriptor("rifle.spread").Step=.02f;
@@ -50,7 +51,7 @@ namespace StarTournament.ProvingGround
             if(id=="unity-combat-state-v1"&&version>=9)return BeforeShotgunBoltTiming().BeforeRifleBurstParameters();
             if(id=="unity-native-combat-v1"&&version>=9)return BeforeGamepadWeaponTuning().BeforeRifleBurstParameters();
             if((id!="unity-native-combat-v1"&&id!="unity-combat-state-v1")||version!=8)return this;
-            var p=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var p=DetachedCopy();
             p.version=7;
             if(id=="unity-native-combat-v1"){p.RebalanceDefault("rifle.spread",1.1f);p.FindDescriptor("rifle.spread").Step=.1f;}
             else {p.RebalanceDefault("rifle.startingAmmo",200);p.RebalanceDefault("rifle.cooldownSeconds",.10f);p.FindDescriptor("rifle.cooldownSeconds").Step=.01f;}
@@ -63,7 +64,7 @@ namespace StarTournament.ProvingGround
             if(id=="unity-native-combat-v1"&&version>=9)return BeforeGamepadWeaponTuning().BeforeWeaponRebalance();
             if(version==8&&(id=="unity-native-combat-v1"||id=="unity-combat-state-v1"))return BeforeRifleBurstParameters().BeforeWeaponRebalance();
             if((id!="unity-native-combat-v1"||version!=7)&&(id!="unity-combat-state-v1"||version!=7)&&(id!="cutter-beam-v1"||version!=4))return this;
-            var p=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var p=DetachedCopy();
             if(id=="unity-native-combat-v1")
             {p.version=6;p.RebalanceDefault("rifle.damage",20);p.RebalanceDefault("rifle.spread",1.2f);p.RebalanceDefault("shot.damage",70);p.RebalanceDefault("shot.pellets",12);p.RebalanceDefault("shot.spread",7);p.RebalanceDefault("rocket.maximumDamage",100);p.FindDescriptor("rocket.maximumDamage").Description="Единый предел прямого и радиального урона, включая усиление.";}
             else if(id=="unity-combat-state-v1")

@@ -45,10 +45,11 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(EditorField<bool>(pad,"WestPending"),Is.False);InputSystem.EnableDevice(pad);InputSystem.QueueStateEvent(pad,new GamepadState());yield return null;yield return null;
             Assert.That(Field<GameObject>("lobbyDialog")==null||!Field<GameObject>("lobbyDialog").activeSelf,Is.True);
         }
-        [UnityTest] public IEnumerator PrimaryKeepsMainMenuAndSecondaryJoinUsesItsOwnDevice()
+        [UnityTest] public IEnumerator LobbyOwnerReleasesMainMenuAndSecondaryJoinUsesItsOwnDevice()
         {
             Call("ToMainMenu");yield return null;EventSystem.current.SetSelectedGameObject(B("main-action-0").gameObject);
-            yield return Press(GamepadButton.South,second);Assert.That(Field<object>("phase").ToString(),Is.EqualTo("MainMenu"));Assert.That(EventSystem.current.currentSelectedGameObject,Is.SameAs(B("main-action-0").gameObject));
+            yield return Press(GamepadButton.South,second);Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Setup"));Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(0),Is.SameAs(pad),"The lobby retains its assigned gamepad");
+            Call("ToMainMenu");yield return null;
             yield return Press(GamepadButton.South,pad);Assert.That(Field<object>("phase").ToString(),Is.EqualTo("Setup"));
             yield return Press(GamepadButton.North,second);yield return Press(GamepadButton.South,second);
             Assert.That(ground.LocalSeatCount,Is.EqualTo(2));Assert.That(Field<SeatInputCoordinator>("input").DeviceAt(1),Is.SameAs(second));
@@ -86,6 +87,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Field<bool>("menuGamepadCursor"),Is.False);Assert.That(Field<InputDevice>("menuDevice"),Is.SameAs(qaKeyboard));
             foreach(var hint in ground.GetComponentsInChildren<MenuActionHint>()){hint.Refresh();Assert.That(hint.GlyphLabel.enabled,Is.False,hint.name);}
             yield return Capture("ownership-keyboard-no-pad-hints");
+            Call("BeginLobbyJoin",second);
+            Assert.That(Field<bool>("menuGamepadCursor"),Is.True,"An explicit join uses that gamepad's hints immediately");
+            Assert.That(Field<InputDevice>("menuDevice"),Is.SameAs(second));
+            var back=B("lobby-dialog-back").GetComponent<MenuActionHint>();back.Refresh();Assert.That(back.GlyphLabel.enabled,Is.True);
+            yield return Press(GamepadButton.East,second);
+            Assert.That(Field<bool>("menuGamepadCursor"),Is.False,"Closing the join restores the keyboard lobby context");
         }
         [UnityTest] public IEnumerator InlineEditorsUseIndependentFocusDraftAndBack()
         {

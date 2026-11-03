@@ -57,7 +57,7 @@ static partial class Maintenance
     {
         if(!Regex.IsMatch(expected,@"\A[a-f0-9]{64}\z"))throw new UnauthorizedAccessException("Frozen current launcher hash required");
         ValidateCaller(root,caller);
-        var fixedImage=Path.Combine(root,"current","StarTournamentLauncher.exe");WindowsBrokerUpgradeAccess.FilePath(fixedImage);
+        var fixedImage=WindowsInstallation.LauncherImage(root);WindowsBrokerUpgradeAccess.FilePath(fixedImage);
         using var process=Process.GetProcessById(caller.Pid);
         if(!string.Equals(Path.GetFullPath(process.MainModule!.FileName!),fixedImage,StringComparison.OrdinalIgnoreCase))throw new UnauthorizedAccessException("Exact current launcher required");
         using var input=new FileStream(fixedImage,FileMode.Open,FileAccess.Read,FileShare.Read);

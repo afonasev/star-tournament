@@ -33,7 +33,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeDeathImpulseIncrease()
         {
             if(id!=DeathPresentationId||version<2)return this;
-            var copy=UnityEngine.JsonUtility.FromJson<ProvingProfile>(UnityEngine.JsonUtility.ToJson(this));copy.version=1;
+            var copy=DetachedCopy();copy.version=1;
             // Exact predecessor defaults keep shipped hashes and custom immutable revisions readable.
             foreach(var entry in new[]{("corpse.shotgunSpeed",6f), ("corpse.rifleSpeed",2.5f), ("corpse.cutterSpeed",.25f), ("corpse.rocketSpeed",9f)})
             {copy.Descriptor(entry.Item1).DefaultValue=entry.Item2;copy.Set(entry.Item1,entry.Item2);}

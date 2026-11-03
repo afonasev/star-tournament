@@ -7,6 +7,60 @@ namespace StarTournament.ProvingGround.Tests.EditMode
 {
     public sealed class UnifiedDamageTests
     {
+        [Test] public void DamageRiskDefaultsAndV9HistoryKeepNamedExperimentsAndOriginalHashes()
+        {
+            var current=new LabBundle{Profiles={ProvingProfile.CreateNativeCombatDefault()}};
+            Assert.That(current.Profiles[0].Version,Is.EqualTo(10));
+            Assert.That(current.Get("damage.selfMultiplier"),Is.EqualTo(1));
+            Assert.That(current.Get("damage.friendlyMultiplier"),Is.EqualTo(.75f));
+            Assert.That(current.Validate(),Is.Empty);
+            var predecessor=(ProvingProfile)typeof(ProvingProfile).GetMethod("BeforeDamageRiskTuning",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(current.Profiles[0],null);
+            Assert.That(predecessor.Version,Is.EqualTo(9));
+            Assert.That(predecessor.Get("damage.selfMultiplier"),Is.EqualTo(.5f));
+            Assert.That(predecessor.Get("damage.friendlyMultiplier"),Is.EqualTo(.5f));
+            var old=new LabBundle{Profiles={predecessor}};
+            var path=Path.Combine(Path.GetTempPath(),"damage-risk-"+Guid.NewGuid()+".json");
+            try
+            {
+                var original=new DesignLabHistory(path,old);string releaseHash=original.Selected.Hash;
+                original.Create("Свой эксперимент");var custom=original.Selected.Snapshot;
+                custom.Set("damage.selfMultiplier",.5f);custom.Set("damage.friendlyMultiplier",.25f);original.Save(custom);
+                string id=original.SelectedProfileId,customHash=original.Selected.Hash;
+                var upgraded=new DesignLabHistory(path,current);Assert.That(upgraded.StorageError,Is.Null);
+                Assert.That(upgraded.Selected.Snapshot.Get("damage.selfMultiplier"),Is.EqualTo(.5f));
+                Assert.That(upgraded.Selected.Snapshot.Get("damage.friendlyMultiplier"),Is.EqualTo(.25f));
+                Assert.That(upgraded.Profiles.Single(p=>p.Id==id).Revisions.Single(r=>r.Hash==customHash).Snapshot.Hash(),Is.EqualTo(customHash));
+                var releases=upgraded.Profiles.Single(p=>p.Id==DesignLabHistory.ReleaseId).Revisions;
+                Assert.That(releases.Single(r=>r.Hash==releaseHash).Snapshot.Hash(),Is.EqualTo(releaseHash));
+                upgraded.Select(DesignLabHistory.ReleaseId,releases.Last().Number);
+                Assert.That(upgraded.Selected.Snapshot.Get("damage.selfMultiplier"),Is.EqualTo(1));
+                Assert.That(upgraded.Selected.Snapshot.Get("damage.friendlyMultiplier"),Is.EqualTo(.75f));
+                var packaged=DesignLabHistory.ResolveStartupDefault(current,LabReleaseCatalog.Factory(old));
+                Assert.That(packaged.Selected.Snapshot.Get("damage.selfMultiplier"),Is.EqualTo(1));
+                Assert.That(packaged.Selected.Snapshot.Get("damage.friendlyMultiplier"),Is.EqualTo(.75f));
+                var reopened=new DesignLabHistory(path,current);Assert.That(reopened.StorageError,Is.Null);
+                Assert.That(reopened.Selected.Hash,Is.EqualTo(upgraded.Selected.Hash));
+            }
+            finally{if(File.Exists(path))File.Delete(path);}
+        }
+        [Test] public void PackagedDefaultAndSceneUseDamageRiskTuningWithoutChangingPublishedSnapshots()
+        {
+            var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/StarTournament/Scenes/ProvingGround.unity",UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var ground=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ProvingGround>()).Single();
+                var baseline=ground.CaptureLabAuthoringBaseline();
+                Assert.That(baseline.Get("damage.selfMultiplier"),Is.EqualTo(1));
+                Assert.That(baseline.Get("damage.friendlyMultiplier"),Is.EqualTo(.75f));
+                var catalog=LabReleaseCatalog.Load();var originalHashes=catalog.Entries.Select(e=>e.Hash).ToArray();
+                var runtime=DesignLabHistory.ResolveStartupDefault(baseline,catalog);
+                Assert.That(runtime.StorageError,Is.Null);
+                Assert.That(runtime.Selected.Snapshot.Get("damage.selfMultiplier"),Is.EqualTo(1));
+                Assert.That(runtime.Selected.Snapshot.Get("damage.friendlyMultiplier"),Is.EqualTo(.75f));
+                CollectionAssert.AreEqual(originalHashes,catalog.Entries.Select(e=>e.Snapshot.Hash()).ToArray());
+            }
+            finally{UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene,true);}
+        }
         NativeMatchState Teams()
         {
             var p=ProvingProfile.CreateMatchDefault();

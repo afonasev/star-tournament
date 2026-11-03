@@ -27,28 +27,29 @@ static class ReleaseCompatibilityChecks
         var wireEnvelope = JsonSerializer.Serialize(new { payload = Convert.ToBase64String(wire), signature = Convert.ToBase64String(rsa.SignData(wire, HashAlgorithmName.SHA256, RSASignaturePadding.Pss)) });
         using (var wireReader = new AuthenticatedSource(config with { Platform = "win", Architecture = "x64" }, rsa.ExportSubjectPublicKeyInfoPem(), hostProbe: (_, minimum) => new Version(10, 0, 19043) >= minimum))
         { wireReader.Admit(wireEnvelope); wireReader.RequireCompatibleTarget(); Check(true, "actual Python producer wire fixture admitted by C# signature/compatibility reader"); }
-        byte[] Package(ReleaseRequirements? actual = null, string version = "1.1.0", bool duplicate = false)
+        byte[] Package(ReleaseRequirements? actual = null, string version = "1.1.0", bool duplicate = false, int bootstrapProtocol = 0)
         {
             using var bytes = new MemoryStream();
             using (var archive = new ZipArchive(bytes, ZipArchiveMode.Create, true))
             {
-                void Entry(string path) { using var writer = new StreamWriter(archive.CreateEntry(path).Open()); writer.Write(JsonSerializer.Serialize(config with { Version = version, Compatibility = actual ?? requirements }, json)); }
+                void Entry(string path) { using var writer = new StreamWriter(archive.CreateEntry(path).Open()); writer.Write(JsonSerializer.Serialize(config with { Version = version, Compatibility = actual ?? requirements, BootstrapProtocol = bootstrapProtocol }, json)); }
                 Entry("lib/osx/release.json"); if (duplicate) Entry("other/release.json");
             }
             return bytes.ToArray();
         }
-        string Signed(byte[] bytes, ReleaseRequirements? target = null, int schema = 2, string version = "1.1.0", bool include = true)
+        string Signed(byte[] bytes, ReleaseRequirements? target = null, int schema = 2, string version = "1.1.0", bool include = true, ReleaseRequirements? bootstrapRequirements = null)
         {
             var data = new Dictionary<string, object?> { ["schema"] = schema, ["platform"] = config.Platform, ["architecture"] = config.Architecture,
                 ["channel"] = config.UpdateChannel, ["version"] = version, ["publicationDate"] = config.PublicationDate,
                 ["downloadUrl"] = $"https://github.com/afonasev/star-tournament/releases/download/v{version}/fixture-{version}-full.nupkg",
                 ["feed"] = new { Assets = new[] { new { PackageId = config.AppId, Version = version, Type = "Full", FileName = $"fixture-{version}-full.nupkg", SHA256 = Convert.ToHexString(SHA256.HashData(bytes)), Size = bytes.Length } } } };
             if (include) data["compatibility"] = target ?? requirements;
+            if (bootstrapRequirements != null) data["bootstrapCompatibility"] = bootstrapRequirements;
             var payload = JsonSerializer.SerializeToUtf8Bytes(data, json);
             return JsonSerializer.Serialize(new { payload = Convert.ToBase64String(payload), signature = Convert.ToBase64String(rsa.SignData(payload, HashAlgorithmName.SHA256, RSASignaturePadding.Pss)) });
         }
-        AuthenticatedSource Source(HttpMessageHandler? transport = null, int reader = 2, Version? host = null) => new(config, rsa.ExportSubjectPublicKeyInfoPem(), transport,
-            readerProtocol: reader, hostProbe: (platform, minimum) => platform == "osx" && (host ?? new Version(15, 0)) >= minimum);
+        AuthenticatedSource Source(HttpMessageHandler? transport = null, int reader = 2, Version? host = null, bool bootstrap = false) => new(config, rsa.ExportSubjectPublicKeyInfoPem(), transport,
+            readerProtocol: reader, hostProbe: (platform, minimum) => platform == "osx" && (host ?? new Version(15, 0)) >= minimum, bootstrap: bootstrap);
         var root = Path.Combine(Path.GetTempPath(), "star-target-compat-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try
         {
@@ -108,6 +109,28 @@ static class ReleaseCompatibilityChecks
                 else
                 { await source.GetReleaseFeed(null!, config.AppId, ""); Check(source.Asset!.Version.ToString() == "1.1.0" && targets == 2, "newest compatible signed target selected: " + mode); }
                 Check(api == 1, "one frozen discovery API snapshot: " + mode);
+            }
+            var incompatible = requirements with { MinimumUpdaterProtocol = 3, PayloadFormat = "launcher-generation3" };
+            var fullReplacement = Package(incompatible, bootstrapProtocol: 1);
+            var fullPath = Path.Combine(root, "bootstrap-full.nupkg"); File.WriteAllBytes(fullPath, fullReplacement);
+            var bootstrapEnvelope = Signed(fullReplacement, incompatible, bootstrapRequirements: requirements);
+            using (var ordinary = Source())
+            {
+                ordinary.Admit(bootstrapEnvelope);
+                await Reject<ReleaseCompatibilityException>(() => { ordinary.RequireCompatibleTarget(); return Task.CompletedTask; }, "ordinary reader cannot bypass incompatible payload via bootstrap declaration");
+            }
+            using (var independent = Source(bootstrap: true))
+            {
+                independent.Admit(bootstrapEnvelope); independent.RequireCompatibleTarget(); await independent.VerifyPackage(fullPath, independent.Asset!);
+                Check(true, "independent transport authenticates full replacement for incompatible launcher reader/format");
+                await Reject<CryptographicException>(() => { independent.Admit(Signed(fullReplacement, incompatible, bootstrapRequirements: requirements with { MinimumOsVersion = "13.0" })); return Task.CompletedTask; }, "bootstrap OS floor cannot differ from target");
+                await Reject<CryptographicException>(() => { independent.Admit(Signed(fullReplacement, incompatible, bootstrapRequirements: requirements with { UserDataPolicy = "unknown-data" })); return Task.CompletedTask; }, "bootstrap never bypasses data preservation");
+                await Reject<CryptographicException>(() => { independent.Admit(Signed(fullReplacement, incompatible, bootstrapRequirements: requirements with { PayloadFormat = "unknown-outer" })); return Task.CompletedTask; }, "unknown outer extraction format is rejected");
+                await Reject<CryptographicException>(() => { independent.Admit(Signed(fullReplacement, incompatible, bootstrapRequirements: requirements with { MinimumUpdaterProtocol = 99 })); return Task.CompletedTask; }, "unsupported bootstrap protocol fails closed");
+                var missingEntry = Package(incompatible);
+                File.WriteAllBytes(fullPath, missingEntry);
+                independent.Admit(Signed(missingEntry, incompatible, bootstrapRequirements: requirements));
+                await Reject<CryptographicException>(() => independent.VerifyPackage(fullPath, independent.Asset!), "full replacement must bind independent entry capability");
             }
             var maintenance = Path.Combine(root, "maintenance"); Directory.CreateDirectory(maintenance);
             foreach (var (protocol, reader, expected) in new[] { (1, 0, 1), (1, 1, 1), (1, 2, 2), (2, 0, 1), (2, 1, 1), (2, 2, 2), (2, 99, 2) })

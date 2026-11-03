@@ -14,17 +14,17 @@ import tempfile
 import urllib.error
 import urllib.request
 
-from release_compatibility import validate as validate_compatibility, verify_payload
+from release_compatibility import validate as validate_compatibility, validate_bootstrap, verify_payload
 from upload_github_assets import REPO, upload, tls_context
 from legacy_release_relay import ReleaseRedirects
 from release_media import prepare as prepare_media
-from release_changelog import previous_release, resolve, render, validate_body, git, version_key
+from release_changelog import previous_release, resolve, render, validate_body, git, version_key, with_installer_downloads
 
 RUNTIMES = ('win-x64', 'osx-arm64')
 ROOT = Path(__file__).resolve().parent
 
 
-def api(method, path, token, data=None, missing=False):
+def api(method, path, token, data=None, missing=False, empty=False):
     conn = http.client.HTTPSConnection('api.github.com', timeout=60, context=tls_context())
     body = None if data is None else json.dumps(data).encode()
     try:
@@ -34,10 +34,11 @@ def api(method, path, token, data=None, missing=False):
             'X-GitHub-Api-Version': '2022-11-28'})
         response = conn.getresponse(); raw = response.read()
         if missing and response.status == 404: return None
-        if response.status not in (200, 201):
-            details=json.loads(raw)
+        if response.status not in ((204,) if empty else (200, 201)):
+            try: details=json.loads(raw)
+            except ValueError: details={'message':'Unexpected response status'}
             raise RuntimeError('GitHub API status '+str(response.status)+': '+json.dumps(details.get('errors',details.get('message'))))
-        return json.loads(raw)
+        return None if empty else json.loads(raw)
     finally: conn.close()
 
 
@@ -77,7 +78,8 @@ def verify_envelope(raw, version, runtime, channel, *, schema=2):
     if not isinstance(date, str) or datetime.date.fromisoformat(date).isoformat() != date:
         raise ValueError('Canonical publication date required')
     if schema == 2:
-        validate_compatibility(data.get('compatibility'), platform)
+        if 'bootstrapCompatibility' in data: validate_bootstrap(data, platform)
+        else: validate_compatibility(data.get('compatibility'), platform)
     elif schema != 1 or 'compatibility' in data:
         raise ValueError('Legacy metadata cannot override historical requirements')
     if len(data['feed']['Assets']) != 1: raise ValueError('Full package required')
@@ -331,6 +333,8 @@ def prepare_changelog(review_path, repo, source_ref, version, channel, token, ou
     review_bytes=review_path.read_bytes()
     review=json.loads(review_bytes.decode('utf-8'))
     body=render(review,repo,source_ref,channel,previous,version=version)
+    body=with_installer_downloads(body,version,'afonasev/star-tournament',f'Star-Tournament-{version}-Windows-x64-Setup.exe',f'Star-Tournament-{version}-macOS-arm64.dmg')
+    validate_body(body)
     identity=dict(schema=1,version=version,source_ref=source_ref,channel=channel,previous_release=previous,
                   body_sha256=hashlib.sha256(body.encode()).hexdigest(),
                   review_sha256=hashlib.sha256(review_bytes).hexdigest())
@@ -432,6 +436,8 @@ def main():
     (a.output/'asset-manifest.json').write_text(json.dumps(assets,indent=2)+'\n')
     release,checks=publish(a.version,a.date,a.channel,assets,token,a.source_ref,a.draft_only,body=body)
     (a.output/'publication.json').write_text(json.dumps(dict(release=release,readback=checks),indent=2)+'\n')
+    if not release['draft'] and not release['prerelease']:
+        api('POST','/actions/workflows/installer-downloads.yml/dispatches',token,{'ref':'main','inputs':{'apply':True}},empty=True)
     print('DRAFT' if release['draft'] else 'PUBLISHED',release['html_url'])
 
 

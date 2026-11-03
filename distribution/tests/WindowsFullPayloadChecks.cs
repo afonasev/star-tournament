@@ -38,7 +38,7 @@ static class WindowsFullPayloadChecks
     }
     static void Entry(ZipArchive zip,string name,string contents,int attributes=0)
     {var e=zip.CreateEntry(name);e.ExternalAttributes=attributes;using var output=new StreamWriter(e.Open(),new UTF8Encoding(false));output.Write(contents);}
-    static async Task<WindowsFullPayload> Stage(string root,Action<ZipArchive>? edit=null,string? manifest=null,LauncherConfig? config=null,Action<string>? checkpoint=null)
+    static async Task<WindowsFullPayload> Stage(string root,Action<ZipArchive>? edit=null,string? manifest=null,LauncherConfig? config=null,Action<string>? checkpoint=null,bool bootstrap=false)
     {
         var parent=Path.Combine(root,"maintenance/staging",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(parent);
         var package=Path.Combine(parent,"candidate-full.nupkg");
@@ -51,8 +51,10 @@ static class WindowsFullPayloadChecks
         }
         var bytes=File.ReadAllBytes(package);var asset=new VelopackAsset{PackageId=Old.AppId,Version=SemanticVersion.Parse(Target.Version),Type=VelopackAssetType.Full,FileName=Path.GetFileName(package),Size=bytes.Length,SHA256=Convert.ToHexString(SHA256.HashData(bytes))};
         var descriptor=new{schema=2,platform="win",architecture="x64",channel="production",version=Target.Version,publicationDate=Target.PublicationDate,compatibility=new{minimumOsVersion=Requirements.MinimumOsVersion,minimumUpdaterProtocol=2,payloadFormat=Requirements.PayloadFormat,userDataPolicy=Requirements.UserDataPolicy},downloadUrl=$"https://github.com/afonasev/star-tournament/releases/download/v{Target.Version}/{asset.FileName}",feed=new{Assets=new[]{new{asset.PackageId,Version=asset.Version.ToString(),Type="Full",asset.FileName,asset.Size,asset.SHA256}}}};
-        using var rsa=RSA.Create(2048);var payload=JsonSerializer.SerializeToUtf8Bytes(descriptor);var envelope=JsonSerializer.Serialize(new{payload=Convert.ToBase64String(payload),signature=Convert.ToBase64String(rsa.SignData(payload,HashAlgorithmName.SHA256,RSASignaturePadding.Pss))});
-        using var source=new AuthenticatedSource(Old,rsa.ExportSubjectPublicKeyInfoPem(),hostProbe:(_,_)=>true);source.Admit(envelope);
+        var wire=JsonSerializer.Deserialize<Dictionary<string,JsonElement>>(JsonSerializer.Serialize(descriptor))!;
+        if(bootstrap){wire["compatibility"]=JsonSerializer.SerializeToElement(config!.Compatibility,Json);wire["bootstrapCompatibility"]=JsonSerializer.SerializeToElement(Requirements,Json);}
+        using var rsa=RSA.Create(2048);var payload=JsonSerializer.SerializeToUtf8Bytes(wire);var envelope=JsonSerializer.Serialize(new{payload=Convert.ToBase64String(payload),signature=Convert.ToBase64String(rsa.SignData(payload,HashAlgorithmName.SHA256,RSASignaturePadding.Pss))});
+        using var source=new AuthenticatedSource(Old,rsa.ExportSubjectPublicKeyInfoPem(),hostProbe:(_,_)=>true,bootstrap:bootstrap);source.Admit(envelope);
         return await WindowsFullPayload.Stage(source,source.Asset!,package,Path.Combine(parent,"payload"),checkpoint:checkpoint);
     }
     static void AssertOld(string root)
@@ -75,6 +77,15 @@ static class WindowsFullPayloadChecks
         await Test("actual released manifest provenance",root=>{Require(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes("distribution/tests/fixtures/released-windows-0.1.5.nuspec"))).ToLowerInvariant()=="10d14a72b3282e2bb5436cfbc74f3e5fe470526c2cf264750cfcaf7b6a68adb9");return Task.CompletedTask;});
         await Test("complete current applies without executing updater or touching root/user data",async root=>
         {var stage=await Stage(root);var store=new WindowsRecoveryStore(root,Old);store.Prepare(Old,Target.Version,false);store.Apply(()=>stage.Activate(root));Require(store.Read().Attempt?.Phase=="installed");Require(File.ReadAllText(Path.Combine(root,"current/game/StarTournament.exe"))=="new player");Require(!File.Exists(Path.Combine(root,"current/Squirrel.exe")));Require(File.ReadAllText(Path.Combine(root,"current/sq.version"))==Manifest());AssertRoot(root);store.Restore();AssertOld(root);});
+        await Test("independent bootstrap replaces incompatible launcher and restores full working payload/data",async root=>
+        {
+            var incompatible=Target with{Compatibility=Requirements with{MinimumUpdaterProtocol=3,PayloadFormat="launcher-generation3"},BootstrapProtocol=1};
+            var host=Path.Combine(root,"maintenance/bootstrap");Directory.CreateDirectory(host);File.WriteAllText(Path.Combine(host,"StarTournamentLauncher.exe"),"stable code retained");
+            var stage=await Stage(root,config:incompatible,bootstrap:true);var store=new WindowsRecoveryStore(root,Old);store.Prepare(Old,Target.Version,true);store.Apply(()=>stage.Activate(root));
+            Require(JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root,"current/release.json")),Json)==incompatible);
+            Require(File.ReadAllText(Path.Combine(host,"StarTournamentLauncher.exe"))=="stable code retained");AssertRoot(root);
+            store.Restore();AssertOld(root);Require(File.ReadAllText(Path.Combine(host,"StarTournamentLauncher.exe"))=="stable code retained");
+        });
         foreach(var point in new[]{"current-saved","target-activated"})
             await Test("exception at "+point+" restores exact old payload",async root=>{var stage=await Stage(root,checkpoint:p=>{if(p==point)throw new IOException("injected");});var store=new WindowsRecoveryStore(root,Old);store.Prepare(Old,Target.Version,false);await Reject(()=>{store.Apply(()=>stage.Activate(root));return Task.CompletedTask;});AssertOld(root);Require(store.Read().Attempt?.Phase=="restored");});
         await Test("staged mutation rejected before current rename",async root=>{var stage=await Stage(root);var staged=Directory.GetFiles(Path.Combine(root,"maintenance/staging"),"UnityPlayer.dll",SearchOption.AllDirectories).Single();File.WriteAllText(staged,"tampered");await Reject(()=>{stage.Activate(root);return Task.CompletedTask;});AssertOld(root);});
@@ -94,6 +105,15 @@ static class WindowsFullPayloadChecks
         await Test("config executable traversal rejected",async root=>{await Reject(async()=>{await Stage(root,config:Target with{GameExecutable="../outside.exe"});});AssertOld(root);});
         await Test("oversized native manifest rejected",async root=>{await Reject(async()=>{await Stage(root,manifest:new string(' ',65537));});AssertOld(root);});
         await Test("unsupported framework rejected",async root=>{await Reject(async()=>{await Stage(root,z=>Entry(z,"lib/net8/app.exe","foreign"));});AssertOld(root);});
+        await Test("independent bootstrap replaces incompatible launcher and restores full working payload/data",async root=>
+        {
+            var incompatible=Target with{Compatibility=Requirements with{MinimumUpdaterProtocol=3,PayloadFormat="launcher-generation3"},BootstrapProtocol=1};
+            var host=Path.Combine(root,"maintenance/bootstrap");Directory.CreateDirectory(host);File.WriteAllText(Path.Combine(host,"StarTournamentLauncher.exe"),"stable code retained");
+            var stage=await Stage(root,config:incompatible,bootstrap:true);var store=new WindowsRecoveryStore(root,Old);store.Prepare(Old,Target.Version,true);store.Apply(()=>stage.Activate(root));
+            Require(JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(Path.Combine(root,"current/release.json")),Json)==incompatible);
+            Require(File.ReadAllText(Path.Combine(host,"StarTournamentLauncher.exe"))=="stable code retained");AssertRoot(root);
+            store.Restore();AssertOld(root);Require(File.ReadAllText(Path.Combine(host,"StarTournamentLauncher.exe"))=="stable code retained");
+        });
         foreach(var point in new[]{"current-saved","target-activated"})
             await Test("process death at "+point+" retains durable recovery",async root=>
             {

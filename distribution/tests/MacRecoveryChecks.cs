@@ -25,9 +25,11 @@ static class MacRecoveryChecks
         int passed=0;
         try
         {
-            foreach(var mode in new[]{"success","exit-before-ready","missing-launcher","updater-error","bad-readback","deferred","orphan","manual-no-host","handoff-error"})
+            foreach(var scenarioMode in new[]{"success","exit-before-ready","missing-launcher","updater-error","bad-readback","deferred","orphan","manual-no-host","handoff-error","bootstrap-success","bootstrap-missing-launcher","bootstrap-exit-before-ready"})
             {
-                var scenario=Path.Combine(root,mode);Directory.CreateDirectory(scenario);Directory.CreateDirectory(Logs(scenario));
+                var independent=scenarioMode.StartsWith("bootstrap-",StringComparison.Ordinal);
+                var mode=independent?scenarioMode[10..]:scenarioMode;
+                var scenario=Path.Combine(root,scenarioMode);Directory.CreateDirectory(scenario);Directory.CreateDirectory(Logs(scenario));
                 File.WriteAllText(Path.Combine(scenario,"mode"),mode);Populate(Live(scenario),"1.0.0");
                 var candidate=Path.Combine(scenario,"candidate.app");Populate(candidate,"1.1.0");
                 var packages=Path.Combine(scenario,"packages");Directory.CreateDirectory(packages);
@@ -36,7 +38,15 @@ static class MacRecoveryChecks
                 const string file="fixture-1.1.0-full.nupkg";var package=Path.Combine(packages,file);ZipFile.CreateFromDirectory(candidate,package);
                 var bytes=File.ReadAllBytes(package);var payload=JsonSerializer.SerializeToUtf8Bytes(new{schema=2,compatibility=new{minimumOsVersion="12.0",minimumUpdaterProtocol=2,payloadFormat=ReleaseCompatibility.PayloadFormat,userDataPolicy=ReleaseCompatibility.DataPolicy},platform="osx",architecture="arm64",channel="production",version="1.1.0",publicationDate="2026-10-16",downloadUrl="https://github.com/afonasev/star-tournament/releases/download/v1.1.0/"+file,feed=new{Assets=new[]{new{PackageId=AppId,Version="1.1.0",Type="Full",FileName=file,SHA256=Convert.ToHexString(SHA256.HashData(bytes)),Size=bytes.Length}}}});
                 File.WriteAllText(Path.Combine(packages,"star-authenticated.json"),JsonSerializer.Serialize(new{payload=Convert.ToBase64String(payload),signature=Convert.ToBase64String(rsa.SignData(payload,HashAlgorithmName.SHA256,RSASignaturePadding.Pss))}));
-                using(var caller=Start(Exe(Live(scenario)),"--mac-caller-fixture",scenario))
+                var callerImage=Exe(Live(scenario));
+                if(independent)
+                {
+                    var stable=BootstrapHost.MacDirectory(Config("1.0.0"),Logs(scenario),Live(scenario));
+                    Populate(Path.GetFullPath(Path.Combine(stable,"../..")),"1.0.0");
+                    File.WriteAllText(Path.Combine(stable,"update-public.pem"),rsa.ExportSubjectPublicKeyInfoPem());
+                    callerImage=Path.Combine(stable,"StarTournamentLauncher");
+                }
+                using(var caller=Start(callerImage,"--mac-caller-fixture",scenario))
                 {await Exit(caller);if(caller.ExitCode!=0)throw new Exception("Caller fixture failed: "+caller.StandardError.ReadToEnd());}
                 if(mode=="handoff-error")
                 {
@@ -52,14 +62,15 @@ static class MacRecoveryChecks
                     File.WriteAllText(Path.Combine(scenario,"orphan-may-exit"),"go");
                 }
                 await Until(()=>!Alive(identity));
-                if(mode=="success")
+                if(mode=="success" || independent && mode=="missing-launcher")
                 {
                     await Until(()=>File.Exists(Path.Combine(scenario,"target-finished.json")));
                     await WaitRecorded(Path.Combine(scenario,"target-finished.json"));
                     Require(Version(scenario)=="1.1.0"&&Journal(scenario).Read().Attempt==null&&Journal(scenario).Read().HealthyVersion=="1.1.0");
                     var args=JsonSerializer.Deserialize<string[]>(File.ReadAllText(Path.Combine(scenario,"observed-args.json")))!;
                     Require(args.Contains("-muted")&&args.Contains("-noaudio")&&args.Contains("профиль two ' quoted"));
-                    Require(!Directory.EnumerateDirectories(Store(scenario)).Any());
+                    Require(!Directory.EnumerateDirectories(Store(scenario)).Any(p=>!independent||Path.GetFileName(p)!="host"));
+                    if(independent)Require(File.Exists(callerImage));
                 }
                 else if(mode is "deferred" or "manual-no-host")
                 {
@@ -84,7 +95,7 @@ static class MacRecoveryChecks
                 }
                 foreach(var record in new[]{"host.json","target-finished.json","restored-launch.json","orphan-started.json"})
                     if(File.Exists(Path.Combine(scenario,record)))await WaitRecorded(Path.Combine(scenario,record));
-                passed++;Console.WriteLine("PASS real stable supervisor processes: "+mode);
+                passed++;Console.WriteLine("PASS real stable supervisor processes: "+scenarioMode);
             }
             var isolated=Path.Combine(root,"installation-separation");Directory.CreateDirectory(isolated);
             var first=StartupRecovery.ForInstallation(Config("1.0.0"),isolated,Path.Combine(root,"first.app"));

@@ -43,7 +43,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeTunnelWayfinding()
         {
             if(Id!=TunnelsArtId||Version<2)return this;
-            var previous=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(BeforeArenaPickupMarkings()));previous.version=1;
+            var previous=BeforeArenaPickupMarkings().DetachedCopy();previous.version=1;
             previous.descriptors.RemoveAll(d=>d.Path.StartsWith("tunnels.wayfinding.",System.StringComparison.Ordinal));
             previous.values.RemoveAll(v=>v.Path.StartsWith("tunnels.wayfinding.",System.StringComparison.Ordinal));
             return previous;

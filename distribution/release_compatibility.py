@@ -32,6 +32,35 @@ def validate(requirements, platform):
     return requirements
 
 
+def validate_bootstrap(descriptor, platform):
+    """Outer full transport is stable; the replaced launcher's reader/format may differ."""
+    transport = validate(descriptor.get('bootstrapCompatibility'), platform)
+    target = descriptor.get('compatibility')
+    if not isinstance(target, dict) or set(target) != FIELDS:
+        raise ValueError('Explicit target payload requirements required')
+    os_version(target['minimumOsVersion'], platform)
+    if (type(target['minimumUpdaterProtocol']) is not int or target['minimumUpdaterProtocol'] < 2 or
+            not isinstance(target['payloadFormat'], str) or not 1 <= len(target['payloadFormat']) <= 64 or
+            target['minimumOsVersion'] != transport['minimumOsVersion'] or
+            target['userDataPolicy'] != transport['userDataPolicy']):
+        raise ValueError('Bootstrap cannot lower target OS or change preserved data policy')
+    return target
+
+
+def bootstrap_transport(requirements):
+    return dict(minimumOsVersion=requirements['minimumOsVersion'], minimumUpdaterProtocol=READER_PROTOCOL,
+                payloadFormat=PAYLOAD_FORMAT, userDataPolicy=DATA_POLICY)
+
+
+def payload_requirements(config):
+    requirements = config['compatibility']
+    if 'bootstrapProtocol' in config and (type(config['bootstrapProtocol']) is not int or config['bootstrapProtocol'] != 1):
+        raise ValueError('Integer independent bootstrap protocol1 required')
+    if config.get('bootstrapProtocol') == 1:
+        return validate_bootstrap(dict(compatibility=requirements, bootstrapCompatibility=bootstrap_transport(requirements)), config['platform'])
+    return validate(requirements, config['platform'])
+
+
 def current(runtime, player: Path):
     platform = runtime.split('-')[0]
     minimum = '10.0.19043'
@@ -45,11 +74,14 @@ def current(runtime, player: Path):
 
 
 def manifest(config, asset, published_at):
-    requirements = validate(config['compatibility'], config['platform'])
-    return dict(schema=2, channel=config['updateChannel'], platform=config['platform'], architecture=config['architecture'],
+    requirements = payload_requirements(config)
+    result = dict(schema=2, channel=config['updateChannel'], platform=config['platform'], architecture=config['architecture'],
                 version=config['version'], publicationDate=config['publicationDate'], compatibility=requirements,
                 downloadUrl=f'https://github.com/afonasev/star-tournament/releases/download/v{config["version"]}/{asset["FileName"]}',
                 publishedAt=published_at, feed={'Assets': [asset]})
+    if config.get('bootstrapProtocol') == 1:
+        result['bootstrapCompatibility'] = bootstrap_transport(requirements)
+    return result
 
 
 def verify_payload(package, descriptor):
@@ -69,3 +101,7 @@ def verify_payload(package, descriptor):
             raise ValueError('Payload config differs from signed target requirements: ' + name)
     if config.get('updateChannel') != descriptor['channel'] or config.get('appId') != descriptor['feed']['Assets'][0]['PackageId']:
         raise ValueError('Payload config identity mismatch')
+    if 'bootstrapCompatibility' in descriptor:
+        validate_bootstrap(descriptor, descriptor['platform'])
+        if type(config.get('bootstrapProtocol')) is not int or config.get('bootstrapProtocol') != 1:
+            raise ValueError('Independent full payload entry contract required')

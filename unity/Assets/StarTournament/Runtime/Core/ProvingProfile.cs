@@ -234,7 +234,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeDamageBonusAlerts()
         {
             if(id!=DefaultId||FindDescriptor("audio.damageBonusSpawnGain")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             bool Added(string path)=>path.StartsWith("audio.damageBonus",StringComparison.Ordinal)||path.StartsWith("ui.damageBonus",StringComparison.Ordinal);
             copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
             copy.version=Math.Min(copy.version,12);return copy;
@@ -242,7 +242,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeMovementAudio()
         {
             if(id!=DefaultId||FindDescriptor("audio.jumpGain")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             bool Added(string path)=>path=="audio.jumpGain"||path=="audio.landGain"||path=="audio.movementPitchVariation"||path=="audio.movementGainVariation";
             copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
             copy.version=Math.Min(copy.version,11);return copy;
@@ -250,7 +250,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeCompactMatchMenu()
         {
             if(id!=DefaultId||FindDescriptor("ui.matchMenuWidth")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             bool Added(string path)=>path=="ui.matchMenuWidth"||path=="ui.matchMenuButtonHeight"||path=="ui.matchMenuSpacing";
             copy.descriptors.RemoveAll(d=>Added(d.Path));copy.values.RemoveAll(v=>Added(v.Path));
             // The earlier UI change appended these descriptors without changing its registry version.
@@ -259,7 +259,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeFootstepMix()
         {
             if(id!=DefaultId||FindDescriptor("audio.footstepGain")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(BeforeMovementAudio()));
+            var copy=BeforeMovementAudio().DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path=="audio.footstepGain");
             copy.values.RemoveAll(v=>v.Path=="audio.footstepGain");
             copy.version=Math.Max(6,copy.version-1);
@@ -270,7 +270,7 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeGamepadLook()
         {
             if(id!=DefaultId||Descriptor(GamepadLookSettings.HorizontalPath)==null)return this;
-            var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var old=DetachedCopy();
             bool NewLookPath(string path)=>path==GamepadLookSettings.HorizontalPath||path==GamepadLookSettings.VerticalPath||path.StartsWith("input.gamepadReturn",StringComparison.Ordinal);
             old.descriptors.RemoveAll(d=>NewLookPath(d.Path));old.values.RemoveAll(v=>NewLookPath(v.Path));
             old.version=Math.Max(6,old.version-1);return old;
@@ -279,7 +279,7 @@ namespace StarTournament.ProvingGround
         {
             const string path="input.gamepadTapAimSmoothingSeconds";
             if(id!=DefaultId||Descriptor(path)==null)return this;
-            var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var old=DetachedCopy();
             old.descriptors.RemoveAll(d=>d.Path==path);old.values.RemoveAll(v=>v.Path==path);
             old.version=Math.Min(14,old.version);return old;
         }
@@ -287,7 +287,7 @@ namespace StarTournament.ProvingGround
         {
             const string path="input.gamepadTapAimThresholdSeconds";
             if(id!=DefaultId||Descriptor(path)==null)return this;
-            var old=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(BeforeSmoothGamepadTap()));
+            var old=BeforeSmoothGamepadTap().DetachedCopy();
             old.descriptors.RemoveAll(d=>d.Path==path);old.values.RemoveAll(v=>v.Path==path);
             old.version=Math.Min(13,old.version);return old;
         }
@@ -296,7 +296,7 @@ namespace StarTournament.ProvingGround
             // Only this registry changed; share untouched profiles rather than serialize every
             // historical schema combination again while opening the Lab.
             if(id!=DefaultId||FindDescriptor("ui.damageVignette.width")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path.StartsWith("ui.damageVignette.",StringComparison.Ordinal));
             copy.version=Math.Max(6,copy.version-1);
@@ -305,7 +305,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeAudio()
         {
             if(id!=DefaultId||FindDescriptor("audio.effectsDefaultPercent")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path.StartsWith("audio.",StringComparison.Ordinal));
             copy.values.RemoveAll(v=>v.Path.StartsWith("audio.",StringComparison.Ordinal));
             copy.version=Math.Max(6,copy.version-1);
@@ -315,7 +315,7 @@ namespace StarTournament.ProvingGround
         public ProvingProfile BeforeTravelingRifle()
         {
             if(id!="unity-native-combat-v1"||FindDescriptor("rifle.speed")==null)return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             int index=copy.descriptors.FindIndex(d=>d.Path=="rifle.speed");
             copy.descriptors.RemoveAt(index);copy.values.RemoveAll(v=>v.Path=="rifle.speed");
             copy.version=Math.Min(copy.version,copy.FindDescriptor("rifle.damage")!=null?5:4);
@@ -343,14 +343,14 @@ namespace StarTournament.ProvingGround
         internal ProvingProfile BeforeModeTargets()
         {
             if(id!="unity-native-match-v1")return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path=="match.ffaTargetDefault"||d.Path=="match.teamTargetDefault");
             copy.values.RemoveAll(v=>v.Path=="match.ffaTargetDefault"||v.Path=="match.teamTargetDefault");return copy;
         }
         internal ProvingProfile BeforeMatchAchievements()
         {
             if(id!="unity-native-match-v1"||(FindDescriptor("achievement.minimumShots")==null&&FindDescriptor("achievement.minimumBeamSeconds")==null))return this;
-            var copy=JsonUtility.FromJson<ProvingProfile>(JsonUtility.ToJson(this));
+            var copy=DetachedCopy();
             copy.descriptors.RemoveAll(d=>d.Path=="achievement.minimumShots"||d.Path=="achievement.minimumBeamSeconds");
             copy.values.RemoveAll(v=>v.Path=="achievement.minimumShots"||v.Path=="achievement.minimumBeamSeconds");return copy;
         }

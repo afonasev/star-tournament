@@ -815,7 +815,7 @@ namespace StarTournament.ProvingGround
                 frozenRocketEffects=Copy(RocketEffectsProfile);frozenCutter=Copy(CutterProfile);frozenPlasma=Copy(PlasmaProfile);frozenMovement=Copy(Profile); frozenLife=Copy(LifeProfile); frozenCombat=Copy(CombatProfile); frozenMatch=Copy(MatchProfile); frozenTrooper=Copy(TrooperProfile); frozenDeath=Copy(DeathProfile); frozenBlood=Copy(BloodProfile);frozenHitFeedback=Copy(HitFeedbackProfile);
                 FrozenLabIdentity=LabSavedIdentity;
                 FrozenLabPresentation=labSavedPresentation;
-                frozenLabReference=activeLabReference==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":activeLabReference.ProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:activeLabReference.Revision,Hash=CurrentLabBundle().Hash()};
+                frozenLabReference=activeLabReference==null?null:new LabRevisionReference{ProfileId=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?"diagnostic-fixture":activeLabReference.ProfileId,Revision=diagnostic||combatReview||botReviewEnabled||reviewComposition!=null?0:activeLabReference.Revision,Hash=CaptureLabBundle().Hash()};
                 frozenConfiguration=Configuration; frozenSeatCount=LocalSeatCount;
             }
             yield return null;
@@ -1018,12 +1018,12 @@ namespace StarTournament.ProvingGround
             RouteInlineInput();
             if(!menuWindowFocused){menuGamepadCursor=false;SetCursor(false);return;}
             if(phase==Phase.Running || phase==Phase.Loading)return;
-            var owner=MenuUiDevice;
-            if(owner!=null&&Enumerable.Range(0,LocalSeatCount).Any(i=>input.DeviceAt(i)!=null))
-            {menuDevice=owner;menuGamepadCursor=owner is Gamepad;Cursor.visible=!menuGamepadCursor;return;}
+            if(phase==Phase.Setup&&MenuUiDevice is Keyboard keyboardOwner)
+            {menuDevice=keyboardOwner;menuGamepadCursor=false;}
+            else if(phase==Phase.Setup&&menuGamepadCursor&&MenuUiDevice is Gamepad owner)menuDevice=owner;
             foreach(var pad in Gamepad.all)
             {
-                if(!pad.enabled)continue;
+                if(!pad.enabled||(phase==Phase.Setup&&!IsMenuInputDevice(pad)))continue;
                 bool activity=pad.leftStick.ReadValue().sqrMagnitude>=.25f||pad.dpad.ReadValue()!=Vector2.zero||Mathf.Abs(pad.rightStick.ReadValue().y)>MenuHistoryScrollDeadzone;
                 foreach(var control in pad.allControls)
                     if(control is UnityEngine.InputSystem.Controls.ButtonControl button&&button.wasPressedThisFrame)activity=true;
@@ -1039,7 +1039,7 @@ namespace StarTournament.ProvingGround
             Cursor.visible=!menuGamepadCursor;
         }
         void SetCursor(bool capture) { Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !capture && (phase==Phase.Running || !menuGamepadCursor); }
-        void OnDestroy() { ClearHistoryImages(); DisposeTextEntry(); visualPresentation?.ResetWorld(); CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreGraphicsQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
+        void OnDestroy() { ClearHistoryImages(); DisposeTextEntry(); visualPresentation?.ResetWorld(); CancelStartupLoading(); CancelHistoryLoading(); UnbindDamageBonusAlerts();UnbindBotBanter(); if(menuSubmitAction!=null)menuSubmitAction.performed-=RememberMenuDevice;if(menuMoveAction!=null)menuMoveAction.performed-=RememberMenuDevice;if(menuClickAction!=null)menuClickAction.performed-=RememberMenuDevice; Application.wantsToQuit-=ProtectLabQuit; gameAudio?.Dispose(); Session?.Stop(); presentation?.Dispose();foreach(var mesh in pickupMeshes)if(mesh)Destroy(mesh); if(damagePickupVisual)Destroy(damagePickupVisual);foreach(var item in healPickupVisuals)if(item)Destroy(item);healPickupVisuals.Clear();foreach(var item in armorPickupVisuals)if(item)Destroy(item);foreach(var item in speedPickupVisuals)if(item)Destroy(item); menuGamepadCursor=false; SetCursor(false); RestoreGraphicsQuality(); if(previousFixedDelta > 0) Time.fixedDeltaTime=previousFixedDelta; }
         readonly List<GameObject> healPickupVisuals=new List<GameObject>();
         void RebuildPickupVisuals()
         {

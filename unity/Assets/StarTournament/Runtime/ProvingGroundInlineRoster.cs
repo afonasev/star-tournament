@@ -58,14 +58,14 @@ namespace StarTournament.ProvingGround
             if(active)menuInputModule.actionsAsset.devices=InputSystem.devices.Where(d=>!(d is Gamepad)&&IsMenuInputDevice(d)&&(!keyboardOwned||!(d is Keyboard))).ToArray();
             // A conditional array/null expression lifts null to an empty ReadOnlyArray,
             // which masks every device. Assign nullable null directly when restoring.
-            else if(MenuUiDevice!=null)menuInputModule.actionsAsset.devices=InputSystem.devices.Where(IsMenuInputDevice).ToArray();
+            else if(phase==Phase.Setup&&MenuUiDevice!=null)menuInputModule.actionsAsset.devices=InputSystem.devices.Where(IsMenuInputDevice).ToArray();
             else menuInputModule.actionsAsset.devices=null;
         }
         void OpenInlineEditor(int p)
         {
             if(phase!=Phase.Setup||p<0||p>=RosterTotal)return;
             var e=InlineFor(inlineInvokingDevice??(inlinePointerParticipant==p?(InputDevice)Keyboard.current:menuDevice));inlinePointerParticipant=-1;if(e==null)return;
-            if(!IsPrimaryMenuDevice(e.Device)&&(p>=LocalSeatCount||input.DeviceAt(p)!=e.Device))return;
+            if(!(e.Device is Keyboard)&&!IsPrimaryMenuDevice(e.Device)&&(p>=LocalSeatCount||input.DeviceAt(p)!=e.Device))return;
             string target=LobbyColorIdentity(p);
             if(inlineEditors.Values.Any(other=>other!=e&&other.Page!=InlinePage.Closed&&other.Target==target))return;
             CloseInlineEditor(e);e.Target=target;e.Page=InlinePage.Fields;e.OpenedFrame=Time.frameCount;e.Hold=0;e.Direction=Vector2.zero;

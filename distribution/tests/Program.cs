@@ -4,6 +4,17 @@ using StarTournament.Distribution;
 using Velopack;
 using Velopack.Logging;
 
+// Independent-host recovery fixtures execute the retained test binary, then dispatch
+// the same target fixture with an explicit replaceable payload, even if its launcher is absent.
+if (args.Length >= 4 && args[0] == "--bootstrap-payload" && args[2] == "--mac-target-fixture")
+{
+    if (!Path.IsPathFullyQualified(args[1]) || !Directory.Exists(args[1])) throw new IOException("Fixture payload missing");
+    args = args[2..];
+}
+if (args.SequenceEqual(new[] { "--bootstrap-startup" })) { await BootstrapStartupChecks.Run(); return; }
+if (args.SequenceEqual(new[] { "--bootstrap-host" })) { BootstrapHostChecks.Run(); return; }
+if (args.SequenceEqual(new[] { "--bootstrap-changelog" })) { BootstrapChangelogChecks.Run(); return; }
+
 if (args.Length == 4 && args[0] == "--verify-produced-broker")
 {
     var payload=JsonSerializer.Deserialize<LauncherConfig>(File.ReadAllText(args[2]),new JsonSerializerOptions{PropertyNameCaseInsensitive=true})??throw new IOException("Fixture payload missing");

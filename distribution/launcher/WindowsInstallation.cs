@@ -10,6 +10,16 @@ namespace StarTournament.Distribution;
 /// <summary>The installer owns maintenance outside the replaceable current payload.</summary>
 public static class WindowsInstallation
 {
+    public static string LauncherImage(string root)
+    {
+        var stable = Path.Combine(root, "maintenance", "bootstrap", "StarTournamentLauncher.exe");
+        if (Directory.Exists(Path.GetDirectoryName(stable)))
+        {
+            if (!File.Exists(stable)) throw new IOException("Independent bootstrap is damaged; repair the installation");
+            return stable;
+        }
+        return Path.Combine(root, "current", "StarTournamentLauncher.exe");
+    }
     public static int MetadataReader(string root)
     {
         var path = Path.Combine(root, "maintenance", "maintenance.json");
