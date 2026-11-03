@@ -12923,7 +12923,7 @@ MonoBehaviour:
       Value: 1.2
   CombatProfile:
     id: unity-native-combat-v1
-    version: 9
+    version: 10
     descriptors:
     - Path: shot.pellets
       Group: shotgun
@@ -13402,7 +13402,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 1
       Step: 0.05
-      DefaultValue: 0.5
+      DefaultValue: 0.75
     - Path: damage.selfMultiplier
       Group: damage-policy
       Label: "\u0423\u0440\u043E\u043D \u0441\u0435\u0431\u0435"
@@ -13413,7 +13413,7 @@ MonoBehaviour:
       Minimum: 0
       Maximum: 1
       Step: 0.05
-      DefaultValue: 0.5
+      DefaultValue: 1
     values:
     - Path: shot.pellets
       Value: 18
@@ -13504,9 +13504,9 @@ MonoBehaviour:
     - Path: shot.damage
       Value: 93.5
     - Path: damage.friendlyMultiplier
-      Value: 0.5
+      Value: 0.75
     - Path: damage.selfMultiplier
-      Value: 0.5
+      Value: 1
   BotPerceptionProfile:
     id: unity-bot-perception-v1
     version: 2

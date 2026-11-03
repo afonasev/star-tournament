@@ -26,21 +26,21 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
         [UnityTest] public IEnumerator MultipliersPrecedeShieldAndFreezeSelectedTuning()
         {
             Setup();yield return null;var snapshot=session.Capture();snapshot.Lives[0].Armor=30;snapshot.Lives[1].Armor=30;snapshot.Lives[2].Armor=30;session.Restore(snapshot);
-            combat.Set("damage.friendlyMultiplier",1);combat.Set("damage.selfMultiplier",1);
-            var ally=session.ApplyDamage(1,1,80,0,1);Assert.That(ally.ArmorLost,Is.EqualTo(30));Assert.That(ally.HealthLost,Is.EqualTo(10));Assert.That(ally.Applied,Is.EqualTo(40));
-            var own=session.ApplyDamage(0,1,80,0,1);Assert.That(own.Applied,Is.EqualTo(40));
+            combat.Set("damage.friendlyMultiplier",.1f);combat.Set("damage.selfMultiplier",.1f);
+            var ally=session.ApplyDamage(1,1,80,0,1);Assert.That(ally.ArmorLost,Is.EqualTo(30));Assert.That(ally.HealthLost,Is.EqualTo(30));Assert.That(ally.Applied,Is.EqualTo(60));
+            var own=session.ApplyDamage(0,1,80,0,1);Assert.That(own.ArmorLost,Is.EqualTo(30));Assert.That(own.HealthLost,Is.EqualTo(50));Assert.That(own.Applied,Is.EqualTo(80));
             var enemy=session.ApplyDamage(2,1,80,0,1);Assert.That(enemy.Applied,Is.EqualTo(80));
-            var row=session.Match.Read().Standings.Single(r=>r.Seat==0);Assert.That(row.DamageDealt,Is.EqualTo(80));Assert.That(row.AllyDamageDealt,Is.EqualTo(40));Assert.That(row.DamageReceived,Is.EqualTo(40));
+            var row=session.Match.Read().Standings.Single(r=>r.Seat==0);Assert.That(row.DamageDealt,Is.EqualTo(80));Assert.That(row.AllyDamageDealt,Is.EqualTo(60));Assert.That(row.DamageReceived,Is.EqualTo(80));
             Assert.That(session.ApplyDamage(1,0,80,0,1).Applied,Is.Zero);
         }
         [UnityTest] public IEnumerator RifleAndShotgunStopAtAllyAndCutterPassesBothParticipants()
         {
             Setup();yield return null;motors[0].Initialize(move,new Vector3(-8,0,0));motors[1].Initialize(move,new Vector3(-8,0,3));motors[2].Initialize(move,new Vector3(-8,0,6));Physics.SyncTransforms();
             var fire=new LocalAction[4];fire[0].Fire=true;Step(fire);Step();Step();
-            Assert.That(session.Life(1).Health,Is.EqualTo(95));Assert.That(session.Life(2).Health,Is.EqualTo(100));
-            Switch(WeaponSelection.Shotgun);Step(fire);Assert.That(session.Life(1).Health,Is.EqualTo(52.5f).Within(.001));Assert.That(session.Life(2).Health,Is.EqualTo(100));
+            Assert.That(session.Life(1).Health,Is.EqualTo(92.5f));Assert.That(session.Life(2).Health,Is.EqualTo(100));
+            Switch(WeaponSelection.Shotgun);Step(fire);Assert.That(session.Life(1).Health,Is.EqualTo(22.375f).Within(.001));Assert.That(session.Life(2).Health,Is.EqualTo(100));
             Switch(WeaponSelection.Cutter);fire[0].FireHeld=true;Step(fire);fire[0].Fire=false;for(int i=0;i<40;i++)Step(fire);
-            Assert.That(session.Life(1).Health,Is.LessThan(52.5f));Assert.That(session.Life(2).Health,Is.LessThan(100));
+            Assert.That(session.Life(1).Health,Is.LessThan(22.375f));Assert.That(session.Life(2).Health,Is.LessThan(100));
             Assert.That(session.Life(0).Health,Is.EqualTo(100),"Beam does not add self contact");
         }
     }

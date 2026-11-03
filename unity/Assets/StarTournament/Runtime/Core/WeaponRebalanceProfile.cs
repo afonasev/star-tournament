@@ -36,6 +36,7 @@ namespace StarTournament.ProvingGround
         // Preserve exact v8 metadata/defaults and immutable Lab revision hashes.
         internal ProvingProfile BeforeGamepadWeaponTuning()
         {
+            if(id=="unity-native-combat-v1"&&version>=10)return BeforeDamageRiskTuning().BeforeGamepadWeaponTuning();
             if(id!="unity-native-combat-v1"||version<9)return this;
             var p=DetachedCopy();p.version=8;
             p.RebalanceDefault("rifle.spread",1.32f);p.FindDescriptor("rifle.spread").Step=.02f;

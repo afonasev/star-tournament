@@ -6,13 +6,24 @@ namespace StarTournament.ProvingGround
         {
             var p=CreateLegacyNativeCombatDefault();
             p.UpgradeBodyDamage();
-            p.version=9;
+            p.version=10;
             p.RebalanceDefault("rifle.damage",10);p.RebalanceDefault("rifle.spread",1.584f);
             p.FindDescriptor("rifle.spread").Step=.001f;
             p.RebalanceDefault("shot.damage",93.5f);p.RebalanceDefault("shot.pellets",18);p.RebalanceDefault("shot.spread",6);
             p.FindDescriptor("shot.damage").Step=.1f;
             p.RebalanceDefault("rocket.maximumDamage",85);
             p.FindDescriptor("rocket.maximumDamage").Description="Базовый прямой урон и splash у эпицентра до усиления.";
+            p.RebalanceDefault("damage.friendlyMultiplier",.75f);
+            p.RebalanceDefault("damage.selfMultiplier",1);
+            return p;
+        }
+        // Exact v9 metadata/defaults keep immutable historical Lab snapshots trusted.
+        internal ProvingProfile BeforeDamageRiskTuning()
+        {
+            if(id!="unity-native-combat-v1"||version<10)return this;
+            var p=DetachedCopy();p.version=9;
+            p.RebalanceDefault("damage.friendlyMultiplier",.5f);
+            p.RebalanceDefault("damage.selfMultiplier",.5f);
             return p;
         }
         void UpgradeBodyDamage()

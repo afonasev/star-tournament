@@ -397,6 +397,8 @@ namespace StarTournament.ProvingGround
                 {if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheHits++;return Remember(warm);}
             if(collectingStartupDiagnostics)startupDiagnostics.RegistryCacheMisses++;
             var shipped=new LabBundle{Profiles=this.shipped.Profiles.Select(p=>p.BeforeWellDensity(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeWellWorkZones(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version).BeforeForgePlacement(sought.Profiles.FirstOrDefault(q=>q.Id==p.Id)?.Version??p.Version)).ToList()};
+            if((sought.Profiles.FirstOrDefault(p=>p.Id=="unity-native-combat-v1")?.Version??10)<10)
+                shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>p.BeforeDamageRiskTuning()).ToList()};
             shipped=new LabBundle{Profiles=shipped.Profiles.Select(p=>
                 (sought.Profiles.FirstOrDefault(old=>old.Id==p.Id)?.Version??p.Version)<11
                     ?p.BeforeRocketHeavyCycle():p).ToList()};
@@ -897,6 +899,10 @@ namespace StarTournament.ProvingGround
                 if(!preserveSavedValues)
                 {
                     value=ProvingProfile.SafeSwitchUpgrade(d,currentDescriptor,value);
+                    // Only the reserved runtime Default adopts the damage-risk tuning;
+                    // named experiments and immutable source revisions retain their values.
+                    if(isDefault&&(d.Path=="damage.friendlyMultiplier"||d.Path=="damage.selfMultiplier")&&snapshot.Profile(d.Path).Version<10)
+                        value=currentDescriptor.DefaultValue;
                     // Update only the reserved packaged Default; preserve named/author experiments
                     // and immutable source revisions. Scene defaults alone are overridden at startup.
                     if(isDefault&&snapshot.Profile(d.Path).Id=="forge-plasma-v1"&&snapshot.Profile(d.Path).Version<5&&
