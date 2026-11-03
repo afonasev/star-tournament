@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace StarTournament.Distribution;
 
@@ -11,7 +10,7 @@ public static class BootstrapPrompt
         var message = "Доступна новая версия Star Tournament: " + version +
             ". Установить обновление перед запуском игры?";
         if (OperatingSystem.IsWindows())
-            return MessageBoxW(IntPtr.Zero, message, "Star Tournament — обновление", 0x00000004 | 0x00000020 | 0x00000100) == 6;
+            return await BootstrapWindowsDialog.Confirm(version, message);
         if (!OperatingSystem.IsMacOS()) throw new PlatformNotSupportedException("Update consent UI requires Windows or macOS");
         var start = new ProcessStartInfo("/usr/bin/osascript")
         { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
@@ -27,6 +26,4 @@ public static class BootstrapPrompt
         return answer == "Обновить";
     }
 
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    static extern int MessageBoxW(IntPtr window, string text, string caption, uint type);
 }

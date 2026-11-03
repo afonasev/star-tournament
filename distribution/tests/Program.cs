@@ -13,6 +13,7 @@ if (args.Length >= 4 && args[0] == "--bootstrap-payload" && args[2] == "--mac-ta
 }
 if (args.SequenceEqual(new[] { "--bootstrap-startup" })) { await BootstrapStartupChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--bootstrap-host" })) { BootstrapHostChecks.Run(); return; }
+if (args.SequenceEqual(new[] { "--bootstrap-changelog" })) { BootstrapChangelogChecks.Run(); return; }
 
 if (args.Length == 4 && args[0] == "--verify-produced-broker")
 {

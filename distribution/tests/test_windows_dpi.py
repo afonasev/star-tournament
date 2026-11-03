@@ -57,6 +57,9 @@ class WindowsDpiContract(unittest.TestCase):
         privilege=manifest.find('.//{urn:schemas-microsoft-com:asm.v3}requestedExecutionLevel')
         self.assertIsNotNone(privilege)
         self.assertEqual(privilege.attrib,{'level':'asInvoker','uiAccess':'false'})
+        controls=manifest.find('.//{urn:schemas-microsoft-com:asm.v1}assemblyIdentity[@name="Microsoft.Windows.Common-Controls"]')
+        self.assertIsNotNone(controls)
+        self.assertEqual(controls.attrib['version'],'6.0.0.0')
 
     def test_previous_icon_only_bootstrap_is_rejected(self):
         exe=self.compile_probe('previous')
