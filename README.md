@@ -5,11 +5,11 @@
 
 | Windows | macOS |
 | --- | --- |
-| **[Download EXE](https://github.com/afonasev/star-tournament/releases/download/v0.1.12/Star-Tournament-0.1.12-Windows-x64-Setup.exe)** | **[Download DMG](https://github.com/afonasev/star-tournament/releases/download/v0.1.12/Star-Tournament-0.1.12-macOS-arm64.dmg)** |
+| **[Download EXE](https://github.com/afonasev/star-tournament/releases/download/v0.1.14/Star-Tournament-0.1.14-Windows-x64-Setup.exe)** | **[Download DMG](https://github.com/afonasev/star-tournament/releases/download/v0.1.14/Star-Tournament-0.1.14-macOS-arm64.dmg)** |
 
 [Только установщики / Installer releases](https://github.com/afonasev/star-tournament/releases?q=tag%3Av0%20prerelease%3Afalse)
 
-Installer version: **0.1.12**.
+Installer version: **0.1.14**.
 <!-- desktop-downloads:end -->
 
 Star Tournament is a native Unity local arena-shooter proving ground. This
