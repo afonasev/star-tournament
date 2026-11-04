@@ -17,7 +17,7 @@ namespace StarTournament.ProvingGround
             public bool Russian=true,Upper=true;
             public string Target, Draft="";
             public InlinePage Page;
-            public Button Focus;
+            public Button Focus,Back;
             public string FocusKey;
             public readonly Dictionary<Button,string> Keys=new Dictionary<Button,string>();
             public GameObject LastSharedSelection;
@@ -35,7 +35,7 @@ namespace StarTournament.ProvingGround
         readonly LobbyRemovalRing[] inlineRings=new LobbyRemovalRing[8];
         InputDevice inlineInvokingDevice;
         bool inlineRouting,inlineKeyboardRouting;
-        int inlinePointerParticipant=-1,inlineDeviceSignature;
+        int inlinePointerParticipant=-1,inlineDeviceSignature,inlinePointerSharedActionFrame=-1;
         bool InlineAny=>inlineEditors.Values.Any(e=>e.Page!=InlinePage.Closed);
         int InlineParticipant(InlineEditor e)=>Enumerable.Range(0,RosterTotal).Where(p=>LobbyColorIdentity(p)==e.Target).DefaultIfEmpty(-1).First();
         InlineEditor InlineFor(InputDevice device)
@@ -73,6 +73,7 @@ namespace StarTournament.ProvingGround
         }
         void CloseInlineEditor(InlineEditor e)
         {
+            if(e.Back){e.Back.gameObject.SetActive(false);Destroy(e.Back.gameObject);}e.Back=null;
             if(e.Root){e.Root.SetActive(false);Destroy(e.Root);}e.Root=null;e.Scroll=null;e.Choices.Clear();e.Keys.Clear();e.FocusKey=null;
             e.Page=InlinePage.Closed;e.Hold=0;e.HoldTarget=null;e.WestPending=false;
         }
@@ -118,6 +119,11 @@ namespace StarTournament.ProvingGround
             if(e.Root){e.Root.SetActive(false);Destroy(e.Root);}e.Choices.Clear();e.Keys.Clear();e.Scroll=null;
             e.Root=Panel(rosterCards[p].transform,"inline-editor-"+e.Device.deviceId,new Vector2(.025f,.035f),new Vector2(.975f,.76f),Color.clear);
             e.Root.GetComponent<Image>().raycastTarget=false;
+            if(e.Back){e.Back.gameObject.SetActive(false);Destroy(e.Back.gameObject);}
+            e.Back=MenuButton(rosterCards[p].transform,"inline-back-"+p,"Назад",new Vector2(.65f,.80f),new Vector2(.89f,.995f),()=>BackInlineEditor(e));
+            e.Back.navigation=new Navigation{mode=Navigation.Mode.None};
+            e.Back.GetComponent<MenuActionHint>().Initialize(e.Back,()=>null,()=>false);
+            var backLabel=e.Back.GetComponentInChildren<Text>();backLabel.fontSize=18;backLabel.resizeTextForBestFit=true;backLabel.resizeTextMinSize=14;backLabel.resizeTextMaxSize=18;
             bool bot=RosterIsBot(p);
             if(e.Page==InlinePage.Fields)
             {
@@ -248,11 +254,13 @@ namespace StarTournament.ProvingGround
                     var hit=Panel(b.transform,"remove-hit",Vector2.zero,Vector2.one,Color.clear).GetComponent<Image>();hit.raycastTarget=true;hit.transform.SetAsFirstSibling();
                     var ring=new GameObject("remove-progress",typeof(RectTransform),typeof(CanvasRenderer),typeof(LobbyRemovalRing));ring.transform.SetParent(b.transform,false);Layout((RectTransform)ring.transform,Vector2.zero,Vector2.one);inlineRings[p]=ring.GetComponent<LobbyRemovalRing>();inlineRings[p].color=MenuGold;inlineRings[p].raycastTarget=false;
                 }
-                inlineRemove[p].interactable=CanInlineRemove(p);inlineRemove[p].transform.SetAsLastSibling();
+                inlineRemove[p].interactable=CanInlineRemove(p);
+                inlineRemove[p].GetComponentInChildren<Text>().color=inlineRemove[p].interactable?Color.white:(Color)new Color32(127,153,165,90);
+                inlineRemove[p].transform.SetAsLastSibling();
                 if(editing)
                 {
                     Layout(rosterPortraits[p].rectTransform,new Vector2(.02f,.775f),new Vector2(.17f,.99f));
-                    Layout(rosterNames[p].rectTransform,new Vector2(.19f,.78f),new Vector2(.88f,.99f));rosterNames[p].fontSize=24;rosterNames[p].resizeTextMaxSize=24;
+                    Layout(rosterNames[p].rectTransform,new Vector2(.19f,.78f),new Vector2(.60f,.99f));rosterNames[p].fontSize=24;rosterNames[p].resizeTextMaxSize=24;
                     rosterDetails[p].gameObject.SetActive(false);rosterScreenIcons[p].SetActive(false);
                 }
                 else
@@ -272,7 +280,21 @@ namespace StarTournament.ProvingGround
             foreach(var e in inlineEditors.Values.Where(e=>e.Page==InlinePage.Fields))
                 foreach(var b in e.Choices.Where(b=>b&&b.name.StartsWith("inline-color-")))
                     b.GetComponentInChildren<Text>().text=lobbyColors.TryGetValue(e.Target,out var color)&&b.name.EndsWith("-"+color)?"✓":"";
+            foreach(var button in rosterEmpty.Concat(new[]{rosterAddBot,rosterAddHuman}))
+            {
+                var pointer=button.GetComponent<InlineRosterPointer>()??button.gameObject.AddComponent<InlineRosterPointer>();
+                pointer.Up=()=>inlinePointerSharedActionFrame=Time.frameCount;
+            }
             PaintInlineFocus();RouteInlineInput();
+        }
+        void ClosePointerEditorForLobbyAction()
+        {
+            // Pointer-up precedes Button.onClick. Restrict this convenience to that
+            // exact click: a later gamepad action must not dismiss another editor.
+            if(inlinePointerSharedActionFrame!=Time.frameCount)return;
+            inlinePointerSharedActionFrame=-1;
+            if(Keyboard.current==null||!inlineEditors.TryGetValue(Keyboard.current.deviceId,out var e)||e.Page==InlinePage.Closed)return;
+            CloseInlineEditor(e);RefreshInterface();
         }
         bool InlineRepeat(InlineEditor e,Vector2 nav)
         {
@@ -400,10 +422,11 @@ namespace StarTournament.ProvingGround
             return !IsPrimaryMenuDevice(pad)||e.Page!=InlinePage.Closed||e.WestPending||Array.IndexOf(rosterCards,e.Focus)>=0||e.HoldTarget!=null;
         }
     }
-    public sealed class InlineRosterPointer : MonoBehaviour,IPointerDownHandler
+    public sealed class InlineRosterPointer : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     {
-        public Action Down;
+        public Action Down,Up;
         public void OnPointerDown(PointerEventData e){if(e.button==PointerEventData.InputButton.Left)Down?.Invoke();}
+        public void OnPointerUp(PointerEventData e){if(e.button==PointerEventData.InputButton.Left)Up?.Invoke();}
     }
     // Procedural ring avoids a new texture or per-frame allocation; only its mesh changes.
     public sealed class LobbyRemovalRing : MaskableGraphic

@@ -295,6 +295,7 @@ namespace StarTournament.ProvingGround
         }
         void BeginLobbyBot()
         {
+            ClosePointerEditorForLobbyAction();
             if(LobbyModal||!LobbyCanAddBot)return;var selected=EventSystem.current?.currentSelectedGameObject; lobbyBotOpener=selected&&selected.name.StartsWith("roster-empty-")?selected.GetComponent<Button>():rosterAddBot;lobbyBotDifficulty=lastBotDifficulty;ShowLobbyBotDifficulty();
         }
         void ShowLobbyBotDifficulty()
@@ -318,6 +319,7 @@ namespace StarTournament.ProvingGround
         bool LobbyDeviceFree(InputDevice device)=>device!=null&&device.added&&device.enabled&&GamepadCompatibility.CanAssign(device)&&!(device is Keyboard&&Mouse.current==null)&&!Enumerable.Range(0,LocalSeatCount).Any(s=>input.DeviceAt(s)==device);
         void BeginLobbyDevices()
         {
+            ClosePointerEditorForLobbyAction();
             if(LobbyModal||LocalSeatCount>=4||RosterTotal>=LobbyCapacity)return;
             ShowLobbyDevices();
         }
