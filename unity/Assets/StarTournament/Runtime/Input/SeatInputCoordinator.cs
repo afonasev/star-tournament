@@ -24,7 +24,8 @@ namespace StarTournament.ProvingGround
         public bool HasKeyboard { get { for(int i=0;i<ActiveSeatCount;i++) if(devices[i] is Keyboard) return true; return false; } }
         public void SetActiveSeatCount(int count)
         {
-            if(count < 1 || count > SeatCount) throw new ArgumentOutOfRangeException(nameof(count));
+            // Zero is an editable lobby state; match composition still requires a view.
+            if(count < 0 || count > SeatCount) throw new ArgumentOutOfRangeException(nameof(count));
             int previous=ActiveSeatCount;
             for(int i=count;i<SeatCount;i++) ReleaseSeat(i);
             if(count>previous) for(int i=previous;i<count;i++) {humanSeats[i]=true;seatAlive[i]=true;}
@@ -41,7 +42,7 @@ namespace StarTournament.ProvingGround
             ReleaseSeat(slot);
             if(!HasKeyboard) pairedMouse=null;
         }
-        public bool Ready { get { for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && !IsConnected(i)) return false; return true; } }
+        public bool Ready { get { if(ActiveSeatCount==0)return false; for (int i = 0; i < ActiveSeatCount; i++) if (humanSeats[i] && !IsConnected(i)) return false; return true; } }
         public bool IsConnected(int slot) => slot >= 0 && slot < ActiveSeatCount && devices[slot] != null && devices[slot].added && devices[slot].enabled &&
             (!(devices[slot] is Keyboard) || (pairedMouse != null && pairedMouse.added && pairedMouse.enabled));
         public string Label(int slot) => devices[slot] == null ? "Ожидает устройство" :
@@ -59,7 +60,7 @@ namespace StarTournament.ProvingGround
         // Setup compaction moves ownership (including disconnected handles), never rejoins devices.
         public void RemoveSeat(int slot)
         {
-            if(ActiveSeatCount<=1 || slot<0 || slot>=ActiveSeatCount)throw new ArgumentOutOfRangeException(nameof(slot));
+            if(ActiveSeatCount<1 || slot<0 || slot>=ActiveSeatCount)throw new ArgumentOutOfRangeException(nameof(slot));
             for(int i=slot;i<ActiveSeatCount-1;i++)
             { devices[i]=devices[i+1];humanSeats[i]=humanSeats[i+1];seatAlive[i]=seatAlive[i+1]; }
             ActiveSeatCount--;ReleaseSeat(ActiveSeatCount);humanSeats[ActiveSeatCount]=true;seatAlive[ActiveSeatCount]=true;

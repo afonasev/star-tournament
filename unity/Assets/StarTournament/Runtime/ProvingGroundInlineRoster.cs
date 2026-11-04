@@ -77,6 +77,19 @@ namespace StarTournament.ProvingGround
             if(e.Root){e.Root.SetActive(false);Destroy(e.Root);}e.Root=null;e.Scroll=null;e.Choices.Clear();e.Keys.Clear();e.FocusKey=null;
             e.Page=InlinePage.Closed;e.Hold=0;e.HoldTarget=null;e.WestPending=false;
         }
+        void ConfirmInlineEditor(InlineEditor e)
+        {
+            int p=InlineParticipant(e);if(p<0){CloseInlineEditor(e);return;}
+            if(e.Page==InlinePage.Create)
+            {
+                if(string.IsNullOrWhiteSpace(e.Draft))return;
+                var profile=CreateProfileWithGeneralSettings(e.Draft);ChooseRosterProfile(p,profile.Id);
+            }
+            // Field selections already use atomic commits. Confirmation closes this
+            // editor without activating an unconfirmed navigation focus.
+            CloseInlineEditor(e);e.Focus=rosterCards[p];RefreshInterface();RebuildInlineEditors();
+            e.LastSharedSelection=EventSystem.current?.currentSelectedGameObject;
+        }
         void BackInlineEditor(InlineEditor e)
         {
             if(e.Page==InlinePage.Fields)
@@ -120,10 +133,12 @@ namespace StarTournament.ProvingGround
             e.Root=Panel(rosterCards[p].transform,"inline-editor-"+e.Device.deviceId,new Vector2(.025f,.035f),new Vector2(.975f,.76f),Color.clear);
             e.Root.GetComponent<Image>().raycastTarget=false;
             if(e.Back){e.Back.gameObject.SetActive(false);Destroy(e.Back.gameObject);}
-            e.Back=MenuButton(rosterCards[p].transform,"inline-back-"+p,"Назад",new Vector2(.65f,.80f),new Vector2(.89f,.995f),()=>BackInlineEditor(e));
+            e.Back=MenuButton(rosterCards[p].transform,"inline-apply-"+p,"✓",new Vector2(.80f,.80f),new Vector2(.895f,.995f),()=>ConfirmInlineEditor(e));
             e.Back.navigation=new Navigation{mode=Navigation.Mode.None};
             e.Back.GetComponent<MenuActionHint>().Initialize(e.Back,()=>null,()=>false);
-            var backLabel=e.Back.GetComponentInChildren<Text>();backLabel.fontSize=18;backLabel.resizeTextForBestFit=true;backLabel.resizeTextMinSize=14;backLabel.resizeTextMaxSize=18;
+            e.Back.GetComponent<MenuPresentation>().enabled=false;e.Back.GetComponent<Image>().enabled=false;e.Back.transition=Selectable.Transition.None;
+            var backLabel=e.Back.GetComponentInChildren<Text>();backLabel.fontSize=28;backLabel.color=new Color32(93,220,137,255);backLabel.alignment=TextAnchor.MiddleCenter;backLabel.rectTransform.offsetMin=backLabel.rectTransform.offsetMax=Vector2.zero;
+            var confirmHit=Panel(e.Back.transform,"confirm-hit",Vector2.zero,Vector2.one,Color.clear).GetComponent<Image>();confirmHit.raycastTarget=true;confirmHit.transform.SetAsFirstSibling();
             bool bot=RosterIsBot(p);
             if(e.Page==InlinePage.Fields)
             {
@@ -225,7 +240,7 @@ namespace StarTournament.ProvingGround
             InlineButton(e,e.Root.transform,"inline-delete-"+p,"⌫",new Vector2(.33f,0),new Vector2(.49f,.17f),()=>{if(e.Draft.Length>0)e.Draft=e.Draft.Substring(0,e.Draft.Length-1);value.text=e.Draft;});
             InlineButton(e,e.Root.transform,"inline-save-"+p,"Создать",new Vector2(.51f,0),new Vector2(1,.17f),()=>{if(string.IsNullOrWhiteSpace(e.Draft))return;CreateProfileWithGeneralSettings(e.Draft);InlinePageTo(e,InlinePage.Identity);RebuildInlineEditors();});
         }
-        bool CanInlineRemove(int p)=>p>=0&&p<RosterTotal&&RosterTotal>1&&(p>=LocalSeatCount||LocalSeatCount>1||botSetup.Count>0);
+        bool CanInlineRemove(int p)=>p>=0&&p<RosterTotal;
         void RemoveInlineParticipant(int p)
         {
             if(!CanInlineRemove(p))return;
@@ -260,7 +275,7 @@ namespace StarTournament.ProvingGround
                 if(editing)
                 {
                     Layout(rosterPortraits[p].rectTransform,new Vector2(.02f,.775f),new Vector2(.17f,.99f));
-                    Layout(rosterNames[p].rectTransform,new Vector2(.19f,.78f),new Vector2(.60f,.99f));rosterNames[p].fontSize=24;rosterNames[p].resizeTextMaxSize=24;
+                    Layout(rosterNames[p].rectTransform,new Vector2(.19f,.78f),new Vector2(.76f,.99f));rosterNames[p].fontSize=24;rosterNames[p].resizeTextMaxSize=24;
                     rosterDetails[p].gameObject.SetActive(false);rosterScreenIcons[p].SetActive(false);
                 }
                 else

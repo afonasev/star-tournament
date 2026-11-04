@@ -19,10 +19,12 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             {
                 yield return null;
                 yield return PointerClick(B("inline-remove-0"));
-                Assert.That(ground.LocalSeatCount+ground.SetupBotCount,Is.EqualTo(2),"First card must be removed with one click, preserving one view");
+                Assert.That(ground.LocalSeatCount+ground.SetupBotCount,Is.EqualTo(2),"First card must be removed with one click without deleting another participant");
                 yield return PointerClick(B("inline-remove-0"));
                 Assert.That(ground.LocalSeatCount+ground.SetupBotCount,Is.EqualTo(1),"Compacted first card remains removable");
-                Assert.That(B("inline-remove-0").interactable,Is.False,"Last participant/view remains protected");
+                Assert.That(B("inline-remove-0").interactable,Is.True,"User now permits deleting the last participant");
+                yield return PointerClick(B("inline-remove-0"));
+                Assert.That(ground.LocalSeatCount+ground.SetupBotCount,Is.Zero);
             }
         }
         [UnityTest] public IEnumerator MouseRemovesFirstCardWhileEditing()
@@ -95,14 +97,13 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
                 yield return null;yield return PointerClick(B("roster-card-0"));
                 yield return Capture("mouse-inline-human-before-back");
                 yield return Capture("mouse-inline-human-720",1280,720);
-                yield return PointerClick(B("inline-back-0"));
+                yield return PointerClick(B("inline-apply-0"));
                 Assert.That(ground.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b=>b.name=="inline-identity-0"),Is.False);
                 yield return PointerClick(B("roster-card-1"));
                 yield return PointerClick(B("inline-identity-1"));
                 yield return Capture("mouse-inline-bot-difficulty");
-                yield return PointerClick(B("inline-back-1"));
-                Assert.That(B("inline-identity-1"),Is.Not.Null,"Back from a subpage returns to fields");
-                yield return PointerClick(B("inline-back-1"));
+                yield return PointerClick(B("inline-apply-1"));
+                Assert.That(ground.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b=>b.name=="inline-identity-1"),Is.False,"Check confirms and closes the entire editor");
                 yield return PointerClick(B("roster-add-bot"));
                 yield return PointerClick(B("lobby-add-difficulty-1"));
                 Assert.That(ground.SetupBotCount,Is.EqualTo(2),"Mouse can add a bot after closing inline settings");

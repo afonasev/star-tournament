@@ -37,7 +37,7 @@ namespace StarTournament.ProvingGround
         public void RemoveSeat(int seat,int views)
         {
             RequireSeat(seat);
-            if(views<=1 || views>NativeMatchComposition.MaximumLocalSeats || seat>=views)throw new ArgumentOutOfRangeException(nameof(views));
+            if(views<1 || views>NativeMatchComposition.MaximumLocalSeats || seat>=views)throw new ArgumentOutOfRangeException(nameof(views));
             for(int i=seat;i<views-1;i++){aiSeats[i]=aiSeats[i+1];seatDifficulties[i]=seatDifficulties[i+1];seatBots[i]=seatBots[i+1];}
             seatBots[views-1]=default;aiSeats[views-1]=false;seatDifficulties[views-1]=(int)NativeBotDifficulty.Normal;
         }
@@ -53,14 +53,14 @@ namespace StarTournament.ProvingGround
         }
         public int HumanCount(int views)
         {
-            if(views<1||views>NativeMatchComposition.MaximumLocalSeats)throw new ArgumentOutOfRangeException(nameof(views));
+            if(views<0||views>NativeMatchComposition.MaximumLocalSeats)throw new ArgumentOutOfRangeException(nameof(views));
             return Enumerable.Range(0,views).Count(seat=>!aiSeats[seat]);
         }
         static void RequireSeat(int seat)
         {
             if(seat<0||seat>=NativeMatchComposition.MaximumLocalSeats)throw new ArgumentOutOfRangeException(nameof(seat));
         }
-        public bool CanAdd(int views)=>views>=1 && views<=NativeMatchComposition.MaximumLocalSeats && views+Count<NativeMatchRoster.MaximumParticipants;
+        public bool CanAdd(int views)=>views>=0 && views<=NativeMatchComposition.MaximumLocalSeats && views+Count<NativeMatchRoster.MaximumParticipants;
         public void Add(int views)
         {
             if(!CanAdd(views))throw new ArgumentException("Participant limit reached");

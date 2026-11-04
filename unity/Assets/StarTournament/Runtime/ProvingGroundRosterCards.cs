@@ -354,8 +354,7 @@ namespace StarTournament.ProvingGround
             Layout((RectTransform)rosterDevice.transform,new Vector2(.055f,teams?.29f:.43f),new Vector2(.945f,teams?.37f:.51f));
             rosterDeviceLabel.text="Экран";rosterDevice.GetComponentInChildren<Text>().text=p<LocalSeatCount?"Экран "+(LobbyPosition(p,LocalSeatCount)+1):"Без экрана";
             rosterEditorHelp.text=!bot&&!input.IsConnected(p)?"Устройство отключено. Верните его или удалите участника.":"";
-            rosterRemove.interactable=RosterTotal>1&&(p>=LocalSeatCount||LocalSeatCount>1||botSetup.Count>0);
-            if(!rosterRemove.interactable)rosterEditorHelp.text="Нужен хотя бы один участник с экраном.";
+            rosterRemove.interactable=p>=0&&p<RosterTotal;
         }
         void AddRosterHuman() { BeginLobbyDevices(); }
         void BeginRosterPicker(string title,Button source,bool compact=false)
@@ -429,8 +428,6 @@ namespace StarTournament.ProvingGround
             if(p>=LocalSeatCount)botSetup.Remove(p-LocalSeatCount);
             else
             {
-                // Keep one view by first moving an existing additional bot into an unused view.
-                if(LocalSeatCount==1)PromoteRosterBot(0);
                 CompactRosterSeat(p);rosterEditing=-1;
             }
             setupError=null;RefreshInterface();FocusRosterCard(p);
