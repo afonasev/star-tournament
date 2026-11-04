@@ -8,6 +8,8 @@
     <PublishSingleFile>true</PublishSingleFile><SelfContained>true</SelfContained><RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="../branding/app-icon.ico" LogicalName="StarTournament.LauncherLogo.ico" />
+    <Compile Include="../launcher/LauncherBrand.cs" Link="LauncherBrand.cs" />
     <PackageReference Include="Velopack" Version="1.2.158" />
     <PackageReference Include="System.Threading.AccessControl" Version="8.0.0" />
     <RuntimeHostConfigurationOption Include="System.StartupHookProvider.IsSupported" Value="false" />

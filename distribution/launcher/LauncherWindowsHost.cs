@@ -17,7 +17,7 @@ internal sealed class LauncherWindowsHost
     readonly LauncherPadEdges[] pads = Enumerable.Range(0,4).Select(_=>new LauncherPadEdges()).ToArray();
     readonly string className = "StarTournamentLauncher-" + Guid.NewGuid().ToString("N");
     readonly WindowProc procedure;
-    IntPtr window, instance, background, progress, largeIcon, smallIcon;
+    IntPtr window, instance, background, progress, largeIcon, smallIcon, brandIcon;
     LauncherView? rendered;
     LauncherFrame? frame;
     Exception? fault;
@@ -38,7 +38,7 @@ internal sealed class LauncherWindowsHost
         {
             SetThreadDpiAwarenessContext(new IntPtr(-4));
             dpi=GetDpiForSystem();if(dpi==0)dpi=96;
-            var size=new Rect{Right=Px(620,dpi),Bottom=Px(350,dpi)};AdjustWindowRectExForDpi(ref size,Style,false,0,dpi);
+            var size=new Rect{Right=Px(620,dpi),Bottom=Px(390,dpi)};AdjustWindowRectExForDpi(ref size,Style,false,0,dpi);
             SystemParametersInfoW(0x30,0,out var area,0);
             int width=Math.Min(size.Right-size.Left,area.Right-area.Left),height=Math.Min(size.Bottom-size.Top,area.Bottom-area.Top);
             window=CreateWindowExW(0,className,"Star Tournament",Style,area.Left+(area.Right-area.Left-width)/2,area.Top+(area.Bottom-area.Top-height)/2,width,height,IntPtr.Zero,IntPtr.Zero,instance,IntPtr.Zero);
@@ -54,6 +54,9 @@ internal sealed class LauncherWindowsHost
             SendMessageW(progress,0x409,IntPtr.Zero,new IntPtr(Color(LauncherPresentation.Accent)));
             SendMessageW(progress,0x2001,IntPtr.Zero,new IntPtr(Color(LauncherPresentation.Button)));
             foreach(var action in Enum.GetValues<LauncherAction>())buttons[action]=Child("BUTTON",LauncherPresentation.ActionText(action),0x10000|0x000b,100+(int)action);
+            var pixels=LauncherBrand.IconPixels();
+            brandIcon=CreateIconFromResourceEx(pixels,(uint)pixels.Length,true,0x00030000,256,256,0);
+            if(brandIcon==IntPtr.Zero)throw new Win32Exception(Marshal.GetLastWin32Error());
             loaded=true;Render(true);
             int dark=1;DwmSetWindowAttribute(window,20,ref dark,4);
             int caption=(int)Color(LauncherPresentation.Background);DwmSetWindowAttribute(window,35,ref caption,4);
@@ -76,6 +79,7 @@ internal sealed class LauncherWindowsHost
             UnregisterClassW(className,instance);
             foreach(var font in fonts.Values)DeleteObject(font);
             if(largeIcon!=IntPtr.Zero)DestroyIcon(largeIcon);if(smallIcon!=IntPtr.Zero)DestroyIcon(smallIcon);
+            if(brandIcon!=IntPtr.Zero)DestroyIcon(brandIcon);
             if(background!=IntPtr.Zero)DeleteObject(background);
             GC.KeepAlive(procedure);
         }
@@ -103,7 +107,7 @@ internal sealed class LauncherWindowsHost
         dpi=GetDpiForWindow(window);if(dpi==0)dpi=96;
         GetClientRect(window,out var client);
         var oldFrame=frame;
-        frame=LauncherPresentation.Frame(view,Math.Max(332,(int)(client.Right*96d/dpi)),Math.Max(300,(int)(client.Bottom*96d/dpi)));
+        frame=LauncherPresentation.Frame(view,Math.Max(332,(int)(client.Right*96d/dpi)),Math.Max(390,(int)(client.Bottom*96d/dpi)));
         foreach(var entry in labels.Where(p=>!frame.Labels.Any(l=>l.Key==p.Key)))ShowWindow(entry.Value,0);
         foreach(var label in frame.Labels)
         {
@@ -222,9 +226,21 @@ internal sealed class LauncherWindowsHost
                 case 0x2b: DrawButton(Marshal.PtrToStructure<DrawItem>(data));return new IntPtr(1);
                 case 0x14: GetClientRect(handle,out var bg);FillRect(new IntPtr(unchecked((long)parameter.ToUInt64())),ref bg,background);return new IntPtr(1);
                 case 0xf:
-                    var dc=BeginPaint(handle,out var paint);GetClientRect(handle,out var bounds);FillRect(dc,ref bounds,background);EndPaint(handle,ref paint);return IntPtr.Zero;
+                    var dc=BeginPaint(handle,out var paint);GetClientRect(handle,out var bounds);FillRect(dc,ref bounds,background);
+                    try
+                    {
+                        if(frame!=null&&brandIcon!=IntPtr.Zero)
+                        {
+                            var logo=frame.Logo;
+                            DrawIconEx(dc,Px(logo.X,dpi),Px(logo.Y,dpi),brandIcon,Px(logo.Width,dpi),Px(logo.Height,dpi),0,IntPtr.Zero,3);
+                            var line=frame.HeaderLine;var lineBounds=new Rect{Left=Px(line.X,dpi),Top=Px(line.Y,dpi),Right=Px(line.X+line.Width,dpi),Bottom=Px(line.Y+line.Height,dpi)};
+                            var brush=CreateSolidBrush(Color(LauncherPresentation.Button));
+                            try{FillRect(dc,ref lineBounds,brush);}finally{DeleteObject(brush);}
+                        }
+                    }
+                    finally{EndPaint(handle,ref paint);}return IntPtr.Zero;
                 case 0x24: // Keep controls readable, but never force a window beyond the available desktop.
-                    var limits=Marshal.PtrToStructure<MinMax>(data);var minimum=new Rect{Right=Px(380,dpi),Bottom=Px(350,dpi)};
+                    var limits=Marshal.PtrToStructure<MinMax>(data);var minimum=new Rect{Right=Px(380,dpi),Bottom=Px(390,dpi)};
                     AdjustWindowRectExForDpi(ref minimum,Style,false,0,dpi);SystemParametersInfoW(0x30,0,out var area,0);
                     limits.MinTrack=new Point(Math.Min(minimum.Right-minimum.Left,area.Right-area.Left),Math.Min(minimum.Bottom-minimum.Top,area.Bottom-area.Top));Marshal.StructureToPtr(limits,data,false);return IntPtr.Zero;
             }

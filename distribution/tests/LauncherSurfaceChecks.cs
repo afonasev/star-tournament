@@ -46,10 +46,13 @@ static class LauncherSurfaceChecks
         {
             LauncherAction[] actions=state=="available"?[LauncherAction.Play,LauncherAction.Update]:state=="downloading"?[LauncherAction.Cancel]:state is "error" or "unavailable"?[LauncherAction.Play,LauncherAction.Retry]:state=="blocked"?[LauncherAction.Quit]:[];
             var view=new LauncherView(1,1,new(state,42,"Проверочная ошибка",Version:"1.1.0"),actions,state=="available");
-            var frame=LauncherPresentation.Frame(view,width,350);
-            Check(frame.Buttons.All(b=>b.Box.X>=0&&b.Box.Y>=0&&b.Box.X+b.Box.Width<=width&&b.Box.Y+b.Box.Height<=350&&b.Box.Height>=30),$"buttons fit supported client area: {state}/{width}");
+            var frame=LauncherPresentation.Frame(view,width,390);
+            Check(frame.Buttons.All(b=>b.Box.X>=0&&b.Box.Y>=0&&b.Box.X+b.Box.Width<=width&&b.Box.Y+b.Box.Height<=390&&b.Box.Height>=30),$"buttons fit supported client area: {state}/{width}");
             Check(frame.Buttons.Zip(frame.Buttons.Skip(1),(a,b)=>a.Box.Y!=b.Box.Y||a.Box.X+a.Box.Width<b.Box.X).All(x=>x),$"same-row buttons have separate hit regions: {state}/{width}");
         }
+        var pixels=LauncherBrand.IconPixels();
+        Check(BitConverter.ToInt32(pixels,0)==40&&BitConverter.ToInt32(pixels,4)==256,"embedded game logo supplies a full-resolution native icon");
+        Check(LauncherBrand.DataUri.StartsWith("data:image/x-icon;base64,"),"preview uses the embedded game logo without a network dependency");
         var hostile=new LauncherView(1,1,new("error",Error:"<script>bad()</script> & error"),[LauncherAction.Play,LauncherAction.Quit]);
         string html=LauncherPresentation.Html([hostile]);
         Check(!html.Contains("<script>")&&html.Contains("&lt;script&gt;"),"source-derived preview renders error strings as text");

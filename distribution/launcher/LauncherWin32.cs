@@ -68,6 +68,8 @@ internal static class LauncherWin32
     [DllImport("uxtheme.dll",CharSet=CharSet.Unicode,ExactSpelling=true)]internal static extern int SetWindowTheme(IntPtr window,string subApplication,string subId);
     [DllImport("dwmapi.dll")]internal static extern int DwmSetWindowAttribute(IntPtr window,uint attribute,ref int value,uint size);
     [DllImport("shell32.dll",CharSet=CharSet.Unicode,ExactSpelling=true)]internal static extern uint ExtractIconExW(string file,int index,out IntPtr large,out IntPtr small,uint count);
+    [DllImport("user32.dll",SetLastError=true)]internal static extern IntPtr CreateIconFromResourceEx(byte[] bits,uint size,bool icon,uint version,int width,int height,uint flags);
+    [DllImport("user32.dll",SetLastError=true)]internal static extern bool DrawIconEx(IntPtr dc,int x,int y,IntPtr icon,int width,int height,uint step,IntPtr brush,uint flags);
     [DllImport("user32.dll")]internal static extern bool DestroyIcon(IntPtr icon);
     [DllImport("xinput1_4.dll")]internal static extern uint XInputGetState(uint index,out PadState state);
 }
