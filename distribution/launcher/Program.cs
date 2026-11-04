@@ -181,13 +181,14 @@ static class Launcher
             return available?.TargetFullRelease.Version.ToString();
         }
         UpdateSnapshot? initial;
+        bool bootstrapErrorAcknowledged=false;
         // Pending first-start/rollback supervision must settle before another replacement.
         // A downloaded package from an earlier launch does not carry consent for this launch.
         if (knownHealthy && recovery.Read().Attempt == null)
         {
             var bootstrap = await BootstrapStartup.Run(config.Version, Check,
                 version => startupWindow != null ? startupWindow.Confirm(version) : BootstrapPrompt.Confirm(version),
-                Download, async target =>
+                (progress, token) => startupWindow != null ? startupWindow.Download(Download,progress,token) : Download(progress,token), async target =>
                 {
                     AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target"));
                     var ready = await Staged() ?? throw new IOException("Authenticated staged target missing");
@@ -195,7 +196,11 @@ static class Launcher
                     if (recovery.IsBlocked(target)) recovery.PermitRetry(target);
                     try { Apply(ready, true, explicitRetry: true); }
                     catch (Exception error) { journal.Fail(target, "Обновление не установлено. " + UpdateFeedback.Explain(error)); throw; }
-                }, Log, startupToken, next => startupWindow?.Publish(new(next.State, next.Progress, next.Error, next.Version)));
+                }, Log, startupToken, next => startupWindow?.Publish(new(next.State, next.Progress, next.Error, next.Version)),
+                startupWindow == null ? null : (next,retry) => startupWindow.Failure(new(next.State,next.Progress,next.Error,next.Version),retry),
+                startupWindow == null ? null : startupWindow.AdmitApply);
+            if(bootstrap.QuitRequested)return 0;
+            bootstrapErrorAcknowledged=bootstrap.ErrorAcknowledged;
             if (bootstrap.HandedOff) return 0;
             initial = bootstrap.Snapshot;
         }
@@ -211,7 +216,7 @@ static class Launcher
             catch (Exception error) { Log(error); initial = new("unavailable", Error: UpdateFeedback.Explain(error)); }
         }
         if (startupToken.IsCancellationRequested) return 0;
-        if (startupWindow != null && !string.IsNullOrEmpty(initial?.Error))
+        if (startupWindow != null && !bootstrapErrorAcknowledged && !string.IsNullOrEmpty(initial?.Error))
         {
             if (!await startupWindow.ShowError(new(initial.State, initial.Progress, initial.Error, initial.Version))) return 0;
         }

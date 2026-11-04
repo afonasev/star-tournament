@@ -11,6 +11,8 @@ if (args.Length >= 4 && args[0] == "--bootstrap-payload" && args[2] == "--mac-ta
     if (!Path.IsPathFullyQualified(args[1]) || !Directory.Exists(args[1])) throw new IOException("Fixture payload missing");
     args = args[2..];
 }
+if (args.SequenceEqual(new[] { "--launcher-surface" })) { await LauncherSurfaceChecks.Run(); return; }
+if (args.Length==2 && args[0]=="--launcher-preview") { LauncherSurfaceChecks.Render(args[1]); return; }
 if (args.SequenceEqual(new[] { "--bootstrap-progress" })) { await BootstrapProgressChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--bootstrap-startup" })) { await BootstrapStartupChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--bootstrap-host" })) { BootstrapHostChecks.Run(); return; }

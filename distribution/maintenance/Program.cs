@@ -370,7 +370,7 @@ static partial class Maintenance
             journal.Fail(expected, failure);
             try { File.WriteAllText(Path.Combine(cache, "star-apply-declined.json"), JsonSerializer.Serialize(new { version = expected })); }
             catch (Exception ex) { UpdateFeedback.Log("write-declined", ex); }
-            if (!progress.ShowError(new("apply-error", Error: "Обновление не установлено. " + failure, Version: expected)).GetAwaiter().GetResult()) return 1;
+            if (!progress.ShowError(new("apply-error", Error: "Обновление не установлено. " + failure, Version: expected),playable:!WindowsInstallation.RecoveryNeedsRepair(root)).GetAwaiter().GetResult()) return 1;
         }
         else if (applied)
         {

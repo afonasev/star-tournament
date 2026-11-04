@@ -44,12 +44,16 @@ static class BootstrapProgressChecks
             {
                 Check(!result.HandedOff && snapshots.Last() == result.Snapshot && result.Snapshot.Error.Length > 0, "failure published without hidden successful handoff: " + mode);
                 Check(applied == (mode == "apply-error"), "network/hash/cancellation failures cannot activate: " + mode);
-                var content = BootstrapProgressContent.From(new(result.Snapshot.State, result.Snapshot.Progress, result.Snapshot.Error, result.Snapshot.Version));
-                Check(content.Detail.Contains(UpdateFeedback.LogPath) && content.Detail.Contains("ОК") && content.CanCancel, "visible error offers log and explicit continuation/exit: " + mode);
+                var surface = new LauncherSurface();
+                _ = surface.Decision(new(result.Snapshot.State,result.Snapshot.Progress,result.Snapshot.Error,result.Snapshot.Version));
+                var content = LauncherPresentation.Frame(surface.View);
+                Check(content.Labels.Any(l=>l.Text.Contains(UpdateFeedback.LogPath)) && content.Buttons.Any(b=>b.Action==LauncherAction.Play) && content.Buttons.Any(b=>b.Action==LauncherAction.Quit), "visible error offers log and explicit continuation/exit: " + mode);
+                surface.Close();
             }
         }
-        Check(!BootstrapProgressContent.From(new("applying")).CanCancel, "handoff cannot be interrupted by UI cancellation");
-        Check(BootstrapProgressContent.From(new("checking")).Marquee && !BootstrapProgressContent.From(new("downloading", 42)).Marquee,
+        var busy = new LauncherSurface();busy.Publish(new("applying"));
+        Check(busy.CloseAction==null, "handoff cannot be interrupted by UI cancellation");
+        Check(LauncherPresentation.Frame(new LauncherSurface().View).Marquee && !LauncherPresentation.Frame(new(1,1,new("downloading",42),[LauncherAction.Cancel])).Marquee,
             "unknown duration uses activity indicator, download uses percentage");
         Console.WriteLine($"PASS {passed} bootstrap progress contracts; native Windows presentation NotRun");
     }

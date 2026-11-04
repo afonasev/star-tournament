@@ -11,6 +11,10 @@
     <PackageReference Include="Velopack" Version="1.2.158" />
     <PackageReference Include="System.Threading.AccessControl" Version="8.0.0" />
     <RuntimeHostConfigurationOption Include="System.StartupHookProvider.IsSupported" Value="false" />
+    <Compile Include="../launcher/LauncherTransfer.cs" Link="LauncherTransfer.cs" />
+    <Compile Include="../launcher/LauncherPresentation.cs" Link="LauncherPresentation.cs" />
+    <Compile Include="../launcher/LauncherWindowsHost.cs" Link="LauncherWindowsHost.cs" />
+    <Compile Include="../launcher/LauncherWin32.cs" Link="LauncherWin32.cs" />
     <Compile Include="../launcher/BootstrapStartupWindow.cs" Link="BootstrapStartupWindow.cs" />
     <Compile Include="../launcher/BootstrapWindowsDialog.cs" Link="BootstrapWindowsDialog.cs" />
     <Compile Include="../launcher/BootstrapChangelog.cs" Link="BootstrapChangelog.cs" />
