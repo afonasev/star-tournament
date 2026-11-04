@@ -43,6 +43,27 @@ class ReleaseNotes(unittest.TestCase):
         image=Path(self.temp.name)/'frame.png';image.write_bytes(data)
         self.review['changes'][0]['images']=[dict(path='frame.png',sha256=hashlib.sha256(data).hexdigest(),ru='Арена после обновления.',en='Updated arena.')]
         return data
+    def test_one_commit_can_have_separate_reviewed_player_bullets(self):
+        row=self.review['changes'][0]
+        row['items']=[dict(ru=row.pop('ru'),en=row.pop('en')),dict(ru='Подтвердите карточку галочкой.',en='Confirm the card with the check.')]
+        body=self.render()
+        self.assertEqual(body.count('\n- '),6)
+        self.assertIn('\n- Подтвердите карточку галочкой.',body)
+        for items in ([],[dict(ru='Только русский.')],[dict(ru='Текст.',en='Text.',commits=[self.source])]):
+            value=copy.deepcopy(self.review);value['changes'][0]['items']=items
+            with self.assertRaises(ValueError):self.render(value)
+
+    def test_grouped_images_keep_their_bullet_and_digest_validation(self):
+        data=self.add_image();row=self.review['changes'][0]
+        row['items']=[dict(ru=row.pop('ru'),en=row.pop('en'),images=row.pop('images'))]
+        body=notes.render(self.review,self.repo,self.source,'production',self.previous,version='2.0.0')
+        self.assertIn('- Введите имя с геймпада.\n\n  ![Арена после обновления.]',body)
+        import release_media
+        paths=release_media.prepare(self.review,Path(self.temp.name),'2.0.0',Path(self.temp.name)/'grouped')
+        self.assertEqual(paths[0].read_bytes(),data)
+        self.review['changes'][0]['items'][0]['images'][0]['en']=''
+        with self.assertRaises(ValueError):self.render()
+
     def test_images_follow_their_own_bullet_in_both_languages(self):
         self.add_image()
         body=notes.render(self.review,self.repo,self.source,'production',self.previous,version='2.0.0')

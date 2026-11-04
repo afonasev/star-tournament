@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
-from release_media import images, image_link
+from release_media import images, image_link, note_items
 
 CATEGORIES = {'added': ('Новое', 'Added'), 'improved': ('Улучшения', 'Improved'), 'fixed': ('Исправления', 'Fixed')}
 SEMVER = re.compile(r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?\Z')
@@ -123,7 +123,8 @@ def render(review, repo, source, channel, previous, *, version=None):
                 text(row.get('reason'))
             else:
                 if row.get('category') not in CATEGORIES: raise ValueError('Unknown change category')
-                groups[row['category']].append((text(row.get('ru')), text(row.get('en')), row.get('images', [])))
+                for item in note_items(row):
+                    groups[row['category']].append((text(item.get('ru')), text(item.get('en')), item.get('images', [])))
     if covered != commits: raise ValueError('Unreviewed Git commits: ' + str(len(commits - covered)))
     sections = []
     for language, title in enumerate(('Русский', 'English')):

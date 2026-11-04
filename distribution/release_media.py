@@ -42,13 +42,25 @@ def png_dimensions(data):
     return width, height
 
 
+def note_items(change):
+    if not isinstance(change, dict): raise ValueError('Change object required')
+    if 'items' not in change: return [change]
+    rows = change['items']
+    if any(key in change for key in ('ru', 'en', 'images')) or not isinstance(rows, list) or not rows:
+        raise ValueError('Grouped change requires nonempty items without parent descriptions')
+    if any(not isinstance(row, dict) or set(row) - {'ru', 'en', 'images'} for row in rows):
+        raise ValueError('Grouped note items only contain paired text and images')
+    return rows
+
+
 def images(review):
     changes = review.get('changes', [])
     if not isinstance(changes, list): raise ValueError('Review changes list required')
     rows = []
     for change in changes:
-        if not isinstance(change, dict) or not isinstance(change.get('images', []), list): raise ValueError('Image list required per change')
-        rows.extend(change.get('images', []))
+        for item in note_items(change):
+            if not isinstance(item.get('images', []), list): raise ValueError('Image list required per change')
+            rows.extend(item.get('images', []))
     if len(rows) > MAX_IMAGES: raise ValueError('Too many release illustrations')
     for image in rows:
         if not isinstance(image, dict) or not re.fullmatch('[0-9a-f]{64}', image.get('sha256', '')):
