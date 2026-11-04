@@ -147,21 +147,6 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             Assert.That(Button("main-action-3").gameObject.activeInHierarchy,Is.True,"East must perform the visible profiles Back action");
             Assert.That(Focus,Is.EqualTo("main-action-0"));
         }
-        [UnityTest] public IEnumerator HistoryBackAcceptsANewPadsFirstNonSubmitPress()
-        {
-            yield return Load();Button("settings-back").onClick.Invoke();yield return null;
-            typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(ground,pad);
-            Button("release-history-action").onClick.Invoke();yield return null;Assert.That(Button("release-history-back").gameObject.activeInHierarchy,Is.True);
-            var second=InputSystem.AddDevice<Gamepad>();try
-            {
-                InputSystem.QueueStateEvent(second,new GamepadState().WithButton(GamepadButton.East));yield return null;yield return null;
-                InputSystem.QueueStateEvent(second,new GamepadState());yield return null;yield return null;
-                Assert.That(Button("release-history-action").gameObject.activeInHierarchy,Is.True,"The first East press must use the actual current pad before routing");
-                Assert.That(Focus,Is.EqualTo("release-history-action"));
-                Assert.That(typeof(ProvingGround).GetField("menuDevice",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(ground),Is.SameAs(second));
-            }
-            finally{if(second.added)InputSystem.RemoveDevice(second);}
-        }
         [UnityTest] public IEnumerator BackFromSettingsOpenedOverSetupDoesNotAlsoPopSetup()
         {
             yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("main-action-0").onClick.Invoke();yield return null;
@@ -172,22 +157,6 @@ namespace StarTournament.ProvingGround.Tests.PlayMode
             yield return Press(GamepadButton.East);
             Assert.That(Button("setup-previous").gameObject.activeInHierarchy,Is.True,"One Back must close settings without executing Setup Back again");
             Assert.That((int)typeof(ProvingGround).GetField("setupStep",flags).GetValue(ground),Is.EqualTo(before));
-        }
-        [UnityTest] public IEnumerator HistoryScrollCapturesSmallRightStickFromANewPadBeforeRouting()
-        {
-            yield return Load();Button("settings-back").onClick.Invoke();yield return null;Button("release-history-action").onClick.Invoke();yield return null;yield return null;
-            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
-            var scroll=(ScrollRect)typeof(ProvingGround).GetField("historyScroll",flags).GetValue(ground);scroll.content.sizeDelta=new Vector2(0,2400);Canvas.ForceUpdateCanvases();scroll.verticalNormalizedPosition=.5f;float before=scroll.verticalNormalizedPosition;
-            var second=InputSystem.AddDevice<Gamepad>();try
-            {
-                float raw=Mathf.Lerp(InputSystem.settings.defaultDeadzoneMin,InputSystem.settings.defaultDeadzoneMax,.2f);
-                InputSystem.QueueStateEvent(second,new GamepadState{rightStick=new Vector2(0,raw)});yield return null;yield return null;
-                Assert.That(second.rightStick.ReadValue().y,Is.GreaterThan(.15f).And.LessThan(.5f),"Fixture supplies a small processed UI scroll input, not a raw value inside deadzone");
-                InputSystem.QueueStateEvent(second,new GamepadState());yield return null;
-                Assert.That(typeof(ProvingGround).GetField("menuDevice",flags).GetValue(ground),Is.SameAs(second));
-                Assert.That(scroll.verticalNormalizedPosition,Is.GreaterThan(before),"Existing .15 scroll threshold also defines device activity");
-            }
-            finally{if(second.added)InputSystem.RemoveDevice(second);}
         }
         [UnityTest] public IEnumerator FamilyHintsAndBackStayBoundAcrossProfilesTextModalAndHandover()
         {

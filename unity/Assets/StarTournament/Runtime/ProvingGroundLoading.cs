@@ -21,7 +21,6 @@ namespace StarTournament.ProvingGround
             var mode=repeating?frozenRoster.Mode:TrainingSelected?NativeMatchMode.Training:SetupMode;
             var count=repeating?(frozenRoster.Mode==NativeMatchMode.Training?Composition.LocalCount:Composition.ParticipantCount):RosterTotal;
             loadingScreen.ShowMatch(AuthoredArenaCatalog.Name(repeating?frozenMatchArena.Definition.MapId:SelectedMapId),mode,count,configuration);
-            updateBridge?.PauseBeforeMatch();
             worldReady=false;gameAudio?.StopEffects();
             phase=Phase.Loading;
             if(EventSystem.current){EventSystem.current.SetSelectedGameObject(null);EventSystem.current.sendNavigationEvents=false;}
@@ -33,7 +32,6 @@ namespace StarTournament.ProvingGround
         {
             // Let the loading Canvas reach rendering before constructing world objects.
             yield return null;
-            if(updateBridge)yield return updateBridge.WaitForMatchPause();
             diagnostic=diagnostics;
             if(repeating){frozenMatchArena.RequireDefinition(arena.Definition);arena.Lifts?.Reset();}
             else
@@ -82,7 +80,6 @@ namespace StarTournament.ProvingGround
                 // Recover UI without reconstructing a possibly damaged projection/actor.
                 try
                 {
-                    updateBridge?.ReturnToMenu();
                     worldReady=false;Session?.Stop();presentation?.Dispose();presentation=null;
                     BotDriver=null;NavigationReviewDriver=null;ClearSeatPauseMenus();
                     foreach(var motor in motors)if(motor)motor.gameObject.SetActive(false);

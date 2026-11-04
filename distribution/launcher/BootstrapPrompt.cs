@@ -26,4 +26,25 @@ public static class BootstrapPrompt
         return answer == "Обновить";
     }
 
+    public static ProcessStartInfo FailureCommand(UpdateSnapshot state,bool retry)
+    {
+        var start=new ProcessStartInfo("/usr/bin/osascript")
+        {UseShellExecute=false,RedirectStandardOutput=true,RedirectStandardError=true};
+        start.ArgumentList.Add("-e");
+        start.ArgumentList.Add(retry
+            ? "on run argv\nset answer to display dialog (item 1 of argv) with title \"Star Tournament — обновление\" buttons {\"Закрыть\", \"Играть сейчас\", \"Повторить\"} default button \"Играть сейчас\"\nreturn button returned of answer\nend run"
+            : "on run argv\nset answer to display dialog (item 1 of argv) with title \"Star Tournament — обновление\" buttons {\"Закрыть\", \"Играть сейчас\"} default button \"Играть сейчас\"\nreturn button returned of answer\nend run");
+        start.ArgumentList.Add("--");start.ArgumentList.Add(state.Error+"\n\nЖурнал: "+UpdateFeedback.LogPath);
+        return start;
+    }
+    public static async Task<BootstrapFailureChoice> Failure(UpdateSnapshot state,bool retry)
+    {
+        if(!OperatingSystem.IsMacOS())throw new PlatformNotSupportedException("Native failure prompt requires macOS");
+        using var process=Process.Start(FailureCommand(state,retry))??throw new IOException("Update failure UI did not start");
+        var output=process.StandardOutput.ReadToEndAsync();var error=process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
+        if(process.ExitCode!=0){UpdateFeedback.Log("bootstrap-failure-ui",new IOException(await error));return BootstrapFailureChoice.Quit;}
+        return (await output).Trim() switch {"Повторить" when retry=>BootstrapFailureChoice.Retry,"Играть сейчас"=>BootstrapFailureChoice.Play,_=>BootstrapFailureChoice.Quit};
+    }
+
 }

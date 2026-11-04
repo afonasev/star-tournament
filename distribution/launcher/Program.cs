@@ -61,7 +61,7 @@ static class Launcher
             if (qaLaunch && qaRunner == null && !string.IsNullOrEmpty(qaEnvironmentRunner))
                 restartArguments = restartArguments.Concat(new[] { "--qa-unity-runner", qaEnvironmentRunner }).ToArray();
         }
-        // Preserve the selected launch mode when staged updates relaunch this Player.
+        // Preserve the selected launch mode across a pre-launch update handoff.
         var baseDir = payload ?? AppContext.BaseDirectory;
         var logRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StarTournament", "launcher");
         Directory.CreateDirectory(logRoot);
@@ -160,16 +160,10 @@ static class Launcher
 
         await using var startupWindow = OperatingSystem.IsWindows() ? await BootstrapStartupWindow.Open() : null;
         var startupToken = startupWindow?.Token ?? CancellationToken.None;
-        VelopackAsset? stagedAtStartup = null;
-        try { stagedAtStartup = await Staged(startupToken); }
+        try { _ = await Staged(startupToken); }
         catch (OperationCanceledException) when (startupToken.IsCancellationRequested) { return 0; }
         catch (Exception ex) { Log(ex); File.Delete(stagedManifest);  } // Invalid staged bytes are never activated.
 
-        var session = Path.Combine(logRoot, "sessions", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(session);
-        var statusPath = Path.Combine(session, "status.json");
-        var commandPath = Path.Combine(session, "command.json");
-        bool restart = false;
         UpdateInfo? available = null;
         async Task<string?> Check(CancellationToken token)
         {
@@ -197,7 +191,7 @@ static class Launcher
                     try { Apply(ready, true, explicitRetry: true); }
                     catch (Exception error) { journal.Fail(target, "Обновление не установлено. " + UpdateFeedback.Explain(error)); throw; }
                 }, Log, startupToken, next => startupWindow?.Publish(new(next.State, next.Progress, next.Error, next.Version)),
-                startupWindow == null ? null : (next,retry) => startupWindow.Failure(new(next.State,next.Progress,next.Error,next.Version),retry),
+                (next,retry) => startupWindow != null ? startupWindow.Failure(new(next.State,next.Progress,next.Error,next.Version),retry) : BootstrapPrompt.Failure(next,retry),
                 startupWindow == null ? null : startupWindow.AdmitApply);
             if(bootstrap.QuitRequested)return 0;
             bootstrapErrorAcknowledged=bootstrap.ErrorAcknowledged;
@@ -216,23 +210,20 @@ static class Launcher
             catch (Exception error) { Log(error); initial = new("unavailable", Error: UpdateFeedback.Explain(error)); }
         }
         if (startupToken.IsCancellationRequested) return 0;
-        if (startupWindow != null && !bootstrapErrorAcknowledged && !string.IsNullOrEmpty(initial?.Error))
+        if (!bootstrapErrorAcknowledged && !string.IsNullOrEmpty(initial?.Error))
         {
-            if (!await startupWindow.ShowError(new(initial.State, initial.Progress, initial.Error, initial.Version))) return 0;
+            bool play= startupWindow != null
+                ? await startupWindow.ShowError(new(initial.State, initial.Progress, initial.Error, initial.Version))
+                : await BootstrapPrompt.Failure(initial,false)==BootstrapFailureChoice.Play;
+            if(!play)return 0;
         }
         startupWindow?.Publish(new("launching"));
-        using var history = new ReleaseHistory(config, Path.Combine(UpdateFeedback.LogRoot, Path.GetFileName(config.AppId) + ".history.json"));
-        await using var updates = new UpdateSession(Check, Download,
-            () => AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target")),
-            next => AtomicWrite(statusPath, JsonSerializer.Serialize(next, Json)), initial, history.Fetch, history.FetchMedia);
-        updates.Start();
         var executable = Path.GetFullPath(Path.Combine(baseDir, config.GameExecutable));
         if (!executable.StartsWith(Path.TrimEndingDirectorySeparator(Path.GetFullPath(baseDir)) + Path.DirectorySeparatorChar, OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
             throw new InvalidOperationException("Player must be inside release payload");
         var start = new ProcessStartInfo(executable) { UseShellExecute = false, WorkingDirectory = Path.GetDirectoryName(executable)! };
         foreach (var arg in args) start.ArgumentList.Add(arg);
-        start.Environment["STAR_TOURNAMENT_UPDATE_STATUS"] = statusPath;
-        start.Environment["STAR_TOURNAMENT_UPDATE_COMMAND"] = commandPath;
+        PlayerLaunchEnvironment.IsolateUpdates(start);
         start.Environment["STAR_TOURNAMENT_RELEASE_LABEL"] = config.Version + " (" +
             DateOnly.ParseExact(config.PublicationDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) + ")";
         // Local QA only: the actual Unity child remains guarded for its whole lifetime.
@@ -245,6 +236,8 @@ static class Launcher
             foreach (var pair in start.Environment) guarded.Environment[pair.Key] = pair.Value;
             start = guarded;
         }
+        var session = Path.Combine(logRoot, "sessions", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(session);
         StartupHealthMonitor? startupHealth = null;
         if (recovery.Read().Attempt is not { Phase: "confirmed" or "restored" })
         {
@@ -268,7 +261,7 @@ static class Launcher
         catch
         {
             try { startupHealth?.End(DateTimeOffset.UtcNow); }
-            finally { await updates.DisposeAsync(); Directory.Delete(session, true); }
+            finally { Directory.Delete(session, true); }
             throw;
         }
         using var ownedGame = game;
@@ -282,21 +275,6 @@ static class Launcher
                     await startupWindow.DisposeAsync();
                 if (!cleanupTried && macRecovery != null && recovery.Read().Attempt is { Phase: "confirmed" } && !macRecovery.IsActive())
                 { cleanupTried = true; try { macRecovery.CleanupSettled(config.Version); } catch (IOException ex) { Log(ex); } }
-                if (File.Exists(commandPath))
-                {
-                    string? command = null; string request = "";
-                    try
-                    {
-                        using var data = JsonDocument.Parse(await File.ReadAllTextAsync(commandPath));
-                        command = data.RootElement.GetProperty("action").GetString();
-                        if (data.RootElement.TryGetProperty("id", out var id)) request = id.GetString() ?? "";
-                        File.Delete(commandPath);
-                    }
-                    catch (IOException) { }
-                    catch (JsonException ex) { Log(ex); File.Delete(commandPath); }
-                    catch (KeyNotFoundException ex) { Log(ex); File.Delete(commandPath); }
-                    if (command != null) restart |= await updates.CommandAsync(command, request);
-                }
                 await Task.Delay(100);
             }
         }
@@ -305,33 +283,14 @@ static class Launcher
             try { startupHealth?.End(DateTimeOffset.UtcNow); }
             finally
             {
-                await updates.DisposeAsync();
                 Directory.Delete(session, true);
                 if (game.HasExited) File.Delete(playerRecord);
             }
         }
         UpdateFeedback.Log("player-exit code=" + game.ExitCode);
-        if (game.ExitCode != 0) { UpdateFeedback.Show("Игра завершилась с ошибкой (код " + game.ExitCode + "). Обновление не применено. Проверьте журнал запуска игры."); return game.ExitCode; } // A crash is not an explicit update activation.
+        if (game.ExitCode != 0) { UpdateFeedback.Show("Игра завершилась с ошибкой (код " + game.ExitCode + "). Проверьте журнал запуска игры."); return game.ExitCode; } // A crash is not an explicit update activation.
         if (!(startupHealth?.IsHealthy ?? knownHealthy))
-        { UpdateFeedback.Log("startup-health-unconfirmed; staged update retained without activation"); return 0; }
-        try
-        {
-            var ready = await Staged(); // Reauthenticate after the actual Player has finished.
-            if (ready != null && recovery.Read().Attempt == null)
-            {
-                if (!restart) return 0; // Only explicit in-game restart consent permits post-Player activation.
-                if (restart && recovery.IsBlocked(ready.Version.ToString())) recovery.PermitRetry(ready.Version.ToString());
-                if (recovery.IsBlocked(ready.Version.ToString())) return 0;
-                if (machineRoot != null && !restart && WindowsInstallation.IsBlocked(machineRoot, ready.Version.ToString())) return 0;
-                if (machineRoot != null)
-                {
-                    if (restart || (!journal.AlreadyAttempted(ready.Version.ToString()) && !WindowsInstallation.Declined(packages, ready.Version.ToString())))
-                        Apply(ready, restart, explicitRetry: restart);
-                }
-                else if (restart || !journal.AlreadyAttempted(ready.Version.ToString())) Apply(ready, restart, explicitRetry: restart);
-            }
-        }
-        catch (Exception ex) { Log(ex); UpdateFeedback.Show("Обновление не установлено. " + UpdateFeedback.Explain(ex)); }
+            UpdateFeedback.Log("startup-health-unconfirmed");
         return 0;
 
         async Task Download(Action<int> progress, CancellationToken token)
