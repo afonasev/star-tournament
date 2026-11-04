@@ -37,6 +37,9 @@ static class BootstrapChangelogChecks
         var common = manifest.Descendants().Single(e => e.Name.LocalName == "assemblyIdentity" && (string?)e.Attribute("name") == "Microsoft.Windows.Common-Controls");
         Check((string?)common.Attribute("version") == "6.0.0.0", "Common Controls v6 dependency enables native hyperlinks");
         Check(manifest.Descendants().Single(e => e.Name.LocalName == "requestedExecutionLevel").Attribute("level")!.Value == "asInvoker", "browser/update question keep normal-user launch level");
+        var maintenanceProject = XDocument.Load("distribution/maintenance/Maintenance.csproj");
+        Check(maintenanceProject.Descendants("ApplicationManifest").Single().Value == "../launcher/app.manifest",
+            "maintenance shares the same v6 TaskDialog manifest for visible install handoff");
         Console.WriteLine($"PASS {passed} bootstrap changelog contracts; native Windows UI/click NotRun");
     }
 }

@@ -336,6 +336,9 @@ static partial class Maintenance
             throw new InvalidOperationException("Current Player startup must be confirmed before activation");
         using var watchLease = TryWatchLease(root, config.AppId) ?? throw new IOException("Startup supervision is already active");
         var journal = UpdateAttemptJournal.ForApp(config.AppId);
+        // Create the successor window before acknowledging the launcher. The caller
+        // can now release its files without leaving download/install work invisible.
+        using var progress = BootstrapStartupWindow.Open(new("applying", 100, Version: expected)).GetAwaiter().GetResult();
         journal.Begin(expected);
         UpdateFeedback.Log("maintenance-ready target=" + expected);
         Console.WriteLine("STAR_TOURNAMENT_ACTIVATION_READY");
@@ -367,7 +370,7 @@ static partial class Maintenance
             journal.Fail(expected, failure);
             try { File.WriteAllText(Path.Combine(cache, "star-apply-declined.json"), JsonSerializer.Serialize(new { version = expected })); }
             catch (Exception ex) { UpdateFeedback.Log("write-declined", ex); }
-            UpdateFeedback.Show("Обновление не установлено. " + failure);
+            if (!progress.ShowError(new("apply-error", Error: "Обновление не установлено. " + failure, Version: expected)).GetAwaiter().GetResult()) return 1;
         }
         else if (applied)
         {
@@ -380,7 +383,7 @@ static partial class Maintenance
         if (restart)
         {
             WindowsDetachedProcess? launched = null;
-            try { launched = LaunchCurrent(root, restartArgs); }
+            try { progress.Publish(new("launching")); launched = LaunchCurrent(root, restartArgs); }
             catch (Exception ex)
             {
                 UpdateFeedback.Log("restart-launcher-failed", ex);

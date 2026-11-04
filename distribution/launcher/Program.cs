@@ -145,21 +145,24 @@ static class Launcher
         if (!manager.IsInstalled || manager.CurrentVersion!.ToString() != config.Version)
             throw new InvalidOperationException("Release identity does not match installed package");
 
-        async Task<VelopackAsset?> Staged()
+        async Task<VelopackAsset?> Staged(CancellationToken token = default)
         {
             if (!File.Exists(stagedManifest)) return null;
             if (new FileInfo(stagedManifest).Length > 65536) throw new System.Security.Cryptography.CryptographicException("Staged metadata exceeds limit");
             using var verifier = new AuthenticatedSource(config, key, readerProtocol: readerProtocol, bootstrap: payload != null);
-            verifier.Admit(await File.ReadAllTextAsync(stagedManifest));
+            verifier.Admit(await File.ReadAllTextAsync(stagedManifest, token));
             verifier.RequireCompatibleTarget();
             var asset = verifier.Asset!;
             if (asset.Version <= manager.CurrentVersion) { File.Delete(stagedManifest); return null; }
-            await verifier.VerifyPackage(PackagePath(asset), asset);
+            await verifier.VerifyPackage(PackagePath(asset), asset, token);
             return asset;
         }
 
+        await using var startupWindow = OperatingSystem.IsWindows() ? await BootstrapStartupWindow.Open() : null;
+        var startupToken = startupWindow?.Token ?? CancellationToken.None;
         VelopackAsset? stagedAtStartup = null;
-        try { stagedAtStartup = await Staged(); }
+        try { stagedAtStartup = await Staged(startupToken); }
+        catch (OperationCanceledException) when (startupToken.IsCancellationRequested) { return 0; }
         catch (Exception ex) { Log(ex); File.Delete(stagedManifest);  } // Invalid staged bytes are never activated.
 
         var session = Path.Combine(logRoot, "sessions", Guid.NewGuid().ToString("N"));
@@ -182,8 +185,9 @@ static class Launcher
         // A downloaded package from an earlier launch does not carry consent for this launch.
         if (knownHealthy && recovery.Read().Attempt == null)
         {
-            var bootstrap = await BootstrapStartup.Run(config.Version, Check, BootstrapPrompt.Confirm,
-                token => Download(_ => { }, token), async target =>
+            var bootstrap = await BootstrapStartup.Run(config.Version, Check,
+                version => startupWindow != null ? startupWindow.Confirm(version) : BootstrapPrompt.Confirm(version),
+                Download, async target =>
                 {
                     AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target"));
                     var ready = await Staged() ?? throw new IOException("Authenticated staged target missing");
@@ -191,7 +195,7 @@ static class Launcher
                     if (recovery.IsBlocked(target)) recovery.PermitRetry(target);
                     try { Apply(ready, true, explicitRetry: true); }
                     catch (Exception error) { journal.Fail(target, "Обновление не установлено. " + UpdateFeedback.Explain(error)); throw; }
-                }, Log);
+                }, Log, startupToken, next => startupWindow?.Publish(new(next.State, next.Progress, next.Error, next.Version)));
             if (bootstrap.HandedOff) return 0;
             initial = bootstrap.Snapshot;
         }
@@ -201,11 +205,17 @@ static class Launcher
             // replacement must wait for its first genuine startup-ready confirmation.
             try
             {
-                var target = await Check(CancellationToken.None);
+                var target = await Check(startupToken);
                 initial = new(target == null ? "current" : "available", Version: target ?? "");
             }
             catch (Exception error) { Log(error); initial = new("unavailable", Error: UpdateFeedback.Explain(error)); }
         }
+        if (startupToken.IsCancellationRequested) return 0;
+        if (startupWindow != null && !string.IsNullOrEmpty(initial?.Error))
+        {
+            if (!await startupWindow.ShowError(new(initial.State, initial.Progress, initial.Error, initial.Version))) return 0;
+        }
+        startupWindow?.Publish(new("launching"));
         using var history = new ReleaseHistory(config, Path.Combine(UpdateFeedback.LogRoot, Path.GetFileName(config.AppId) + ".history.json"));
         await using var updates = new UpdateSession(Check, Download,
             () => AtomicWrite(stagedManifest, source.Envelope ?? throw new InvalidOperationException("No authenticated target")),
@@ -263,6 +273,8 @@ static class Launcher
             while (!game.HasExited)
             {
                 startupHealth?.Poll(DateTimeOffset.UtcNow);
+                if (startupWindow != null && (startupHealth?.IsHealthy ?? knownHealthy))
+                    await startupWindow.DisposeAsync();
                 if (!cleanupTried && macRecovery != null && recovery.Read().Attempt is { Phase: "confirmed" } && !macRecovery.IsActive())
                 { cleanupTried = true; try { macRecovery.CleanupSettled(config.Version); } catch (IOException ex) { Log(ex); } }
                 if (File.Exists(commandPath))

@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <ApplicationManifest>../launcher/app.manifest</ApplicationManifest>
     <ApplicationIcon>../branding/app-icon.ico</ApplicationIcon>
     <OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
@@ -10,6 +11,9 @@
     <PackageReference Include="Velopack" Version="1.2.158" />
     <PackageReference Include="System.Threading.AccessControl" Version="8.0.0" />
     <RuntimeHostConfigurationOption Include="System.StartupHookProvider.IsSupported" Value="false" />
+    <Compile Include="../launcher/BootstrapStartupWindow.cs" Link="BootstrapStartupWindow.cs" />
+    <Compile Include="../launcher/BootstrapWindowsDialog.cs" Link="BootstrapWindowsDialog.cs" />
+    <Compile Include="../launcher/BootstrapChangelog.cs" Link="BootstrapChangelog.cs" />
     <Compile Include="../launcher/BrokerUpgradeState.cs" Link="BrokerUpgradeState.cs" />
     <Compile Include="../launcher/WindowsBrokerUpgradeStartup.cs" Link="WindowsBrokerUpgradeStartup.cs" />
     <Compile Include="../launcher/WindowsBrokerUpgradeAccess.cs" Link="WindowsBrokerUpgradeAccess.cs" />

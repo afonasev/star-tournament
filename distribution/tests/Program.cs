@@ -11,6 +11,7 @@ if (args.Length >= 4 && args[0] == "--bootstrap-payload" && args[2] == "--mac-ta
     if (!Path.IsPathFullyQualified(args[1]) || !Directory.Exists(args[1])) throw new IOException("Fixture payload missing");
     args = args[2..];
 }
+if (args.SequenceEqual(new[] { "--bootstrap-progress" })) { await BootstrapProgressChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--bootstrap-startup" })) { await BootstrapStartupChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--bootstrap-host" })) { BootstrapHostChecks.Run(); return; }
 if (args.SequenceEqual(new[] { "--bootstrap-changelog" })) { BootstrapChangelogChecks.Run(); return; }

@@ -13,7 +13,7 @@ static class BootstrapStartupChecks
             var called = false;
             var result = await BootstrapStartup.Run("1.0.0", _ => Task.FromResult(target),
                 _ => { called = true; return Task.FromResult(true); },
-                _ => { called = true; return Task.CompletedTask; },
+                (_, _) => { called = true; return Task.CompletedTask; },
                 _ => { called = true; return Task.CompletedTask; }, _ => { called = true; });
             Check(!result.HandedOff && result.Snapshot.State == "current" && !called,
                 "absent/equal/older target starts current without UI/download/apply: " + target);
@@ -34,7 +34,7 @@ static class BootstrapStartupChecks
                 if (mode == "prompt-error") throw new IOException("No UI");
                 if (mode == "cancel-after-consent") token.Cancel();
                 return Task.FromResult(mode != "decline");
-            }, cancellation =>
+            }, (_, cancellation) =>
             {
                 events.Add("download"); cancellation.ThrowIfCancellationRequested();
                 if (mode == "download-error") throw new IOException("Incomplete download");

@@ -4,14 +4,14 @@ namespace StarTournament.Distribution;
 
 internal static class BootstrapWindowsDialog
 {
-    public static Task<bool> Confirm(string version, string message)
+    public static Task<bool> Confirm(string version, string message, IntPtr parent = default)
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
         var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         // Discovery resumes on a pool thread; Task Dialog requires its own STA.
         var thread = new Thread(() =>
         {
-            try { completion.SetResult(Show(version, message)); }
+            try { completion.SetResult(Show(version, message, parent)); }
             catch (Exception error) { completion.SetException(error); }
         }) { IsBackground = true, Name = "Bootstrap update question" };
         thread.SetApartmentState(ApartmentState.STA);
@@ -19,7 +19,7 @@ internal static class BootstrapWindowsDialog
         return completion.Task;
     }
 
-    static bool Show(string version, string message)
+    static bool Show(string version, string message, IntPtr parent)
     {
         Callback callback = (_, notification, _, target, _) =>
         {
@@ -29,6 +29,7 @@ internal static class BootstrapWindowsDialog
         };
         var config = new Config {
             Size = (uint)Marshal.SizeOf<Config>(),
+            Parent = parent,
             Flags = 0x0001 | 0x0002 | 0x0008, // hyperlinks, shared question icon, Escape/close
             CommonButtons = 0x0002 | 0x0004, // Yes/No
             Title = "Star Tournament — обновление",
@@ -44,11 +45,11 @@ internal static class BootstrapWindowsDialog
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Winapi)]
-    delegate int Callback(IntPtr window, uint notification, UIntPtr parameter, IntPtr target, IntPtr data);
+    internal delegate int Callback(IntPtr window, uint notification, UIntPtr parameter, IntPtr target, IntPtr data);
 
     // The Windows SDK's Task Dialog section explicitly uses pshpack1.h.
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
-    struct Config
+    internal struct Config
     {
         public uint Size;
         public IntPtr Parent, Instance;
@@ -75,7 +76,7 @@ internal static class BootstrapWindowsDialog
     }
 
     [DllImport("comctl32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-    static extern int TaskDialogIndirect([In] ref Config config, out int button, out int radioButton, [MarshalAs(UnmanagedType.Bool)] out bool verification);
+    internal static extern int TaskDialogIndirect([In] ref Config config, out int button, out int radioButton, [MarshalAs(UnmanagedType.Bool)] out bool verification);
     [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     static extern IntPtr LoadIconW(IntPtr instance, IntPtr resource);
 }
